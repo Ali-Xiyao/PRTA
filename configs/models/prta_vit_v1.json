@@ -1,0 +1,15 @@
+{
+  "schema": "prta-cxr.model.v1",
+  "backbone": "BiomedCLIP-ViT",
+  "block8_token_shape": [197, 768],
+  "frozen_early_blocks": 8,
+  "adapted_tail_blocks": [9, 10, 11, 12],
+  "adapter_rank": 32,
+  "attention_heads": 12,
+  "state_tokens": 20,
+  "transition_tokens": 20,
+  "progression_labels": ["Stable", "Improved", "Worse", "New", "Resolved"],
+  "native_heads": ["H0", "H1"],
+  "default_native_head": "H0",
+  "fixed64_is_main_head": false
+}

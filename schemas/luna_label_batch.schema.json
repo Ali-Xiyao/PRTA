@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prta-cxr.luna-label-batch.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sample_id",
+          "finding",
+          "verified_label",
+          "decision",
+          "prior_evidence",
+          "current_evidence",
+          "comparison_evidence",
+          "comparison_matches_selected_prior",
+          "finding_match",
+          "negation_conflict",
+          "uncertainty_conflict",
+          "temporal_conflict",
+          "reason_code"
+        ],
+        "properties": {
+          "sample_id": {"type": "string", "minLength": 1},
+          "finding": {"type": "string", "minLength": 1},
+          "verified_label": {
+            "enum": ["Stable", "Improved", "Worse", "New", "Resolved"]
+          },
+          "decision": {"enum": ["accept", "tier_b", "reject"]},
+          "prior_evidence": {"type": "string"},
+          "current_evidence": {"type": "string"},
+          "comparison_evidence": {"type": "string"},
+          "comparison_matches_selected_prior": {"type": "boolean"},
+          "finding_match": {"type": "boolean"},
+          "negation_conflict": {"type": "boolean"},
+          "uncertainty_conflict": {"type": "boolean"},
+          "temporal_conflict": {"type": "boolean"},
+          "reason_code": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

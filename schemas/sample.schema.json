@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prta-cxr.sample.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sample_id",
+    "patient_id_hash",
+    "source",
+    "prior_study_id",
+    "current_study_id",
+    "prior_image_path",
+    "current_image_path",
+    "prior_report",
+    "current_report",
+    "prior_datetime",
+    "current_datetime",
+    "interval_days",
+    "prior_view",
+    "current_view",
+    "finding",
+    "progression_label",
+    "label_source",
+    "label_tier"
+  ],
+  "properties": {
+    "sample_id": {"type": "string", "minLength": 1},
+    "patient_id_hash": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "prior_study_id": {"type": "string", "minLength": 1},
+    "current_study_id": {"type": "string", "minLength": 1},
+    "prior_image_path": {"type": "string", "minLength": 1},
+    "current_image_path": {"type": "string", "minLength": 1},
+    "prior_report": {"type": "string", "minLength": 1},
+    "current_report": {"type": "string", "minLength": 1},
+    "prior_datetime": {"type": "string", "minLength": 1},
+    "current_datetime": {"type": "string", "minLength": 1},
+    "interval_days": {"type": "number", "minimum": 0},
+    "prior_view": {"type": "string", "minLength": 1},
+    "current_view": {"type": "string", "minLength": 1},
+    "finding": {"type": "string", "minLength": 1},
+    "progression_label": {
+      "enum": ["Stable", "Improved", "Worse", "New", "Resolved"]
+    },
+    "label_source": {"type": "string", "minLength": 1},
+    "label_tier": {"enum": ["Tier-A", "Tier-B", "Reject"]}
+  }
+}

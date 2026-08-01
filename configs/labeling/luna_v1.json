@@ -1,0 +1,13 @@
+{
+  "schema": "prta-cxr.luna-labeling.v1",
+  "model": "gpt-5.6-luna",
+  "batch_size_min": 20,
+  "batch_size_max": 30,
+  "pilot_rows_min": 100,
+  "pilot_rows_max": 200,
+  "prompt": "prompts/luna_label_v1.md",
+  "verifier_prompt": "prompts/luna_verify_v1.md",
+  "output_schema": "schemas/luna_label_batch.schema.json",
+  "fail_closed": true,
+  "formal_execution_enabled": false
+}

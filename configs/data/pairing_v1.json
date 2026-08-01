@@ -1,0 +1,8 @@
+{
+  "schema": "prta-cxr.pairing.v1",
+  "pairing": "adjacent-within-patient",
+  "allowed_views": ["AP", "PA"],
+  "patient_identifier": "patient_id_hash",
+  "require_strict_time_order": true,
+  "cross_split_patient_overlap_allowed": false
+}

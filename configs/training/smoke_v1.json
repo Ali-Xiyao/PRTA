@@ -1,0 +1,12 @@
+{
+  "schema": "prta-cxr.synthetic-smoke.v1",
+  "formal_experiment": false,
+  "real_data": false,
+  "seed": 17,
+  "steps": 3,
+  "width": 16,
+  "heads": 4,
+  "adapter_rank": 4,
+  "state_tokens": 4,
+  "transition_tokens": 4
+}
