@@ -753,3 +753,12 @@
   All four processes are alive, current stderr logs are empty, checkpoints and
   registry rows are consistent, GPU memory is about 4.48 GiB per device at
   77/76 C, H: has 422.8 GiB free, and protected markers remain absent.
+- The 07:55 CST heartbeat found D204 at epoch 7, batch 700/4,293. Its latest
+  completed Dev Macro-F1 was 0.4173 at epoch 6, while the frozen best remains
+  0.4331 at epoch 4. D205 reached epoch 2, batch 4,600/5,692 with best Dev
+  Macro-F1 0.4430 at epoch 1 and should enter its next fixed-Dev pass in about
+  10-20 minutes. Queue state remains 3/7 complete with both runs active and
+  two M301 variants planned. Both children and the recovered keepers are
+  alive, active stderr logs remain empty, checkpoint and registry identities
+  are consistent, GPU memory is about 4.48 GiB per device at 78/71 C, H: has
+  422.8 GiB free, and protected outcome/protocol-freeze markers are absent.
