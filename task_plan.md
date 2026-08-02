@@ -498,6 +498,11 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   inventory located the active file at
   `docs/TRAINING_READINESS_AND_COMMANDS_CN.md`. Update that authority surface
   with the live cache/store/queue contract; no runtime action was attempted.
+- 2026-08-03: the first matched-wrong dataset test showed that normal one-row
+  datasets were unnecessarily forced to find a different patient; Ruff also
+  found one unused loop index and one long line. Build the derangement map only
+  for `matched_wrong`, explicitly swap image fields for reversal, format the
+  two findings, and rerun before any training starts.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

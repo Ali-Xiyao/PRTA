@@ -78,3 +78,58 @@ def test_feature_dataset_prefers_contiguous_training_store(tmp_path):
     actual = index.get_many([inventory[2]["image_key"], inventory[0]["image_key"]])
     assert index._training_store_path is not None
     assert torch.equal(actual, expected[[2, 0]].to(torch.float16))
+
+
+def test_matched_wrong_prior_comes_from_a_different_patient(tmp_path):
+    rows = []
+    inventory = []
+    for index in range(3):
+        prior = f"prior-{index}.png"
+        current = f"current-{index}.png"
+        for path in (prior, current):
+            inventory.append(
+                {
+                    "image_key": image_cache_key("source-a", path),
+                    "source": "source-a",
+                    "image_path": path,
+                }
+            )
+        rows.append(
+            {
+                "sample_id": f"sample-{index}",
+                "patient_id_hash": f"patient-{index}",
+                "source": "source-a",
+                "prior_image_path": prior,
+                "current_image_path": current,
+                "finding": "Edema",
+                "progression_label": "Stable",
+                "current_view": "AP",
+                "calendar_interval_available": True,
+                "interval_days": 10.0,
+                "split": "dev",
+            }
+        )
+    root = tmp_path / "cache"
+    features = torch.arange(6, dtype=torch.float32).reshape(6, 1, 1).expand(
+        6, 197, 768
+    )
+    write_block8_cache(root, inventory, features, shard_size=6)
+    text = tmp_path / "text.pt"
+    torch.save(
+        {
+            "finding_embeddings": {"Edema": torch.zeros(512)},
+            "transition_prototypes": {"Edema|Stable": torch.zeros(512)},
+        },
+        text,
+    )
+    dataset = PRTAFeatureDataset(
+        rows,
+        cache=Block8CacheIndex(root),
+        text_cache_path=text,
+        split="dev",
+        prior_intervention="matched_wrong",
+    )
+    item = dataset[0]
+    assert item["matched_wrong_sample_id"] != item["sample_id"]
+    wrong = rows[dataset.wrong_prior_indices[0]]
+    assert wrong["patient_id_hash"] != rows[0]["patient_id_hash"]

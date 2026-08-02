@@ -453,3 +453,9 @@
 - Because two GPUs may finish/start runs concurrently, the unified registry
   needs a cross-process lock around read-modify-replace. The Windows lock-file
   implementation prevents one run closeout from erasing the other run's row.
+- The head-selection rule cannot be implemented from ordinary Dev Macro-F1
+  alone because the authority also requires that matched-wrong PRIOR behavior
+  not worsen. The new derangement is outcome-independent and frozen before
+  training: same source/finding/view/interval bin when possible, progressively
+  relaxed only for support, always a different patient, with deterministic
+  sample-hash selection.

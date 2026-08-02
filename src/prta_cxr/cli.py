@@ -135,6 +135,13 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         dev_dataset = PRTAFeatureDataset(
             rows, cache=cache, text_cache_path=args.text_cache, split="dev"
         )
+        wrong_prior_dev_dataset = PRTAFeatureDataset(
+            rows,
+            cache=cache,
+            text_cache_path=args.text_cache,
+            split="dev",
+            prior_intervention="matched_wrong",
+        )
         batch_size = int(config["optimization"]["batch_size"])
         workers = int(config["optimization"].get("num_workers", 0))
         generator = torch.Generator().manual_seed(int(config["seed"]))
@@ -147,6 +154,12 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         )
         dev_loader = DataLoader(
             dev_dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=workers,
+        )
+        wrong_prior_dev_loader = DataLoader(
+            wrong_prior_dev_dataset,
             batch_size=batch_size,
             shuffle=False,
             num_workers=workers,
@@ -200,6 +213,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                 input_hashes=input_hashes,
                 resume_path=args.resume,
                 fraction_audit=fraction_audit,
+                wrong_prior_dev_loader=wrong_prior_dev_loader,
             )
         except Exception:
             registry_row["end_time"] = datetime.now(UTC).isoformat()

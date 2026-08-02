@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Sequence
 from pathlib import Path
@@ -25,11 +26,15 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         cache: Block8CacheIndex,
         text_cache_path: Path,
         split: str,
+        prior_intervention: str = "true",
     ) -> None:
         self.rows = [dict(row) for row in rows if row.get("split") == split]
         if not self.rows:
             raise ContractError(f"split contains no rows: {split}")
         self.cache = cache
+        if prior_intervention not in {"true", "matched_wrong", "reversed"}:
+            raise ContractError("unsupported dataset prior intervention")
+        self.prior_intervention = prior_intervention
         value = torch.load(text_cache_path, map_location="cpu", weights_only=True)
         if not isinstance(value, dict):
             raise ContractError("text cache must be a dictionary")
@@ -68,15 +73,87 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
                 )
             if row["progression_label"] not in self.label_index:
                 raise ContractError("training row has an unknown progression label")
+        self.wrong_prior_indices = (
+            self._matched_wrong_indices()
+            if self.prior_intervention == "matched_wrong"
+            else list(range(len(self.rows)))
+        )
+
+    @staticmethod
+    def _interval_bin(row: dict[str, Any]) -> str:
+        if not bool(row.get("calendar_interval_available", False)):
+            return "ordinal"
+        value = float(row.get("interval_days", 0.0))
+        for bound in (7, 30, 90, 365):
+            if value <= bound:
+                return f"le_{bound}"
+        return "gt_365"
+
+    def _matched_wrong_indices(self) -> list[int]:
+        groups: dict[tuple[str, ...], list[int]] = {}
+        for index, row in enumerate(self.rows):
+            keys = (
+                (
+                    str(row["source"]),
+                    str(row["finding"]),
+                    str(row.get("current_view", "unknown")),
+                    self._interval_bin(row),
+                ),
+                (str(row["source"]), str(row["finding"])),
+                (str(row["finding"]),),
+                ("all",),
+            )
+            for key in keys:
+                groups.setdefault(key, []).append(index)
+        result = []
+        for row in self.rows:
+            keys = (
+                (
+                    str(row["source"]),
+                    str(row["finding"]),
+                    str(row.get("current_view", "unknown")),
+                    self._interval_bin(row),
+                ),
+                (str(row["source"]), str(row["finding"])),
+                (str(row["finding"]),),
+                ("all",),
+            )
+            candidates = []
+            for key in keys:
+                candidates = [
+                    candidate
+                    for candidate in groups[key]
+                    if str(self.rows[candidate]["patient_id_hash"])
+                    != str(row["patient_id_hash"])
+                ]
+                if candidates:
+                    break
+            if not candidates:
+                raise ContractError("cannot construct a different-patient wrong prior")
+            candidates.sort(key=lambda value: str(self.rows[value]["sample_id"]))
+            digest = hashlib.sha256(str(row["sample_id"]).encode()).digest()
+            selected = int.from_bytes(digest[:8], "big") % len(candidates)
+            result.append(candidates[selected])
+        return result
 
     def __len__(self) -> int:
         return len(self.rows)
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         row = self.rows[index]
+        prior_source = str(row["source"])
+        prior_path = str(row["prior_image_path"])
+        current_source = str(row["source"])
+        current_path = str(row["current_image_path"])
+        if self.prior_intervention == "matched_wrong":
+            prior_row = self.rows[self.wrong_prior_indices[index]]
+            prior_source = str(prior_row["source"])
+            prior_path = str(prior_row["prior_image_path"])
+        elif self.prior_intervention == "reversed":
+            prior_path, current_path = current_path, prior_path
         keys = [
-            image_cache_key(row["source"], row["prior_image_path"]),
-            image_cache_key(row["source"], row["current_image_path"]),
+            image_cache_key(prior_source, prior_path),
+            image_cache_key(current_source, current_path),
         ]
         features = self.cache.get_many(keys).float()
         finding = torch.as_tensor(
@@ -98,4 +175,10 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             "finding_text": finding,
             "transition_text": transition,
             "target": self.label_index[str(row["progression_label"])],
+            "source": str(row["source"]),
+            "finding": str(row["finding"]),
+            "prior_intervention": self.prior_intervention,
+            "matched_wrong_sample_id": str(
+                self.rows[self.wrong_prior_indices[index]]["sample_id"]
+            ),
         }

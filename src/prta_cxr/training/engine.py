@@ -373,6 +373,7 @@ def train_model(
     input_hashes: Mapping[str, str],
     resume_path: Path | None = None,
     fraction_audit: Mapping[str, Any] | None = None,
+    wrong_prior_dev_loader: DataLoader | None = None,
 ) -> dict[str, Any]:
     output_root = Path(output_root)
     if output_root.exists() and resume_path is None:
@@ -495,6 +496,30 @@ def train_model(
         if epoch + 1 >= min_epochs and epoch - best_epoch >= patience:
             stopped_early = True
             break
+    dev_prior_audit: dict[str, Any] = {}
+    if wrong_prior_dev_loader is not None:
+        best_checkpoint = torch.load(
+            output_root / "best.pt", map_location="cpu", weights_only=True
+        )
+        model.load_state_dict(best_checkpoint["model_state"])
+        model.to(device)
+        wrong_metrics = evaluate_loader(
+            model,
+            wrong_prior_dev_loader,
+            weights=config["loss_weights"],
+            device=device,
+        )
+        true_metrics = next(
+            value for value in history if int(value["epoch"]) == best_epoch
+        )
+        dev_prior_audit = {
+            "intervention": "matched_source_finding_view_interval_wrong_patient",
+            "true_prior_macro_f1": float(true_metrics["macro_f1"]),
+            "matched_wrong_prior_macro_f1": float(wrong_metrics["macro_f1"]),
+            "true_minus_wrong_prior_gap": float(true_metrics["macro_f1"])
+            - float(wrong_metrics["macro_f1"]),
+            "matched_wrong_metrics": wrong_metrics,
+        }
     ended = datetime.now(UTC).isoformat()
     receipt = {
         "schema": "prta-cxr.training-receipt.v1",
@@ -511,6 +536,7 @@ def train_model(
         "input_hashes": dict(input_hashes),
         "checkpoint_path": "best.pt",
         "fraction_audit": dict(fraction_audit or {}),
+        "dev_prior_audit": dev_prior_audit,
         "start_time": started,
         "end_time": ended,
         "internal_test_opened": False,

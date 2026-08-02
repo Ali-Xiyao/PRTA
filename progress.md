@@ -504,3 +504,12 @@
 - Full repository validation now passes 85 tests, Ruff, compileall, and diff
   checks. The original cache process remains healthy at 42,752/146,110 images
   (167 shards, 29.26%) with empty stderr.
+- Launched the committed development keeper as PID 25716. It is healthy and
+  explicitly waiting for the cache/training-store gate; zero training runs
+  have started.
+- Added a deterministic Dev matched-wrong PRIOR dataset matched in descending
+  strictness by source/finding/view/interval and always drawn from a different
+  patient. Each run evaluates this intervention once on its best Dev-selected
+  checkpoint and records True-minus-Wrong Macro-F1 without opening test/Gold.
+- Full gates now pass 86 tests. Cache progress is 50,944/146,110 images (199
+  shards, 34.87%), while the keeper remains at 0/7 and stderr is empty.
