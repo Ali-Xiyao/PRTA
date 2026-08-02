@@ -60,7 +60,7 @@ Status: complete
   formal execution paths.
 
 ### Phase 5 - Verification and local Git handoff
-Status: in_progress
+Status: complete
 
 - Add focused tests, run repository gates and an end-to-end synthetic pipeline.
 - Update readiness/HOLD documentation, commit, push to the local-only remote,
@@ -68,8 +68,8 @@ Status: in_progress
 
 ## Next Step
 
-Run the complete repository verification surface, refresh evidence documents,
-then commit and push only this clean-project scope to the local-only remote.
+Await explicit authorization for the first real-data inventory/manifest build;
+do not start training or open protected/internal-test outcomes automatically.
 
 ## Decisions
 

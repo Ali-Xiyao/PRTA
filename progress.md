@@ -59,3 +59,5 @@
   checkpoint, produced finite dummy Block-8/text representations, and produced
   finite full-size PRTA five-class logits. No real image/report or optimizer
   step was used.
+- Committed the implementation as `b3c4249` and pushed `main` only to the
+  local bare remote `PRTA-CXR-local.git`; no cloud remote exists or was used.
