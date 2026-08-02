@@ -46,6 +46,9 @@ def build_adjacent_pairs(
         source = str(study["source"]).strip()
         if not source:
             raise ContractError("source must be non-empty")
+        time_basis = str(study.get("time_basis", "calendar")).strip()
+        if time_basis not in {"calendar", "within_patient_ordinal"}:
+            raise ContractError(f"unsupported time_basis: {time_basis!r}")
         by_patient[(source, patient)].append(study)
 
     pairs = []
@@ -59,6 +62,11 @@ def build_adjacent_pairs(
             current_time = _parse_datetime(current["datetime"])
             if current_time <= prior_time:
                 raise ContractError("studies must have strictly increasing time")
+            prior_basis = str(prior.get("time_basis", "calendar"))
+            current_basis = str(current.get("time_basis", "calendar"))
+            if prior_basis != current_basis:
+                raise ContractError("paired studies must share one time_basis")
+            interval_value = (current_time - prior_time).total_seconds() / 86400.0
             identity = "|".join(
                 (
                     source,
@@ -82,8 +90,14 @@ def build_adjacent_pairs(
                     "current_report": str(current["report"]),
                     "prior_datetime": str(prior["datetime"]),
                     "current_datetime": str(current["datetime"]),
-                    "interval_days": (current_time - prior_time).total_seconds()
-                    / 86400.0,
+                    "interval_days": interval_value,
+                    "interval_basis": prior_basis,
+                    "calendar_interval_available": prior_basis == "calendar",
+                    "interval_semantics": (
+                        "elapsed_calendar_days"
+                        if prior_basis == "calendar"
+                        else "within_patient_ordinal_steps_not_calendar_days"
+                    ),
                     "prior_view": str(prior["view"]),
                     "current_view": str(current["view"]),
                 }

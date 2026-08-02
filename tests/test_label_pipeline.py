@@ -48,6 +48,9 @@ def test_pair_to_candidate_uses_clean_sample_contract():
         "prior_datetime": "2025-01-01T00:00:00",
         "current_datetime": "2025-01-02T00:00:00",
         "interval_days": 1,
+        "interval_basis": "within_patient_ordinal",
+        "calendar_interval_available": False,
+        "interval_semantics": "within_patient_ordinal_steps_not_calendar_days",
         "prior_view": "PA",
         "current_view": "PA",
     }
@@ -55,6 +58,7 @@ def test_pair_to_candidate_uses_clean_sample_contract():
     assert len(samples) == 1
     assert samples[0]["progression_label"] == "Improved"
     assert samples[0]["label_tier"] == "Tier-B"
+    assert samples[0]["calendar_interval_available"] is False
     assert audit["candidate_samples"] == 1
 
 
@@ -74,6 +78,7 @@ def test_luna_batches_remove_patient_identity_and_pin_authority(tmp_path):
     serialized = json.dumps(batches)
     assert "patient_id" not in serialized
     assert "synthetic-hash" not in serialized
+    assert "elapsed_calendar_days" in serialized
 
 
 def test_luna_output_and_merge_fail_closed(tmp_path):

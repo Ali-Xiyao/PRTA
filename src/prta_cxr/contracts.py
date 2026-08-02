@@ -29,6 +29,9 @@ SAMPLE_FIELDS = frozenset(
         "prior_datetime",
         "current_datetime",
         "interval_days",
+        "interval_basis",
+        "calendar_interval_available",
+        "interval_semantics",
         "prior_view",
         "current_view",
         "finding",
@@ -94,7 +97,7 @@ def _nonempty_string(row: Mapping[str, Any], key: str) -> str:
 def validate_sample(row: Mapping[str, Any]) -> dict[str, Any]:
     _require_exact_fields(row, SAMPLE_FIELDS)
     result = dict(row)
-    for key in SAMPLE_FIELDS - {"interval_days"}:
+    for key in SAMPLE_FIELDS - {"interval_days", "calendar_interval_available"}:
         _nonempty_string(result, key)
     if result["progression_label"] not in PROGRESSION_LABELS:
         raise ContractError("unknown progression_label")
@@ -103,6 +106,13 @@ def validate_sample(row: Mapping[str, Any]) -> dict[str, Any]:
     interval = result["interval_days"]
     if not isinstance(interval, (int, float)) or interval < 0:
         raise ContractError("interval_days must be non-negative")
+    if result["interval_basis"] not in {"calendar", "within_patient_ordinal"}:
+        raise ContractError("unsupported interval_basis")
+    calendar_available = result["calendar_interval_available"]
+    if type(calendar_available) is not bool:
+        raise ContractError("calendar_interval_available must be boolean")
+    if calendar_available != (result["interval_basis"] == "calendar"):
+        raise ContractError("calendar interval flag contradicts interval_basis")
     if result["prior_datetime"] >= result["current_datetime"]:
         raise ContractError("prior_datetime must precede current_datetime")
     return result

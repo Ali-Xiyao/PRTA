@@ -16,6 +16,9 @@
     "prior_datetime",
     "current_datetime",
     "interval_days",
+    "interval_basis",
+    "calendar_interval_available",
+    "interval_semantics",
     "prior_view",
     "current_view",
     "finding",
@@ -36,6 +39,11 @@
     "prior_datetime": {"type": "string", "minLength": 1},
     "current_datetime": {"type": "string", "minLength": 1},
     "interval_days": {"type": "number", "minimum": 0},
+    "interval_basis": {
+      "enum": ["calendar", "within_patient_ordinal"]
+    },
+    "calendar_interval_available": {"type": "boolean"},
+    "interval_semantics": {"type": "string", "minLength": 1},
     "prior_view": {"type": "string", "minLength": 1},
     "current_view": {"type": "string", "minLength": 1},
     "finding": {"type": "string", "minLength": 1},

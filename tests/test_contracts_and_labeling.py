@@ -1,8 +1,12 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from prta_cxr.contracts import (
     INVERSION,
     PROGRESSION_LABELS,
+    SAMPLE_FIELDS,
     ContractError,
     validate_luna_batch,
     validate_sample,
@@ -24,6 +28,9 @@ def sample() -> dict:
         "prior_datetime": "2025-01-01T00:00:00",
         "current_datetime": "2025-01-03T00:00:00",
         "interval_days": 2,
+        "interval_basis": "calendar",
+        "calendar_interval_available": True,
+        "interval_semantics": "elapsed_calendar_days",
         "prior_view": "PA",
         "current_view": "PA",
         "finding": "Pleural Effusion",
@@ -54,6 +61,14 @@ def luna() -> dict:
 def test_five_labels_and_inversion_are_closed():
     assert set(INVERSION) == set(PROGRESSION_LABELS)
     assert all(INVERSION[INVERSION[label]] == label for label in PROGRESSION_LABELS)
+
+
+def test_sample_json_schema_matches_runtime_contract():
+    schema = json.loads(
+        Path("schemas/sample.schema.json").read_text(encoding="utf-8")
+    )
+    assert set(schema["required"]) == SAMPLE_FIELDS
+    assert set(schema["properties"]) == SAMPLE_FIELDS
 
 
 def test_sample_and_luna_merge_to_tier_a():

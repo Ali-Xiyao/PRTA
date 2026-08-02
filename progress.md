@@ -61,3 +61,58 @@
   step was used.
 - Committed the implementation as `b3c4249` and pushed `main` only to the
   local bare remote `PRTA-CXR-local.git`; no cloud remote exists or was used.
+
+## 2026-08-02 real-data preparation authorization
+
+- The user approved starting the next step named in the handoff: real asset
+  inventory and unified source-manifest preparation.
+- Training, Luna, real image caching, internal-test opening, and protected
+  outcome access remain outside this phase.
+- Started Phase 6 inventory and governance evidence collection.
+- Confirmed MIMIC official-train and CheXpert Plus train as the two local
+  longitudinal report sources; classification/localization-only CXR datasets
+  remain auxiliary or blocked for the primary progression pool.
+- Added a fresh-only real source builder for MIMIC and CheXpert Plus, plus an
+  ID/partition-only historical exclusion projector covering R24-R32 while
+  deliberately reactivating old train-only membership.
+- Added three focused source-builder tests; the targeted source/data suite
+  passes 7/7 and focused Ruff passes.
+- Launched the authorized fresh real source build under PID 29840. The outer
+  command reached its 30-minute limit, but process inspection confirmed the
+  child remained alive with increasing CPU and I/O counters; no duplicate was
+  launched and no formal directory was prematurely accepted.
+- At the first staging audit, the atomic MIMIC temp JSONL had 176,745 readable
+  lines and later 199,452,548 bytes. The process remains I/O-active; CheXpert,
+  exclusions, pair construction, cache, and training have not started.
+- After confirming sustained but very low disk throughput, stopped only the
+  orphaned builder PID 29840; the formal output never existed and staging was
+  preserved. The final partial audit found 206,724 complete, valid, unique
+  MIMIC JSONL rows, zero duplicate image IDs, and no malformed tail.
+- The first resume completed atomic MIMIC and CheXpert source JSONLs in staging
+  but stopped at the exclusion projector because four gold identifiers had no
+  numeric component. Added a namespaced opaque-ID hash fallback with a receipt
+  counter; regression tests remain 3/3 and Ruff clean.
+- The corrected retry atomically completed `sources_v1`: MIMIC 213,365 studies
+  and CheXpert Plus 187,474 studies, plus a 3,750-patient hash-only exclusion
+  registry. Independent full parsing verified row/key/time-basis/report
+  integrity and confirmed all protected execution flags remained false.
+- Closed Phases 6 and 7. Added explicit pair-level calendar-versus-ordinal
+  semantics and regression coverage; the focused data suite passes 10/10 and
+  Ruff is clean. Phase 8 is now building the full candidate pair manifest.
+- The first full pair attempt failed closed before writing files on four
+  duplicate MIMIC patient-time rows. Added deterministic timepoint
+  deduplication plus a regression test; zero-interval transitions remain
+  prohibited.
+- The corrected full build produced 238,511 adjacent pairs from 362,593
+  normalized studies. Independent streaming validation reproduced the
+  canonical hash and found zero excluded patients, raw patient fields,
+  nonpositive intervals, time-basis conflicts, pair-ID mismatches, duplicate
+  edges, or non-adjacent chains.
+- Added `docs/REAL_DATA_PREPARATION_STATUS_CN.md` and refreshed README/readiness
+  status so the repository now identifies the exact artifact boundary and the
+  next label-review gate. The two supplied authority documents remain
+  byte-identical to their originals.
+- Final repository validation passes 34/34 tests, Ruff, compileall, the main
+  preflight, every scripts/00-08 preflight, and `git diff --check`. No formal
+  experiment, cache, Luna call, internal-test opening, or GPU training was
+  triggered by these verification gates.

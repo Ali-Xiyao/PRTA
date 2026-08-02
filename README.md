@@ -14,8 +14,9 @@ Qwen SFT attempts are intentionally absent.
 ## Current status
 
 The full data-to-training code path and synthetic validation are implemented.
-Formal scientific experiments have **not** been started. Data activation,
-repartition, labeling, caching, training, and internal testing remain separately
+Real source manifests, exclusions, and the 238,511-pair candidate pool are now
+prepared and audited. Formal scientific experiments have **not** been started;
+labeling, split freeze, caching, training, and internal testing remain separately
 gated and require explicit authorization.
 
 ## Start here
@@ -29,6 +30,9 @@ gated and require explicit authorization.
 5. Use the Chinese
    [training readiness and command runbook](docs/TRAINING_READINESS_AND_COMMANDS_CN.md)
    before allocating a GPU.
+6. Check the frozen
+   [real-data preparation status](docs/REAL_DATA_PREPARATION_STATUS_CN.md) for
+   current counts, hashes, and the next execution gate.
 
 ## Local engineering validation
 

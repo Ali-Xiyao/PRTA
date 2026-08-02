@@ -269,6 +269,15 @@ def candidate_samples(
                     "prior_datetime": str(pair["prior_datetime"]),
                     "current_datetime": str(pair["current_datetime"]),
                     "interval_days": float(pair["interval_days"]),
+                    "interval_basis": str(
+                        pair.get("interval_basis", "calendar")
+                    ),
+                    "calendar_interval_available": bool(
+                        pair.get("calendar_interval_available", True)
+                    ),
+                    "interval_semantics": str(
+                        pair.get("interval_semantics", "elapsed_calendar_days")
+                    ),
                     "prior_view": str(pair["prior_view"]),
                     "current_view": str(pair["current_view"]),
                     "finding": annotation["finding"],

@@ -1,0 +1,49 @@
+{
+  "schema": "prta-cxr.exclusion-sources.v1",
+  "patient_namespace": "mimic",
+  "sources": [
+    {
+      "source_id": "r24_mimic_evaluated",
+      "path_env": "PRTA_R24_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": null,
+      "excluded_partitions": null
+    },
+    {
+      "source_id": "r25_evaluated",
+      "path_env": "PRTA_R25_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": null,
+      "excluded_partitions": null
+    },
+    {
+      "source_id": "r26_evaluated",
+      "path_env": "PRTA_R26_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": null,
+      "excluded_partitions": null
+    },
+    {
+      "source_id": "r29_revealed_dev_test",
+      "path_env": "PRTA_R29_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": "partition",
+      "excluded_partitions": ["dev", "test"]
+    },
+    {
+      "source_id": "r30_revealed_dev_test",
+      "path_env": "PRTA_R30_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": "partition",
+      "excluded_partitions": ["dev", "test"]
+    },
+    {
+      "source_id": "r31_revealed_dev_test",
+      "path_env": "PRTA_R31_COHORT",
+      "patient_field": "patient_id",
+      "partition_field": "partition",
+      "excluded_partitions": ["dev", "test"]
+    }
+  ],
+  "legacy_structural_registry_env": "PRTA_R32_STRUCTURAL_REGISTRY"
+}

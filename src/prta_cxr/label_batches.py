@@ -41,6 +41,11 @@ def prepare_luna_batches(
                 "current_report": row["current_report"],
                 "prior_datetime": row["prior_datetime"],
                 "current_datetime": row["current_datetime"],
+                "interval_basis": row["interval_basis"],
+                "calendar_interval_available": row[
+                    "calendar_interval_available"
+                ],
+                "interval_semantics": row["interval_semantics"],
             }
             for row in selected
         ]

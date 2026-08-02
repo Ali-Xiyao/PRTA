@@ -21,7 +21,8 @@ Decision: `HOLD_PARITY_NOT_RUN`
 
 - Old-checkpoint/small-cohort prediction parity was not run.
 - A real single-GPU train was not run; only generated tensors were used.
-- Patient leakage is tested on fixtures, but no formal split manifest exists.
+- The real source and pair manifests have passed exclusion/lineage audits, but
+  no labeled formal split manifest exists yet.
 - Luna pilot, clinician audit, expanded data, formal baselines, ablations,
   trust analysis, figures, and VLM deployment have not started.
 
@@ -38,4 +39,6 @@ The user directed the new project to retire debugging-only dataset isolation,
 reconsider all previously used datasets, and rebuild larger patient-level
 splits from scratch. The durable policy and unchanged protected boundaries are
 recorded in [DATA_REPARTITION_POLICY.md](DATA_REPARTITION_POLICY.md). This is
-implementation authority only; no real-data build or training has started.
+The authorized source/pair preparation has now completed; training has not
+started. Current counts, hashes, and the next gate are recorded in
+[REAL_DATA_PREPARATION_STATUS_CN.md](REAL_DATA_PREPARATION_STATUS_CN.md).

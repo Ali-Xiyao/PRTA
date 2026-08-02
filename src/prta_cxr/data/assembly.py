@@ -79,6 +79,7 @@ def normalize_studies(
                 "image_path": str(row["image_path"]),
                 "report": str(row["report"]),
                 "datetime": str(row["study_datetime"]),
+                "time_basis": str(row.get("time_basis", "calendar")),
                 "view": view,
             }
         )
@@ -100,7 +101,24 @@ def normalize_studies(
             diagnostics["extra_frontal_in_study"] += 1
             continue
         selected[key] = row
-    normalized = list(selected.values())
+    timeline_selected: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for row in sorted(
+        selected.values(),
+        key=lambda item: (
+            item["source"],
+            item["patient_id_hash"],
+            item["datetime"],
+            view_rank[item["view"]],
+            item["study_id"],
+            item["image_id"],
+        ),
+    ):
+        key = (row["source"], row["patient_id_hash"], row["datetime"])
+        if key in timeline_selected:
+            diagnostics["duplicate_patient_time"] += 1
+            continue
+        timeline_selected[key] = row
+    normalized = list(timeline_selected.values())
     audit = {
         "schema": "prta-cxr.source-normalization-audit.v1",
         "source_id": source.source_id,
@@ -109,6 +127,9 @@ def normalize_studies(
         "diagnostics": dict(sorted(diagnostics.items())),
         "normalized_sha256": canonical_sha256(normalized),
         "raw_patient_ids_persisted": False,
+        "time_bases": dict(
+            sorted(Counter(row["time_basis"] for row in normalized).items())
+        ),
     }
     return normalized, audit
 
@@ -149,5 +170,11 @@ def build_full_candidate_pairs(
         "studies": sum(item["studies"] for item in source_counts.values()),
         "patients": len({row["patient_id_hash"] for row in pairs}),
         "pairs": len(pairs),
+        "interval_bases": dict(
+            sorted(Counter(row["interval_basis"] for row in pairs).items())
+        ),
+        "calendar_interval_analysis_allowed": all(
+            row["calendar_interval_available"] for row in pairs
+        ),
         "pair_manifest_sha256": canonical_sha256(pairs),
     }

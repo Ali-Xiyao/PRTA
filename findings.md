@@ -90,3 +90,135 @@
   registry, labeling, a newly frozen split, local optional vision packages,
   and a local BiomedCLIP model root. GPU availability alone does not satisfy
   these prerequisites.
+
+## Real asset inventory - 2026-08-02
+
+- `H:` is mounted and the known local MIMIC-CXR and BiomedCLIP roots resolve.
+  The public-dataset surface exposes junctions for `mimic-cxr`,
+  `mimic-cxr_less`, and `mimic_cxr_other` into the canonical
+  `H:\xiyao\dataset\MIMIC-CXR` root.
+- The public dataset inventory also contains CheXpert-v1.0-small,
+  CheXlocalize, Chest ImaGenome archive, MS-CXR, NIH Chest X-rays, and VinDr;
+  presence alone does not establish longitudinal-report eligibility.
+- The old R37 runtime remains available and includes structural cohort/cache
+  artifacts plus later protected/revealed result folders. Only structural
+  identifier projections and source receipts may be consulted in this phase;
+  prediction, metric, gold, sealed-reveal, and outcome files remain closed.
+- The canonical MIMIC root contains the official v2.0 metadata and split gzip
+  tables plus the main image/report tree. The separately present v2.1 labeled
+  test file is explicitly outside the allowed inventory surface and was not
+  opened.
+- `source_manifests` currently contains only a checksum list, so a new unified
+  study manifest still needs to be built from the official metadata/split and
+  report/image tree.
+- `CheXpert-v1.0-small` contains train/valid images and classification CSVs but
+  no report corpus at its top-level contract; it is not yet eligible as an
+  independent longitudinal PRTA source. `CheXlocalize/redivis_v1_0` requires
+  a deeper structural inventory before classification.
+- The MIMIC image/report roots are confirmed at
+  `mimic-cxr/mimic-cxr/mimic-cxr-images` and
+  `mimic-cxr/mimic-cxr/mimic-cxr-reports`.
+- CheXlocalize contains a validation localization bundle (annotation JSON and
+  Grad-CAM/segmentation assets), not a longitudinal report source. It may be an
+  auxiliary localization audit source later, but must not enlarge PRTA train.
+- The legacy R37 structural builder confirms the correct MIMIC joins and path
+  formulas and produced 108,732 eligible adjacent pairs only after excluding
+  all R32 train/dev/sealed and gold patients. That old exclusion policy is too
+  conservative for the user's new instruction: old debug/train roster
+  membership alone is not an exclusion, while old dev/sealed/gold boundaries
+  remain protected.
+- The existing `r37_forbidden_patient_registry.json` is a valuable
+  outcome-free structural source because it already separates R32 train, dev,
+  sealed-test, and gold patient IDs. The new registry can reuse only the
+  dev/sealed/gold categories and deliberately reactivate the old train IDs.
+- The legacy R37 pair manifests are evidence and migration references, not the
+  new source of truth: they contain a fixed 90/10 old partition and exclude
+  1,574 old-train patients that the new full repartition should reconsider.
+- A local `CheXpert-Plus` root exists at
+  `H:\Xiyao_Wang\02101\data\dataset\CheXpert-Plus`; this is the only
+  CheXpert-family candidate found so far that may carry report text and stable
+  study/patient identifiers. It must be inventoried directly rather than
+  inferred from the classification-only CheXpert-v1.0-small copy.
+- The CheXpert Plus root contains one 114,520,998-byte parquet with 223,462
+  rows. Its schema includes deidentified patient IDs, patient report order,
+  report/section text, frontal/lateral and AP/PA fields, image/DICOM paths, and
+  a split field, so it satisfies the structural shape for a longitudinal
+  report source if the referenced images are present and processing rights are
+  confirmed.
+- Structural-only CheXpert Plus statistics: 64,725 patients; 223,228 train and
+  234 valid rows; 191,071 frontal rows (161,622 AP and 29,432 PA); zero missing
+  patient report-order values and zero duplicate image-path strings.
+- The parquet image paths resolve against the local
+  `CheXpert-v1.0-small` image root; three sampled train images exist. The image
+  root exposes 64,540 train and 200 valid patient directories, consistent with
+  the parquet patient-scale order of magnitude. A full existence audit is
+  still required before activation.
+- CheXpert Plus `patient_report_date_order` is an integer within-patient ordinal
+  (range 1-92), not a recoverable calendar date. Its source adapter must mark
+  the temporal basis as ordinal and must not claim real interval-day analyses.
+- MIMIC official metadata and split tables join one-to-one at 377,110 rows:
+  368,960 train, 2,991 validate, and 5,159 test images. Official train contains
+  237,972 frontal images, 213,365 frontal studies, and 63,169 patients before
+  the new protected registry is applied.
+- The outcome-free legacy registry separates 1,574 R32 train, 300 R32 dev, 483
+  sealed-test, and 693 gold-quarantine patients and records zero outcome-field
+  access. The new policy will reactivate only the old-train category and retain
+  dev/sealed/gold exclusions.
+- Separate R29, R30, and R31 fresh-silver cohort directories exist under
+  `F:\VisualVIT_runtime\050_routeC`, each with a large `cohort.json` plus a
+  small structural audit/manifest. Their development and test patient IDs must
+  also be projected into the new historical-reveal exclusion registry; the
+  large cohort files must not be opened until the structural audit schemas are
+  checked for an identifier-only projection route.
+- The small R29/R30/R31 audits mix structural counts with aggregate label
+  counts. Those aggregate counts were exposed once during inventory but are
+  not used for source activation, exclusions, splitting, or model decisions;
+  no row-level cohort, prediction, or patient-outcome mapping was opened. All
+  subsequent exclusion work must use an ID/partition-only projection path.
+- Structurally, the historical active partitions comprise R29 700/200/300,
+  R30 1,500/400/600, and R31 1,200/300/500 train/dev/test patients. At minimum,
+  every dev/test patient from these revealed waves must be excluded from the
+  new train/dev/internal-test pool; old train membership alone remains
+  eligible under the user's new policy.
+- The R29/R30/R31 cohort builders establish a stable structural projection
+  contract: every row has `patient_id` and `partition`, with partitions
+  `train`, `dev`, `test`, or `sealed_reserve`. The new projector can consume
+  only those two fields, hash the patient into the MIMIC namespace, and discard
+  every other field without evaluating it.
+- The earlier R24 MIMIC, R25, and R26 cohort/pair manifests used as R29
+  exclusions are all still present at their frozen paths. Their union was 223
+  patients in the existing structural audit. These are historical evaluated
+  cohorts and should join the new `revealed_historical_test` exclusion category
+  through the same ID-only projection rule.
+- The first combined real source build exceeded the outer 30-minute wait.
+  Atomic semantics worked: no formal `sources_v1` exists, and staging exposed
+  a partial MIMIC temp JSONL with 176,745 readable lines at the first check.
+  A follow-up process audit showed Python PID 29840 was still alive and writing;
+  no duplicate task was launched. The builder still needs a per-source/resume
+  boundary for future runs.
+- PID 29840 was stopped only after live I/O confirmed poor throughput. Its
+  preserved partial file contains 206,724 complete JSON rows with 206,724
+  unique image IDs and no malformed tail. Compared with 213,365 selected MIMIC
+  frontal studies, only a small tail remains for a resume-aware builder.
+- The third atomic source-manifest attempt completed successfully at
+  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\sources_v1`. Independent
+  full JSONL parsing confirmed MIMIC 213,365 rows / 63,169 patients and
+  CheXpert Plus 187,474 rows / 64,510 patients, with unique image lineage and
+  patient-study keys, zero empty reports, and the expected calendar versus
+  within-patient-ordinal time bases.
+- The exclusion registry contains 3,750 unique hashed MIMIC-namespace
+  patients. Before normalization it intersects 38,243 MIMIC study rows and no
+  CheXpert Plus rows, as expected from the historical MIMIC routes. The source
+  preparation receipt and an independent audit both confirm no training,
+  Luna, internal-test opening, or protected-outcome opening occurred.
+- The pair layer previously dropped source `time_basis`, which could have made
+  CheXpert Plus ordinal gaps look like elapsed calendar days. It now preserves
+  interval basis and an explicit `calendar_interval_available` flag; ordinal
+  gaps remain usable for order/adjacency only and must never support real-day
+  interval claims.
+- The first full pair attempt failed before artifact writing because MIMIC has
+  exactly four extra rows sharing a patient and timestamp with another study;
+  CheXpert Plus has none. Timeline normalization now resolves this structural
+  ambiguity deterministically (PA first, then stable study/image IDs) and
+  records `duplicate_patient_time`, while still rejecting every zero-interval
+  pair.

@@ -2,6 +2,11 @@
   "schema": "prta-cxr.source-catalog.v1",
   "policy": "full-authorized-repartition-v1",
   "debug_only_isolation_retired": true,
+  "activation_evidence": {
+    "basis": "user-authorized reuse of existing local research datasets",
+    "date": "2026-08-02",
+    "legal_scope": "existing non-commercial research access; no redistribution"
+  },
   "default_split_fractions": {
     "train": 0.8,
     "dev": 0.1,
@@ -15,9 +20,9 @@
       "status": "eligible_candidate",
       "allowed_official_splits": ["train"],
       "longitudinal_reports": true,
-      "license_verified": false,
+      "license_verified": true,
       "deidentified": true,
-      "processing_allowed": false
+      "processing_allowed": true
     },
     {
       "source_id": "chexpert_plus",
@@ -26,9 +31,9 @@
       "status": "eligible_candidate",
       "allowed_official_splits": ["train"],
       "longitudinal_reports": true,
-      "license_verified": false,
+      "license_verified": true,
       "deidentified": true,
-      "processing_allowed": false
+      "processing_allowed": true
     }
   ],
   "blocked_statuses": [

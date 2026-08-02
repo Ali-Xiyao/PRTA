@@ -27,7 +27,13 @@ def source(*, status: str = "debug_only_legacy", allowed: bool = True) -> Source
     )
 
 
-def study(patient: str, visit: int, *, view: str = "PA") -> dict:
+def study(
+    patient: str,
+    visit: int,
+    *,
+    view: str = "PA",
+    time_basis: str = "calendar",
+) -> dict:
     return {
         "patient_id": patient,
         "study_id": f"{patient}-study-{visit}",
@@ -35,6 +41,7 @@ def study(patient: str, visit: int, *, view: str = "PA") -> dict:
         "image_path": f"images/{patient}-{visit}.png",
         "report": f"report {visit}",
         "study_datetime": f"2025-01-{visit + 1:02d}T00:00:00",
+        "time_basis": time_basis,
         "view": view,
         "official_split": "train",
     }
@@ -90,10 +97,30 @@ def test_normalization_hashes_patients_excludes_and_selects_one_frontal():
     assert normalized[0]["image_id"] == "preferred-pa"
     assert audit["diagnostics"]["protected_patient"] == 2
     assert audit["raw_patient_ids_persisted"] is False
+    assert audit["time_bases"] == {"calendar": 2}
     assert all("patient_id" not in row for row in normalized)
     pairs, pair_audit = build_full_candidate_pairs({"fixture": normalized})
     assert len(pairs) == 1
     assert pair_audit["debug_only_isolation_inherited"] is False
+
+
+def test_normalization_deduplicates_ambiguous_patient_timepoints():
+    rows = [
+        study("kept", 0, view="AP"),
+        study("kept", 1, view="PA")
+        | {
+            "study_datetime": "2025-01-01T00:00:00",
+            "image_id": "preferred-pa-at-same-time",
+        },
+        study("kept", 2, view="PA"),
+    ]
+    normalized, audit = normalize_studies(source(), rows)
+    assert len(normalized) == 2
+    assert normalized[0]["image_id"] == "preferred-pa-at-same-time"
+    assert audit["diagnostics"]["duplicate_patient_time"] == 1
+    pairs, _ = build_full_candidate_pairs({"fixture": normalized})
+    assert len(pairs) == 1
+    assert pairs[0]["interval_days"] > 0
 
 
 def test_exclusion_registry_accepts_hashes_only(tmp_path):

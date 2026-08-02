@@ -1,21 +1,23 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`CODE_READY__DATA_AND_EXECUTION_NOT_AUTHORIZED`
+状态：`PAIR_POOL_READY__LABEL_SPLIT_CACHE_TRAIN_HOLD`
 
 日期：2026-08-02
 
 ## 结论
 
 当前项目已经具备从 source manifest 到正式训练、断点和内部测试的代码路径，
-但现在还不能理解为“插入 GPU 就会自动开始训练”。在首次正式运行前，必须先完成：
+且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
+但现在还不能理解为“插入 GPU 就会自动开始训练”。在首次正式运行前仍必须完成：
 
-1. 为每个准备使用的数据源生成统一 study manifest；
-2. 核实许可、DUA、去标识和处理权限，并更新 source catalog；
-3. 准备 protected/revealed/external 排除登记；
-4. 重新构建全量相邻检查 pair，完成规则候选与 Luna 审核；
-5. 从新的合规候选池重新冻结 patient-disjoint 80/10/10 split；
-6. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
-7. 用户单独授权具体的正式数据构建或训练运行。
+1. 对已冻结的 238,511 个 pair 生成规则候选并完成 Luna 审核；
+2. 完成标签规模、五类覆盖、冲突拒绝和小规模人工抽检门；
+3. 从新的合规候选池重新冻结 patient-disjoint 80/10/10 split；
+4. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
+5. 用户单独授权具体的缓存或训练运行。
+
+当前真实数据证据、计数和哈希见
+[真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
 
 旧的 debug、小 cohort、R 编号临时 roster 不再作为训练规模上限，也不能直接
 复制为新 split。揭示过结果的 test、protected gold、external confirmation 和
@@ -55,7 +57,8 @@ python scripts/08_evaluate.py --mode synthetic --output results/smoke/evaluation
 
 source catalog 中的 manifest 环境变量必须指向统一 JSONL。每行必须包含：
 `patient_id, study_id, image_id, image_path, report, study_datetime, view,
-official_split`。
+official_split, time_basis`。`time_basis` 必须区分真实 `calendar` 和
+`within_patient_ordinal`；后者只能支持患者内先后顺序，不能支持真实天数分析。
 
 ```powershell
 $env:PRTA_CXR_ALLOW_FORMAL='I_UNDERSTAND_THIS_STARTS_A_FORMAL_RUN'
@@ -146,10 +149,11 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
   --device cuda:0
 ```
 
-## 当前未执行事项
+## 当前已完成与未执行事项
 
-- 未读取真实报告或图像；
-- 未生成真实 pair、标签、split 或缓存；
+- 已读取允许范围内的真实报告、检查图像存在性并生成真实 source/pair manifest；
+- 未读取真实图像像素；
+- 未生成真实规则/Luna 标签、split 或缓存；
 - 未调用 Luna；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
