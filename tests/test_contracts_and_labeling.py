@@ -24,7 +24,7 @@ def sample() -> dict:
         "prior_image_path": "images/prior.jpg",
         "current_image_path": "images/current.jpg",
         "prior_report": "moderate right pleural effusion",
-        "current_report": "small residual right pleural effusion",
+        "current_report": "decreased to small residual right pleural effusion",
         "prior_datetime": "2025-01-01T00:00:00",
         "current_datetime": "2025-01-03T00:00:00",
         "interval_days": 2,
@@ -88,5 +88,18 @@ def test_luna_fail_closed_on_extra_unknown_duplicate_and_conflict():
     with pytest.raises(ContractError):
         validate_luna_batch([luna(), luna()])
     conflict = luna() | {"negation_conflict": True}
-    with pytest.raises(ContractError):
-        validate_luna_batch([conflict])
+    assert validate_luna_batch([conflict])[0]["negation_conflict"] is True
+    merged, counts = merge_luna_labels([sample()], [conflict])
+    assert counts["Reject"] == 1
+    assert merged[0]["label_gate"]["deterministic_reject_reason"] == (
+        "accept_with_conflict"
+    )
+
+
+def test_merge_rejects_non_extractive_accepted_evidence():
+    paraphrased = luna() | {"comparison_evidence": "the fluid got smaller"}
+    merged, counts = merge_luna_labels([sample()], [paraphrased])
+    assert counts == {"Tier-A": 0, "Tier-B": 0, "Reject": 1}
+    assert merged[0]["label_gate"]["deterministic_reject_reason"] == (
+        "non_extractive_evidence"
+    )

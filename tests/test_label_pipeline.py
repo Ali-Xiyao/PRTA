@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -8,7 +9,11 @@ from prta_cxr.cli_labeling import (
     synthetic_samples,
 )
 from prta_cxr.contracts import ContractError
-from prta_cxr.label_batches import load_luna_output, prepare_luna_batches
+from prta_cxr.label_batches import (
+    load_luna_output,
+    prepare_luna_batches,
+    select_stratified_pilot,
+)
 from prta_cxr.label_rules import candidate_samples, extract_report_annotations
 from prta_cxr.labeling import merge_luna_labels
 
@@ -67,8 +72,9 @@ def test_luna_batches_remove_patient_identity_and_pin_authority(tmp_path):
     schema = tmp_path / "schema.json"
     prompt.write_text("prompt", encoding="utf-8")
     schema.write_text("{}", encoding="utf-8")
+    samples = synthetic_samples()
     batches, receipt = prepare_luna_batches(
-        synthetic_samples(),
+        samples,
         batch_size=2,
         prompt_path=prompt,
         schema_path=schema,
@@ -79,6 +85,8 @@ def test_luna_batches_remove_patient_identity_and_pin_authority(tmp_path):
     assert "patient_id" not in serialized
     assert "synthetic-hash" not in serialized
     assert "elapsed_calendar_days" in serialized
+    assert batches[0]["items"][0]["sample_id"] == "s00000_00"
+    assert batches[0]["sample_id_map"]["s00000_00"] == samples[0]["sample_id"]
 
 
 def test_luna_output_and_merge_fail_closed(tmp_path):
@@ -101,6 +109,30 @@ def test_luna_command_is_argument_list_not_shell(tmp_path):
         schema=tmp_path / "schema.json",
         output=tmp_path / "output.json",
     )
-    assert command[:3] == ["codex", "exec", "-m"]
+    assert Path(command[0]).name in {"codex", "codex.cmd"}
+    assert command[1:3] == ["exec", "-m"]
     assert "--sandbox" in command
     assert command[-1] == "-"
+
+
+def test_stratified_pilot_is_deterministic_unique_patient_and_balanced():
+    samples = []
+    for patient in range(30):
+        row = synthetic_samples()[patient % 5].copy()
+        row["sample_id"] = f"sample-{patient}"
+        row["patient_id_hash"] = f"patient-{patient}"
+        row["source"] = "source-a" if patient % 2 else "source-b"
+        row["finding"] = "Edema" if patient % 3 else "Pleural Effusion"
+        samples.append(row)
+    left, audit = select_stratified_pilot(samples, pilot_size=20, salt="fixed")
+    right, _ = select_stratified_pilot(samples, pilot_size=20, salt="fixed")
+    assert left == right
+    assert len({row["patient_id_hash"] for row in left}) == 20
+    assert set(audit["sources"]) == {"source-a", "source-b"}
+    assert set(audit["labels"]) == {
+        "Improved",
+        "New",
+        "Resolved",
+        "Stable",
+        "Worse",
+    }

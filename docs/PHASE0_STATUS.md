@@ -42,3 +42,9 @@ recorded in [DATA_REPARTITION_POLICY.md](DATA_REPARTITION_POLICY.md). This is
 The authorized source/pair preparation has now completed; training has not
 started. Current counts, hashes, and the next gate are recorded in
 [REAL_DATA_PREPARATION_STATUS_CN.md](REAL_DATA_PREPARATION_STATUS_CN.md).
+
+The subsequent 150-row Luna engineering pilot is also complete, with full
+label expansion held by source imbalance, retry rate, throughput, and missing
+clinician/stress-set evidence. See
+[LUNA_PILOT_STATUS_CN.md](LUNA_PILOT_STATUS_CN.md). No split, cache, training,
+or protected evaluation was opened.

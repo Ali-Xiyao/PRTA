@@ -16,8 +16,9 @@ Qwen SFT attempts are intentionally absent.
 The full data-to-training code path and synthetic validation are implemented.
 Real source manifests, exclusions, and the 238,511-pair candidate pool are now
 prepared and audited. Formal scientific experiments have **not** been started;
-labeling, split freeze, caching, training, and internal testing remain separately
-gated and require explicit authorization.
+the 150-row Luna engineering pilot is complete but full labeling is on HOLD.
+Split freeze, caching, training, and internal testing remain separately gated
+and require explicit authorization.
 
 ## Start here
 
@@ -33,6 +34,9 @@ gated and require explicit authorization.
 6. Check the frozen
    [real-data preparation status](docs/REAL_DATA_PREPARATION_STATUS_CN.md) for
    current counts, hashes, and the next execution gate.
+7. Review the
+   [Luna pilot status](docs/LUNA_PILOT_STATUS_CN.md) before authorizing any
+   full-scale label expansion.
 
 ## Local engineering validation
 

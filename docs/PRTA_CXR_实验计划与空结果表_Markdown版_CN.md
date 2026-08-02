@@ -203,16 +203,16 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 
 | 检查项 | 目标/标准 | 实际结果 | 是否通过 | 证据/路径 | 备注 |
 |---|---|---|---|---|---|
-| 实际可调用的 Model ID | 记录完整 Model ID |  |  |  |  |
-| Codex CLI 版本 | 固定并保存 |  |  |  |  |
-| JSON Schema 合法率 | 建议 ≥99% |  |  |  |  |
-| Evidence 原文命中率 | 建议 ≥98% |  |  |  |  |
-| 重复 Sample ID | 0 |  |  |  |  |
-| 未知标签/字段缺失 | 0 或全部 Fail-closed |  |  |  |  |
-| 平均每批耗时 | 记录 |  |  |  |  |
-| 批量失败率 | 记录 |  |  |  |  |
-| 否定/不确定性 Stress Set | 达到预设召回 |  |  |  |  |
-| 错误 PRIOR Reference 检出 | 达到预设召回 |  |  |  |  |
+| 实际可调用的 Model ID | 记录完整 Model ID | `gpt-5.6-luna` | 是 | `labels_v1/pilot_luna_run_receipt_v6.json` | v6 authority |
+| Codex CLI 版本 | 固定并保存 | `0.144.6` | 是 | `docs/LUNA_PILOT_STATUS_CN.md` | Windows `codex.cmd` |
+| JSON Schema 合法率 | 建议 ≥99% | 最终 150/150（100%） | 是 | v6 outputs + receipt | 失败尝试均 fail-closed |
+| Evidence 原文命中率 | 建议 ≥98% | 最终 Tier-A 45/45（100%） | 是 | `pilot_merge_audit_v6.json` | 1 条 accept 确定性降为 Reject |
+| 重复 Sample ID | 0 | 0 | 是 | v6 merge audit | batch-local alias 后本地恢复 |
+| 未知标签/字段缺失 | 0 或全部 Fail-closed | 最终 0 | 是 | v6 outputs | 非法尝试未合并 |
+| 平均每批耗时 | 记录 | 约 85.1 秒/外部尝试 | 已记录 | `docs/LUNA_PILOT_STATUS_CN.md` | 10 次尝试合计约 851 秒 |
+| 批量失败率 | 记录 | 2/10（20%） | HOLD | v6 failed outputs | 全量前需并发/重试预算 |
+| 否定/不确定性 Stress Set | 达到预设召回 | 未独立完成 | 否 |  | 不以普通 pilot 替代 stress set |
+| 错误 PRIOR Reference 检出 | 达到预设召回 | 未独立完成 | 否 |  | 需单独冻结 stress roster |
 
 ## 3.4 数据漏斗汇总
 
@@ -229,12 +229,14 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 
 | Batch ID | 样本数 | Model ID | Prompt Hash | Schema Hash | Input Hash | Output Hash | Tier-A | Tier-B | Reject | Invalid | Retries | 开始时间 | 结束时间 | 状态 | 备注 |
 |---|---:|---|---|---|---|---|---:|---:|---:|---:|---:|---|---|---|---|
-| batch_0001 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| batch_0002 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| batch_0003 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| batch_0004 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| batch_0005 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| batch_XXXX |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| batch_00000 | 20 | gpt-5.6-luna | e36f91da | c65db59e | 1c722011 | f069301b | 13 | 0 | 7 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00001 | 20 | gpt-5.6-luna | e36f91da | c65db59e | b0fbf6c1 | 95739ebb | 5 | 0 | 15 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00002 | 20 | gpt-5.6-luna | e36f91da | c65db59e | ff647cb2 | c1997a3b | 3 | 0 | 17 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00003 | 20 | gpt-5.6-luna | e36f91da | c65db59e | 7af5b5ee | d3a14958 | 4 | 0 | 16 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00004 | 20 | gpt-5.6-luna | e36f91da | c65db59e | de86c517 | ac48a299 | 2 | 0 | 18 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00005 | 20 | gpt-5.6-luna | e36f91da | c65db59e | 764a54bc | 2788fa14 | 10 | 0 | 10 | 0 | 2 | 2026-08-02 | 2026-08-02 | PASS | 两次 accept/flag 冲突重试 |
+| batch_00006 | 20 | gpt-5.6-luna | e36f91da | c65db59e | 029aed8d | 241206e1 | 7 | 0 | 13 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
+| batch_00007 | 10 | gpt-5.6-luna | e36f91da | c65db59e | bd4284d7 | 05cd9274 | 1 | 0 | 9 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | final short batch |
 
 ## 3.6 临床抽检与一致性
 
@@ -266,12 +268,12 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 - [ ] Train/Dev/Internal Test 的患者交集为 0。
 - [ ] 数据许可、隐私和报告去标识已由负责人确认。
 
-**数据版本**：  
-**Label Manifest Hash**：  
+**数据版本**：`PRTA-CXR Luna pilot v6（full expansion HOLD）`
+**Label Manifest Hash**：`9b7ba10d3b4f693f31e441960c68d8cb9dce478c28177ee7c949646a47267dbd`
 **Split Manifest Hash**：  
 **确认人**：  
-**日期**：  
-**决策**：`GO / HOLD / STOP`
+**日期**：`2026-08-02`
+**决策**：`HOLD`（未完成 stress set、医生抽检、来源偏差处置与全量吞吐/额度方案）
 
 ---
 
@@ -991,4 +993,3 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 9. 将正式结果同步回论文 Table 1–8
 10. 完成提交前确认
 ```
-

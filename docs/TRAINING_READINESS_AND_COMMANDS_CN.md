@@ -1,6 +1,6 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`PAIR_POOL_READY__LABEL_SPLIT_CACHE_TRAIN_HOLD`
+状态：`LUNA_PILOT_COMPLETE__FULL_LABEL_SPLIT_CACHE_TRAIN_HOLD`
 
 日期：2026-08-02
 
@@ -18,6 +18,8 @@
 
 当前真实数据证据、计数和哈希见
 [真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
+Luna pilot 的接受率、来源差异、失败率和全量 HOLD 依据见
+[Luna Pilot 状态](LUNA_PILOT_STATUS_CN.md)。
 
 旧的 debug、小 cohort、R 编号临时 roster 不再作为训练规模上限，也不能直接
 复制为新 split。揭示过结果的 test、protected gold、external confirmation 和

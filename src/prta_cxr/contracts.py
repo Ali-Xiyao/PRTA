@@ -146,27 +146,6 @@ def validate_luna_record(row: Mapping[str, Any]) -> dict[str, Any]:
     for key in boolean_fields:
         if type(result[key]) is not bool:
             raise ContractError(f"{key} must be boolean")
-    evidence = (
-        str(result["prior_evidence"]).strip(),
-        str(result["current_evidence"]).strip(),
-        str(result["comparison_evidence"]).strip(),
-    )
-    if result["decision"] == "accept" and not any(evidence):
-        raise ContractError("accepted Luna records require cited evidence")
-    conflict = any(
-        result[key]
-        for key in (
-            "negation_conflict",
-            "uncertainty_conflict",
-            "temporal_conflict",
-        )
-    )
-    if result["decision"] == "accept" and (
-        conflict
-        or not result["comparison_matches_selected_prior"]
-        or not result["finding_match"]
-    ):
-        raise ContractError("accepted Luna record violates the Tier-A gate")
     return result
 
 

@@ -1,6 +1,6 @@
 # PRTA-CXR 真实数据准备状态
 
-状态：`PAIR_POOL_READY__LABEL_SPLIT_CACHE_TRAIN_HOLD`
+状态：`PAIR_POOL_READY__LUNA_PILOT_COMPLETE__FULL_LABEL_HOLD`
 
 日期：2026-08-02
 
@@ -62,4 +62,7 @@ roster，也没有启动训练。下一阶段仍是规则候选与 Luna 审核�
 - 未打开 internal-test、protected gold 或 external confirmation 结果；
 - 本页数字是数据工程审计证据，不是论文模型结果。
 
-继续执行 `scripts/02_prepare_luna_batches.py` 及后续步骤前，需要新的明确阶段授权。
+规则候选与 150 条 Luna pilot 已完成，但全量扩展被 pilot 门 HOLD。具体接受率、
+来源差异、失败率和吞吐证据见 [LUNA_PILOT_STATUS_CN.md](LUNA_PILOT_STATUS_CN.md)。
+在该 HOLD 被新的 source-aware 策略、stress set 和执行预算解除前，不得冻结 split、
+生成缓存或训练。

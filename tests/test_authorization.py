@@ -9,6 +9,7 @@ from prta_cxr.authorization import (
 from prta_cxr.cli import train_main
 from prta_cxr.cli_cache import cache_main
 from prta_cxr.cli_evaluate import evaluate_main
+from prta_cxr.cli_labeling import run_luna_labeling_main
 
 
 def test_formal_requires_flag_and_exact_environment(monkeypatch):
@@ -40,3 +41,11 @@ def test_formal_entrypoints_block_before_opening_inputs(
     monkeypatch.delenv(FORMAL_ENV_NAME, raising=False)
     with pytest.raises(FormalExecutionBlocked):
         entrypoint(arguments)
+
+
+def test_full_luna_runner_is_held_by_labeling_config(monkeypatch):
+    monkeypatch.setenv(FORMAL_ENV_NAME, FORMAL_ENV_VALUE)
+    with pytest.raises(FormalExecutionBlocked, match="held by the labeling config"):
+        run_luna_labeling_main(
+            ["--mode", "formal", "--formal", "--execute"]
+        )

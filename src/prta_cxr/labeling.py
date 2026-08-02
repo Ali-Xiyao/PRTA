@@ -1,9 +1,23 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
 from .contracts import ContractError, validate_luna_batch, validate_sample
+
+
+def _token_sequence(value: object) -> list[str]:
+    return re.findall(r"[a-z0-9]+", str(value).casefold())
+
+
+def _is_extract_span(evidence: object, report: object) -> bool:
+    needle = _token_sequence(evidence)
+    haystack = _token_sequence(report)
+    return bool(needle) and any(
+        haystack[index : index + len(needle)] == needle
+        for index in range(max(0, len(haystack) - len(needle) + 1))
+    )
 
 
 def merge_luna_labels(
@@ -26,6 +40,22 @@ def merge_luna_labels(
         luna = luna_by_id[sample_id]
         if sample["finding"] != luna["finding"]:
             raise ContractError(f"finding mismatch for {sample_id}")
+        extractive = None
+        if luna["decision"] == "accept":
+            extractive = (
+                _is_extract_span(luna["prior_evidence"], sample["prior_report"])
+                and _is_extract_span(
+                    luna["current_evidence"], sample["current_report"]
+                )
+                and (
+                    _is_extract_span(
+                        luna["comparison_evidence"], sample["prior_report"]
+                    )
+                    or _is_extract_span(
+                        luna["comparison_evidence"], sample["current_report"]
+                    )
+                )
+            )
         conflicts = any(
             luna[key]
             for key in (
@@ -34,7 +64,15 @@ def merge_luna_labels(
                 "temporal_conflict",
             )
         )
-        if luna["decision"] == "accept" and not conflicts:
+        accept_matches = (
+            luna["comparison_matches_selected_prior"] and luna["finding_match"]
+        )
+        if (
+            luna["decision"] == "accept"
+            and not conflicts
+            and accept_matches
+            and extractive
+        ):
             tier = "Tier-A"
         elif luna["decision"] == "tier_b" and not conflicts:
             tier = "Tier-B"
@@ -47,6 +85,32 @@ def merge_luna_labels(
                 "label_source": "luna_verified",
                 "label_tier": tier,
                 "luna": luna,
+                "label_gate": {
+                    "extractive_evidence": extractive,
+                    "deterministic_reject_reason": next(
+                        (
+                            reason
+                            for condition, reason in (
+                                (
+                                    luna["decision"] == "accept" and conflicts,
+                                    "accept_with_conflict",
+                                ),
+                                (
+                                    luna["decision"] == "accept"
+                                    and not accept_matches,
+                                    "accept_with_mismatch",
+                                ),
+                                (
+                                    luna["decision"] == "accept"
+                                    and not extractive,
+                                    "non_extractive_evidence",
+                                ),
+                            )
+                            if condition
+                        ),
+                        "",
+                    ),
+                },
             }
         )
         counts[tier] += 1

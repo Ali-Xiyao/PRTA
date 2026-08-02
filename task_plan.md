@@ -103,10 +103,34 @@ Status: complete
 - Run tests/static checks, update authority/readiness documents, commit, push
   to the local-only remote, and verify local/remote equality.
 
+### Phase 10 - Rule candidates and Luna pilot
+Status: complete - HOLD_FULL_EXPANSION
+
+- Generate deterministic rule candidates from the frozen 238,511-pair pool.
+- Audit candidate counts by source, finding, label, and time basis.
+- Prepare a deterministic stratified 100-200-row Luna pilot and run the locked
+  external reviewer only within the newly authorized labeling scope.
+- Fail closed on ID/schema/evidence conflicts and decide whether full-scale
+  Luna expansion is operationally and scientifically justified.
+
+### Phase 11 - Full Luna expansion and label manifest
+Status: pending - held by pilot gate
+
+- Expand Luna review only after the pilot passes quality and runner gates.
+- Merge outputs, audit Tier-A/Tier-B/Reject counts and hashes, and stop before
+  split freeze, cache generation, or training.
+
+### Phase 12 - Labeling verification and local handoff
+Status: complete
+
+- Run tests/static/preflight gates, update the durable labeling receipt,
+  commit, push to the local-only remote, and verify equality.
+
 ## Next Step
 
-Hold before rule/Luna label preparation until the user explicitly authorizes
-that next phase; do not create a split, cache, training run, or evaluation yet.
+Hold full Luna expansion until the user selects a source-aware candidate
+strategy and supplies concurrency/quota plus stress-set/clinician-audit plans;
+do not launch split, cache, training, or evaluation.
 
 ## Decisions
 
@@ -119,6 +143,7 @@ that next phase; do not create a split, cache, training run, or evaluation yet.
 | Generate the text cache from frozen BiomedCLIP prototypes | Avoid a hidden manual input between image caching and training. |
 | Require a separate internal-test open flag | Training completion must not silently consume the test partition. |
 | Treat the new user approval as manifest-phase authority only | The preceding handoff named inventory/manifests as the next step, not training or outcome opening. |
+| Treat the 2026-08-02 follow-up approval as labeling-phase authority | The immediately preceding handoff named rule candidates and Luna review as the next gate; split/cache/train remain separately unauthorized. |
 
 ## Errors Encountered
 
@@ -137,3 +162,12 @@ that next phase; do not create a split, cache, training run, or evaluation yet.
 | First combined real source build hit the 30-minute outer timeout while processing MIMIC small report files; the Python child remained alive | 1 | Formal root was never prematurely created; preserve and monitor PID 29840 without launching a duplicate, then audit its terminal output and add per-source resumability for future runs. |
 | Resume completed both source manifests but exclusion projection rejected four nonnumeric legacy gold identifiers | 1 | Keep fail-closed behavior, hash those opaque identifiers as namespaced raw strings while retaining numeric normalization for MIMIC IDs, add a regression test, and reuse the completed atomic MIMIC manifest on retry. |
 | First full pair build found four duplicate MIMIC patient-time rows and failed the strict increasing-time contract before writing an artifact | 1 | Audit both source manifests, then deterministically retain one frontal study per patient/time point (PA first, then stable IDs), record the dropped-row count, and keep zero-interval pairs prohibited. |
+| First Luna pilot launch failed before sending input with Windows `WinError 5` because `codex` resolved to a PowerShell wrapper | 1 | Resolve `codex.cmd` explicitly on Windows, keep the empty output directory, and retry through the new resume-safe runner. |
+| The fourth pilot batch returned `accept` together with a conflict flag; Windows stderr capture also attempted GBK decoding | 1 | Invalidate the v1 pilot outputs, strengthen the prompt, attempt schema-level Tier-A enforcement, capture UTF-8 with replacement, and preserve future rejected outputs; the next row records the schema compatibility result. |
+| The v2 first batch was rejected before generation because Codex Structured Outputs does not permit `allOf` in this schema position | 1 | Retain the strengthened prompt and runtime contract, remove the unsupported conditional schema keyword, regenerate v3 batches with the new schema hash, and canary the first batch again. |
+| The v3 pilot passed JSON/ID/decision gates but only 48/74 Tier-A rows had all three evidence fields as contiguous report spans | 1 | Hold full expansion, require verbatim contiguous extractive citations in the prompt and merge contract, invalidate v3 for downstream labeling, and rerun the same frozen 150-row pilot as v4. |
+| The first v4 canary omitted or altered at least one sample ID and failed closed; the mismatch check sat just outside the failed-output preservation block | 1 | Move ID validation inside the preservation block, keep the output directory free of accepted files, and retry the unchanged v4 authority without manual repair. |
+| The unchanged v4 canary again omitted IDs; the preserved output had 23 unique expected rows, 2 missing, 0 extra, and 0 duplicates | 1 | Keep the exact-ID gate, explicitly require one ordered output per input including rejects, reduce the regular batch size from 25 to 20, and regenerate the unchanged 150-row pilot as v5. |
+| The v5 20-row canary returned 20 unique rows but altered one 64-character sample hash, yielding one missing and one extra ID | 1 | Introduce short batch-local aliases, withhold the alias-to-original map from the model payload, validate exact aliases, and restore original IDs locally before atomic output; regenerate as v6. |
+| The v6 canary passed alias/ID gates, but one of 14 accepted rows used non-extractive current/comparison evidence | 1 | Preserve the Luna output, deterministically demote every non-extractive accept to Reject with an audit reason, and require Tier-A extractive evidence by construction rather than trusting prompt compliance. |
+| v6 batch 6 twice returned an accept/flag contradiction under the unchanged prompt | 1 | Stop stochastic retrying; separate structural output validation from deterministic label admission, preserve raw Luna rows, and demote accept+conflict/mismatch/non-extractive records to audited Rejects. |

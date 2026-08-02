@@ -116,3 +116,71 @@
   preflight, every scripts/00-08 preflight, and `git diff --check`. No formal
   experiment, cache, Luna call, internal-test opening, or GPU training was
   triggered by these verification gates.
+
+## 2026-08-02 labeling authorization
+
+- The user explicitly authorized the next named phase: rule candidate
+  generation and Luna label review. Split freeze, cache generation, GPU
+  training, and evaluation remain outside this authorization.
+- Activated the labeling config only for that scope and amended the Luna prompt
+  so within-patient ordinal metadata cannot be interpreted as calendar dates
+  or elapsed days.
+- Generated and independently verified 148,798 rule candidates in 5,952
+  reusable batches. Froze a 150-patient stratified pilot spanning 118 strata,
+  with exact 75/75 source and calendar/ordinal balance.
+- The first pilot invocation failed before any external call because Windows
+  exposed `codex` as a PowerShell wrapper to Python subprocess. Added explicit
+  `codex.cmd` resolution plus atomic per-batch output, timeout, and resume
+  support; the empty pilot output directory is safe to reuse.
+- Three pilot batches (75 rows) completed under the first authority, but the
+  fourth returned `accept` with a conflict flag and correctly failed the
+  runtime Tier-A contract. Those first outputs are retained as invalidated
+  runner evidence and will not be merged. Strengthened the prompt and output
+  schema so acceptance logically implies matching finding/comparison, no
+  conflict flags, and non-empty comparison evidence; the full 150-row pilot
+  must be regenerated and rerun under the new single authority hash.
+- The v2 canary was rejected server-side before output generation because the
+  Structured Outputs subset disallows `allOf` at the item schema. Removed that
+  unsupported keyword while retaining the explicit prompt rule and strict
+  runtime validator; v2 is invalidated and v3 will be the next authority.
+- The v3 pilot completed 150/150 structurally valid rows and merged to 74
+  Tier-A / 76 Reject, with rule/Luna label agreement 143/150. However, only
+  48/74 Tier-A rows had all three evidence fields as contiguous token spans in
+  the corresponding reports, below the >=98% pilot target. Full expansion is
+  held. Added an extractive-evidence merge gate and a prompt prohibition on
+  paraphrase/non-contiguous evidence; the same frozen pilot will rerun as v4.
+- The first v4 canary failed the exact-ID set gate before formal output. Its
+  temporary output was not preserved because the mismatch check was one block
+  outside the preservation handler; corrected that runner defect. No v4 row
+  was accepted or merged, and the unchanged v4 authority can be retried.
+- The v4 retry failed the same ID gate. The now-preserved rejected output had
+  23 unique expected IDs, two missing, no extras, and no duplicates. Full
+  expansion remains held. Added an exact one-output-per-input instruction and
+  reduced standard batch size to 20 for v5; the ID contract is unchanged.
+- The v5 canary returned 20 unique rows but transcribed one long sample hash
+  incorrectly (one missing and one extra ID). Added short batch-local aliases;
+  the private alias map is removed from the external payload, exact aliases are
+  checked, and original IDs are restored locally before atomic output. v6 will
+  use this traceable interface without relaxing the ID contract.
+- The v6 alias canary passed 20/20 ID/schema gates. One of 14 accepted rows had
+  non-extractive current/comparison evidence, so the merge policy now
+  deterministically demotes such records to Reject while preserving the raw
+  Luna record and recording `non_extractive_evidence`. Tier-A therefore
+  requires 100% extractive evidence by code, without manual label repair.
+- The sixth v6 batch twice returned an accept/flag contradiction. Refactored
+  the gate so Luna rows are structurally preserved while deterministic label
+  admission demotes accept+conflict, accept+mismatch, and non-extractive
+  accepts to explicitly audited Rejects. This stops stochastic retries without
+  weakening Tier-A or editing raw model output.
+- Completed the final v6 pilot: 150 unique rows, 45 Tier-A, 105 Reject, zero
+  Tier-B, 142/150 rule/Luna label agreement, and one non-extractive accept
+  deterministically rejected. Final Tier-A extractive evidence is 45/45.
+- The pilot places full expansion on HOLD: strict batch-attempt failure was
+  2/10, MIMIC Tier-A was 35/75 versus CheXpert Plus 10/75, and observed
+  sequential throughput projects roughly 9-10 days for all 148,798 candidates.
+  Added `docs/LUNA_PILOT_STATUS_CN.md`; no split/cache/train/test was opened.
+- Wrote the real pilot results and eight v6 batch rows back into the active
+  experiment-plan table, disabled formal full-Luna execution in config and
+  enforced that HOLD in the runner. Final repository gates pass 37/37 tests,
+  Ruff, compileall, diff-check, main preflight, and downstream split/cache/train/
+  evaluation preflights without opening any protected surface.
