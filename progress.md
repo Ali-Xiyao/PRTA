@@ -664,3 +664,14 @@
   queue keeper PID 10548, and formal keeper PID 37228 are alive with zero-byte
   stderr logs. The queue is 1 complete, 2 running, and 4 planned; H: has
   424.6 GiB free, and no outcome-open/protocol-freeze marker exists.
+- D202 formally closed at 04:37:03 CST with `PASS_TRAINING_FINISHED`, frozen
+  early stopping after epoch 6, and best fixed-Dev Macro-F1 0.4430 at epoch 2;
+  its receipt and registry row confirm protected outcomes remained sealed. The
+  repaired queue reconciled it immediately and launched D204 on GPU1 as PID
+  24720. At the 04:55 CST heartbeat, D203 had completed epoch 1 with best Dev
+  Macro-F1 0.4368 and was in fixed-Dev evaluation, while D204 had completed
+  3,300/4,293 batches of epoch 0. Queue status is 2/7 complete, D203+D204
+  running, and 3 planned. Both keepers and training children are alive, all
+  relevant stderr logs are empty, GPU memory is about 4.48 GiB per device,
+  temperatures are 56/74 C, H: has 424.0 GiB free, and no protected marker
+  exists.
