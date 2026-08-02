@@ -618,3 +618,11 @@
   Dev pass closes; the seven-run initial queue remains 0 complete, 2 running,
   and 5 planned. Total Phase-33 duration remains multi-hour and is bounded by
   the frozen 6-epoch minimum / 20-epoch maximum early-stopping protocol.
+- The 03:35 CST heartbeat confirmed continued healthy Phase-33 training. D201
+  is at epoch 3, batch 500/581 with best fixed-Dev Macro-F1 0.3839 at epoch 2;
+  D202 is at epoch 2, batch 200/1,441 with best fixed-Dev Macro-F1 0.4034 at
+  epoch 1. Each run has an atomic `best.pt`; no final receipt exists yet. Both
+  GPUs are active at about 4.48 GiB, 78/76 C, all four expected PIDs are alive,
+  keeper stderr remains empty, and H: has 424.6 GiB free. The initial queue is
+  still 0 complete, 2 running, and 5 planned; protected outcome-open/protocol-
+  freeze markers remain absent, so Internal-test and Gold are still sealed.
