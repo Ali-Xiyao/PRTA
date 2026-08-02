@@ -317,7 +317,7 @@ Status: complete
   overlap across Train/Dev/Internal-test/Gold before caching.
 
 ### Phase 32 - Full Block-8/text cache and input audit
-Status: in progress
+Status: complete
 
 - Bind the local BiomedCLIP checkpoint, build resume-safe caches for the frozen
   split, and verify exact sample/image/text lineage, shapes, finite values,
@@ -327,7 +327,7 @@ Status: in progress
   manifest. No development/cache script may parse the sealed test labels.
 
 ### Phase 33 - Train/Dev performance development
-Status: pending
+Status: in progress
 
 - Implement any still-missing D2xx/M3xx data-scaling, head, adapter, and loss
   variants required by the authority documents; use only Train/Dev.
