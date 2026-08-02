@@ -7,6 +7,7 @@ from pathlib import Path
 
 import torch
 
+from prta_cxr.artifacts import replace_json_atomic
 from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.program_keeper import run_formal_program
 
@@ -54,13 +55,26 @@ def program_keeper_main(argv: Sequence[str] | None = None) -> int:
     missing = [key for key, value in paths.items() if value is None]
     if missing:
         parser.error("formal program paths missing: " + ", ".join(missing))
-    result = run_formal_program(
-        **paths,
-        devices=tuple(
-            value.strip() for value in args.devices.split(",") if value.strip()
-        ),
-        outcome_device=torch.device(args.outcome_device),
-        poll_seconds=args.poll_seconds,
-    )
+    try:
+        result = run_formal_program(
+            **paths,
+            devices=tuple(
+                value.strip() for value in args.devices.split(",") if value.strip()
+            ),
+            outcome_device=torch.device(args.outcome_device),
+            poll_seconds=args.poll_seconds,
+        )
+    except Exception as error:
+        args.output.mkdir(parents=True, exist_ok=True)
+        replace_json_atomic(
+            args.output / "program_state.json",
+            {
+                "schema": "prta-cxr.formal-program-keeper.v1",
+                "status": "HOLD_PROGRAM_ERROR",
+                "error_type": type(error).__name__,
+                "error": str(error),
+            },
+        )
+        raise
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

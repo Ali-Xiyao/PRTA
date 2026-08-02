@@ -581,6 +581,10 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
 - 2026-08-03: the first formal-program keeper lint pass applied one automatic
   fix and stopped on one 91-character device parsing expression before tests.
   Wrap it and rerun protocol, outcome-session, and keeper preflight gates.
+- 2026-08-03: post-launch review found that an uncaught keeper exception would
+  leave the last running stage in `program_state.json`, making monitoring
+  ambiguous. Add an atomic `HOLD_PROGRAM_ERROR` state with error type/message,
+  then restart only the still-waiting program keeper from the new commit.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
