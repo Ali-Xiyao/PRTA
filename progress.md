@@ -742,3 +742,14 @@
   epoch 5, batch 3,400/4,293 with best Dev Macro-F1 0.4331 at epoch 4; D205 was
   at epoch 1, batch 3,100/5,692 with first-pass Dev Macro-F1 0.4112. Protected
   outcomes remain sealed.
+- The 07:35 CST heartbeat confirmed the recovered keepers remain healthy and
+  their bounded atomic-state retry has not recurred. D204 is at epoch 6, batch
+  2,100/4,293; its latest Dev Macro-F1 0.4333 is below the frozen 0.001
+  improvement threshold over best 0.4331, so the best checkpoint correctly
+  remains epoch 4. D205 is at epoch 2, batch 500/5,692 after improving best Dev
+  Macro-F1 to 0.4430 at epoch 1. D204 should reach its next Dev decision in
+  roughly 15-25 minutes and D205 in roughly 30-40 minutes. Queue state remains
+  3/7 complete with both training runs active and two M301 variants planned.
+  All four processes are alive, current stderr logs are empty, checkpoints and
+  registry rows are consistent, GPU memory is about 4.48 GiB per device at
+  77/76 C, H: has 422.8 GiB free, and protected markers remain absent.
