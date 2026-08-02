@@ -29,6 +29,9 @@ def protocol_freeze_main(argv: Sequence[str] | None = None) -> int:
         "protocol-config",
         "trust-config",
         "case-selection-config",
+        "vlm-config",
+        "vlm-model-config",
+        "vlm-model-index",
         "output",
     ):
         parser.add_argument(f"--{name}", type=Path)
@@ -66,6 +69,9 @@ def protocol_freeze_main(argv: Sequence[str] | None = None) -> int:
         protocol_config=args.protocol_config,
         trust_config=args.trust_config,
         case_selection_config=args.case_selection_config,
+        vlm_config=args.vlm_config,
+        vlm_model_config=args.vlm_model_config,
+        vlm_model_index=args.vlm_model_index,
         output=args.output,
     )
     print(json.dumps(result, indent=2, sort_keys=True))

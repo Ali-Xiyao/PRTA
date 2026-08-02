@@ -51,6 +51,9 @@ def freeze_formal_protocol(
     protocol_config: Path,
     trust_config: Path,
     case_selection_config: Path,
+    vlm_config: Path,
+    vlm_model_config: Path,
+    vlm_model_index: Path,
     output: Path,
 ) -> dict[str, Any]:
     gate = json.loads(gate_receipt.read_text(encoding="utf-8"))
@@ -90,6 +93,35 @@ def freeze_formal_protocol(
         "sealed_internal_test_manifest": sealed_internal_test_manifest,
         "gold_manifest": gold_manifest,
     }
+    if vlm_model_config.parent.resolve() != vlm_model_index.parent.resolve():
+        raise ValueError("VLM model config and index must share one model root")
+    model_index = json.loads(vlm_model_index.read_text(encoding="utf-8"))
+    weight_names = sorted(set(model_index["weight_map"].values()))
+    model_root = vlm_model_config.parent
+    vlm_assets = {
+        "vlm_model_config": vlm_model_config,
+        "vlm_model_index": vlm_model_index,
+        **{
+            f"vlm_weight_{index:02d}": model_root / name
+            for index, name in enumerate(weight_names, start=1)
+        },
+        **{
+            f"vlm_asset_{name.replace('.', '_')}": model_root / name
+            for name in (
+                "tokenizer.json",
+                "tokenizer_config.json",
+                "chat_template.json",
+                "merges.txt",
+                "vocab.json",
+            )
+            if (model_root / name).is_file()
+        },
+    }
+    missing_vlm_assets = [
+        str(path) for path in vlm_assets.values() if not path.is_file()
+    ]
+    if missing_vlm_assets:
+        raise FileNotFoundError(f"VLM model assets missing: {missing_vlm_assets}")
     inputs: dict[str, Path] = {
         "development_gate": gate_receipt,
         "formal_matrix_receipt": formal_matrix_receipt,
@@ -104,6 +136,8 @@ def freeze_formal_protocol(
         "protocol_config": protocol_config,
         "trust_config": trust_config,
         "case_selection_config": case_selection_config,
+        "vlm_config": vlm_config,
+        **vlm_assets,
         **outcome_files,
     }
     input_hashes = {key: sha256_file(value) for key, value in inputs.items()}
@@ -113,6 +147,16 @@ def freeze_formal_protocol(
         "training": repo_root / "src/prta_cxr/training/engine.py",
         "trust_entrypoint": repo_root / "scripts/09_run_trust_audits.py",
         "figure_entrypoint": repo_root / "scripts/10_make_figures.py",
+        "figure_cli": repo_root / "src/prta_cxr/cli_figures.py",
+        "figure_implementation": (
+            repo_root / "src/prta_cxr/visualization/paper_figures.py"
+        ),
+        "vlm_entrypoint": repo_root / "scripts/11_vlm_additional.py",
+        "vlm_cli": repo_root / "src/prta_cxr/cli_vlm.py",
+        "vlm_implementation": repo_root / "src/prta_cxr/vlm/additional.py",
+        "vlm_fixed64": repo_root / "src/prta_cxr/vlm/fixed64.py",
+        "vlm_projector": repo_root / "src/prta_cxr/vlm/projector.py",
+        "vlm_scorer": repo_root / "src/prta_cxr/vlm/frozen_qwen.py",
     }
     result = {
         "schema": "prta-cxr.protocol-freeze.v1",

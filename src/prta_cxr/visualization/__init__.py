@@ -1,1 +1,1 @@
-"""Visualization namespace; formal figure generation remains locked."""
+"""Outcome-locked paper visualization utilities."""

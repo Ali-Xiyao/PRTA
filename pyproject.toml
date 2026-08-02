@@ -29,6 +29,9 @@ data = [
   "pandas>=2.0",
   "pyarrow>=15",
 ]
+figures = [
+  "matplotlib>=3.8",
+]
 
 [project.scripts]
 prta-preflight = "prta_cxr.cli:preflight_main"

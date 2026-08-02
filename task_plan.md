@@ -525,6 +525,42 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   89-93 character lines after applying two automatic formatting fixes. Wrap
   only those expressions and rerun the unchanged focused lint/test gate; no
   experiment, outcome, or runtime artifact was touched.
+- 2026-08-03: the figure/VLM inventory guessed the nonexistent legacy name
+  `scripts/11_vlm_appendix.py`; the same listing shows the tracked entrypoint is
+  `scripts/11_vlm_additional.py`. Inspect the exact file next; no formal result
+  or sealed outcome was read.
+- 2026-08-03: the follow-up inventory also guessed nonexistent
+  `src/prta_cxr/gated_cli.py`; locate `dispatch_gated` by symbol before replacing
+  the two remaining placeholders. No code path executed beyond read-only
+  inventory.
+- 2026-08-03: a prediction-schema inventory guessed nonexistent
+  `src/prta_cxr/cli_outcome.py`; the actual implementation is
+  `src/prta_cxr/cli_formal_outcome.py` plus `formal_outcome_session.py`, which
+  the same symbol search located. Use those exact modules; no outcome opened.
+- 2026-08-03: the first figure lint gate applied two automatic fixes and then
+  stopped on seven 89-106 character expressions before tests or formal figure
+  generation. Wrap the expressions without changing plot semantics and rerun
+  the same lint, synthetic-render, and preflight gates.
+- 2026-08-03: the VLM legacy inventory intentionally ran from the parent
+  VisualVIT root but tried to read `src/prta_cxr/vlm/__init__.py` without the
+  nested `PRTA-CXR` prefix. The local model and legacy exact-64 searches still
+  completed; use exact nested/legacy paths next. No model was loaded or run.
+- 2026-08-03: PRTA representation inspection guessed nonexistent
+  `src/prta_cxr/models/components.py`; the actual fixed-token inputs are all
+  exposed by `models/prta.py` and the native heads are in `models/heads.py`.
+  No checkpoint or outcome was read.
+- 2026-08-03: the first additional-VLM entrypoint lint pass applied one
+  automatic fix and stopped on two 93-character expressions before any model
+  load or test. Wrap them and rerun the VLM, protocol-freeze, and preflight
+  gates unchanged.
+- 2026-08-03: the first full post-VLM regression passed 102/103 tests but the
+  repository preflight correctly rejected a hard-coded Windows model path in
+  the new VLM protocol. Replace it with a protocol-freeze model-root reference
+  and bind the local config, index, weight shards, and tokenizer assets by hash;
+  do not weaken the portability gate or load the model yet.
+- 2026-08-03: the first portability-fix lint pass stopped on one 90-character
+  model-asset validation comprehension before tests. Wrap it and rerun the
+  unchanged preflight/protocol/VLM gate.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

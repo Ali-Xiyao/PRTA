@@ -220,3 +220,53 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
 - pilot 数字仅用于工程与流程决策，不是论文科学结论。
+
+## 正式结果、图表与 VLM 附加部署（新增冻结命令面）
+
+开发门、正式矩阵与全部训练完成后，`07e` 冻结协议时必须额外绑定可视化、
+VLM 协议和本地 Qwen 资产。配置中不写死本机路径；模型根目录由下面两个
+受哈希保护的文件共同确定，协议冻结器还会自动哈希 index 引用的全部权重分片
+以及 tokenizer 资产：
+
+```powershell
+python scripts/07e_freeze_protocol.py --mode formal --formal `
+  ...原有全部冻结参数... `
+  --case-selection-config configs/experiments/visualizations/case_selection_v1.json `
+  --vlm-config configs/experiments/vlm_additional/protocol_v1.json `
+  --vlm-model-config QWEN_MODEL_ROOT/config.json `
+  --vlm-model-index QWEN_MODEL_ROOT/model.safetensors.index.json `
+  --output FORMAL_ROOT/receipts/protocol_freeze_v1.json
+```
+
+完成一次性 outcome session 和信任审计后，生成 V701–V708。入口同时输出
+PNG、SVG、逐文件 SHA-256、Figure 8 的 5 桶 × 5 例固定哈希抽样清单；不能
+人工替换案例，也不把注意力图声称为内部因果证据：
+
+```powershell
+python scripts/10_make_figures.py --mode formal --formal `
+  --protocol-freeze FORMAL_ROOT/receipts/protocol_freeze_v1.json `
+  --outcome-session FORMAL_ROOT/formal_outcome/session_receipt.json `
+  --predictions-root FORMAL_ROOT/formal_outcome/predictions `
+  --trust-audit FORMAL_ROOT/trust/trust_audit.json `
+  --development-root FORMAL_ROOT/development/runs `
+  --quality-audit FORMAL_ROOT/receipts/human_silver_accuracy_audit.json `
+  --case-selection configs/experiments/visualizations/case_selection_v1.json `
+  --output FORMAL_ROOT/figures
+```
+
+X801–X806 永远最后运行。它只使用冻结 B404 Seed 17，固定 2,500 条 Train
+Silver 训练一个 projector，Qwen3-VL-4B 参数全部冻结，并在同一 outcome
+session 已打开的 250 条资深医生 Gold 上做结构化五分类。该结果不建立 VLM
+baseline 矩阵，也不得反向修改 PRTA；失败时按冻结阈值省略附加小节：
+
+```powershell
+python scripts/11_vlm_additional.py --mode formal --formal `
+  --protocol-freeze FORMAL_ROOT/receipts/protocol_freeze_v1.json `
+  --outcome-session FORMAL_ROOT/formal_outcome/session_receipt.json `
+  --output FORMAL_ROOT/vlm_additional `
+  --device cuda:0
+```
+
+中断后仅允许原身份恢复：在同一命令上加 `--resume`。VLM 结果收据明确记录
+64-token/60-active+4-reserved、零可训练 VLM 参数、无像素旁路、结构有效率、
+finding 一致性、时间矛盾率，以及 `prta_changed_after_vlm=false`。

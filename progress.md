@@ -563,3 +563,15 @@
   The main cache remains healthy at 98,048/146,110 images (383 atomic shards,
   67.11%); both cache and queue-keeper stderr files are empty, and training
   remains 0/7 behind the cache/training-store gate.
+- Replaced both remaining paper-output placeholders. V701-V708 now have a
+  formal outcome-locked generator with deterministic failure-inclusive case
+  selection; X801-X806 have a single exact-64 projector-only Qwen3-VL path with
+  resumable training, frozen model auditing, structured Gold evaluation, and a
+  pre-frozen omit-without-changing-PRTA gate.
+- Hardened protocol freeze to hash the figure implementations, the complete VLM
+  implementation, the portable VLM protocol, local model config/index, every
+  referenced safetensors shard, and tokenizer assets. Full gates pass 104 tests,
+  Ruff, compileall, repository preflight, and diff checks.
+- Main cache progress reached 123,392/146,110 images (482 atomic shards,
+  84.45%). Cache and queue-keeper stderr remain empty; the initial development
+  queue remains 0/7 behind the completed-cache and training-store gate.

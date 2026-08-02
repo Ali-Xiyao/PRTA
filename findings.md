@@ -488,3 +488,14 @@
   fails closed. The frozen protocol supplies 10,000 hierarchical replicates;
   empirical two-sided contrast p-values are corrected together with
   Benjamini-Hochberg.
+- The paper figure surface can be outcome-independent in implementation while
+  remaining outcome-locked in execution. V701-V708 now require the completed
+  formal outcome receipt and matching trust receipt, emit PNG/SVG plus hashes,
+  and use the frozen five-bucket hash selection for both successes and failures.
+- The bounded additional VLM path can reuse the final PRTA representation
+  without a second model-selection loop: exact 64 physical positions use the
+  registered 4/12/16/16/12/4 layout, only one projector is trained on 2,500
+  deterministic Train Silver rows, Qwen remains fully frozen, and the only
+  evaluation cohort is the 250-row senior Gold after the common outcome open.
+  Model paths stay portable because protocol freeze hashes the local model
+  config/index, referenced weight shards, and tokenizer assets.

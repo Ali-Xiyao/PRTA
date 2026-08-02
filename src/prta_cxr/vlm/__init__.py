@@ -1,1 +1,1 @@
-"""Optional post-freeze VLM deployment namespace."""
+"""Single post-freeze PRTA-to-VLM deployment path."""
