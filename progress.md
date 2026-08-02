@@ -538,3 +538,10 @@
 - A GO gate will generate 9 B401-B403 runs and 18 A501-A506 runs. B404/A500
   alias the identical frozen PRTA three-seed checkpoints; B405/A507 are explicit
   N/A. Full gates now pass 91 tests, Ruff, compileall, and diff checks.
+- Added tracked formal protocol, trust, calibration, bootstrap, subgroup, and
+  outcome-independent case-selection configs plus a clean-worktree
+  protocol-freeze receipt builder. It hashes sealed outcome files without
+  parsing them and cannot run before a GO gate/formal matrix.
+- Implemented Dev-only scalar temperature fitting, 15-bin ECE, NLL, Brier,
+  AURC/risk-at-coverage, and all registered PRIOR/query dataset interventions.
+  Main cache progress is 78,592/146,110 (53.79%); keeper remains 0/7 waiting.

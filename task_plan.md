@@ -513,6 +513,14 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   the non-empty string `"None"`. The roster is 250/250 PENDING and contains no
   `human_label`; accept only literal `None`/empty while continuing to reject
   every actual clinician value, then retry without displaying labels.
+- 2026-08-03: the first protocol-freeze validation test used an incorrect
+  hard-coded SHA for its tiny fixture, and the validator correctly rejected it
+  as changed. Derive the fixture hash with the production helper, then verify a
+  subsequent mutation fails; no real protocol freeze was attempted.
+- 2026-08-03: calibration focused tests found that the installed NumPy lacks
+  the newer `np.trapezoid` alias; use compatible `np.trapz` with identical
+  trapezoidal AURC semantics. Wrap two 89-90 character lines and rerun; no
+  formal prediction or outcome was opened.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

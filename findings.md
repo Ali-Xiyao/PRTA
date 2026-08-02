@@ -474,3 +474,7 @@
   matrix therefore records B404/A500 aliases to the three already-confirmed
   PRTA runs, while every distinct baseline and one-component ablation receives
   its own run. This preserves equal frozen budgets without duplicate science.
+- Protocol freezing can safely bind protected cohorts by file SHA-256 without
+  parsing their JSONL contents. The actual one-time outcome session remains a
+  separate later transition after formal training, while temperature values
+  are fitted from Dev under the already-frozen algorithm.

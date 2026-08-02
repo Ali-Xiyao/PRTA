@@ -1,0 +1,22 @@
+{
+  "schema": "prta-cxr.trust-protocol.v1",
+  "interventions": [
+    "true_prior",
+    "current_only",
+    "null_prior",
+    "random_prior",
+    "matched_wrong_prior",
+    "reversed_pair",
+    "wrong_finding_query"
+  ],
+  "subgroups": [
+    "progression_label",
+    "finding",
+    "source",
+    "current_view",
+    "interval_bin"
+  ],
+  "paired_unit": "patient",
+  "temperature_source": "dev_only",
+  "outcome_selection": false
+}

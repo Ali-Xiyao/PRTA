@@ -1,0 +1,15 @@
+{
+  "schema": "prta-cxr.case-selection.v1",
+  "rng_seed": 20260803,
+  "cases_per_bucket": 5,
+  "buckets": [
+    "correct_high_confidence",
+    "wrong_high_confidence",
+    "true_to_wrong_after_matched_prior",
+    "wrong_to_correct_after_matched_prior",
+    "prediction_flip_after_wrong_query"
+  ],
+  "tie_breaker": "sha256_sample_id",
+  "include_success_and_failure": true,
+  "manual_cherry_pick": false
+}

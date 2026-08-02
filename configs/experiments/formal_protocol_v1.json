@@ -1,0 +1,35 @@
+{
+  "schema": "prta-cxr.formal-protocol.v1",
+  "progression_labels": ["Stable", "Improved", "Worse", "New", "Resolved"],
+  "training_seeds": [17, 29, 43],
+  "primary_metric": "patient_clustered_macro_f1",
+  "secondary_metrics": [
+    "balanced_accuracy",
+    "accuracy",
+    "min_class_recall",
+    "opposite_direction_error_rate",
+    "nll",
+    "brier",
+    "ece",
+    "aurc"
+  ],
+  "bootstrap": {
+    "unit": "patient",
+    "replicates": 10000,
+    "confidence_level": 0.95,
+    "rng_seed": 20260803,
+    "minimum_valid_fraction": 0.95
+  },
+  "calibration": {
+    "temperature_fit_split": "dev",
+    "ece_bins": 15,
+    "risk_coverages": [0.9, 0.8, 0.7]
+  },
+  "formal_outcome_open": {
+    "single_session": true,
+    "internal_test_reads": 1,
+    "gold_reads": 1,
+    "test_driven_tuning": false
+  },
+  "multiple_comparison": "benjamini_hochberg"
+}
