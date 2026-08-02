@@ -10,8 +10,8 @@
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
 但现在还不能理解为“插入 GPU 就会自动开始训练”。在首次正式运行前仍必须完成：
 
-1. 完成 250 条 source × 五类 Luna Silver 人工准确率审核门；
-2. 确认每条 Gold 候选均经人工复核后，才可称为 Gold；
+1. 完成 250 条 source × 五类 Luna Silver 资深医生辅助复核门；
+2. 确认每条 Gold 候选均经资深医生复核后，才可称为 Gold；
 3. 从新的合规候选池重新冻结 patient-disjoint 80/10/10 split；
 4. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
 5. 用户单独授权具体的缓存或训练运行。
@@ -186,7 +186,7 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
 - 已生成 148,798 个真实规则候选；独立 AI pilot 已完成 150 条并保留 103 条 Silver；
 - 已完成 148,798 条全量 Luna-primary 标注：126,727 条 Silver、22,071 条
   `Unclear` 排除；250 条人工审核/Gold 候选 roster 已生成；
-- 未完成人工准确率抽检、split 或缓存；
+- 第一轮人工结果已清除；资深医生 Luna 辅助复核尚未回收，split 和缓存未启动；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
 - pilot 数字仅用于工程与流程决策，不是论文科学结论。

@@ -88,6 +88,19 @@
   manifest that removes every Silver row from every selected patient; focused
   tests require zero patient overlap with the quarantined manifest.
 
+## Returned human review - 2026-08-02
+
+- The original blind workbook was modified in place and passed read-only import
+  validation: 250 rows, 250 unique `review_id` values, exact headers and case
+  sequence, no missing or invalid human labels, reviewer IDs, or review dates.
+- Human dispositions before deblinding are Improved 50, Worse 46, New 14,
+  Resolved 35, Stable 61, Unclear 40, and Unusable 4. Every Unusable row has a
+  reason. These are response-completeness facts, not Luna accuracy results.
+- Human `Unclear` and `Unusable` cannot enter Gold. The remaining 206 decisive
+  five-class rows may be frozen with the human label only after exact roster
+  binding and deblinded source/label audits pass. All 250 roster patients must
+  remain quarantined regardless of whether their selected row enters Gold.
+
 ## Initial code state
 
 - The clean repository has validated PRTA/CMCP/cache/evaluation core and
@@ -293,3 +306,14 @@
   ambiguity deterministically (PA first, then stable study/image IDs) and
   records `duplicate_patient_time`, while still rejecting every zero-interval
   pair.
+- 2026-08-02 reviewer reset: the first doctor's responses are no longer
+  evidence. The user explicitly invalidated that review, the filled workbook
+  was restored to the original empty template, and all derived first-review
+  runtime directories were deleted.
+- The replacement senior doctor will see Luna's five-class label. This is a
+  practical confirmation/correction workflow but introduces anchoring, so its
+  outcome must be described as `Luna-assisted senior review`, not independent
+  blind accuracy or inter-reader agreement.
+- The frozen 250-row roster and patient quarantine remain unchanged. The senior
+  doctor supplies the final human label; `Unclear`/`Unusable` remain excluded
+  and no training authority is created by completing the workbook.

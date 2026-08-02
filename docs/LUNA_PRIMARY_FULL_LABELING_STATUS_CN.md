@@ -27,17 +27,20 @@ Worse 23,311。Silver manifest SHA-256 为
 患者唯一。其所有 2,297 条 Silver 行均已从训练可用清单移除，训练可用 Silver 为
 124,430 条，患者交集为 0。
 
-该 roster 状态为 `GOLD_PENDING_HUMAN_REVIEW`，`gold_rows=0`。只有 250 条全部
-经人工确认后，才可以称为 Gold；当前人工审核未完成，因此训练和论文使用仍为 HOLD。
+该 roster 状态为 `GOLD_PENDING_SENIOR_REVIEW`，`gold_rows=0`。第一轮医生填写结果已
+按用户要求清除，未保留为 Gold 或准确率证据。当前改由资深医生在可见 Luna 标签的
+条件下进行确认/修正；在 250 条全部完成并通过导入审计前，训练和论文使用仍为 HOLD。
 
-人工交付材料已经准备完成：
+新的资深医生交付材料已经准备完成：
 
-- [人工盲审规则](PRTA_CXR_Gold人工盲审规则_CN.md)
-- [250条人工盲审表](../outputs/gold_human_review_20260802/PRTA_CXR_Gold人工盲审表_v1.xlsx)
-- [可直接转交的压缩包](../outputs/gold_human_review_20260802/PRTA_CXR_Gold_Human_Review_Package_v1.zip)
+- [Luna辅助复核说明](PRTA_CXR_Gold资深医生_Luna辅助复核说明_v2_CN.md)
+- [标签判定规则](PRTA_CXR_Gold标签判定规则_v2_CN.md)
+- [250条资深医生复核表](../outputs/gold_human_review_senior_20260802/PRTA_CXR_Gold资深医生_Luna辅助复核表_v2.xlsx)
+- [可直接转交的压缩包](../outputs/gold_human_review_senior_20260802/PRTA_CXR_Gold_Senior_Doctor_Luna_Assisted_Review_Package_v2.zip)
 
-盲审表不包含 Luna 标签、规则标签、患者哈希或原始样本 ID。审核人员完成全部行后，
-项目侧才可按 `review_id` 解盲并冻结人工确认的 Gold。
+新表显示 Luna 标签，但不包含第一位医生答案、患者哈希或原始样本 ID。本轮属于
+Luna 辅助复核，不再称为独立盲审；完成全部行后，项目侧才可按 `review_id` 导入并
+冻结资深医生确认/修正后的 Gold。
 
 ## 运行产物
 

@@ -311,3 +311,29 @@
   `outputs/gold_human_review_20260802/PRTA_CXR_Gold_Human_Review_Package_v1.zip`
   for direct offline handoff; no Luna mapping or project runtime artifact is
   included.
+
+## 2026-08-02 first review withdrawn and senior review repackaged
+
+- The user questioned the first reviewer's reliability and explicitly asked to
+  delete the first-round result. Restored the tracked v1 workbook to its
+  original empty Git blob (`6665f27c...acf4c`) using a byte-identical verified
+  backup.
+- Deleted the two derived runtime result directories
+  `human_review_complete_v1` and `human_review_complete_v2`; the verified
+  remaining count is zero. Luna outputs, the frozen 250-row roster, patient
+  quarantine, and labeling code were preserved.
+- The user changed the second review from blind to Luna-assisted. Generated a
+  newly shuffled 250-row workbook that exposes `Luna标签` and leaves every
+  senior-doctor response field empty. It contains 125 rows per source and 50
+  rows per Luna five-class label; no first-review answer field was found.
+- Rendered and visually checked all four workbook sheets. Packaged only the new
+  workbook, assisted-review instructions, and v2 label rules in
+  `outputs/gold_human_review_senior_20260802/PRTA_CXR_Gold_Senior_Doctor_Luna_Assisted_Review_Package_v2.zip`.
+- Workbook SHA-256 is `2e823b7154d0cf92560c1cd2f4a7d853fd61f3589f9291fb2bf6f09047547e07`;
+  package SHA-256 is `536bc5225cc7543ced4ffbe050f353435beea1e0afa0d6da69020c5a6ee69e2b`.
+- Upgraded the importer to recognize both the legacy blind schema and the new
+  Luna-assisted senior schema, including exact verification of the displayed
+  Luna label against the frozen roster. Final validation passes 64 tests,
+  Ruff, compileall, formalizer preflight, direct parse of the new workbook, and
+  `git diff --check`.
+- Gold freeze, split, cache, internal test, and GPU training remain closed.

@@ -233,7 +233,7 @@ Status: complete
   and verify equality.
 
 ### Phase 24 - Blind human-review handoff
-Status: complete (review responses pending)
+Status: complete
 
 - Write the Chinese review protocol for the seven allowed human dispositions.
 - Export the frozen 250-row roster as a blind workbook with no Luna label,
@@ -241,12 +241,40 @@ Status: complete (review responses pending)
 - Add validated input fields, completion formulas, a codebook, and QC counts;
   keep deblinding and Gold freeze closed until the completed workbook returns.
 
+### Phase 25 - First human-response import and audit
+Status: withdrawn by user; result deleted
+
+- The first returned workbook and its derived runtime audits were invalidated
+  after reviewer reliability was questioned.
+- The tracked workbook was restored to the verified original empty template;
+  both `human_review_complete_v1` and `human_review_complete_v2` were deleted.
+- No first-review human label or derived Gold row remains authoritative.
+
+### Phase 26 - Result documentation, verification, and local handoff
+Status: superseded by Phase 27
+
+- Write the bounded human-review result without presenting one-reviewer Gold as
+  clinical truth beyond the protocol.
+- Run focused tests/static checks and runtime conservation/leakage audits.
+- Commit and push only to the local bare remote; do not start split/cache/train.
+
+### Phase 27 - Senior-doctor Luna-assisted review handoff
+Status: in progress (package complete; responses pending)
+
+- Rebuild the same frozen 250-row roster in a newly shuffled workbook.
+- Show the five-class Luna label while keeping all first-review answers absent.
+- Collect an empty senior-doctor label, reviewer, date, optional correction
+  note, and required unusable reason for every row.
+- Treat the result as Luna-assisted confirmation/correction, not independent
+  blind agreement; keep Gold freeze and training closed until the workbook
+  returns and passes exact-ID/completeness audits.
+
 ## Next Step
 
-Send the blind workbook and Chinese protocol to the human reviewers. After all
-250 rows are complete, import responses by immutable `review_id`, deblind only
-inside the project, calculate Luna accuracy by source and label, and freeze the
-human-confirmed Gold manifest. Stop before split/cache/training authorization.
+Wait for the completed senior-doctor Luna-assisted workbook. Import it by
+immutable `review_id`, calculate confirmation/correction statistics, and freeze
+only decisive senior-doctor five-class labels while retaining all 250 patients
+in quarantine. Stop before split/cache/training.
 
 ## Completion record - 2026-08-02
 
@@ -284,6 +312,12 @@ human-confirmed Gold manifest. Stop before split/cache/training authorization.
 | Do not call Luna-only test labels Gold | Gold status requires human confirmation of every selected row; a sampled accuracy audit validates Silver quality but does not convert unreviewed labels into Gold. |
 
 ## Errors Encountered
+
+- 2026-08-02: a code-inventory command guessed a nonexistent
+  `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
+  already contained the required patterns, so no replacement utility was
+  needed. The first human-review lint pass then found three 89-95 character
+  lines; wrapped those lines without changing behavior before formal execution.
 
 - 2026-08-02: static qualification found `--preparation-receipt` attached to the
   batch-preparation parser while the formal runner consumed it. Moved the option
