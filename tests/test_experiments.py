@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 
 from prta_cxr.contracts import PROGRESSION_LABELS
 from prta_cxr.experiments import (
@@ -9,7 +11,7 @@ from prta_cxr.experiments import (
     materialize_classification_counts,
     nested_train_fraction,
 )
-from prta_cxr.queue_runner import dependencies_satisfied
+from prta_cxr.queue_runner import dependencies_satisfied, process_alive
 from prta_cxr.receipts import RUN_RECEIPT_FIELDS
 from prta_cxr.run_registry import read_run_registry, upsert_run_registry
 
@@ -96,3 +98,15 @@ def test_head_screening_waits_for_full_fraction_run():
     assert dependencies_satisfied(rows[1], rows) is False
     rows[0]["status"] = "PASS_TRAINING_FINISHED"
     assert dependencies_satisfied(rows[1], rows) is True
+
+
+def test_process_alive_tracks_a_reaped_child():
+    process = subprocess.Popen(
+        [sys.executable, "-c", "import time; time.sleep(60)"],
+    )
+    try:
+        assert process_alive(process.pid) is True
+    finally:
+        process.terminate()
+        process.wait(timeout=10)
+    assert process_alive(process.pid) is False
