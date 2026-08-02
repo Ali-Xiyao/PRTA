@@ -478,6 +478,16 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   variable, so the fail-closed guard rejected it before output creation. Retry
   under the user's active full-program authority with the exact required
   `PRTA_CXR_ALLOW_FORMAL` value; never weaken the guard.
+- 2026-08-03: a formal-matrix inventory used the guessed legacy names
+  `scripts/07_train_prta.py` and `src/prta_cxr/cli_training.py`. The repository
+  listing in the same command shows the real entrypoint is `scripts/07_train.py`
+  and its implementation is `src/prta_cxr/training/engine.py`; inspect those
+  exact files next. No experiment or artifact was affected.
+- 2026-08-03: the first experiment-orchestration test showed that the generic
+  JSONL artifact writer correctly refuses overwrites, but a unified run
+  registry must atomically replace its RUNNING row at closeout. Implement a
+  dedicated temp-file-and-replace registry writer; also apply Ruff's import and
+  modern-datetime fixes before rerunning. Scaling/config tests already passed.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

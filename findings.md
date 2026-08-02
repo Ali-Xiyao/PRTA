@@ -435,3 +435,13 @@
   rows per source-by-label stratum; overall/source confirmation is 0.984 and
   the weakest label stratum is Improved at 0.96, so the configured 0.95 gate
   passes without claiming independent ground truth.
+- The frozen Train population supports nested Luna-primary scaling cleanly:
+  2,604/6,511/13,022/19,534/26,045 patients yield
+  9,282/23,043/45,885/68,676/91,065 rows at 10/25/50/75/100%, respectively.
+  Each point preserves both sources and every progression class, including
+  245 Resolved rows at the smallest fraction, while the full 16,666-row Dev
+  set is unchanged and patient-disjoint.
+- Formal training needs mutable state but immutable scientific artifacts. The
+  implementation therefore uses replace-in-place atomic files only for
+  `training_progress.json` and the unified registry; configs, checkpoints,
+  final receipts, predictions, and metrics retain refuse-overwrite behavior.

@@ -519,10 +519,15 @@ PRTA-CXR/
 
 | ID | 训练数据 | 目的 |
 |---|---|---|
-| D0 | 旧训练规模 + 旧规则标签 | 迁移后的基准 |
-| D1 | 扩展规模 + 旧规则标签 | 分离“规模收益” |
-| D2 | 扩展规模 + Luna-primary Silver | 分离“标签策略收益” |
-| D3 | 扩展规模 + Rule-only | 测试质量-数量权衡 |
+| D0 | 10% 患者级嵌套子集 + Luna-primary Silver | 最小规模点 |
+| D1 | 25% 患者级嵌套子集 + Luna-primary Silver | 低规模点 |
+| D2 | 50% 患者级嵌套子集 + Luna-primary Silver | 中规模点 |
+| D3 | 75% 患者级嵌套子集 + Luna-primary Silver | 高规模点 |
+| D4 | 100% 全量 + Luna-primary Silver | 完整开发集 |
+
+上述比例均以 patient 为不可分割单位，使用同一 salt 形成嵌套子集，Dev 始终完整且
+不变。旧 Rule-only D0/D1/D3 已被用户后续冻结的 Luna-primary 决策取代，不运行、
+不回填，也不作为任何训练或消融标签源。
 
 #### 2.2 有限方法开发
 
@@ -602,7 +607,7 @@ PRTA-CXR/
 - w/o CMCP；
 - w/o temporal inversion；
 - w/o state preservation；
-- 可选：rule-only labels 替代 Luna-primary Silver。
+- A507 Rule-only label 消融记为 `N/A_POLICY_RETIRED`；不再训练。
 
 所有消融使用同一 split、同一最终 head、同一训练预算和三个 seeds；不在正式 test 上选择变体。
 
@@ -776,10 +781,11 @@ L101  Candidate extraction
 L102  Independent-label pilot
 L103  Clinician audit
 L104  Frozen full labeling
-D201  Old-size rule labels
-D202  Full-size rule labels
-D203  Full-size Luna-primary Silver
-D204  Full-size Rule-only
+D201  10% Luna-primary patient subset
+D202  25% Luna-primary patient subset
+D203  50% Luna-primary patient subset
+D204  75% Luna-primary patient subset
+D205  100% Luna-primary full Train
 M301  Head screening
 M302  Loss screening
 M303  Adapter-range screening
@@ -815,7 +821,7 @@ X801  PRTA-to-VLM additional deployment
 
 | Label pipeline | Coverage | Clinician agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject precision |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Rule-only |  |  |  |  |  |  |  |  |
+| Rule-only（历史诊断，训练 N/A） | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 | Luna-primary Silver |  |  |  |  |  |  |  |  |
 
 ### Table 3：正式主结果

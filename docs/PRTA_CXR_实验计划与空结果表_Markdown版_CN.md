@@ -366,10 +366,15 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 数据配置：
 
-- **D0**：旧规模 + 旧规则标签；
-- **D1**：扩展规模 + 旧规则标签；
-- **D2**：扩展规模 + Luna-primary Silver；
-- **D3**：扩展规模 + Rule-only（质量—数量对照）。
+- **D0**：10% patient-level 嵌套子集 + Luna-primary Silver；
+- **D1**：25% patient-level 嵌套子集 + Luna-primary Silver；
+- **D2**：50% patient-level 嵌套子集 + Luna-primary Silver；
+- **D3**：75% patient-level 嵌套子集 + Luna-primary Silver；
+- **D4**：100% 全量 Train + Luna-primary Silver。
+
+比例只作用于 Train 患者；五个规模点使用同一 salt，严格嵌套，Dev 始终保持完整。
+旧 Rule-only 数据配置已被后续 Luna-primary 用户决策废弃，不作为训练、筛选或消融
+输入。规则代码仅保留历史审计可复现性，不产生正式标签。
 
 开发轴：
 
@@ -382,11 +387,12 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | 任务 ID | 任务 | 交付物/验收标准 | 优先级 | 负责人 | 计划完成 | 状态 | 实际完成 | 证据/路径 | 前置依赖 | 阶段决策 | 风险 | 备注 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| D201 | D0：旧规模 + 旧规则标签 | 新项目开发基准 | P0 |  |  |  |  |  |  |  |  |  |
-| D202 | D1：扩展规模 + 旧规则标签 | 测量纯数据规模收益 | P0 |  |  |  |  |  | D201 |  |  |  |
-| D203 | D2：扩展规模 + Luna-primary Silver | 测量标签策略收益 | P0 |  |  |  |  |  | D202 |  |  |  |
-| D204 | D3：扩展规模 + Rule-only | 质量—数量权衡 | P1 |  |  |  |  |  | D203 |  |  |  |
-| M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选 | P0 |  |  |  |  |  | D203 |  |  |  |
+| D201 | D0：10% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue |  |  |  |  |
+| D202 | D1：25% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D201 |  |  |  |
+| D203 | D2：50% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D202 |  |  |  |
+| D204 | D3：75% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D203 |  |  |  |
+| D205 | D4：100% Luna-primary Train | 全量开发集 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D204 |  |  |  |
+| M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选；H0复用D205 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D205 |  |  |  |
 | M302 | 类别不平衡 Loss Screening | WCE/BalSoftmax/CB-Focal | P0 |  |  |  |  |  | M301 |  |  |  |
 | M303 | Adapter 范围 Screening | 最多两个候选 | P1 |  |  |  |  |  | M302 |  |  |  |
 | M304 | 最终候选三 Seed 确认 | Seeds 17/29/43 | P0 |  |  |  |  |  | M303 |  |  |  |
@@ -400,13 +406,14 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | Run ID | Axis | Data Config | Head | Loss | Adapter Scope | Seed | Dev Macro-F1 | Balanced Acc | Accuracy | Min Recall | Prior Gap | ODER | Train Hours | VRAM GB | Status | Decision | Evidence/Notes |
 |---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| D201 | Data | D0 | H0 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| D202 | Data | D1 | H0 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| D203 | Data | D2 | H0 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| D204 | Data | D3 | H0 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M301-H0 | Head | D2 | H0 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M301-H1 | Head | D2 | H1 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M301-H2 | Head | D2 | H2 | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
+| D201 | Data | D0 (10%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| D202 | Data | D1 (25%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| D203 | Data | D2 (50%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| D204 | Data | D3 (75%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| D205 | Data | D4 (100%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| M301-H0 | Head | D4 | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | REUSE_D205 |  | 不重复训练 |
+| M301-H1 | Head | D4 | H1 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| M301-H2 | Head | D4 | H2 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
 | M302-WCE | Loss | D2 |  | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
 | M302-BS | Loss | D2 |  | Balanced Softmax | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
 | M302-CBF | Loss | D2 |  | CB-Focal | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
@@ -590,7 +597,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 | A504 | w/o CMCP | 移除 Counterfactual PRIOR | 检验正确 PRIOR 依赖 | P0 |  |  |  |  |
 | A505 | w/o Temporal Inversion | 移除反转约束 | 检验时间方向性 | P0 |  |  |  |  |
 | A506 | w/o State Preservation | 移除 State Loss | 检验当前状态保持 | P0 |  |  |  |  |
-| A507 | Rule-only Labels | 替换 Luna-primary Silver | 数据监督消融，可选 | P2 |  |  |  |  |
+| A507 | Rule-only Labels | 用户已废弃规则训练标签 | N/A | P2 |  | N/A_POLICY_RETIRED | 不运行 |  |
 
 ## 7.3 消融汇总
 
@@ -630,9 +637,9 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 | A506-S17 | w/o State Preserve | 17 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | A506-S29 | w/o State Preserve | 29 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | A506-S43 | w/o State Preserve | 43 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| A507-S17 | Rule-only Labels | 17 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| A507-S29 | Rule-only Labels | 29 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| A507-S43 | Rule-only Labels | 43 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| A507-S17 | Rule-only Labels | 17 |  |  |  |  |  |  |  |  |  |  |  | N/A_POLICY_RETIRED |  | 不运行 |
+| A507-S29 | Rule-only Labels | 29 |  |  |  |  |  |  |  |  |  |  |  | N/A_POLICY_RETIRED |  | 不运行 |
+| A507-S43 | Rule-only Labels | 43 |  |  |  |  |  |  |  |  |  |  |  | N/A_POLICY_RETIRED |  | 不运行 |
 
 ## 7.5 消融执行确认
 

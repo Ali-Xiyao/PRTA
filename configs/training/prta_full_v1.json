@@ -1,13 +1,26 @@
 {
   "schema": "prta-cxr.training.v1",
+  "experiment_id": "TEMPLATE_ONLY",
   "seed": 17,
+  "data": {
+    "train_fraction": 1.0,
+    "fraction_salt": "prta-cxr-luna-primary-scaling-v1"
+  },
   "model": {
+    "family": "prta",
+    "width": 768,
     "adapter_rank": 32,
     "heads": 12,
     "state_tokens": 20,
     "transition_tokens": 20,
     "dropout": 0.1,
-    "native_head": "H0"
+    "native_head": "H0",
+    "adapter_scope": "tail4",
+    "components": {
+      "finding_conditioning": true,
+      "cross_time_alignment": true,
+      "dual_branch": true
+    }
   },
   "optimization": {
     "epochs": 20,
@@ -15,7 +28,13 @@
     "learning_rate": 0.0001,
     "weight_decay": 0.01,
     "gradient_clip_norm": 1.0,
-    "num_workers": 4
+    "num_workers": 4,
+    "minimum_epochs": 6,
+    "early_stopping_patience": 4,
+    "early_stopping_min_delta": 0.001
+  },
+  "classification_loss": {
+    "name": "weighted_ce"
   },
   "loss_weights": {
     "classification": 1.0,

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from collections.abc import Sequence
+from datetime import UTC, datetime
 from pathlib import Path
 
 import torch
@@ -40,6 +42,8 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--label-quality-audit", type=Path)
+    parser.add_argument("--run-registry", type=Path)
+    parser.add_argument("--owner", default="Codex formal program")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--formal", action="store_true")
@@ -62,6 +66,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                             args.text_cache,
                             args.weights,
                             args.label_quality_audit,
+                            args.run_registry,
                             args.output,
                         )
                     ),
@@ -80,6 +85,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "text_cache": args.text_cache,
             "weights": args.weights,
             "label_quality_audit": args.label_quality_audit,
+            "run_registry": args.run_registry,
             "output": args.output,
         }
         missing = [name for name, value in required.items() if value is None]
@@ -89,7 +95,12 @@ def train_main(argv: Sequence[str] | None = None) -> int:
 
         from prta_cxr.data.token_cache import Block8CacheIndex
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
+        from prta_cxr.experiments import (
+            materialize_classification_counts,
+            nested_train_fraction,
+        )
         from prta_cxr.quality_gate import load_completed_human_silver_audit
+        from prta_cxr.run_registry import upsert_run_registry
         from prta_cxr.training.engine import (
             build_train_model,
             load_training_config,
@@ -103,6 +114,20 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         config = load_training_config(args.config)
         load_completed_human_silver_audit(args.label_quality_audit)
         rows = read_jsonl(args.split_manifest)
+        data_config = dict(config.get("data", {}))
+        rows, fraction_audit = nested_train_fraction(
+            rows,
+            fraction=float(data_config.get("train_fraction", 1.0)),
+            salt=str(
+                data_config.get(
+                    "fraction_salt", "prta-cxr-luna-primary-scaling-v1"
+                )
+            ),
+        )
+        config = materialize_classification_counts(config, rows)
+        experiment_id = str(config.get("experiment_id", ""))
+        if not experiment_id:
+            raise ValueError("formal training config requires experiment_id")
         cache = Block8CacheIndex(args.cache_root)
         train_dataset = PRTAFeatureDataset(
             rows, cache=cache, text_cache_path=args.text_cache, split="train"
@@ -129,24 +154,65 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         visual, _ = load_biomedclip_visual(args.weights)
         blocks, final_norm = tail_modules(visual)
         model = build_train_model(blocks, final_norm, config)
-        receipt = train_model(
-            model,
-            train_loader,
-            dev_loader,
-            config=config,
-            output_root=args.output,
-            device=torch.device(args.device),
-            input_hashes={
-                "split_manifest": sha256_file(args.split_manifest),
-                "text_cache": sha256_file(args.text_cache),
-                "weights": sha256_file(args.weights),
-                "cache_manifest": sha256_file(
-                    args.cache_root / "cache_manifest.json"
-                ),
-                "label_quality_audit": sha256_file(args.label_quality_audit),
-            },
-            resume_path=args.resume,
+        input_hashes = {
+            "split_manifest": sha256_file(args.split_manifest),
+            "text_cache": sha256_file(args.text_cache),
+            "weights": sha256_file(args.weights),
+            "cache_manifest": sha256_file(args.cache_root / "cache_manifest.json"),
+            "label_quality_audit": sha256_file(args.label_quality_audit),
+        }
+        started = datetime.now(UTC).isoformat()
+        git_commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        registry_row = {
+            "experiment_id": experiment_id,
+            "date": started[:10],
+            "owner": str(args.owner),
+            "git_commit": git_commit,
+            "config_path": str(args.config.resolve()),
+            "config_hash": sha256_file(args.config),
+            "split_manifest_hash": input_hashes["split_manifest"],
+            "label_manifest_hash": input_hashes["split_manifest"],
+            "seed": int(config["seed"]),
+            "gpu": str(args.device),
+            "start_time": started,
+            "end_time": "",
+            "status": "RUNNING",
+            "checkpoint_path": "",
+            "prediction_path": "",
+            "metrics_path": "",
+            "log_path": str((args.output / "training_progress.json").resolve()),
+            "notes": "Train/Dev only; Internal-test and Gold sealed",
+        }
+        upsert_run_registry(args.run_registry, registry_row)
+        try:
+            receipt = train_model(
+                model,
+                train_loader,
+                dev_loader,
+                config=config,
+                output_root=args.output,
+                device=torch.device(args.device),
+                input_hashes=input_hashes,
+                resume_path=args.resume,
+                fraction_audit=fraction_audit,
+            )
+        except Exception:
+            registry_row["end_time"] = datetime.now(UTC).isoformat()
+            registry_row["status"] = "FAILED"
+            upsert_run_registry(args.run_registry, registry_row)
+            raise
+        registry_row["end_time"] = datetime.now(UTC).isoformat()
+        registry_row["status"] = str(receipt["status"])
+        registry_row["checkpoint_path"] = str((args.output / "best.pt").resolve())
+        registry_row["metrics_path"] = str(
+            (args.output / "training_receipt.json").resolve()
         )
+        upsert_run_registry(args.run_registry, registry_row)
         print(json.dumps(receipt, indent=2, sort_keys=True))
         return 0
     if args.formal:

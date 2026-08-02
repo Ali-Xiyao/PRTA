@@ -482,3 +482,14 @@
   `training_gate_passed=true`, and explicit Luna-assisted/not-blind wording.
   The receipt file SHA-256 is
   `b6c7d4cc1784deef5e45640d0c0151b68504a51f7f70b5b922ef67eba034b2c9`.
+- Replaced the stale Rule-only D0-D3 development surface with five nested
+  patient-level Luna-primary fractions (10/25/50/75/100%) and marked A507
+  `N/A_POLICY_RETIRED`, preserving the user's later label authority.
+- Implemented deterministic patient-level scaling, effective class-count
+  materialization, a mutable atomic Run Registry, live training progress,
+  epoch-level identity-checked resume, and a frozen early-stopping rule.
+- Formally prepared the seven-run initial Train/Dev queue: D201-D205 plus
+  M301-H1/H2 (M301-H0 reuses D205). All five labels and both sources remain in
+  every fraction; Dev stays fixed at 16,666 rows; no test or Gold outcome was
+  opened. Queue hash is
+  `84086d0ce7fa3b3c465513a51af4c92935998d32e6244cdf186d78a06582f60b`.

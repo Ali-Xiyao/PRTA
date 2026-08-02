@@ -5,6 +5,7 @@ import os
 import random
 from collections.abc import Mapping
 from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +15,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-from prta_cxr.artifacts import write_json_atomic
+from prta_cxr.artifacts import replace_json_atomic, write_json_atomic
 from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256
 from prta_cxr.evaluation.progression import classification_metrics
 from prta_cxr.models.heads import NativeH0Head, NativeH1Head, NativeH2Head
@@ -371,11 +372,14 @@ def train_model(
     device: torch.device,
     input_hashes: Mapping[str, str],
     resume_path: Path | None = None,
+    fraction_audit: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     output_root = Path(output_root)
-    if output_root.exists():
+    if output_root.exists() and resume_path is None:
         raise FileExistsError(f"refusing to overwrite training output: {output_root}")
-    output_root.mkdir(parents=True)
+    if output_root.exists() and not output_root.is_dir():
+        raise FileExistsError(f"training output is not a directory: {output_root}")
+    output_root.mkdir(parents=True, exist_ok=resume_path is not None)
     seed = int(config["seed"])
     seed_everything(seed)
     model.to(device)
@@ -387,18 +391,50 @@ def train_model(
     )
     start_epoch = 0
     best_f1 = -1.0
+    best_epoch = -1
+    history: list[dict[str, Any]] = []
     if resume_path is not None:
+        if Path(resume_path).resolve().parent != output_root.resolve():
+            raise ValueError("resume checkpoint must belong to the output directory")
         checkpoint = torch.load(resume_path, map_location="cpu", weights_only=True)
+        if checkpoint.get("config") != dict(config):
+            raise ValueError("resume checkpoint config mismatch")
+        if checkpoint.get("input_hashes") != dict(input_hashes):
+            raise ValueError("resume checkpoint input hash mismatch")
         model.load_state_dict(checkpoint["model_state"])
         optimizer.load_state_dict(checkpoint["optimizer_state"])
         start_epoch = int(checkpoint["epoch"]) + 1
         best_f1 = float(checkpoint["best_dev_macro_f1"])
-    history = []
+        best_epoch = int(checkpoint.get("best_epoch", checkpoint["epoch"]))
+        history = list(checkpoint.get("history", []))
     epochs = int(config["optimization"]["epochs"])
+    patience = int(config["optimization"].get("early_stopping_patience", epochs))
+    min_epochs = int(config["optimization"].get("minimum_epochs", 1))
+    min_delta = float(config["optimization"].get("early_stopping_min_delta", 0.0))
+    if patience < 1 or not 1 <= min_epochs <= epochs or min_delta < 0:
+        raise ValueError("invalid early-stopping configuration")
+    started = datetime.now(UTC).isoformat()
+    state = {
+        "schema": "prta-cxr.training-progress.v1",
+        "status": "RUNNING",
+        "pid": os.getpid(),
+        "experiment_id": str(config.get("experiment_id", "")),
+        "start_time": started,
+        "current_epoch": start_epoch,
+        "total_epochs": epochs,
+        "completed_steps_in_epoch": 0,
+        "steps_in_epoch": len(train_loader),
+        "best_dev_macro_f1": best_f1,
+        "best_epoch": best_epoch,
+        "input_hashes": dict(input_hashes),
+        "config_sha256": canonical_sha256(config),
+    }
+    replace_json_atomic(output_root / "training_progress.json", state)
+    stopped_early = False
     for epoch in range(start_epoch, epochs):
         model.train()
         train_losses = []
-        for batch in train_loader:
+        for step, batch in enumerate(train_loader, start=1):
             optimizer.zero_grad(set_to_none=True)
             loss, _ = _loss(model, batch, config["loss_weights"], device)
             if not torch.isfinite(loss):
@@ -410,6 +446,15 @@ def train_model(
             )
             optimizer.step()
             train_losses.append(float(loss.detach()))
+            if step % 100 == 0 or step == len(train_loader):
+                state.update(
+                    {
+                        "current_epoch": epoch,
+                        "completed_steps_in_epoch": step,
+                        "latest_train_loss": train_losses[-1],
+                    }
+                )
+                replace_json_atomic(output_root / "training_progress.json", state)
         metrics = evaluate_loader(
             model,
             dev_loader,
@@ -419,32 +464,59 @@ def train_model(
         metrics["epoch"] = epoch
         metrics["train_loss"] = sum(train_losses) / len(train_losses)
         history.append(metrics)
+        improved = float(metrics["macro_f1"]) > best_f1 + min_delta
+        if improved:
+            best_f1 = float(metrics["macro_f1"])
+            best_epoch = epoch
         checkpoint = {
             "schema": "prta-cxr.checkpoint.v1",
             "epoch": epoch,
-            "best_dev_macro_f1": max(best_f1, float(metrics["macro_f1"])),
+            "best_dev_macro_f1": best_f1,
+            "best_epoch": best_epoch,
+            "history": history,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "config": dict(config),
             "input_hashes": dict(input_hashes),
         }
         _save_checkpoint(output_root / "last.pt", checkpoint)
-        if metrics["macro_f1"] > best_f1:
-            best_f1 = float(metrics["macro_f1"])
+        if improved:
             _save_checkpoint(output_root / "best.pt", checkpoint)
+        state.update(
+            {
+                "current_epoch": epoch,
+                "completed_steps_in_epoch": len(train_loader),
+                "best_dev_macro_f1": best_f1,
+                "best_epoch": best_epoch,
+                "latest_dev_metrics": metrics,
+            }
+        )
+        replace_json_atomic(output_root / "training_progress.json", state)
+        if epoch + 1 >= min_epochs and epoch - best_epoch >= patience:
+            stopped_early = True
+            break
+    ended = datetime.now(UTC).isoformat()
     receipt = {
         "schema": "prta-cxr.training-receipt.v1",
         "status": "PASS_TRAINING_FINISHED",
         "formal_experiment": True,
         "seed": seed,
-        "epochs": epochs,
+        "maximum_epochs": epochs,
+        "completed_epochs": len(history),
+        "stopped_early": stopped_early,
         "best_dev_macro_f1": best_f1,
+        "best_epoch": best_epoch,
         "history": history,
         "config_sha256": canonical_sha256(config),
         "input_hashes": dict(input_hashes),
         "checkpoint_path": "best.pt",
+        "fraction_audit": dict(fraction_audit or {}),
+        "start_time": started,
+        "end_time": ended,
         "internal_test_opened": False,
         "protected_outcomes_opened": False,
     }
     write_json_atomic(output_root / "training_receipt.json", receipt)
+    state.update({"status": "PASS_TRAINING_FINISHED", "end_time": ended})
+    replace_json_atomic(output_root / "training_progress.json", state)
     return receipt

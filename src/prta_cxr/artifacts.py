@@ -28,6 +28,23 @@ def write_json_atomic(path: Path, value: Any) -> None:
         if temporary.exists():
             temporary.unlink()
 
+
+def replace_json_atomic(path: Path, value: Any) -> None:
+    """Atomically replace an explicitly mutable state file."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    try:
+        temporary.write_text(
+            json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
 def write_jsonl_atomic(path: Path, rows: Iterable[Mapping[str, Any]]) -> None:
     path = _fresh_target(path)
     temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
