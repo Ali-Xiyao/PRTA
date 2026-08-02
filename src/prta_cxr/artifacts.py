@@ -2,9 +2,24 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
+
+_WINDOWS_REPLACE_RETRY_DELAYS = (0.05, 0.1, 0.2, 0.4, 0.8, 1.6)
+
+
+def _replace_with_retry(temporary: Path, path: Path) -> None:
+    """Retry transient Windows sharing violations without weakening atomicity."""
+    for attempt, delay in enumerate(_WINDOWS_REPLACE_RETRY_DELAYS):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt == len(_WINDOWS_REPLACE_RETRY_DELAYS) - 1:
+                raise
+            time.sleep(delay)
 
 
 def _fresh_target(path: Path) -> Path:
@@ -39,7 +54,7 @@ def replace_json_atomic(path: Path, value: Any) -> None:
             json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )
-        temporary.replace(path)
+        _replace_with_retry(temporary, path)
     finally:
         if temporary.exists():
             temporary.unlink()
