@@ -2,7 +2,8 @@ import json
 
 import torch
 
-from prta_cxr.data.token_cache import Block8CacheIndex
+from prta_cxr.data.cache_writer import write_block8_cache
+from prta_cxr.data.token_cache import Block8CacheIndex, image_cache_key
 
 
 def test_generic_block8_cache_uses_relative_paths(tmp_path):
@@ -28,3 +29,29 @@ def test_generic_block8_cache_uses_relative_paths(tmp_path):
     )
     cache = Block8CacheIndex(tmp_path)
     assert cache.get_many(["b", "a"]).shape == (2, 197, 768)
+
+
+def test_direct_cache_round_trip_and_namespaced_key(tmp_path):
+    first = image_cache_key("mimic", "folder/image.jpg")
+    second = image_cache_key("chexpert", "folder/image.jpg")
+    assert first != second
+    inventory = [
+        {
+            "image_key": first,
+            "source": "mimic",
+            "image_path": "folder/image.jpg",
+        },
+        {
+            "image_key": second,
+            "source": "chexpert",
+            "image_path": "folder/image.jpg",
+        },
+    ]
+    features = torch.randn(2, 197, 768)
+    root = tmp_path / "cache"
+    manifest = write_block8_cache(root, inventory, features, shard_size=1)
+    assert manifest["contains_labels"] is False
+    cache = Block8CacheIndex(root)
+    loaded = cache.get_many([second, first])
+    assert loaded.dtype == torch.float16
+    assert loaded.shape == (2, 197, 768)

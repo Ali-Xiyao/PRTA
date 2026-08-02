@@ -1,4 +1,8 @@
-from _bootstrap import dispatch_gated
+from _bootstrap import dispatch
 
 if __name__ == "__main__":
-    raise SystemExit(dispatch_gated("prepare-luna-batches"))
+    raise SystemExit(
+        dispatch(
+            "prepare_luna_batches_main", module_name="prta_cxr.cli_labeling"
+        )
+    )

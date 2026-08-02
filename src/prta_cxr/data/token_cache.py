@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from collections import OrderedDict, defaultdict
 from collections.abc import Iterable
@@ -7,6 +8,15 @@ from pathlib import Path
 from typing import Any
 
 import torch
+
+
+def image_cache_key(source: object, image_path: object) -> str:
+    """Return a stable, non-identifying key for an image lineage."""
+    namespace = str(source).strip()
+    path = str(image_path).strip().replace("\\", "/")
+    if not namespace or not path:
+        raise ValueError("cache keys require non-empty source and image path")
+    return hashlib.sha256(f"{namespace}|{path}".encode()).hexdigest()
 
 
 class Block8CacheIndex:
@@ -34,6 +44,9 @@ class Block8CacheIndex:
         )
         if merged["status"] != self.required_status:
             raise ValueError("Block-8 cache does not match the required status")
+        if "parts" not in merged:
+            self._build_direct_index(merged)
+            return
         for part_entry in merged["parts"]:
             part_manifest_path = Path(part_entry["manifest_path"])
             if not part_manifest_path.is_absolute():
@@ -66,6 +79,31 @@ class Block8CacheIndex:
         if len(self.locations) != int(merged["cached_image_count"]):
             raise ValueError("merged cache count differs from indexed DICOMs")
 
+    def _build_direct_index(self, manifest: dict[str, Any]) -> None:
+        inventory_path = self.cache_root / manifest.get(
+            "inventory_path", "image_inventory.json"
+        )
+        inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+        offset = 0
+        for shard_entry in manifest["shards"]:
+            count = int(shard_entry["images"])
+            current = inventory[offset : offset + count]
+            if len(current) != count:
+                raise ValueError("cache shard exceeds direct inventory")
+            path = Path(shard_entry["path"])
+            if not path.is_absolute():
+                path = self.cache_root / path
+            for local_index, item in enumerate(current):
+                image_key = str(item["image_key"])
+                if image_key in self.locations:
+                    raise ValueError(f"duplicate cached image key: {image_key}")
+                self.locations[image_key] = (path, local_index)
+            offset += count
+        if offset != len(inventory):
+            raise ValueError("direct cache did not consume its inventory")
+        if len(self.locations) != int(manifest["cached_image_count"]):
+            raise ValueError("cache count differs from indexed image keys")
+
     def __len__(self) -> int:
         return len(self.locations)
 
@@ -82,11 +120,11 @@ class Block8CacheIndex:
             self._loaded.popitem(last=False)
         return value
 
-    def get_many(self, dicom_ids: Iterable[str]) -> torch.Tensor:
-        ids = [str(value) for value in dicom_ids]
+    def get_many(self, image_keys: Iterable[str]) -> torch.Tensor:
+        ids = [str(value) for value in image_keys]
         missing = [value for value in ids if value not in self.locations]
         if missing:
-            raise KeyError(f"{len(missing)} DICOM IDs are absent; first={missing[0]}")
+            raise KeyError(f"{len(missing)} image keys are absent; first={missing[0]}")
         grouped: dict[Path, list[tuple[int, int]]] = defaultdict(list)
         for output_index, dicom_id in enumerate(ids):
             path, local_index = self.locations[dicom_id]

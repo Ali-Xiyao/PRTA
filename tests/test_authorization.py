@@ -6,6 +6,9 @@ from prta_cxr.authorization import (
     FormalExecutionBlocked,
     require_formal_authorization,
 )
+from prta_cxr.cli import train_main
+from prta_cxr.cli_cache import cache_main
+from prta_cxr.cli_evaluate import evaluate_main
 
 
 def test_formal_requires_flag_and_exact_environment(monkeypatch):
@@ -18,3 +21,22 @@ def test_formal_requires_flag_and_exact_environment(monkeypatch):
     with pytest.raises(FormalExecutionBlocked):
         require_formal_authorization(formal_flag=False)
     require_formal_authorization(formal_flag=True)
+
+
+@pytest.mark.parametrize(
+    ("entrypoint", "arguments"),
+    (
+        (cache_main, ["--mode", "formal", "--formal"]),
+        (train_main, ["--mode", "formal", "--formal"]),
+        (
+            evaluate_main,
+            ["--mode", "formal", "--formal", "--open-internal-test"],
+        ),
+    ),
+)
+def test_formal_entrypoints_block_before_opening_inputs(
+    monkeypatch, entrypoint, arguments
+):
+    monkeypatch.delenv(FORMAL_ENV_NAME, raising=False)
+    with pytest.raises(FormalExecutionBlocked):
+        entrypoint(arguments)

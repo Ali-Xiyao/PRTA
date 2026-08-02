@@ -33,7 +33,7 @@ def build_adjacent_pairs(
     *,
     allowed_views: frozenset[str] = frozenset({"AP", "PA"}),
 ) -> list[dict[str, Any]]:
-    by_patient: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+    by_patient: dict[tuple[str, str], list[Mapping[str, Any]]] = defaultdict(list)
     for study in studies:
         missing = REQUIRED_STUDY_FIELDS - set(study)
         if missing:
@@ -43,12 +43,16 @@ def build_adjacent_pairs(
         patient = str(study["patient_id_hash"]).strip()
         if not patient:
             raise ContractError("patient_id_hash must be non-empty")
-        by_patient[patient].append(study)
+        source = str(study["source"]).strip()
+        if not source:
+            raise ContractError("source must be non-empty")
+        by_patient[(source, patient)].append(study)
 
     pairs = []
-    for patient in sorted(by_patient):
+    for source, patient in sorted(by_patient):
         ordered = sorted(
-            by_patient[patient], key=lambda row: _parse_datetime(row["datetime"])
+            by_patient[(source, patient)],
+            key=lambda row: _parse_datetime(row["datetime"]),
         )
         for prior, current in zip(ordered, ordered[1:], strict=False):
             prior_time = _parse_datetime(prior["datetime"])
@@ -56,13 +60,20 @@ def build_adjacent_pairs(
             if current_time <= prior_time:
                 raise ContractError("studies must have strictly increasing time")
             identity = "|".join(
-                (patient, str(prior["study_id"]), str(current["study_id"]))
+                (
+                    source,
+                    patient,
+                    str(prior["study_id"]),
+                    str(current["study_id"]),
+                )
             )
             pairs.append(
                 {
                     "pair_id": hashlib.sha256(identity.encode()).hexdigest()[:24],
                     "patient_id_hash": patient,
-                    "source": str(current["source"]),
+                    "source": source,
+                    "prior_image_id": str(prior.get("image_id", "")),
+                    "current_image_id": str(current.get("image_id", "")),
                     "prior_study_id": str(prior["study_id"]),
                     "current_study_id": str(current["study_id"]),
                     "prior_image_path": str(prior["image_path"]),

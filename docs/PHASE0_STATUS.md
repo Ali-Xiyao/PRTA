@@ -12,7 +12,10 @@ Decision: `HOLD_PARITY_NOT_RUN`
 - Native H0/H1 heads and PRTA core unit coverage.
 - Run receipt schema, authority hashing, no-absolute-path preflight.
 - Synthetic CPU smoke training with checkpoint receipt.
-- Default-dry-run 00-11 scripts and formal double-authorization lock.
+- Functional data, label, cache, train, and internal-evaluation entry points
+  with preflight/synthetic modes and a formal double-authorization lock.
+- Frozen BiomedCLIP Block-8 and text-cache adapters, hashed cache inventory,
+  PRTA multi-loss training, checkpoint/resume, and input-hash-bound evaluation.
 
 ## Deliberately not claimed
 
@@ -24,3 +27,15 @@ Decision: `HOLD_PARITY_NOT_RUN`
 
 Phase 1 cannot open until the user explicitly authorizes the specific parity
 inputs/run and the parity table in the supplied plan is filled with evidence.
+
+Code readiness does not remove the data gate. The exact remaining inputs and
+formal command templates are recorded in
+[TRAINING_READINESS_AND_COMMANDS_CN.md](TRAINING_READINESS_AND_COMMANDS_CN.md).
+
+## 2026-08-02 data-policy addendum
+
+The user directed the new project to retire debugging-only dataset isolation,
+reconsider all previously used datasets, and rebuild larger patient-level
+splits from scratch. The durable policy and unchanged protected boundaries are
+recorded in [DATA_REPARTITION_POLICY.md](DATA_REPARTITION_POLICY.md). This is
+implementation authority only; no real-data build or training has started.

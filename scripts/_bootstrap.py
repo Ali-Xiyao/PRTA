@@ -11,9 +11,14 @@ def _prepare() -> None:
     sys.path.insert(0, str(source))
 
 
-def dispatch(function_name: str, argv: Sequence[str] | None = None) -> int:
+def dispatch(
+    function_name: str,
+    argv: Sequence[str] | None = None,
+    *,
+    module_name: str = "prta_cxr.cli",
+) -> int:
     _prepare()
-    module = importlib.import_module("prta_cxr.cli")
+    module = importlib.import_module(module_name)
     function = getattr(module, function_name)
     return int(function(argv))
 

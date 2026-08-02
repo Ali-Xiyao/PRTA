@@ -18,6 +18,13 @@ dev = [
   "pytest>=8",
   "ruff>=0.5",
 ]
+vision = [
+  "timm>=1.0",
+  "Pillow>=10",
+  "torchvision>=0.16",
+  "open_clip_torch>=2.24",
+  "transformers>=4.40",
+]
 
 [project.scripts]
 prta-preflight = "prta_cxr.cli:preflight_main"

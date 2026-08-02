@@ -1,0 +1,40 @@
+{
+  "schema": "prta-cxr.source-catalog.v1",
+  "policy": "full-authorized-repartition-v1",
+  "debug_only_isolation_retired": true,
+  "default_split_fractions": {
+    "train": 0.8,
+    "dev": 0.1,
+    "internal_test": 0.1
+  },
+  "sources": [
+    {
+      "source_id": "mimic_cxr_jpg",
+      "patient_namespace": "mimic",
+      "manifest_env": "PRTA_MIMIC_STUDY_MANIFEST",
+      "status": "eligible_candidate",
+      "allowed_official_splits": ["train"],
+      "longitudinal_reports": true,
+      "license_verified": false,
+      "deidentified": true,
+      "processing_allowed": false
+    },
+    {
+      "source_id": "chexpert_plus",
+      "patient_namespace": "chexpert_plus",
+      "manifest_env": "PRTA_CHEXPERT_PLUS_STUDY_MANIFEST",
+      "status": "eligible_candidate",
+      "allowed_official_splits": ["train"],
+      "longitudinal_reports": true,
+      "license_verified": false,
+      "deidentified": true,
+      "processing_allowed": false
+    }
+  ],
+  "blocked_statuses": [
+    "revealed_test",
+    "protected_gold",
+    "external_confirmation",
+    "governance_hold"
+  ]
+}
