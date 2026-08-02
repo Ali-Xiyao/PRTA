@@ -699,3 +699,13 @@
   children and patched keepers are alive, current stderr logs are empty, GPU
   memory is about 4.48 GiB per device at 75/74 C, H: has 423.4 GiB free, and
   no protected outcome/protocol-freeze marker exists.
+- The 06:15 CST heartbeat found D203 at epoch 6, batch 1,700/2,868; its best
+  fixed-Dev Macro-F1 remains 0.4392 at epoch 2 and its latest completed epoch
+  scored 0.4386. At its present rate it should reach the next frozen Dev and
+  early-stopping decision in roughly 20-30 minutes. D204 is at epoch 3, batch
+  3,100/4,293 and improved its best Dev Macro-F1 to 0.4214 at epoch 2. Queue
+  state remains 2/7 complete, D203+D204 running, and 3 planned. Both training
+  children and keepers are alive, checkpoints are current, stderr logs are
+  empty, GPU memory is about 4.48 GiB per device at 78/75 C, H: has 423.4 GiB
+  free, registry state is consistent, and no protected outcome/protocol-freeze
+  marker exists.
