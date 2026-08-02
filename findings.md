@@ -464,3 +464,8 @@
   tail blocks plus trainable adapters peaked below 4 GiB reserved. Formal OOM
   risk is therefore more likely to come from loader/process behavior than the
   core model tensor graph.
+- The pending human-review roster uses `clinician_label=None`, not an empty
+  string; guards must distinguish this sentinel from an actual value. Its 250
+  sample IDs join exactly to the pre-existing Luna Silver image lineage, so a
+  label-free Gold-candidate cache can be prepared without reading senior-panel
+  outcomes or changing the main training/test cache identity.

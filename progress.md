@@ -519,3 +519,12 @@
 - Ran one synthetic GPU1 forward/backward engineering step with batch 16 and
   the real frozen BiomedCLIP tail: PASS, logits `[16,5]`, peak allocated 3.718
   GiB and reserved 3.969 GiB. It read no real outcomes and is not a paper run.
+- Registered `DEV-002` after one already-frozen Gold row was accidentally
+  re-read during a structure check; it had no scientific downstream use.
+- Formally derived a six-field, 250-row Gold-candidate cache input from the
+  pending pre-human roster and Silver image lineage. It contains zero human
+  outcomes, Luna labels, or patient identifiers; manifest hash is
+  `58551698e0bf68833c3f44edb26ba8fd7b23173f221e1bf3b4df2589709547aa`.
+- Built the independent Gold-candidate cache on GPU1: 500/500 images completed
+  while the main cache reached 65,280/146,110 images. No Gold outcome was
+  opened by the cache process.

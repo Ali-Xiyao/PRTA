@@ -19,6 +19,52 @@ SEALED_OUTCOME_FIELDS = frozenset(
 )
 
 
+def outcome_free_roster_cache_rows(
+    roster: Sequence[Mapping[str, Any]],
+    silver_rows: Sequence[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    roster_ids = [str(row["sample_id"]) for row in roster]
+    if len(roster_ids) != len(set(roster_ids)):
+        raise ContractError("cache roster sample IDs must be unique")
+    if any(
+        row.get("clinician_label") is not None
+        and str(row.get("clinician_label", "")).strip()
+        for row in roster
+    ):
+        raise ContractError("pre-freeze cache roster contains clinician outcomes")
+    if any("human_label" in row for row in roster):
+        raise ContractError("pre-freeze cache roster contains human labels")
+    silver = {str(row["sample_id"]): row for row in silver_rows}
+    if not set(roster_ids).issubset(silver):
+        raise ContractError("cache roster is not contained in Silver")
+    fields = (
+        "sample_id",
+        "source",
+        "finding",
+        "prior_image_path",
+        "current_image_path",
+    )
+    output = [
+        {
+            **{field: silver[sample_id][field] for field in fields},
+            "split": "gold_cache",
+        }
+        for sample_id in roster_ids
+    ]
+    audit = {
+        "schema": "prta-cxr.outcome-free-roster-cache.v1",
+        "status": "PASS_OUTCOME_FREE_ROSTER_CACHE_INPUT",
+        "rows": len(output),
+        "fields": sorted(output[0]),
+        "sample_ids_sha256": canonical_sha256(sorted(roster_ids)),
+        "manifest_sha256": canonical_sha256(output),
+        "contains_human_outcomes": False,
+        "contains_luna_labels": False,
+        "contains_patient_identifiers": False,
+    }
+    return output, audit
+
+
 def seal_split_surfaces(
     rows: Sequence[Mapping[str, Any]],
 ) -> tuple[

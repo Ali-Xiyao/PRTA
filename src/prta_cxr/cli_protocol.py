@@ -9,7 +9,10 @@ from prta_cxr.artifacts import write_json_atomic, write_jsonl_atomic
 from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.contracts import sha256_file
 from prta_cxr.data.manifests import read_jsonl
-from prta_cxr.data.sealing import seal_split_surfaces
+from prta_cxr.data.sealing import (
+    outcome_free_roster_cache_rows,
+    seal_split_surfaces,
+)
 from prta_cxr.quality_gate import derive_completed_human_silver_audit
 
 
@@ -88,4 +91,35 @@ def derive_silver_quality_gate_main(argv: Sequence[str] | None = None) -> int:
         raise RuntimeError("senior panel confirmation failed the Silver gate")
     write_json_atomic(args.output, result)
     print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def prepare_gold_cache_input_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Prepare outcome-free Gold-candidate image cache input"
+    )
+    parser.add_argument("--mode", choices=("preflight", "formal"), default="preflight")
+    parser.add_argument("--roster", type=Path)
+    parser.add_argument("--silver", type=Path)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--audit-output", type=Path)
+    parser.add_argument("--formal", action="store_true")
+    args = parser.parse_args(argv)
+    if args.mode == "preflight":
+        if args.formal:
+            parser.error("preflight cannot carry --formal")
+        print(json.dumps({"status": "PASS_GOLD_CACHE_INPUT_PREFLIGHT"}, indent=2))
+        return 0
+    require_formal_authorization(formal_flag=args.formal)
+    if not all((args.roster, args.silver, args.output, args.audit_output)):
+        parser.error("formal cache-input preparation requires every path")
+    rows, audit = outcome_free_roster_cache_rows(
+        read_jsonl(args.roster), read_jsonl(args.silver)
+    )
+    write_jsonl_atomic(args.output, rows)
+    audit["roster_file_sha256"] = sha256_file(args.roster)
+    audit["silver_file_sha256"] = sha256_file(args.silver)
+    audit["output_file_sha256"] = sha256_file(args.output)
+    write_json_atomic(args.audit_output, audit)
+    print(json.dumps(audit, indent=2, sort_keys=True))
     return 0

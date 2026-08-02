@@ -503,6 +503,16 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   found one unused loop index and one long line. Build the derangement map only
   for `matched_wrong`, explicitly swap image fields for reversal, format the
   two findings, and rerun before any training starts.
+- 2026-08-03: a post-authority Gold file-structure check used `Get-Content
+  -First 1` and therefore re-read one already-frozen senior-consensus outcome
+  before the new protocol-freeze stage. Register as `DEV-002`; the row did not
+  enter code, config, training, metrics, or selection. Do not read further Gold
+  content and derive any pre-freeze image cache only from an outcome-free roster.
+- 2026-08-03: the first outcome-free Gold-cache input attempt failed closed
+  because the guard converted the pending sentinel `clinician_label=None` to
+  the non-empty string `"None"`. The roster is 250/250 PENDING and contains no
+  `human_label`; accept only literal `None`/empty while continuing to reject
+  every actual clinician value, then retry without displaying labels.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
