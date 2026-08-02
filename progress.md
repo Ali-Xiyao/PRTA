@@ -307,3 +307,7 @@
   `sample_id`, or `clinician_label`. All four sheets passed rendered visual QA.
 - Human responses, deblinding, Gold freeze, split, cache, and training remain
   pending; no scientific outcome gate was opened.
+- Packaged the reviewer-facing protocol and blind workbook only as
+  `outputs/gold_human_review_20260802/PRTA_CXR_Gold_Human_Review_Package_v1.zip`
+  for direct offline handoff; no Luna mapping or project runtime artifact is
+  included.

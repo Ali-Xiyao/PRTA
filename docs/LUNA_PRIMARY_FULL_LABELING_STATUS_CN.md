@@ -34,6 +34,7 @@ Worse 23,311。Silver manifest SHA-256 为
 
 - [人工盲审规则](PRTA_CXR_Gold人工盲审规则_CN.md)
 - [250条人工盲审表](../outputs/gold_human_review_20260802/PRTA_CXR_Gold人工盲审表_v1.xlsx)
+- [可直接转交的压缩包](../outputs/gold_human_review_20260802/PRTA_CXR_Gold_Human_Review_Package_v1.zip)
 
 盲审表不包含 Luna 标签、规则标签、患者哈希或原始样本 ID。审核人员完成全部行后，
 项目侧才可按 `review_id` 解盲并冻结人工确认的 Gold。
