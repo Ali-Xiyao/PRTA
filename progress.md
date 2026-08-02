@@ -378,3 +378,7 @@
   confirmations, four corrections, zero exclusions, zero Gold/training patient
   overlap, 2,297 quarantined Silver rows, and 124,430 training-eligible Silver
   rows. The formal split/cache/training flag remains false.
+- Committed the frozen package as `25cfc91` and pushed it only to the local bare
+  remote `E:\Xiyaowang\050_VisualVIT\PRTA-CXR-local.git`; local `main` and the
+  local remote `main` were byte-identical at verification time. No cloud remote
+  exists in this clean project.
