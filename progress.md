@@ -411,3 +411,25 @@
 - A split-code inspection used two guessed legacy-style filenames that are not
   present. The file inventory identifies `src/prta_cxr/data/splitting.py` plus
   the thin `scripts/05_freeze_splits.py` entrypoint as the correct surfaces.
+- Committed the full-program authority/monitor plan as `0eb29b6` and pushed it
+  to the local-only bare remote before formal execution.
+- Formally froze `formal_program_v1/splits/full_repartition_v1.jsonl` in 22.8
+  seconds. The built-in audit passed with 32,557 patients at exact 80/10/10
+  capacities and zero patient overlap.
+- A separate full JSONL audit passed: all 124,430 input sample IDs are preserved
+  exactly once; Train/Dev/Internal-test and the 250-patient Gold set are pairwise
+  disjoint; all sources and five labels remain supported; the canonical
+  manifest hash exactly reproduces the formal audit. No GPU, cache, training,
+  or outcome read occurred.
+- Pinned the strictly loadable local BiomedCLIP assets and their hashes. Cache
+  source inspection exposed a scale blocker before GPU launch: the current CLI
+  accumulates the entire feature tensor before writing, so it is unsuitable for
+  the full manifest. No cache was started; implementation will be repaired to
+  stream/resume atomically first.
+- Implemented bounded-memory streaming cache primitives, atomic per-shard
+  state, strict resume identity, final manifest validation, CLI `--resume`, and
+  formal input/model hashes. The first focused check exposed only a missing
+  test import and two Ruff formatting findings; recorded and corrected them.
+- Focused cache tests (9), Ruff, and compileall pass after the repair. A full
+  frozen-path audit found 146,110 unique images, 12 findings, zero missing
+  image files, and an estimated 41.175 GiB/571-shard FP16 cache footprint.

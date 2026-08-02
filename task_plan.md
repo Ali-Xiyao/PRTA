@@ -308,7 +308,7 @@ Status: in progress
   never opens Internal-test/Gold before the protocol-freeze gate.
 
 ### Phase 31 - Patient-disjoint split freeze and leakage receipt
-Status: pending
+Status: complete
 
 - Formally freeze the 80/10/10 patient split from exactly 124,430 eligible
   Silver rows while keeping all 250 Gold patients and 2,297 associated Silver
@@ -381,9 +381,9 @@ Status: pending
 
 ## Next Step
 
-Complete the Phase-30 authority/readiness audit, create the 20-minute heartbeat,
-then freeze and independently validate the exact patient-disjoint split before
-any cache or GPU training starts.
+Pin and strictly load the local BiomedCLIP model root, estimate/cache storage,
+then implement resume-safe full-cache orchestration and begin the frozen
+Block-8/text cache without opening Internal-test or Gold outcomes.
 
 ## Completion record - 2026-08-03
 
@@ -443,6 +443,10 @@ any cache or GPU training starts.
   `data/splits.py`; the repository inventory shows the actual module is
   `data/splitting.py` and the script itself carries the CLI entrypoint. Inspect
   those exact files next; no execution was attempted.
+- 2026-08-03: the first focused streaming-cache test pass found one missing
+  `pytest` import plus Ruff import-order/line-length issues. The functional
+  resume round-trip passed; add the import and format the two code locations
+  before rerunning the same focused gate.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

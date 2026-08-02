@@ -6,7 +6,8 @@
 
 冻结的 148,798 条候选已经完成 Luna-primary 全量标注和 fail-closed 合并。有效的
 五分类 Luna 输出进入 Silver；`Unclear` 被单独排除。规则标签仅保留为诊断，未参与
-Silver 准入、否决或回填。训练、split、缓存、内部测试和论文结果仍未启动。
+Silver 准入、否决或回填。patient-disjoint split 已于 2026-08-03 正式冻结；缓存、
+训练、内部测试和论文结果仍未启动。
 
 | 项目 | 结果 |
 |---|---:|
@@ -33,6 +34,11 @@ Gold 行数和患者数均为 250，排除 0。两名临床资历均超过 5 年
 标签后共同形成一列共识结果；246/250（98.4%）确认 Luna，4 条被修正。该比例是
 辅助复核确认率，不是独立盲审准确率或医生间一致率。详细结果见
 [资深医生 Gold 状态](SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)。
+
+正式 split 从 124,430 条训练候选重新冻结，按患者为 Train/Dev/Internal-test 分配
+26,045 / 3,256 / 3,256 名患者，对应 91,065 / 16,666 / 16,699 行。三个 split
+两两患者交集为 0，与 250 名 Gold 患者的交集也全部为 0。split canonical SHA-256：
+`9eb2fadf8d5c568b701f6cfebd75fc06d3bd2bf3fb20f889f20f5f47cf93283b`。
 
 资深医生交付与回收材料：
 

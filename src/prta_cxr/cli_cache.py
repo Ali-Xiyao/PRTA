@@ -9,10 +9,15 @@ import torch
 
 from prta_cxr.artifacts import write_json_atomic
 from prta_cxr.authorization import require_formal_authorization
+from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.data.cache_writer import (
+    finalize_streaming_block8_cache,
+    prepare_streaming_block8_cache,
+    replace_cache_manifest,
     synthetic_block8_features,
     unique_image_inventory,
     write_block8_cache,
+    write_streaming_block8_shard,
 )
 from prta_cxr.data.token_cache import Block8CacheIndex
 
@@ -51,6 +56,7 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--shard-size", type=int, default=256)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--synthetic-count", type=int, default=4)
+    parser.add_argument("--resume", action="store_true")
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
 
@@ -78,6 +84,8 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     if args.mode == "synthetic":
         if args.formal:
             parser.error("--formal cannot be used in synthetic mode")
+        if args.resume:
+            parser.error("--resume cannot be used in synthetic mode")
         inventory = _synthetic_inventory(args.synthetic_count)
         features = synthetic_block8_features(len(inventory), seed=args.seed)
         manifest = write_block8_cache(
@@ -110,30 +118,65 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
 
     visual, encoder_receipt = load_biomedclip_visual(args.weights)
     device = torch.device(args.device)
-    features = encode_image_paths(
-        BiomedCLIPBlock8Encoder(visual),
-        (Path(row["image_path"]) for row in inventory),
-        device=device,
-        batch_size=args.batch_size,
-    )
-    manifest = write_block8_cache(
+    normalized, state = prepare_streaming_block8_cache(
         args.output,
         inventory,
-        features,
         shard_size=args.shard_size,
         encoder_receipt=encoder_receipt,
+        resume=args.resume,
     )
-    del features, visual
+    encoder = BiomedCLIPBlock8Encoder(visual)
+    while int(state["completed_images"]) < len(normalized):
+        start = int(state["completed_images"])
+        selected = normalized[start : start + args.shard_size]
+        features = encode_image_paths(
+            encoder,
+            (Path(row["image_path"]) for row in selected),
+            device=device,
+            batch_size=args.batch_size,
+        )
+        write_streaming_block8_shard(args.output, state, features)
+        del features
+    manifest = finalize_streaming_block8_cache(args.output, state)
+    del encoder, visual
     if device.type == "cuda":
         torch.cuda.empty_cache()
     from prta_cxr.vision.text_cache import write_text_cache
 
-    text_receipt = write_text_cache(
-        args.output / "text_cache.pt",
-        findings=sorted({str(row["finding"]) for row in rows}),
-        model_root=args.model_root,
-    )
-    write_json_atomic(args.output / "text_cache_receipt.json", text_receipt)
+    findings = sorted({str(row["finding"]) for row in rows})
+    text_path = args.output / "text_cache.pt"
+    text_receipt_path = args.output / "text_cache_receipt.json"
+    if text_path.exists() or text_receipt_path.exists():
+        if (
+            not args.resume
+            or not text_path.is_file()
+            or not text_receipt_path.is_file()
+        ):
+            raise FileExistsError("incomplete or unauthorized text-cache resume")
+        text_receipt = json.loads(text_receipt_path.read_text(encoding="utf-8"))
+        if text_receipt["encoder"]["weights_sha256"] != sha256_file(args.weights):
+            raise ValueError("resumed text cache uses different visual/text weights")
+        if int(text_receipt["findings"]) != len(findings):
+            raise ValueError("resumed text cache uses a different finding set")
+        if int(text_receipt["transition_prototypes"]) != 5 * len(findings):
+            raise ValueError("resumed text cache has incomplete prototypes")
+    else:
+        text_receipt = write_text_cache(
+            text_path,
+            findings=findings,
+            model_root=args.model_root,
+        )
+        write_json_atomic(text_receipt_path, text_receipt)
     manifest["text_cache"] = text_receipt
+    manifest["formal_input"] = {
+        "sample_manifest_sha256": canonical_sha256(rows),
+        "sample_manifest_file_sha256": sha256_file(args.pair_manifest),
+        "model_config_sha256": sha256_file(
+            args.model_root / "open_clip_config.json"
+        ),
+        "weights_sha256": sha256_file(args.weights),
+    }
+    replace_cache_manifest(args.output, manifest)
+    Block8CacheIndex(args.output)
     print(json.dumps(manifest, indent=2, sort_keys=True))
     return 0

@@ -29,7 +29,8 @@ The 250-row senior-physician Luna-assisted panel review is also complete:
 246/250 Luna labels were confirmed, four were corrected, and all 250 decisive
 consensus labels are frozen as patient-quarantined Gold. See the
 [senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md).
-Split freeze, caching, training, and internal testing remain separately gated.
+The new patient-disjoint split is now frozen and independently audited. Full
+caching, training, and internal testing remain sequentially gated.
 
 ## Start here
 

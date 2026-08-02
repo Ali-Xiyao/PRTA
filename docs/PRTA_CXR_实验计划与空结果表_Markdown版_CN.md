@@ -61,7 +61,7 @@ PRIOR 干预 + 时间反转 + 校准 + 亚组 + 可视化
 | Phase | 工作包 | 计划任务数 | 负责人 | 计划完成 | 当前状态 | 完成率 | 出口门 | 阶段决策 | 证据/报告 |
 |---|---|---:|---|---|---|---:|---|---|---|
 | Phase 0 | 新项目重构与 Parity | 10 |  |  |  |  | Parity / Tests / Leakage |  |  |
-| Phase 1 | 数据扩展、Luna 标签与临床抽检 | 12 |  |  |  |  | 标签质量门 |  |  |
+| Phase 1 | 数据扩展、Luna 标签、临床抽检与冻结划分 | 12 | 12 | 0 | 0 | 100% | PASS | 完成 | `formal_program_v1/splits/full_repartition_v1.audit.json` |
 | Phase 2 | 主方法性能开发 | 13 |  |  |  |  | Dev 出口门 |  |  |
 | Phase 3 | 正式协议冻结 | 5 |  |  |  |  | Freeze Receipt |  |  |
 | Phase 4 | 正式 Baseline | 5 |  |  |  |  | 三 Seed 完成 |  |  |
@@ -208,7 +208,7 @@ Silver。
 | L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  | 完成 | 2026-08-03 | Luna full config + Gold audit | L108 | PASS | 未修改prompt |  |
 | L110 | 按冻结版本全量重跑 | 不得逐行人工修补 | P0 |  |  | N/A | 2026-08-03 | 原L106保持冻结 | L109 | 无需重跑 | 质量门通过 |  |
 | L111 | 排除历史 Test/Audit/Gold | 排除 manifest hash | P0 |  |  | 完成 | 2026-08-03 | `review/luna_primary_training_eligible.jsonl` | L109 | PASS | 2,297行隔离 | 124,430训练候选 |
-| L112 | 患者级冻结 Train/Dev/Test | Patient overlap = 0 | P0 |  |  |  |  |  | L111 |  |  |  |
+| L112 | 患者级冻结 Train/Dev/Test | Patient overlap = 0 | P0 |  |  | 完成 | 2026-08-03 | `formal_program_v1/splits/full_repartition_v1.audit.json` | L111 | PASS | Gold overlap=0 | 26,045/3,256/3,256患者 |
 
 ## 3.3 独立交集 Silver Pilot 确认
 
@@ -955,12 +955,12 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | 检查 | Train | Dev | Internal Test | Audit | Expert Gold | 是否通过 | 证据 |
 |---|---:|---:|---:|---:|---:|---|---|
-| 患者数 |  |  |  |  |  |  |  |
-| 与 Train 重叠 | — |  |  |  |  |  |  |
-| 与 Dev 重叠 |  | — |  |  |  |  |  |
-| 与 Internal Test 重叠 |  |  | — |  |  |  |  |
-| 与 Audit 重叠 |  |  |  | — |  |  |  |
-| 与 Expert Gold 重叠 |  |  |  |  | — |  |  |
+| 患者数 | 26,045 | 3,256 | 3,256 | N/A（与Gold同一roster） | 250 | PASS | split audit + senior Gold audit |
+| 与 Train 重叠 | — | 0 | 0 | N/A | 0 | PASS | independent full JSONL audit |
+| 与 Dev 重叠 | 0 | — | 0 | N/A | 0 | PASS | independent full JSONL audit |
+| 与 Internal Test 重叠 | 0 | 0 | — | N/A | 0 | PASS | independent full JSONL audit |
+| 与 Audit 重叠 | N/A | N/A | N/A | — | 与Gold同一roster | N/A | 本轮250条审核直接冻结为Gold |
+| 与 Expert Gold 重叠 | 0 | 0 | 0 | 与Audit同一roster | — | PASS | independent full JSONL audit |
 
 ## 13.3 协议偏差登记
 

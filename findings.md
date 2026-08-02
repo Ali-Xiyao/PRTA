@@ -368,3 +368,26 @@
   document's H2 screening head; the one training config is fixed to seed 17,
   H0, Weighted-CE-like default loss, 20 epochs, and one adapter scope. It cannot
   represent the required development/formal matrix without code/config work.
+- Formal split `full_repartition_v1` completed from commit `0eb29b6` over the
+  exact 124,430-row training-eligible manifest. Patient capacities are exactly
+  26,045 Train, 3,256 Dev, and 3,256 Internal-test (80/10/10 by patient), with
+  91,065 / 16,666 / 16,699 rows respectively.
+- Independent re-read proved full sample-ID conservation, 124,430 unique IDs,
+  zero duplicates, zero Train/Dev/Internal-test patient overlap, and zero
+  overlap between every split and all 250 Gold patients. Every split contains
+  both sources and all five labels. Canonical split hash is
+  `9eb2fadf8d5c568b701f6cfebd75fc06d3bd2bf3fb20f889f20f5f47cf93283b`;
+  output file SHA-256 is `3901895d927ee8de614545086ddb70e817a38d6c1c80c47a4dc51b2bf8583ea7`.
+- The exact local BiomedCLIP root is
+  `H:\.cache\modelscope\hub\models\microsoft\BiomedCLIP-PubMedBERT_256-vit_base_patch16_224`.
+  Config SHA-256 is `9a41f334a8c444678772c0ebb9ab854c97ab350bced3a17b803e258d39c23dc0`;
+  visual weights SHA-256 is
+  `52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be`.
+- The current formal cacher is not full-scale safe: it materializes every
+  unique image's `[197,768]` float32 feature tensor in GPU/host memory before
+  writing any shard. At only 100k images this is about 60.5 GB float32, and a
+  crash loses all work. Phase 32 therefore requires streaming, atomic shards,
+  resumable completion, and an independent manifest audit before launch.
+- The frozen split references 146,110 unique images across 124,430 rows and 12
+  findings. All image paths exist. A full FP16 Block-8 cache is estimated at
+  41.175 GiB across 571 shards of 256 images, safely below current H: capacity.

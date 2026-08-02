@@ -1,8 +1,14 @@
 import json
 
+import pytest
 import torch
 
-from prta_cxr.data.cache_writer import write_block8_cache
+from prta_cxr.data.cache_writer import (
+    finalize_streaming_block8_cache,
+    prepare_streaming_block8_cache,
+    write_block8_cache,
+    write_streaming_block8_shard,
+)
 from prta_cxr.data.token_cache import Block8CacheIndex, image_cache_key
 
 
@@ -55,3 +61,69 @@ def test_direct_cache_round_trip_and_namespaced_key(tmp_path):
     loaded = cache.get_many([second, first])
     assert loaded.dtype == torch.float16
     assert loaded.shape == (2, 197, 768)
+
+
+def test_streaming_cache_resumes_without_rewriting_completed_shards(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("mimic", f"image-{index}.jpg"),
+            "source": "mimic",
+            "image_path": f"image-{index}.jpg",
+        }
+        for index in range(5)
+    ]
+    root = tmp_path / "streaming"
+    normalized, state = prepare_streaming_block8_cache(
+        root,
+        inventory,
+        shard_size=2,
+        encoder_receipt={"weights_sha256": "a" * 64},
+        resume=False,
+    )
+    assert normalized == inventory
+    write_streaming_block8_shard(root, state, torch.randn(2, 197, 768))
+    first_hash = state["shards"][0]["sha256"]
+
+    normalized, state = prepare_streaming_block8_cache(
+        root,
+        inventory,
+        shard_size=2,
+        encoder_receipt={"weights_sha256": "a" * 64},
+        resume=True,
+    )
+    assert state["completed_images"] == 2
+    write_streaming_block8_shard(root, state, torch.randn(2, 197, 768))
+    write_streaming_block8_shard(root, state, torch.randn(1, 197, 768))
+    manifest = finalize_streaming_block8_cache(root, state)
+    assert manifest["resume_safe"] is True
+    assert manifest["cached_image_count"] == 5
+    assert manifest["shards"][0]["sha256"] == first_hash
+    cache = Block8CacheIndex(root)
+    assert len(cache) == 5
+
+
+def test_streaming_cache_resume_rejects_inventory_change(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("mimic", "one.jpg"),
+            "source": "mimic",
+            "image_path": "one.jpg",
+        }
+    ]
+    root = tmp_path / "streaming"
+    prepare_streaming_block8_cache(
+        root,
+        inventory,
+        shard_size=1,
+        encoder_receipt={"weights_sha256": "b" * 64},
+        resume=False,
+    )
+    changed = [dict(inventory[0], image_path="changed.jpg")]
+    with pytest.raises(ValueError, match="identity mismatch"):
+        prepare_streaming_block8_cache(
+            root,
+            changed,
+            shard_size=1,
+            encoder_receipt={"weights_sha256": "b" * 64},
+            resume=True,
+        )

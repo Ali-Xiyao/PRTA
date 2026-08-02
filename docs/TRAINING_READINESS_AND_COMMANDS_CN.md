@@ -1,6 +1,6 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`LUNA_PRIMARY_AND_GOLD_COMPLETE__SPLIT_CACHE_TRAIN_HOLD`
+状态：`LUNA_PRIMARY_GOLD_AND_SPLIT_COMPLETE__CACHE_TRAIN_HOLD`
 
 日期：2026-08-03
 
@@ -10,11 +10,11 @@
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
 资深医生 Gold 门已完成：250 条全部为明确五分类，246 条确认 Luna、4 条修正，
 Gold 与训练候选患者交集为 0。现在仍不能理解为“插入 GPU 就会自动开始训练”，
-首次正式训练前还必须完成：
+正式 split 已完成并通过独立泄漏复算。首次正式训练前还必须完成：
 
-1. 从 124,430 条合规训练候选重新冻结 patient-disjoint 80/10/10 split；
-2. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
-3. 用户单独授权具体的缓存或训练运行。
+1. 使用已钉住的本地 BiomedCLIP 生成新的 Block-8 与文本缓存；
+2. 完成缓存哈希、形状、有限值和样本覆盖审计；
+3. 按正式 Run Registry 启动仅使用 Train/Dev 的开发训练。
 
 当前真实数据证据、计数和哈希见
 [真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
@@ -124,7 +124,12 @@ python scripts/04e_prepare_gold_audit_roster.py --mode formal --formal `
   --roster-size 250
 ```
 
-### 3. 从头冻结新 split
+### 3. 从头冻结新 split（已完成）
+
+正式结果：Train/Dev/Internal-test 患者数为 26,045 / 3,256 / 3,256，行数为
+91,065 / 16,666 / 16,699；三者及 250 名 Gold 患者之间交集均为 0。canonical
+manifest SHA-256 为
+`9eb2fadf8d5c568b701f6cfebd75fc06d3bd2bf3fb20f889f20f5f47cf93283b`。
 
 ```powershell
 python scripts/05_freeze_splits.py --mode formal --formal `
@@ -191,7 +196,7 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
   `Unclear` 排除；250 条人工审核/Gold 候选 roster 已生成；
 - 已完成两名 >5 年资历医生的 Luna 辅助单列共识复核：250 条 Gold，246 条确认、
   4 条修正、排除 0；2,297 条 roster 患者相关 Silver 继续隔离；
-- split 和缓存尚未启动；
+- split 已冻结并独立审计；缓存尚未启动；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
 - pilot 数字仅用于工程与流程决策，不是论文科学结论。
