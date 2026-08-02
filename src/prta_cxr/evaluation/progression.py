@@ -557,6 +557,20 @@ def hierarchical_patient_bootstrap(
                 "point": point[left] - point[right],
                 "point_pp": 100.0 * (point[left] - point[right]),
                 "interval": interval(contrast_samples[name]),
+                "empirical_two_sided_p": (
+                    None
+                    if not inference_valid
+                    else min(
+                        1.0,
+                        2.0
+                        * min(
+                            (sum(value <= 0 for value in contrast_samples[name]) + 1)
+                            / (valid + 1),
+                            (sum(value >= 0 for value in contrast_samples[name]) + 1)
+                            / (valid + 1),
+                        ),
+                    )
+                ),
             }
             for name, (left, right) in contrasts.items()
         },

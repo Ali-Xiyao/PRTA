@@ -482,3 +482,9 @@
   because B/A rows are added as those runs finish. The protocol instead freezes
   every config hash and the registry path; the outcome-session marker then
   binds the completed registry SHA-256 immediately before opening outcomes.
+- Formal significance reporting is now fully paired at the patient level.
+  B401-B404 and all seven PRTA input conditions must have identical patient,
+  observation, target, and patient-weight layouts for every seed or the audit
+  fails closed. The frozen protocol supplies 10,000 hierarchical replicates;
+  empirical two-sided contrast p-values are corrected together with
+  Benjamini-Hochberg.

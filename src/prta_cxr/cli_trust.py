@@ -8,8 +8,11 @@ from pathlib import Path
 
 from prta_cxr.artifacts import write_json_atomic
 from prta_cxr.authorization import require_formal_authorization
+from prta_cxr.contracts import PROGRESSION_LABELS
 from prta_cxr.data.manifests import read_jsonl
+from prta_cxr.evaluation.progression import hierarchical_patient_bootstrap
 from prta_cxr.evaluation.reporting import (
+    benjamini_hochberg,
     intervention_comparison,
     prediction_summary,
     subgroup_summary,
@@ -75,6 +78,102 @@ def trust_audits_main(argv: Sequence[str] | None = None) -> int:
             interventions[comparison_key] = intervention_comparison(
                 conditions["true"], rows
             )
+    protocol = json.loads(
+        Path(freeze["input_paths"]["protocol_config"]).read_text(encoding="utf-8")
+    )
+    bootstrap_config = protocol["bootstrap"]
+
+    def bootstrap_rows(system_rows):
+        output = []
+        for system, seed, rows in system_rows:
+            patient_sizes = defaultdict(int)
+            for row in rows:
+                patient_sizes[str(row["patient_id"])] += 1
+            for row in rows:
+                output.append(
+                    {
+                        "system": system,
+                        "training_seed": seed,
+                        "derangement_id": 0,
+                        "patient_id": str(row["patient_id"]),
+                        "observation_id": str(row["observation_id"]),
+                        "target": str(row["target"]),
+                        "prediction": str(row["prediction"]),
+                        "weight": 1.0 / patient_sizes[str(row["patient_id"])],
+                    }
+                )
+        return output
+
+    main_systems = ("B401", "B402", "B403", "B404")
+    seeds = (17, 29, 43)
+    main_blocks = []
+    for system in main_systems:
+        for seed in seeds:
+            rows = grouped.get((system, seed, "internal_test"), {}).get("true")
+            if rows is None:
+                raise ValueError(f"main bootstrap block missing: {system}/{seed}")
+            main_blocks.append((system, seed, rows))
+    main_bootstrap = hierarchical_patient_bootstrap(
+        bootstrap_rows(main_blocks),
+        labels=tuple(PROGRESSION_LABELS),
+        systems=main_systems,
+        seeds=seeds,
+        derangements=(0,),
+        contrasts={
+            "B404_minus_B401": ("B404", "B401"),
+            "B404_minus_B402": ("B404", "B402"),
+            "B404_minus_B403": ("B404", "B403"),
+        },
+        replicates=int(bootstrap_config["replicates"]),
+        rng_seed=int(bootstrap_config["rng_seed"]),
+        minimum_valid_fraction=float(bootstrap_config["minimum_valid_fraction"]),
+    )
+    intervention_names = (
+        "true",
+        "current_only",
+        "null",
+        "random",
+        "matched_wrong",
+        "reversed",
+        "wrong_finding_query",
+    )
+    intervention_blocks = []
+    for condition in intervention_names:
+        for seed in seeds:
+            rows = grouped.get(("B404", seed, "internal_test"), {}).get(condition)
+            if rows is None:
+                raise ValueError(
+                    f"intervention bootstrap block missing: {condition}/{seed}"
+                )
+            intervention_blocks.append((condition, seed, rows))
+    intervention_bootstrap = hierarchical_patient_bootstrap(
+        bootstrap_rows(intervention_blocks),
+        labels=tuple(PROGRESSION_LABELS),
+        systems=intervention_names,
+        seeds=seeds,
+        derangements=(0,),
+        contrasts={
+            f"true_minus_{condition}": ("true", condition)
+            for condition in intervention_names
+            if condition != "true"
+        },
+        replicates=int(bootstrap_config["replicates"]),
+        rng_seed=int(bootstrap_config["rng_seed"]) + 1,
+        minimum_valid_fraction=float(bootstrap_config["minimum_valid_fraction"]),
+    )
+    p_values = {
+        f"main:{name}": value["empirical_two_sided_p"]
+        for name, value in main_bootstrap["contrasts"].items()
+    }
+    p_values.update(
+        {
+            f"intervention:{name}": value["empirical_two_sided_p"]
+            for name, value in intervention_bootstrap["contrasts"].items()
+        }
+    )
+    adjusted = benjamini_hochberg(
+        {key: value for key, value in p_values.items() if value is not None}
+    )
     result = {
         "schema": "prta-cxr.trust-audit.v1",
         "status": "PASS_TRUST_AUDITS_FINISHED",
@@ -82,6 +181,15 @@ def trust_audits_main(argv: Sequence[str] | None = None) -> int:
         "summaries": summaries,
         "interventions": interventions,
         "subgroups": subgroups,
+        "bootstrap": {
+            "main_methods": main_bootstrap,
+            "interventions": intervention_bootstrap,
+        },
+        "multiple_comparison": {
+            "method": "benjamini_hochberg",
+            "raw_p": p_values,
+            "adjusted_p": adjusted,
+        },
         "protocol_freeze_sha256": validate_protocol_freeze(
             freeze, receipt_path=args.protocol_freeze
         )["receipt_file_sha256"],

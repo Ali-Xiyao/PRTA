@@ -521,6 +521,10 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   the newer `np.trapezoid` alias; use compatible `np.trapz` with identical
   trapezoidal AURC semantics. Wrap two 89-90 character lines and rerun; no
   formal prediction or outcome was opened.
+- 2026-08-03: the first focused hierarchical-bootstrap lint pass found two
+  89-93 character lines after applying two automatic formatting fixes. Wrap
+  only those expressions and rerun the unchanged focused lint/test gate; no
+  experiment, outcome, or runtime artifact was touched.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

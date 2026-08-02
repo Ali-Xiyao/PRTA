@@ -555,3 +555,11 @@
   six PRTA interventions, and forbids a changed restart.
 - Full gates pass 98 tests. Main cache is 90,368/146,110 images (353 shards,
   61.85%); development remains 0/7 behind the cache/store gate.
+- Completed the formal bootstrap/significance surface: four main methods and
+  seven PRTA input conditions are evaluated as fully crossed patient-weighted
+  blocks across seeds 17/29/43, using the frozen 10,000-replicate protocol,
+  empirical two-sided p-values, and a joint Benjamini-Hochberg correction.
+- Full repository gates now pass 99 tests, Ruff, compileall, and diff checks.
+  The main cache remains healthy at 98,048/146,110 images (383 atomic shards,
+  67.11%); both cache and queue-keeper stderr files are empty, and training
+  remains 0/7 behind the cache/training-store gate.
