@@ -469,3 +469,8 @@
   sample IDs join exactly to the pre-existing Luna Silver image lineage, so a
   label-free Gold-candidate cache can be prepared without reading senior-panel
   outcomes or changing the main training/test cache identity.
+- Deterministic retraining of the same PRTA config/seed after Dev selection
+  would reproduce the same checkpoint while doubling compute. The formal
+  matrix therefore records B404/A500 aliases to the three already-confirmed
+  PRTA runs, while every distinct baseline and one-component ablation receives
+  its own run. This preserves equal frozen budgets without duplicate science.

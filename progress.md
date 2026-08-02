@@ -528,3 +528,13 @@
 - Built the independent Gold-candidate cache on GPU1: 500/500 images completed
   while the main cache reached 65,280/146,110 images. No Gold outcome was
   opened by the cache process.
+- Gold-candidate cache fully closed with 500 images, 2 verified shards, 11
+  finding embeddings, and `PASS_PRTA_CXR_BLOCK8_CACHE`; its process exited with
+  empty stderr.
+- Implemented the final Dev baseline gate and formal matrix preparation. GO
+  requires mean three-seed F1 >=0.52, Seed-17 gain >=3pp over the strongest
+  temporal baseline, mean min recall >=0.20, non-worse ODER, positive prior
+  gaps, no seed below 0.48, and <=0.10 seed range. HOLD/STOP fail closed.
+- A GO gate will generate 9 B401-B403 runs and 18 A501-A506 runs. B404/A500
+  alias the identical frozen PRTA three-seed checkpoints; B405/A507 are explicit
+  N/A. Full gates now pass 91 tests, Ruff, compileall, and diff checks.
