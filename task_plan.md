@@ -585,6 +585,10 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   leave the last running stage in `program_state.json`, making monitoring
   ambiguous. Add an atomic `HOLD_PROGRAM_ERROR` state with error type/message,
   then restart only the still-waiting program keeper from the new commit.
+- 2026-08-03: a continuation probe used the obsolete shorthand cache path
+  `cache/block8_v1` and returned a read-only path-not-found error. Recovered the
+  exact live path from PID 30444's command line as `cache/full_repartition_v1`;
+  no process or artifact was changed.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

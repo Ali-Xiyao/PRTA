@@ -591,3 +591,10 @@
   `WAITING_INITIAL_DEVELOPMENT_QUEUE`, it points to the frozen senior-consensus
   Gold JSONL and local hashed Qwen assets, and both stdout/stderr are empty. It
   is waiting on the existing PID 25716 rather than launching a duplicate queue.
+- Live continuation audit at 2026-08-03 02:44 CST confirmed all 146,110 images
+  are present in 571 atomic Block-8 shards. Cache PID 30444 remains healthy
+  during full-shard validation (CPU advanced by 58.8 seconds over 41 seconds,
+  working set about 1.14 GiB, stderr empty); the manifest/text-cache gate has
+  not yet closed. Development keeper PID 25716 and formal keeper PID 40932 are
+  both alive, the frozen initial queue remains 0/7, both GPUs are idle, and H:
+  retains 466.9 GiB free for the planned 41.175 GiB contiguous training store.
