@@ -675,3 +675,11 @@
   relevant stderr logs are empty, GPU memory is about 4.48 GiB per device,
   temperatures are 56/74 C, H: has 424.0 GiB free, and no protected marker
   exists.
+- The 05:15 CST heartbeat found D203 at epoch 3, batch 400/2,868 with best
+  fixed-Dev Macro-F1 0.4392 at epoch 2. D204 is at epoch 1, batch 2,000/4,293
+  with best fixed-Dev Macro-F1 0.4135 after epoch 0. Both atomic best
+  checkpoints exist; neither run has reached its frozen early-stopping close.
+  Queue state remains 2/7 complete, D203+D204 running, and 3 planned. Both
+  training children and the patched keepers are alive, all relevant stderr
+  logs remain empty, GPU memory is about 4.48 GiB per device at 78/76 C, H:
+  has 423.4 GiB free, and protected outcome/protocol-freeze markers are absent.
