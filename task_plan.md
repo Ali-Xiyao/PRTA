@@ -589,6 +589,10 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   `cache/block8_v1` and returned a read-only path-not-found error. Recovered the
   exact live path from PID 30444's command line as `cache/full_repartition_v1`;
   no process or artifact was changed.
+- 2026-08-03: the first heartbeat status probe piped directly from a completed
+  PowerShell `foreach` block and hit an empty-pipe parser error before reading
+  runtime state. Collected rows into an explicit array and reran the same
+  read-only audit successfully; no experiment process or artifact was touched.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
