@@ -520,3 +520,10 @@
   only `STILL_ACTIVE` as alive, with a regression test that keeps the child
   handle open after termination. This preserves queue identities while safely
   releasing a GPU for the next planned run.
+- Windows can also transiently deny `os.replace` on a mutable JSON state file
+  even when the writer owns the temporary file. The initial queue keeper hit
+  WinError 5 while replacing `scheduler_state.json`; the queue and both active
+  training children remained intact. Mutable-state replacement now retries a
+  bounded 3.15-second exponential schedule while preserving the same atomic
+  replace operation and still raises after exhaustion. A regression test
+  forces two sharing violations before success.

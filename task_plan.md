@@ -602,6 +602,12 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   a PowerShell `foreach` block and failed before output. Reused the documented
   explicit-array pattern on the next read-only probe; runtime state was not
   affected.
+- 2026-08-03: the patched queue keeper later exited on transient WinError 5
+  while atomically replacing `scheduler_state.json`. Both training children
+  and the queue manifest remained healthy. Added bounded retry around the same
+  atomic replace primitive, verified the full suite, and restarted only the
+  two operational keepers from the new commit without changing experiment
+  identity, method, seed, data, or budget.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

@@ -730,3 +730,15 @@
   current, active stderr logs are empty, GPU memory is about 4.48 GiB per
   device at 75/57 C, H: has 423.4 GiB free, and protected outcome/protocol-
   freeze markers remain absent.
+- The 07:15 CST audit found that the queue keeper had exited at 07:09:26 after
+  a transient Windows WinError 5 while atomically replacing only
+  `scheduler_state.json`; D204 and D205 continued training normally, and the
+  queue manifest was not damaged. Added bounded PermissionError retries to
+  mutable JSON atomic replacement, with 110 tests, Ruff, and compileall all
+  passing. After commit `8a6eef9`, both operational keepers were restarted
+  against the unchanged queue as PIDs 27740 and 38596; their stderr logs are
+  empty and both report 3/7 complete with D204+D205 running. No training child,
+  data identity, seed, method, or budget changed. At inspection D204 was at
+  epoch 5, batch 3,400/4,293 with best Dev Macro-F1 0.4331 at epoch 4; D205 was
+  at epoch 1, batch 3,100/5,692 with first-pass Dev Macro-F1 0.4112. Protected
+  outcomes remain sealed.
