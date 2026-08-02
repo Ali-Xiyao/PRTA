@@ -200,6 +200,7 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch-dir", type=Path)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--receipt-output", type=Path)
+    parser.add_argument("--preparation-receipt", type=Path)
     parser.add_argument("--prompt", type=Path, default=DEFAULT_PROMPT)
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
@@ -207,6 +208,8 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--timeout-seconds", type=int, default=600)
+    parser.add_argument("--max-attempts", type=int, default=3)
+    parser.add_argument("--retry-delay-seconds", type=float, default=2.0)
     parser.add_argument("--max-batches", type=int)
     parser.add_argument("--start-batch", type=int, default=0)
     parser.add_argument("--formal", action="store_true")
@@ -258,6 +261,22 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     config = _require_execution_enabled(
         args.config, scope=args.scope, row_count=authority_row_count
     )
+    expected_candidate_hash = config.get("candidate_manifest_sha256")
+    if expected_candidate_hash:
+        if args.preparation_receipt is None:
+            raise FormalExecutionBlocked(
+                "config-pinned candidate hash requires --preparation-receipt"
+            )
+        preparation = json.loads(
+            args.preparation_receipt.read_text(encoding="utf-8")
+        )
+        batch_receipt = preparation.get("batch_receipt", {})
+        if batch_receipt.get("candidate_manifest_sha256") != expected_candidate_hash:
+            raise FormalExecutionBlocked("candidate manifest hash mismatch")
+        if batch_receipt.get("samples") != authority_row_count:
+            raise FormalExecutionBlocked("candidate row count mismatch")
+        if config.get("full_candidate_rows") != authority_row_count:
+            raise FormalExecutionBlocked("configured full candidate count mismatch")
     if args.model != config.get("model"):
         raise FormalExecutionBlocked(
             "requested model does not match the independent-label config"
@@ -275,6 +294,10 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
             )
     if args.timeout_seconds < 1:
         parser.error("timeout-seconds must be positive")
+    if args.max_attempts < 1:
+        parser.error("max-attempts must be positive")
+    if args.retry_delay_seconds < 0:
+        parser.error("retry-delay-seconds must be non-negative")
     if args.output_dir.exists() and not args.resume:
         raise FileExistsError(f"refusing existing output dir: {args.output_dir}")
     args.output_dir.mkdir(parents=True, exist_ok=args.resume)
@@ -297,38 +320,40 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
         if not reused:
             started_at = datetime.now(UTC).isoformat()
             started_clock = time.perf_counter()
-            temporary = output.with_name(f".{output.name}.tmp.{os.getpid()}")
             external_batch = externalize_independent_batch(batch)
             payload = (
                 prompt
                 + "\n\nINPUT_BATCH_JSON:\n"
                 + json.dumps(external_batch, ensure_ascii=False)
             )
-            command = luna_command(
-                model=args.model, schema=args.schema, output=temporary
-            )
-            try:
-                completed = subprocess.run(
-                    command,
-                    input=payload,
-                    text=True,
-                    check=False,
-                    capture_output=True,
-                    encoding="utf-8",
-                    errors="replace",
-                    timeout=args.timeout_seconds,
+            attempt_errors = []
+            for attempt in range(1, args.max_attempts + 1):
+                temporary = output.with_name(
+                    f".{output.name}.tmp.{os.getpid()}.{attempt}"
                 )
-                if completed.returncode != 0:
-                    raise RuntimeError(
-                        f"independent AI batch failed: {batch_path.name}; "
-                        f"exit={completed.returncode}; "
-                        f"stderr_tail={completed.stderr[-500:]!r}"
-                    )
+                command = luna_command(
+                    model=args.model, schema=args.schema, output=temporary
+                )
                 try:
+                    completed = subprocess.run(
+                        command,
+                        input=payload,
+                        text=True,
+                        check=False,
+                        capture_output=True,
+                        encoding="utf-8",
+                        errors="replace",
+                        timeout=args.timeout_seconds,
+                    )
+                    if completed.returncode != 0:
+                        raise RuntimeError(
+                            f"exit={completed.returncode}; "
+                            f"stderr_tail={completed.stderr[-500:]!r}"
+                        )
                     rows = load_independent_ai_output(temporary)
                     if {row["sample_id"] for row in rows} != expected_external:
                         raise RuntimeError(
-                            f"independent AI IDs mismatch for {batch_path.name}"
+                            "external sample IDs are incomplete or mismatched"
                         )
                     restored = [
                         row | {"sample_id": sample_id_map[row["sample_id"]]}
@@ -345,25 +370,36 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
                         + "\n",
                         encoding="utf-8",
                     )
-                except Exception:
+                    temporary.replace(output)
+                    timing = {
+                        "started_at_utc": started_at,
+                        "completed_at_utc": datetime.now(UTC).isoformat(),
+                        "elapsed_seconds": round(
+                            time.perf_counter() - started_clock, 3
+                        ),
+                        "attempts_used": attempt,
+                        "failed_attempts": attempt - 1,
+                    }
+                    write_json_atomic(timing_receipt, timing)
+                    break
+                except Exception as error:
+                    attempt_errors.append(str(error))
                     failed = output.with_name(
-                        f".{output.name}.failed.{os.getpid()}.json"
+                        f".{output.name}.failed.{os.getpid()}."
+                        f"{time.time_ns()}.json"
                     )
                     if temporary.exists():
                         temporary.replace(failed)
-                    raise
-                temporary.replace(output)
-                timing = {
-                    "started_at_utc": started_at,
-                    "completed_at_utc": datetime.now(UTC).isoformat(),
-                    "elapsed_seconds": round(
-                        time.perf_counter() - started_clock, 3
-                    ),
-                }
-                write_json_atomic(timing_receipt, timing)
-            finally:
-                if temporary.exists():
-                    temporary.unlink()
+                    if attempt == args.max_attempts:
+                        raise RuntimeError(
+                            f"independent AI batch failed after "
+                            f"{args.max_attempts} attempts: {batch_path.name}; "
+                            f"last_error={attempt_errors[-1]}"
+                        ) from error
+                    time.sleep(args.retry_delay_seconds)
+                finally:
+                    if temporary.exists():
+                        temporary.unlink()
         else:
             rows = load_independent_ai_output(output)
             timing = (

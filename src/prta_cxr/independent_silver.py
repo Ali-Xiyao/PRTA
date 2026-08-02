@@ -137,6 +137,11 @@ def externalize_independent_batch(batch: Mapping[str, Any]) -> dict[str, Any]:
         raise ContractError("independent AI items must be objects")
     if any(set(item) != EXTERNAL_ITEM_FIELDS for item in items):
         raise ContractError("independent AI external item fields changed")
+    identifiers = [item["sample_id"] for item in items]
+    if len(identifiers) != len(set(identifiers)):
+        raise ContractError("duplicate alias in independent AI input batch")
+    if canonical_sha256(items) != batch.get("input_sha256"):
+        raise ContractError("independent AI input batch hash mismatch")
     return {key: value for key, value in batch.items() if key != "sample_id_map"}
 
 

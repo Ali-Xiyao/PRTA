@@ -170,20 +170,26 @@ PRTA-CXR/
 
 ---
 
-# 3. Phase 1：数据扩展、独立交集 Silver 与临床抽检
+# 3. Phase 1：数据扩展、Luna-primary Silver 与临床抽检
 
 ## 3.1 简单说明
 
-规则程序先在本地产生候选标签；AI 在看不到规则标签的前提下，只读取目标 finding 和前后报告，独立输出五类之一或 `Unclear`。代码只把非 `Unclear` 且与规则完全一致的样本纳入 Silver；不一致和 `Unclear` 直接排除。AI 不输出理由、置信度或证据引用。
+规则程序负责配对、finding 候选、否定/不确定性与结构过滤；Luna 看不到规则五分类，
+只读取目标 finding 和前后报告，独立输出五类之一或 `Unclear`。代码把所有结构合法
+且非 `Unclear` 的 Luna 结果纳入 Silver；规则标签只用于诊断，不否决或覆盖 Luna。
+Luna 不输出理由、置信度或证据引用。
 
 固定输出状态：
 
-- **Silver**：`rule_label == ai_label` 且 AI 非 `Unclear`，进入训练候选；
-- **Excluded-mismatch**：规则与 AI 不一致，不进入训练；
-- **Excluded-unclear**：AI 输出 `Unclear`，不进入训练。
+- **Silver**：Luna 输出五个明确类别之一且结构/ID 合法，进入训练候选；
+- **Diagnostic-mismatch**：规则与 Luna 不一致，只统计，不改变 Silver 准入；
+- **Excluded-unclear**：Luna 输出 `Unclear`，不进入训练；
+- **Invalid**：缺行、重复 ID、未知标签或额外字段，有界重试仍失败则 fail-closed。
 
-自动一致只表示可信度提高，不代表 ground truth。全量结束后必须按
-`source × 五类 Silver 标签` 分层抽检 200–300 条并报告人工准确率；该收据未完成前正式训练和论文使用均为 HOLD。MIMIC-CXR 与 CheXpert Plus 必须分别报告一致率。
+模型间一致不代表 ground truth。全量结束后必须按 `source × 五类 Silver 标签`
+固定抽取 250 条并报告人工准确率；该收据未完成前正式训练和论文使用均为 HOLD。
+MIMIC-CXR 与 CheXpert Plus 必须分别报告准确率。该名单只有在每条均经人工确认后
+才能成为 Gold；抽样复核不能把其余 Luna 标签变成 Gold。
 
 ## 3.2 数据与标签任务清单
 
@@ -195,7 +201,7 @@ PRTA-CXR/
 | L104 | 设计 rule-blind AI Prompt + 两字段 Schema | 外发无规则标签；只输出 sample_id + ai_label | P0 |  |  | 完成 | 2026-08-02 | `prompts/independent_silver_label_v1.md` | L103 | PASS |  |  |
 | L105 | 独立标签 Pilot 100–200 条 | 结构合法率、分来源一致率和吞吐报告 | P0 |  |  | 完成 | 2026-08-02 | `docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md` | L104 | PASS_PILOT |  | 150 条 |
 | L105S | Sol盲审同一150条 | Luna–Sol、分来源、分类别、Worse、三方分歧 | P0 |  |  | 完成 | 2026-08-02 | `docs/SOL_BLIND_REVIEW_STATUS_CN.md` | L105 | PASS_AGREEMENT | 非医学准确率 | Sol 150/150 |
-| L106 | 第一次全量独立 AI 标注 | Luna outputs + Silver/Excluded manifests | P0 |  |  | HOLD |  |  | L105S + 政策选择 + 单独授权 | HOLD | full config=false | 未启动 |
+| L106 | 第一次全量 Luna-primary 标注 | Luna outputs + Silver/Unclear manifests | P0 |  |  | 完成 | 2026-08-02 | `luna_primary_full_v1/merged/luna_primary_merge_audit.json` | L105S + 单独授权 | PASS | 64个无重叠断点分片 | 126,727 Silver；22,071 Unclear |
 | L107 | 分层抽取 200–300 条人工审核 | source × 五类 Silver 全覆盖 | P0 |  |  | HOLD |  |  | L106 |  |  | 全量后执行 |
 | L108 | 计算人工准确率 | 总体、分来源、分类别、95% CI | P0 |  |  | HOLD |  |  | L107 |  |  | 训练硬门 |
 | L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  |  |  |  | L108 |  |  |  |
@@ -215,7 +221,7 @@ PRTA-CXR/
 | 总体 Silver | 记录 | 103/150（68.67%） | 已记录 | merge audit | 非 ground truth accuracy |
 | MIMIC Silver | 单独报告 | 52/75（69.33%） | 已记录 | merge audit | 13 mismatch + 10 Unclear |
 | CheXpert Plus Silver | 单独报告 | 51/75（68.00%） | 已记录 | merge audit | 17 mismatch + 7 Unclear |
-| 全量运行 | 需要单独授权 | 未启动 | HOLD | config full=false | 不自动从 pilot 扩展 |
+| 全量运行 | 需要单独授权 | 已完成 148,798 条 | PASS | `luna_primary_full_v1` | full config 已回锁 |
 | 人工准确率抽检 | 全量后 200–300 条 | 未开始 | HOLD | training gate | 正式训练/论文前必须完成 |
 
 五类规则候选的 Silver 保留率：Improved 23/33（69.70%）、New 21/30
@@ -235,8 +241,9 @@ PRTA-CXR/
 | 30条规则–Luna分歧 | Sol支持Luna 21、规则4、第三标签1、Unclear 4 | 支持取消规则五分类硬准入 |
 | 人工准确率 | 未完成 | 仍需200–300条 |
 
-Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这不是
-自动政策切换或全量授权；规则继续负责候选结构、finding、异常过滤和审计。
+Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用户已
+据此单独授权全量 Luna-primary 标注；规则继续负责候选结构、finding、异常过滤和
+审计，但不再作为五分类准入条件。该授权不包含 split、缓存或训练。
 
 ### 3.3.2 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
 
@@ -310,7 +317,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 | Label Pipeline | Coverage | Clinician Agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject Precision | 95% CI | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
 | Rule-only |  |  |  |  |  |  |  |  |  |  |
-| Rule/AI agreement Silver | 68.67% pilot retention | 未完成 |  |  |  |  |  | N/A |  | pilot 非准确率 |
+| Luna-primary Silver | 126,727/148,798（85.17%） | 未完成 |  |  |  |  |  | N/A |  | 人工审核前非 Gold |
 
 ## 3.8 标签冻结确认
 
@@ -324,12 +331,12 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 - [ ] Train/Dev/Internal Test 的患者交集为 0。
 - [ ] 数据许可、隐私和报告去标识已由负责人确认。
 
-**数据版本**：`PRTA-CXR independent-silver pilot v1（full expansion HOLD）`
+**数据版本**：`PRTA-CXR Luna-primary full v1（labeling complete）`
 **Pilot Silver Manifest Hash**：`e4be33b5e2ee9d01f5ae227d01b4fe816972f65b09ec65ccce9d1f409ab655c2`
 **Split Manifest Hash**：  
 **确认人**：  
 **日期**：`2026-08-02`
-**决策**：`HOLD`（全量标注未授权；200–300 条 source × 五类人工准确率抽检未完成）
+**决策**：`LABELING_COMPLETE__TRAIN_HOLD`（250 条 source × 五类人工准确率审核未完成）
 
 ---
 
@@ -343,7 +350,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 
 - **D0**：旧规模 + 旧规则标签；
 - **D1**：扩展规模 + 旧规则标签；
-- **D2**：扩展规模 + Rule/AI agreement Silver；
+- **D2**：扩展规模 + Luna-primary Silver；
 - **D3**：扩展规模 + Rule-only（质量—数量对照）。
 
 开发轴：
@@ -359,7 +366,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | D201 | D0：旧规模 + 旧规则标签 | 新项目开发基准 | P0 |  |  |  |  |  |  |  |  |  |
 | D202 | D1：扩展规模 + 旧规则标签 | 测量纯数据规模收益 | P0 |  |  |  |  |  | D201 |  |  |  |
-| D203 | D2：扩展规模 + Rule/AI agreement Silver | 测量标签质量收益 | P0 |  |  |  |  |  | D202 |  |  |  |
+| D203 | D2：扩展规模 + Luna-primary Silver | 测量标签策略收益 | P0 |  |  |  |  |  | D202 |  |  |  |
 | D204 | D3：扩展规模 + Rule-only | 质量—数量权衡 | P1 |  |  |  |  |  | D203 |  |  |  |
 | M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选 | P0 |  |  |  |  |  | D203 |  |  |  |
 | M302 | 类别不平衡 Loss Screening | WCE/BalSoftmax/CB-Focal | P0 |  |  |  |  |  | M301 |  |  |  |
@@ -565,7 +572,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 | A504 | w/o CMCP | 移除 Counterfactual PRIOR | 检验正确 PRIOR 依赖 | P0 |  |  |  |  |
 | A505 | w/o Temporal Inversion | 移除反转约束 | 检验时间方向性 | P0 |  |  |  |  |
 | A506 | w/o State Preservation | 移除 State Loss | 检验当前状态保持 | P0 |  |  |  |  |
-| A507 | Rule-only Labels | 替换 Rule/AI agreement Silver | 数据监督消融，可选 | P2 |  |  |  |  |
+| A507 | Rule-only Labels | 替换 Luna-primary Silver | 数据监督消融，可选 | P2 |  |  |  |  |
 
 ## 7.3 消融汇总
 
@@ -851,7 +858,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这
 | Label Pipeline | Coverage | Clinician Agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject Precision | 95% CI |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | Rule-only |  |  |  |  |  |  |  |  |  |
-| Rule/AI agreement Silver |  |  |  |  |  |  |  |  |  |
+| Luna-primary Silver |  |  |  |  |  |  |  |  |  |
 
 ## Table 3：正式主结果
 

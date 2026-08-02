@@ -19,6 +19,9 @@
 
 ## Independent-silver protocol decision - 2026-08-02
 
+> Historical pilot policy, superseded for the full run by the Luna-primary
+> policy below. The pilot artifacts and measurements remain immutable.
+
 - The strict v6 pilot established that evidence-heavy per-row review is costly
   and failure-prone; it remains useful as engineering validation but is not the
   full-scale labeling authority.
@@ -68,6 +71,22 @@
 - Of 103 prior rule-Luna exact rows, Sol confirmed 94, differed on 4, and was
   `Unclear` on 5. Across all 9 mutually decisive Luna-Sol disagreements, zero
   were direct Improved/Worse or New/Resolved opposite-direction pairs.
+
+## Luna-primary policy - 2026-08-02
+
+- The five-class label authority is now Luna alone within the frozen
+  rule-extractable candidate pool. The old rule label remains provenance and
+  diagnostic metadata only and must not overwrite or veto a Luna class.
+- Every valid Luna output in the five-label vocabulary is retained as Silver;
+  Luna `Unclear`, missing IDs, duplicate IDs, extra fields, or unknown labels
+  are fail-closed exclusions.
+- A sampled clinician audit estimates Silver accuracy. A Gold test artifact is
+  a different object: every row in that subset must be human-reviewed, and its
+  patients must be fully excluded from training to prevent leakage.
+- The roster quarantine is not consumed automatically by split freezing.
+  Roster generation must therefore materialize a training-eligible Silver
+  manifest that removes every Silver row from every selected patient; focused
+  tests require zero patient overlap with the quarantined manifest.
 
 ## Initial code state
 

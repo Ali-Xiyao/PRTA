@@ -43,21 +43,25 @@ VLM 只在全部 ViT 实验完成后做一次附加部署：
 
 这部分只回答“PRTA 表征能否迁移到 VLM”，不做 VLM 基线大矩阵，不把其他方法强行部署成 VLM，也不让 VLM 结果反向牵引主方法。
 
-### 0.2 独立交集 Silver 标签的正式名称
+### 0.2 Luna-primary Silver 标签的正式名称
 
-使用规则程序与 rule-blind AI 独立判断并只保留一致交集，是可行的大规模数据构建方案，论文中应称为：
+规则程序负责配对、finding 候选、结构过滤与审计；rule-blind Luna 只读取 finding
+和前后报告并独立给出五分类。所有结构合法且非 `Unclear` 的 Luna 标签进入 Silver，
+论文中应称为：
 
-- `rule–AI agreement silver labels`；
-- `independently cross-checked pseudo-labels`；
+- `Luna-primary report-derived silver labels`；
+- `AI-labeled report-derived weak supervision`；
 - `report-derived weak supervision`。
 
-不能将自动一致标签直接称为人工 Gold 或声称必然正确。最低人工环节是在全量完成后按来源与五类做 200–300 条分层准确率抽检，而不是重新人工标注整套训练集。
+规则标签只作诊断统计，不作为准入、否决或回填依据。不能将 Luna 自动标签直接
+称为人工 Gold 或声称必然正确。最低人工环节是在全量完成后按来源与五类做
+250 条分层准确率审核，而不是重新人工标注整套训练集。
 
 ### 0.3 最终执行顺序
 
 ```text
 新项目重构与 parity
-→ 扩大纵向样本、rule-blind AI 交集、医生抽检
+→ 扩大纵向样本、rule-blind Luna 主标签、医生抽检
 → 仅在 Train/Dev 上把主 ViT 指标做上去
 → 冻结数据、方法、指标和测试协议
 → 正式 baseline
@@ -88,7 +92,7 @@ VLM 只在全部 ViT 实验完成后做一次附加部署：
 1. **PRTA 时间融合结构**：finding-conditioned patch-level alignment，显式组织 CURRENT、aligned PRIOR、signed difference、absolute difference 和 token interaction。
 2. **State/Transition 解耦**：分别学习“当前是什么”与“发生了什么变化”，避免两类信息被混入一个全局向量。
 3. **Correct-prior responsiveness**：使用 Current-Matched Counterfactual Prior、时间反转和 state preservation，抑制只看 CURRENT 的 shortcut。
-4. **可扩展报告监督**：使用规则候选 + Luna 证据审核 + 冲突拒绝构建高置信弱监督训练集，并以少量医生抽检量化标签质量。
+4. **可扩展报告监督**：使用确定性程序构建候选、Luna 独立生成五分类 Silver，丢弃 `Unclear`，并以少量医生抽检量化标签质量。
 5. **附加迁移能力**：最终 PRTA 表征可进一步接入 VLM，但该结果只作为额外部署展示。
 
 ### 1.4 明确不做的内容
@@ -144,7 +148,7 @@ Improved ↔ Worse
 New      ↔ Resolved
 ```
 
-### 2.2 报告监督与独立交集 Silver Pipeline
+### 2.2 报告监督与 Luna-primary Silver Pipeline
 
 ```text
 原始纵向 study
@@ -153,15 +157,13 @@ New      ↔ Resolved
     ↓
 相邻合格 PRIOR–CURRENT 配对
     ↓
-规则程序生成候选 progression（仅本地保存）
+规则程序构建配对、finding 候选和结构过滤（规则五分类仅本地审计）
     ↓
 AI 只读取 finding、PRIOR 报告、CURRENT 报告
     ↓
-AI 独立输出五类标签之一或 Unclear
+Luna 独立输出五类标签之一或 Unclear
     ↓
-本地比较 Rule Label 与 AI Label
-    ↓
-完全一致且非 Unclear → Silver；否则排除
+非 Unclear 且结构/ID 合法 → Silver；Unclear 或非法输出 → 排除/重试
     ↓
 完成 source × 五类的 200–300 条人工准确率抽检
     ↓
@@ -191,32 +193,29 @@ alias-to-original 映射。AI 不输出理由、置信度或原文证据；代�
 
 同时满足：
 
-- 规则与 AI 相互独立；
-- AI 输出不是 `Unclear`；
-- `rule_label == ai_label` 完全一致；
+- Luna 看不到规则五分类结果；
+- Luna 输出五个明确类别之一而不是 `Unclear`；
 - 样本通过 ID、schema、来源和患者隔离检查。
 
 #### Excluded
 
 以下样本不进入 silver 训练清单：
 
-- 规则与 AI 标签不一致；
-- AI 输出 `Unclear`；
-- AI 输出缺失、重复、未知或 schema/ID 不合法。
+- Luna 输出 `Unclear`；
+- Luna 输出缺失、重复、未知或 schema/ID 不合法且有界重试仍失败；
+- 上游候选被否定、不确定性或结构过滤拒绝。
 
-规则与 AI 一致只表示标签可信度较高，不证明标签一定正确。不得把自动一致率
-写成 gold accuracy，也不得人工逐条修补后回填为自动 silver。
+规则–Luna 一致率只保留为诊断，不决定 Silver 准入，也不证明标签正确。不得把
+Luna 标签或自动一致率写成 gold accuracy，也不得人工逐条修补后回填为自动 Silver。
 
-#### 2026-08-02 Sol 盲审后的候选政策更新（待确认）
+#### 2026-08-02 Sol 盲审后的冻结政策
 
 同一冻结150条中，Luna 与 Sol 在双方明确的124条上五类一致115条
 （92.74%，κ=0.908）；30条规则–Luna分歧中，Sol支持Luna 21条、规则4条。
-这支持把后续候选政策改为：自动程序负责结构与finding，Luna负责五类标签，
-Luna=`Unclear`排除，规则标签只用于审计而非Silver硬准入。
-
-在用户正式确认该政策之前，本节上方的 Rule∩AI 准入仍是当前冻结实现；Sol结果
-不自动授权全量标注。无论采用哪一方案，200–300条人工准确率门禁不变。完整
-结果见 `docs/SOL_BLIND_REVIEW_STATUS_CN.md`。
+用户已据此冻结后续政策：自动程序负责结构与 finding，Luna 负责五类标签，
+Luna=`Unclear` 排除，规则标签只用于审计而非 Silver 硬准入。全量自动标注已获
+单独授权；这不授权 split、缓存或训练。250 条人工准确率门禁不变。完整依据见
+`docs/SOL_BLIND_REVIEW_STATUS_CN.md`。
 
 ### 2.3 临床抽检最小方案
 
@@ -477,7 +476,7 @@ PRTA-CXR/
 
 未通过 parity 不进入数据扩展。
 
-### Phase 1：数据扩展、独立交集 Silver 与医生抽检
+### Phase 1：数据扩展、Luna-primary Silver 与医生抽检
 
 **目标**：在不新增人工大规模标注的前提下，扩大训练数据并提高标签精度。
 
@@ -486,11 +485,11 @@ PRTA-CXR/
 1. 扩大已批准公开数据源中的合格纵向 pair；
 2. 规则提取候选；
 3. AI 在看不到规则标签的前提下批量输出单一标签；
-4. 本地取规则与 AI 的非 `Unclear` 完全一致交集；
-5. 分来源统计一致率并排除 mismatch/`Unclear`；
-6. 全量完成后分层抽取 200–300 条做人工准确率检查；
+4. 保留 Luna 的非 `Unclear` 五分类，规则标签只作诊断；
+5. 分来源统计 Luna 标签、`Unclear`、失败重试和规则–Luna诊断一致率；
+6. 全量完成后分层抽取 250 条做人工准确率检查；
 7. 必要时修订并冻结 prompt/规则后重新运行全量标签；
-8. 排除历史 test、医生审计集和现有 Gold；
+8. 排除历史 test、医生审计集、现有 Gold，以及待审 roster 患者的全部行；
 9. 按患者冻结 Train/Dev/Internal-test。
 
 建议划分：
@@ -512,7 +511,7 @@ PRTA-CXR/
 |---|---|---|
 | D0 | 旧训练规模 + 旧规则标签 | 迁移后的基准 |
 | D1 | 扩展规模 + 旧规则标签 | 分离“规模收益” |
-| D2 | 扩展规模 + Rule/AI agreement Silver | 分离“质量收益” |
+| D2 | 扩展规模 + Luna-primary Silver | 分离“标签策略收益” |
 | D3 | 扩展规模 + Rule-only | 测试质量-数量权衡 |
 
 #### 2.2 有限方法开发
@@ -593,7 +592,7 @@ PRTA-CXR/
 - w/o CMCP；
 - w/o temporal inversion；
 - w/o state preservation；
-- 可选：rule-only labels 替代 Rule/AI agreement Silver。
+- 可选：rule-only labels 替代 Luna-primary Silver。
 
 所有消融使用同一 split、同一最终 head、同一训练预算和三个 seeds；不在正式 test 上选择变体。
 
@@ -695,7 +694,7 @@ cat artifacts/label_inputs/batch_0001.txt \
 - 每批保存 input hash、output hash、模型名、CLI 版本、运行日期、prompt hash、schema hash；
 - 非法 JSON、缺字段、重复 sample_id、未知标签全部 fail-closed；
 - 失败批次可使用同一 prompt 重试，不能人工改写模型输出；
-- AI 只输出单一标签；mismatch 和 `Unclear` 直接排除，不做第二次自动裁决；
+- AI 只输出单一标签；`Unclear` 排除，规则 mismatch 不否决 Luna；
 - 正式运行前先以 100–200 条 pilot 验证结构化输出、速度、额度和失败率。
 
 ---
@@ -769,7 +768,7 @@ L103  Clinician audit
 L104  Frozen full labeling
 D201  Old-size rule labels
 D202  Full-size rule labels
-D203  Full-size Rule/AI agreement Silver
+D203  Full-size Luna-primary Silver
 D204  Full-size Rule-only
 M301  Head screening
 M302  Loss screening
@@ -795,7 +794,7 @@ X801  PRTA-to-VLM additional deployment
 
 ### Table 1：数据与标签构建
 
-| Source | Candidate patients | Candidate pairs | Candidate rows | Rule-valid | AI-labeled | Silver | Mismatch/Unclear | Final train/dev/test |
+| Source | Candidate patients | Candidate pairs | Candidate rows | Structurally valid | Luna-labeled | Silver | Unclear/invalid | Final train/dev/test |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | MIMIC-CXR |  |  |  |  |  |  |  |  |
 | CheXpert |  |  |  |  |  |  |  |  |
@@ -807,7 +806,7 @@ X801  PRTA-to-VLM additional deployment
 | Label pipeline | Coverage | Clinician agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject precision |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Rule-only |  |  |  |  |  |  |  |  |
-| Rule/AI agreement Silver |  |  |  |  |  |  |  |  |
+| Luna-primary Silver |  |  |  |  |  |  |  |  |
 
 ### Table 3：正式主结果
 

@@ -185,11 +185,72 @@ Status: complete
 - Run repository gates, commit, push only to the local bare remote, and verify
   local/remote equality.
 
+### Phase 19 - Luna-primary policy and full-run authority
+Status: in progress
+
+- Replace rule-Luna agreement admission with Luna-primary five-class labels
+  inside the already frozen 148,798-row candidate pool.
+- Retain deterministic code only for pair/finding construction, uncertainty
+  and structural filtering, ID/source/patient audits, batching, and receipts.
+- Keep every valid Luna five-class output; discard `Unclear` and any invalid or
+  missing output. Never repair a label manually or from the old rule label.
+- Define a future clinician-reviewed Gold subset: Luna may prelabel it, but
+  every Gold row must receive human confirmation and its patients must remain
+  quarantined from training.
+
+### Phase 20 - Full batch preparation and concurrency qualification
+Status: complete
+
+- Prepare the exact 148,798 candidates with the frozen two-field prompt/schema
+  and verify candidate, prompt, schema, and external-field hashes.
+- Run a bounded concurrent qualification before the long expansion; choose a
+  safe shard count from observed failures/rate limits rather than assuming
+  unlimited service concurrency.
+
+### Phase 21 - Complete full Luna labeling and primary merge
+Status: complete
+
+- Resume until every frozen batch has one structurally valid, exact-ID output.
+- Merge all non-`Unclear` Luna labels into the Silver manifest and write all
+  discarded `Unclear`/invalid rows to an exclusion manifest and audit.
+- Report source/finding/label counts, retention, failures, retries, hashes, and
+  patient/source integrity; do not start training.
+
+### Phase 22 - Human-audit and Gold-review rosters
+Status: complete (human review pending)
+
+- Generate a deterministic 200-300-row source-by-Luna-label Silver accuracy
+  audit roster, with no overlap into training while review is pending.
+- Generate a separate fully reviewed Gold-test candidate roster and make clear
+  that it remains `GOLD_PENDING_HUMAN_REVIEW` until every row is confirmed.
+
+### Phase 23 - Documentation, verification, and local handoff
+Status: complete
+
+- Update the paper manual/result tables to describe deterministic preprocessing
+  plus Luna-primary Silver, with human accuracy and fully reviewed Gold gates.
+- Run repository/runtime audits, commit, push only to the local bare remote,
+  and verify equality.
+
 ## Next Step
 
-Await the user's explicit decision on whether to replace Rule-Luna intersection
-with Luna-primary admission inside the current candidate pool. Do not enable
-full labeling, split, cache, training, or evaluation from the Sol pilot alone.
+Complete final runtime/repository audits, close the labeling switch, update the
+manual/result tables, and push the code/document package only to the local bare
+remote. Stop before training; Gold remains pending complete human review.
+
+## Completion record - 2026-08-02
+
+- Full Luna-primary output: 7,440/7,440 batches and 148,798/148,798 unique
+  candidate IDs; final runtime audit PASS.
+- Silver: 126,727 valid Luna five-class rows; 22,071 Luna `Unclear` rows
+  discarded. Rule–Luna agreement remains diagnostic-only and never affects
+  admission or labels.
+- Gold candidate roster: 250 rows, 250 unique patients, exact 25 rows per
+  source-by-five-label stratum. All 2,297 Silver rows belonging to those
+  patients are quarantined, leaving 124,430 training-eligible Silver rows with
+  zero patient overlap. Gold remains `GOLD_PENDING_HUMAN_REVIEW`.
+- Full execution flag is closed. Tests (60), Ruff, compile, preflight, output
+  audit, and local-only handoff verification all remain required before training.
 
 ## Decisions
 
@@ -209,8 +270,33 @@ full labeling, split, cache, training, or evaluation from the Sol pilot alone.
 | Require a 200-300-row source-by-label human audit before training/paper use | The lightweight audit measures silver accuracy without blocking automated labeling itself. |
 | Treat Sol review as agreement evidence, not Luna accuracy | Correlated AI errors remain possible; only human review can estimate clinical correctness. |
 | Keep rule outputs for diagnostics but reconsider them as admission labels | Sol review tests whether Luna can become the primary classifier while automation remains responsible for candidate structure and audits. |
+| Adopt Luna-primary five-class admission | The user accepted the Sol evidence and explicitly authorized full labeling; non-`Unclear` Luna outputs are retained regardless of rule disagreement. |
+| Do not call Luna-only test labels Gold | Gold status requires human confirmation of every selected row; a sampled accuracy audit validates Silver quality but does not convert unreviewed labels into Gold. |
 
 ## Errors Encountered
+
+- 2026-08-02: static qualification found `--preparation-receipt` attached to the
+  batch-preparation parser while the formal runner consumed it. Moved the option
+  to the runner before any Luna full-run call; no external labeling was started
+  with the faulty entrypoint.
+- 2026-08-02: a preflight command referenced the nonexistent legacy name
+  `scripts/03a_run_independent_ai.py`; corrected to the repository entrypoint
+  `scripts/03b_run_independent_labeling.py`. No external call was made.
+- 2026-08-02: the first 4-worker qualification exposed a real Luna omission:
+  batch 1 returned 19/20 IDs. The runner correctly failed closed. Stopped the
+  remaining qualification workers after preserving 8 valid outputs, then added
+  bounded per-batch retry with every malformed attempt retained for audit.
+- 2026-08-02: the first attempted 64-worker expansion used malformed PowerShell
+  (`-Filter` and `-ne` lacked token-separating spaces), so completed outputs were
+  misread as empty and only two resume-safe half-range workers started. No data
+  was overwritten because their ranges were disjoint and `--resume` was active.
+  Stopped those exact two PIDs and rebuilt the missing-range calculation with
+  explicit file-count and 32-to-64 range assertions before retrying expansion.
+- 2026-08-02: the corrected scan found 33, not 32, missing runs because outputs
+  completed during earlier stop/restart boundaries fragmented one original
+  shard. The assertion stopped execution before any new worker launch. Revised
+  the splitter to preserve all 33 real gaps and bisect the 31 largest, yielding
+  exactly 64 non-overlapping ranges with exact remaining-count coverage.
 
 | Error | Attempt | Resolution |
 |---|---:|---|

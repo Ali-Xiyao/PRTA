@@ -15,13 +15,18 @@ Qwen SFT attempts are intentionally absent.
 
 The full data-to-training code path and synthetic validation are implemented.
 Real source manifests, exclusions, and the 238,511-pair candidate pool are now
-prepared and audited. Formal scientific experiments have **not** been started.
+prepared and audited. GPU training and formal model experiments have **not**
+been started.
 The rule-blind Luna pilot completed 150/150 rows. A same-roster blind Sol
 review found 115/124 agreement (92.74%, kappa 0.908) where both models were
 decisive and favored Luna over the rule 21-to-4 in the 30 rule-Luna conflicts.
-This supports, but does not yet activate, a Luna-primary labeling policy. Full
-labeling remains disabled; human accuracy audit, split freeze, caching,
-training, and internal testing remain separately gated.
+The user subsequently froze and authorized a Luna-primary labeling policy:
+deterministic code constructs and audits candidates, every valid non-`Unclear`
+Luna five-class output becomes Silver, and the rule label is diagnostic only.
+Full labeling is now complete; see the
+[Luna-primary full-labeling status](docs/LUNA_PRIMARY_FULL_LABELING_STATUS_CN.md).
+The human audit, Gold confirmation, split freeze, caching, training, and
+internal testing remain separately gated.
 
 ## Start here
 
@@ -43,9 +48,8 @@ training, and internal testing remain separately gated.
 8. Use the current
    [independent Silver pilot status](docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md)
    as the authority for future full-scale labeling decisions.
-9. Review the blind
-   [Sol-vs-Luna status](docs/SOL_BLIND_REVIEW_STATUS_CN.md) before deciding
-   whether rule-label agreement remains a Silver admission requirement.
+9. Review the blind [Sol-vs-Luna status](docs/SOL_BLIND_REVIEW_STATUS_CN.md)
+   for the evidence supporting the frozen Luna-primary policy.
 
 ## Local engineering validation
 

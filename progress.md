@@ -1,5 +1,29 @@
 # Progress - full-data training pipeline
 
+## 2026-08-02 - Luna-primary full-run concurrency qualification
+
+- Prepared 7,440 rule-blind batches for all 148,798 frozen candidates; the
+  preparation receipt reproduces candidate hash
+  `29ceedb0719d9c04476d5aa157da937147acb2314cb9f7c4b1d571b9b9d7e81e`.
+- Independent batch audit: 148,798 unique restored IDs, exact four external
+  fields, no rule label or patient identifier, final batch size 18, and zero
+  schema/field/map errors.
+- Four-worker qualification initially exposed one 19/20-ID Luna response. The
+  runner failed closed; bounded retries were added and the malformed response
+  was preserved.
+- Qualification resume passed: 40/40 batches, 800/800 unique IDs, four PASS
+  receipts, no unresolved batch failure. Safe expansion is eight disjoint
+  shards over batches 40-7439 with resume enabled.
+- Concurrency was subsequently qualified at 8, 16, 32, then 64 disjoint workers.
+  Each scale-up stopped exact prior PIDs, preserved valid outputs, verified
+  remaining ranges were contiguous, and restarted from the first missing batch.
+- The final 64-worker command-line audit covers 6,231 then-missing batches
+  exactly once (overlap 0; shard sizes 16-174); completed outputs remain outside
+  those ranges and are reused rather than overwritten.
+- Gold-audit preparation now also writes a training-eligible Silver manifest
+  that removes all rows belonging to the 250 selected patients; focused tests
+  prove zero patient overlap with the quarantined manifest.
+
 ## 2026-08-02
 
 - Received authorization to begin coding, but not to begin training.
@@ -255,3 +279,17 @@
   identical Luna/Sol input hashes, four allowed external fields, 150 unique
   two-field Sol outputs, zero failed files, and a comparison hash matching the
   frozen v2 audit.
+
+## 2026-08-02 Luna-primary full-labeling authorization
+
+- The user explicitly selected Luna as the sole five-class label generator and
+  asked to complete full labeling. Rule-Luna agreement is no longer an
+  admission criterion; Luna `Unclear`/unusable rows must be discarded.
+- Structural automation remains in scope for candidate pairing, target finding,
+  uncertainty/structure filtering, de-duplication, ID/source/patient audit,
+  batching, resumability, and receipts. It does not choose the final class.
+- A Luna-prelabeled test subset may become Gold only after every selected row
+  is human-confirmed and patient-quarantined. The 200-300-row sampled review
+  remains a Silver accuracy audit and cannot make unreviewed rows Gold.
+- Started Phase 19. This authorization covers labeling and roster preparation,
+  not GPU training, cache generation, internal-test opening, or paper claims.

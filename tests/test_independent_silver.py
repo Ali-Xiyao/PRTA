@@ -48,6 +48,16 @@ def test_rule_blind_batches_expose_only_reports_finding_and_alias(tmp_path):
     assert receipt["patient_identifiers_in_external_payload"] is False
 
 
+def test_rule_blind_batch_rejects_tampered_external_item(tmp_path):
+    prompt, schema = _authority_files(tmp_path)
+    batches, _ = prepare_independent_ai_batches(
+        synthetic_samples(), batch_size=2, prompt_path=prompt, schema_path=schema
+    )
+    batches[0]["items"][0]["current_report"] = "tampered"
+    with pytest.raises(ContractError, match="hash mismatch"):
+        externalize_independent_batch(batches[0])
+
+
 def test_independent_output_is_two_fields_only_and_fail_closed(tmp_path):
     samples = synthetic_samples()
     rows = synthetic_ai_rows(samples)
@@ -111,3 +121,9 @@ def test_completed_sol_review_is_held_against_rerun():
     config = Path("configs/labeling/sol_blind_review_v1.json")
     with pytest.raises(FormalExecutionBlocked, match="pilot execution"):
         _require_execution_enabled(config, scope="pilot", row_count=150)
+
+
+def test_completed_luna_primary_full_execution_is_held_against_rerun():
+    config = Path("configs/labeling/luna_primary_full_v1.json")
+    with pytest.raises(FormalExecutionBlocked, match="full execution"):
+        _require_execution_enabled(config, scope="full", row_count=148798)
