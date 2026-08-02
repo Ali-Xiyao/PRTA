@@ -649,3 +649,9 @@
   healthy as PID 10548 with empty stderr. It reconciled D201 and launched D203
   on GPU0 as PID 6780 while D202 continues on GPU1. The queue is now 1/7
   complete, 2/7 running, and 4/7 planned; no protected outcome was opened.
+- Because the long-lived formal-program keeper had imported the same pre-fix
+  Windows liveness function, safely replaced it only while its durable state
+  was `WAITING_INITIAL_DEVELOPMENT_QUEUE`. The patched keeper is PID 37228,
+  retains that exact waiting state, sees the queue as 1 complete / D202+D203
+  running / 4 planned, and has empty stdout/stderr. Queue keeper PID 10548 and
+  both training children remained alive through the restart.
