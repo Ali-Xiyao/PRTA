@@ -207,6 +207,13 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             "target": self.label_index[str(row[self.label_key])],
             "source": str(row["source"]),
             "finding": str(row["finding"]),
+            "prior_view": str(row.get("prior_view", "unknown")),
+            "current_view": str(row.get("current_view", "unknown")),
+            "interval_days": float(row.get("interval_days", -1.0)),
+            "interval_basis": str(row.get("interval_basis", "unknown")),
+            "calendar_interval_available": bool(
+                row.get("calendar_interval_available", False)
+            ),
             "prior_intervention": self.prior_intervention,
             "query_finding": query_finding,
             "matched_wrong_sample_id": str(

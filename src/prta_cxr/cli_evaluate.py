@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from prta_cxr.artifacts import write_json_atomic, write_jsonl_atomic
 from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.contracts import PROGRESSION_LABELS, sha256_file
+from prta_cxr.evaluation.inference import predict_loader
 from prta_cxr.evaluation.progression import classification_metrics
 
 
@@ -30,32 +31,14 @@ def _synthetic_rows() -> list[dict[str, str]]:
 
 @torch.no_grad()
 def _predict(model, loader: DataLoader, device: torch.device):
-    model.eval()
-    rows = []
-    for batch in loader:
-        _, logits, _ = model(
-            batch["prior"].to(device),
-            batch["current"].to(device),
-            batch["finding_text"].to(device),
-        )
-        predictions = logits.argmax(dim=-1).cpu().tolist()
-        targets = batch["target"].tolist()
-        for sample_id, patient, target, prediction in zip(
-            batch["sample_id"],
-            batch["patient_id_hash"],
-            targets,
-            predictions,
-            strict=True,
-        ):
-            rows.append(
-                {
-                    "patient_id": str(patient),
-                    "observation_id": str(sample_id),
-                    "target": PROGRESSION_LABELS[int(target)],
-                    "prediction": PROGRESSION_LABELS[int(prediction)],
-                }
-            )
-    return rows
+    return predict_loader(
+        model,
+        loader,
+        device=device,
+        system="single_checkpoint",
+        seed=int(model.config["seed"]),
+        cohort="internal_test",
+    )
 
 
 def evaluate_main(argv: Sequence[str] | None = None) -> int:

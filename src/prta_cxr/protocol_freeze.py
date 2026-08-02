@@ -9,6 +9,7 @@ from typing import Any
 
 from prta_cxr.artifacts import write_json_atomic
 from prta_cxr.contracts import canonical_sha256, sha256_file
+from prta_cxr.run_registry import read_run_registry
 
 
 def _git_state(repo_root: Path) -> tuple[str, str]:
@@ -37,11 +38,15 @@ def freeze_formal_protocol(
     gate_receipt: Path,
     formal_matrix_receipt: Path,
     formal_queue: Path,
+    run_registry: Path,
     train_dev_manifest: Path,
     sealed_internal_test_manifest: Path,
     gold_manifest: Path,
     main_cache_manifest: Path,
     gold_cache_manifest: Path,
+    weights: Path,
+    main_text_cache: Path,
+    gold_text_cache: Path,
     quality_audit: Path,
     protocol_config: Path,
     trust_config: Path,
@@ -69,6 +74,18 @@ def freeze_formal_protocol(
         for row in queue
     ):
         raise ValueError("formal config hash mismatch")
+    registry = {
+        str(row["experiment_id"]): row for row in read_run_registry(run_registry)
+    }
+    for alias, source in matrix["prta_aliases"].items():
+        if source not in registry or registry[source]["status"] != (
+            "PASS_TRAINING_FINISHED"
+        ):
+            raise ValueError(f"PRTA alias source is incomplete: {source}")
+        path = Path(str(registry[source]["config_path"]))
+        if sha256_file(path) != registry[source]["config_hash"]:
+            raise ValueError(f"PRTA alias config changed: {source}")
+        config_hashes[str(alias)] = sha256_file(path)
     outcome_files = {
         "sealed_internal_test_manifest": sealed_internal_test_manifest,
         "gold_manifest": gold_manifest,
@@ -80,6 +97,9 @@ def freeze_formal_protocol(
         "train_dev_manifest": train_dev_manifest,
         "main_cache_manifest": main_cache_manifest,
         "gold_cache_manifest": gold_cache_manifest,
+        "weights": weights,
+        "main_text_cache": main_text_cache,
+        "gold_text_cache": gold_text_cache,
         "quality_audit": quality_audit,
         "protocol_config": protocol_config,
         "trust_config": trust_config,
@@ -99,6 +119,7 @@ def freeze_formal_protocol(
         "status": "PASS_PROTOCOL_FROZEN__FORMAL_OUTCOMES_CLOSED",
         "frozen_at": datetime.now(UTC).isoformat(),
         "git_commit": commit,
+        "run_registry_path": str(run_registry.resolve()),
         "input_paths": {key: str(value.resolve()) for key, value in inputs.items()},
         "input_hashes": input_hashes,
         "formal_config_hashes": dict(sorted(config_hashes.items())),

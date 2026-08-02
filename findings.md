@@ -478,3 +478,7 @@
   parsing their JSONL contents. The actual one-time outcome session remains a
   separate later transition after formal training, while temperature values
   are fitted from Dev under the already-frozen algorithm.
+- The run registry cannot itself be content-frozen before formal training
+  because B/A rows are added as those runs finish. The protocol instead freezes
+  every config hash and the registry path; the outcome-session marker then
+  binds the completed registry SHA-256 immediately before opening outcomes.

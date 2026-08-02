@@ -1,4 +1,4 @@
-from _bootstrap import dispatch_gated
+from _bootstrap import dispatch
 
 if __name__ == "__main__":
-    raise SystemExit(dispatch_gated("run-trust-audits"))
+    raise SystemExit(dispatch("trust_audits_main", module_name="prta_cxr.cli_trust"))

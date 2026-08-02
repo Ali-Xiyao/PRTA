@@ -545,3 +545,13 @@
 - Implemented Dev-only scalar temperature fitting, 15-bin ECE, NLL, Brier,
   AURC/risk-at-coverage, and all registered PRIOR/query dataset interventions.
   Main cache progress is 78,592/146,110 (53.79%); keeper remains 0/7 waiting.
+- Upgraded prediction artifacts to retain calibrated five-class probabilities,
+  patient/sample identity, source, finding, views, interval, query, and PRIOR
+  condition. Implemented real trust reporting for calibration, risk coverage,
+  interventions, and four subgroup axes.
+- Implemented a resumable one-time formal outcome session. It fits all main
+  temperatures on Dev before opening, writes an immutable protocol-bound open
+  marker, evaluates 30 unique Internal-test checkpoints, main-method Gold, and
+  six PRTA interventions, and forbids a changed restart.
+- Full gates pass 98 tests. Main cache is 90,368/146,110 images (353 shards,
+  61.85%); development remains 0/7 behind the cache/store gate.
