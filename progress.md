@@ -626,3 +626,12 @@
   keeper stderr remains empty, and H: has 424.6 GiB free. The initial queue is
   still 0 complete, 2 running, and 5 planned; protected outcome-open/protocol-
   freeze markers remain absent, so Internal-test and Gold are still sealed.
+- The 03:55 CST heartbeat found D201 at the end of epoch 6 (581/581 batches)
+  entering fixed-Dev evaluation, with best Dev Macro-F1 0.4045 at epoch 4.
+  D202 is at the end of epoch 3 (1,441/1,441 batches), with best Dev Macro-F1
+  0.4430 at epoch 2. Both atomic best checkpoints remain present; no final run
+  receipt exists because neither frozen early-stopping decision has closed.
+  GPUs remain healthy at about 4.48 GiB and 75/73 C, both training children and
+  both keepers are alive, stderr logs are empty, and H: has 424.6 GiB free.
+  The queue remains 0 complete, 2 running, and 5 planned, with no protected
+  outcome-open or protocol-freeze marker.
