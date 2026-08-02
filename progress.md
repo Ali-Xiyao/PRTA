@@ -382,3 +382,32 @@
   remote `E:\Xiyaowang\050_VisualVIT\PRTA-CXR-local.git`; local `main` and the
   local remote `main` were byte-identical at verification time. No cloud remote
   exists in this clean project.
+
+## 2026-08-03 full formal-program authorization
+
+- The user authorized implementation and formal execution of the complete
+  program in the two Chinese paper authority documents and requested a
+  20-minute recurring monitor until terminal completion.
+- Expanded the persistent plan through split freeze, cache, Train/Dev
+  development, protocol freeze, formal baselines/ablations, one-time
+  Internal-test/Gold evaluation, trust/calibration/subgroups, figures, the VLM
+  appendix, and final paper/local handoff.
+- Preserved the authority documents' order: the authorization enables the
+  stages but does not permit test-driven tuning or premature Gold/Test access.
+- One command-inventory search failed because a pattern beginning with
+  `--mode` was parsed as an option; recorded the issue and will use `rg --`.
+- The first 20-minute heartbeat request was rejected because a local
+  destination requires an explicit target thread. No automation was created;
+  the retry will use the app's current-thread destination.
+- Created and activated the current-thread heartbeat
+  `prta-cxr-formal-program-monitor` at a 20-minute cadence with the two paper
+  documents, planning files, stage order, one-time test boundary, resume rules,
+  and local-only push policy embedded in its task prompt.
+- Phase-30 resource audit found two idle RTX 3090 24 GB GPUs, no competing PRTA
+  processes, and sufficient immediate free space on H: for split and initial
+  preparation. The paper experiment config directories are still placeholders,
+  so formal matrix implementation must proceed alongside the first split/cache
+  stages rather than pretending the repository is already paper-complete.
+- A split-code inspection used two guessed legacy-style filenames that are not
+  present. The file inventory identifies `src/prta_cxr/data/splitting.py` plus
+  the thin `scripts/05_freeze_splits.py` entrypoint as the correct surfaces.

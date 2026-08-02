@@ -21,13 +21,19 @@ and write auditable receipts once the user later authorizes execution.
 
 ## Non-negotiable execution boundary
 
-- The user has now authorized the first real-data inventory and source-manifest
-  preparation phase.
-- Do not launch GPU training, create the full real image cache, call Luna, or
-  open internal-test/protected/gold/external outcomes without a later explicit
-  phase authorization.
-- Structural metadata, report file existence, exclusion identifiers, source
-  manifests, counts, hashes, and leakage audits may be processed now.
+- On 2026-08-03 the user authorized implementation and formal execution of the
+  complete experiment program defined by the two Chinese paper authority
+  documents, including a 20-minute recurring monitor, until the registered
+  program reaches its terminal GO/HOLD/STOP state.
+- Authorization does not collapse the documents' sequencing gates: freeze the
+  patient-disjoint split first; use Train/Dev for performance development;
+  freeze method/config/checkpoint/temperature and the test protocol before the
+  single formal Internal-test/Gold read; run the VLM appendix only after the
+  ViT program is frozen.
+- Never tune from Internal-test/Gold, reuse revealed legacy cohorts, weaken
+  legal/privacy exclusions, or silently continue past a preregistered HOLD/STOP
+  gate. Every formal run must receive a registry row, immutable config/receipt,
+  completion marker, and patient-level leakage audit.
 
 ## Phases
 
@@ -291,12 +297,93 @@ Status: complete
 - Run repository and runtime conservation/leakage gates, commit, push only to
   the local bare remote, and verify local/remote equality.
 
+### Phase 30 - Full-program authority, readiness audit, and 20-minute monitor
+Status: in progress
+
+- Re-read both paper authority documents, inventory implemented versus missing
+  experiment surfaces, inspect GPU/model/data/disk/process state, and bind the
+  new full-program authorization without changing frozen Gold or Silver.
+- Create one thread heartbeat every 20 minutes that re-reads planning files,
+  monitors the active formal stage, resumes only identity-preserving work, and
+  never opens Internal-test/Gold before the protocol-freeze gate.
+
+### Phase 31 - Patient-disjoint split freeze and leakage receipt
+Status: pending
+
+- Formally freeze the 80/10/10 patient split from exactly 124,430 eligible
+  Silver rows while keeping all 250 Gold patients and 2,297 associated Silver
+  rows quarantined.
+- Independently verify counts, label/source support, manifest hashes, and zero
+  overlap across Train/Dev/Internal-test/Gold before caching.
+
+### Phase 32 - Full Block-8/text cache and input audit
+Status: pending
+
+- Bind the local BiomedCLIP checkpoint, build resume-safe caches for the frozen
+  split, and verify exact sample/image/text lineage, shapes, finite values,
+  storage conservation, and completion markers.
+
+### Phase 33 - Train/Dev performance development
+Status: pending
+
+- Implement any still-missing D2xx/M3xx data-scaling, head, adapter, and loss
+  variants required by the authority documents; use only Train/Dev.
+- Run the bounded development matrix and apply the documented macro-F1 exit
+  gate. Diagnose label/source/class failure if the gate is not met; do not read
+  Internal-test or Gold.
+
+### Phase 34 - Formal protocol and method freeze
+Status: pending
+
+- Freeze the selected PRTA method, baseline/ablation list, three seeds, metrics,
+  bootstrap, calibration, intervention, subgroup, visualization, checkpoint,
+  and one-time test-read protocol with hashes and a freeze receipt.
+
+### Phase 35 - Formal baselines and PRTA main runs
+Status: pending
+
+- Execute B401-B404 for seeds 17/29/43 under equal frozen budgets; include B405
+  only if its stable native implementation is available before freeze.
+- Validate checkpoints and Dev outputs without choosing anything from test.
+
+### Phase 36 - Formal ablations
+Status: pending
+
+- Execute A500-A506 across seeds 17/29/43 with the same split, head, and budget;
+  run optional A507 only if its frozen Rule-only label manifest is valid.
+
+### Phase 37 - One-time evaluation, trust, calibration, and subgroups
+Status: pending
+
+- After the protocol freeze and all formal training complete, open Internal-test
+  and the 250-row Gold once for frozen inference only.
+- Run T601-T614, patient-clustered confidence intervals, calibration fitted on
+  Dev only, and preregistered source/finding/progression/view/interval analyses.
+
+### Phase 38 - Figures and failure analysis
+Status: pending
+
+- Produce V701-V708 from frozen results and select qualitative cases only by
+  the preregistered, outcome-independent bucket rules.
+
+### Phase 39 - PRTA-to-VLM appendix
+Status: pending
+
+- Freeze the final PRTA checkpoint, implement X801-X806 as a single appendix
+  path, and ensure VLM outcomes cannot alter the ViT method or claims.
+
+### Phase 40 - Paper tables, final audit, and local handoff
+Status: pending
+
+- Populate the unified Run Registry and Tables 1-8, reconcile every planned
+  task with an artifact or explicit N/A/HOLD/STOP rationale, run final audits,
+  commit, and push only to the local bare remote.
+
 ## Next Step
 
-After separate user authorization, freeze a new patient-disjoint 80/10/10
-split from the 124,430 training-eligible Silver rows while preserving the 250
-Gold patients and their 2,297 Silver rows in quarantine. Stop before
-cache/training unless those stages are separately authorized.
+Complete the Phase-30 authority/readiness audit, create the 20-minute heartbeat,
+then freeze and independently validate the exact patient-disjoint split before
+any cache or GPU training starts.
 
 ## Completion record - 2026-08-03
 
@@ -341,8 +428,21 @@ cache/training unless those stages are separately authorized.
 | Keep rule outputs for diagnostics but reconsider them as admission labels | Sol review tests whether Luna can become the primary classifier while automation remains responsible for candidate structure and audits. |
 | Adopt Luna-primary five-class admission | The user accepted the Sol evidence and explicitly authorized full labeling; non-`Unclear` Luna outputs are retained regardless of rule disagreement. |
 | Do not call Luna-only test labels Gold | Gold status requires human confirmation of every selected row; a sampled accuracy audit validates Silver quality but does not convert unreviewed labels into Gold. |
+| Treat the 2026-08-03 approval as full-program formal authority | The user explicitly requested code completion plus formal execution under both paper documents until terminal completion, with a 20-minute recurring monitor; internal sequencing and GO/HOLD/STOP gates remain binding. |
 
 ## Errors Encountered
+
+- 2026-08-03: an inventory `rg` pattern began with `--mode`, which `rg`
+  interpreted as an option and rejected. Future searches use the `--` option
+  terminator before such patterns; no files or experiments were changed.
+- 2026-08-03: the first heartbeat creation attempt used `destination=local`
+  without an explicit thread ID, so the automation API rejected it before
+  creation. Retry with the current-thread destination so the app binds the
+  heartbeat to this task automatically.
+- 2026-08-03: the first split-source inspection guessed `cli_split.py` and
+  `data/splits.py`; the repository inventory shows the actual module is
+  `data/splitting.py` and the script itself carries the CLI entrypoint. Inspect
+  those exact files next; no execution was attempted.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

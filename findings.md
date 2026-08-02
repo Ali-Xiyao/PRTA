@@ -327,3 +327,44 @@
   independent double annotation or inter-rater agreement. The human consensus
   label is the Gold label for all 250 rows, while the full patient quarantine
   remains intact with zero overlap into the 124,430-row training candidate set.
+- The paper authorities prescribe a strict lifecycle even under full execution
+  authority: patient split and data freeze; Train/Dev-only performance
+  development; method/protocol freeze; formal baseline and ablation training;
+  then one-time frozen Internal-test/Gold inference; trust/calibration/subgroup
+  analysis; figures; and only then the VLM appendix.
+- Required formal matrices include B401-B404 and A500-A506 over seeds 17, 29,
+  and 43. B405 and A507 are conditional/optional rather than automatically
+  mandatory. The development exit gate explicitly forbids proceeding as if
+  successful when enlarged-data Dev macro-F1 remains below 0.48.
+- The bounded development search is exactly H0/H1/H2, three imbalance losses,
+  and at most two adapter scopes. Screening is Seed 17, one axis per round;
+  final confirmation is seeds 17/29/43, and architecture changes stop after two
+  consecutive improvements below 0.5 percentage points.
+- The desired performance-development GO is Dev macro-F1 at least 0.52, at
+  least +3 percentage points over the strongest simple temporal baseline,
+  min-class recall at least 0.20, non-worse ODER, a positive True-versus-wrong
+  PRIOR gap, and no single-seed collapse. Values 0.48-0.52 trigger HOLD and
+  diagnosis; below 0.48 with saturated scaling is STOP/redesign.
+- Every run must record experiment/config/split/label hashes, seed, GPU, times,
+  checkpoint/prediction/metrics/log paths, and failed runs must be preserved.
+  Patient-clustered paired bootstrap uses 10,000 replicates; temperature,
+  threshold, and checkpoint are Dev-only choices.
+- Phase-30 live audit: both local RTX 3090 GPUs are idle with 24,576 MiB each;
+  no PRTA cache/train/evaluate process is active. H: has about 546.6 GB free,
+  E: about 262.5 GB free, and the existing formal runtime is on H:.
+- The generic split/cache/train/evaluate CLIs exist, but every formal experiment
+  config directory (`performance_development`, `formal_baselines`, `ablations`,
+  `trust_audits`, `visualizations`, `vlm_additional`) contains only `.gitkeep`.
+  Therefore the paper matrix is not yet runnable end-to-end: a formal registry,
+  variant configs/orchestrator, native baselines/ablations, freeze receipt, and
+  downstream audit/figure/VLM implementations must be added before claiming
+  readiness beyond split/cache/basic PRTA training.
+- The split implementation is deterministic, exact-capacity patient assignment
+  with source/finding/label stratification cost, canonical manifest/assignment
+  hashes, atomic output writes, and a built-in all-pairs patient-overlap audit.
+  It is suitable for the Phase-31 formal freeze once the authoritative runtime
+  training-eligible manifest path is pinned.
+- The current generic model/config surface supports H0/H1 but not the authority
+  document's H2 screening head; the one training config is fixed to seed 17,
+  H0, Weighted-CE-like default loss, 20 epochs, and one adapter scope. It cannot
+  represent the required development/formal matrix without code/config work.
