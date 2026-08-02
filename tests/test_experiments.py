@@ -9,6 +9,7 @@ from prta_cxr.experiments import (
     materialize_classification_counts,
     nested_train_fraction,
 )
+from prta_cxr.queue_runner import dependencies_satisfied
 from prta_cxr.receipts import RUN_RECEIPT_FIELDS
 from prta_cxr.run_registry import read_run_registry, upsert_run_registry
 
@@ -85,3 +86,13 @@ def test_run_registry_atomically_upserts_by_experiment(tmp_path):
     assert len(values) == 1
     assert values[0]["status"] == "PASS_TRAINING_FINISHED"
     assert json.loads(path.read_text(encoding="utf-8")) == values[0]
+
+
+def test_head_screening_waits_for_full_fraction_run():
+    rows = [
+        {"experiment_id": "D205", "status": "RUNNING"},
+        {"experiment_id": "M301-H1", "status": "PLANNED"},
+    ]
+    assert dependencies_satisfied(rows[1], rows) is False
+    rows[0]["status"] = "PASS_TRAINING_FINISHED"
+    assert dependencies_satisfied(rows[1], rows) is True

@@ -488,6 +488,16 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   registry must atomically replace its RUNNING row at closeout. Implement a
   dedicated temp-file-and-replace registry writer; also apply Ruff's import and
   modern-datetime fixes before rerunning. Scaling/config tests already passed.
+- 2026-08-03: the first contiguous-store focused command guessed the missing
+  `tests/test_cache_writer.py`; inventory located `tests/test_token_cache.py`.
+  The new dataset test then intentionally hit the finite-value guard because
+  its unbounded `arange` overflowed FP16. Scale the synthetic values into the
+  finite FP16 range and rerun the real cache tests; production shards remain
+  untouched and the guard behaved correctly.
+- 2026-08-03: a readiness-document search guessed `docs/TRAINING_READINESS_CN.md`;
+  inventory located the active file at
+  `docs/TRAINING_READINESS_AND_COMMANDS_CN.md`. Update that authority surface
+  with the live cache/store/queue contract; no runtime action was attempted.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

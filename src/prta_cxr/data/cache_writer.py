@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from collections.abc import Iterable, Mapping
@@ -222,6 +223,7 @@ def finalize_streaming_block8_cache(
         comparable = dict(recorded)
         comparable.pop("text_cache", None)
         comparable.pop("formal_input", None)
+        comparable.pop("training_store", None)
         if comparable != manifest:
             raise ValueError("existing final cache manifest differs from build")
     else:
@@ -233,6 +235,73 @@ def finalize_streaming_block8_cache(
 
 def replace_cache_manifest(output_root: Path, manifest: Mapping[str, Any]) -> None:
     _replace_json_atomic(Path(output_root) / "cache_manifest.json", dict(manifest))
+
+
+def build_block8_training_store(output_root: Path) -> dict[str, Any]:
+    """Build one contiguous read-only FP16 store from verified cache shards."""
+    output_root = Path(output_root)
+    manifest_path = output_root / "cache_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("status") != "PASS_PRTA_CXR_BLOCK8_CACHE":
+        raise ValueError("training store requires a complete Block-8 cache")
+    target = output_root / "block8_features.f16.bin"
+    receipt_path = output_root / "training_store_receipt.json"
+    expected_bytes = (
+        int(manifest["cached_image_count"]) * 197 * 768 * 2
+    )
+    if target.exists() or receipt_path.exists():
+        if not target.is_file() or not receipt_path.is_file():
+            raise FileExistsError("incomplete Block-8 training store exists")
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        if target.stat().st_size != expected_bytes:
+            raise ValueError("existing training store has the wrong byte size")
+        if receipt.get("file_sha256") != sha256_file(target):
+            raise ValueError("existing training store hash mismatch")
+        return receipt
+    temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
+    digest = hashlib.sha256()
+    rows = 0
+    try:
+        with temporary.open("wb") as handle:
+            for entry in manifest["shards"]:
+                shard_path = output_root / str(entry["path"])
+                if sha256_file(shard_path) != str(entry["sha256"]):
+                    raise ValueError(f"cache shard hash mismatch: {shard_path}")
+                value = torch.load(shard_path, map_location="cpu", weights_only=True)
+                features = value["features"].contiguous().to(torch.float16)
+                _validate_feature_tensor(
+                    features, expected_images=int(entry["images"])
+                )
+                payload = features.numpy().tobytes(order="C")
+                handle.write(payload)
+                digest.update(payload)
+                rows += int(features.shape[0])
+            handle.flush()
+            os.fsync(handle.fileno())
+        if rows != int(manifest["cached_image_count"]):
+            raise ValueError("training store row count mismatch")
+        if temporary.stat().st_size != expected_bytes:
+            raise ValueError("training store byte count mismatch")
+        temporary.replace(target)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    receipt = {
+        "schema": "prta-cxr.block8-training-store.v1",
+        "status": "PASS_BLOCK8_TRAINING_STORE",
+        "path": target.name,
+        "rows": rows,
+        "shape": [rows, 197, 768],
+        "dtype": "float16",
+        "bytes": expected_bytes,
+        "file_sha256": digest.hexdigest(),
+        "inventory_sha256": manifest["inventory_sha256"],
+        "source_cache_manifest_sha256": sha256_file(manifest_path),
+    }
+    write_json_atomic(receipt_path, receipt)
+    manifest["training_store"] = receipt
+    replace_cache_manifest(output_root, manifest)
+    return receipt
 
 
 def unique_image_inventory(

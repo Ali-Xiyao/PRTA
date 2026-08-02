@@ -493,3 +493,14 @@
   every fraction; Dev stays fixed at 16,666 rows; no test or Gold outcome was
   opened. Queue hash is
   `84086d0ce7fa3b3c465513a51af4c92935998d32e6244cdf186d78a06582f60b`.
+- Added a verified contiguous FP16 training store derived shard-by-shard from
+  the completed cache. `Block8CacheIndex` will prefer this memory-mapped access
+  surface, avoiding random whole-shard reads while preserving identical
+  features and inventory order.
+- Added a fail-closed two-GPU queue keeper. It waits for the final cache and
+  text cache, builds/validates the training store, runs only the seven frozen
+  Train/Dev configs, honors D205 before M301-H1/H2, updates a locked registry,
+  and enters HOLD on any missing receipt. It has not yet been launched.
+- Full repository validation now passes 85 tests, Ruff, compileall, and diff
+  checks. The original cache process remains healthy at 42,752/146,110 images
+  (167 shards, 29.26%) with empty stderr.

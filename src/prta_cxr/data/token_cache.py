@@ -7,6 +7,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import torch
 
 
@@ -34,6 +35,10 @@ class Block8CacheIndex:
         self.maximum_loaded_shards = maximum_loaded_shards
         self.locations: dict[str, tuple[Path, int]] = {}
         self._loaded: OrderedDict[Path, dict[str, Any]] = OrderedDict()
+        self._global_locations: dict[str, int] = {}
+        self._training_store_path: Path | None = None
+        self._training_store_shape: tuple[int, int, int] | None = None
+        self._training_store: np.memmap | None = None
         self._build_index()
 
     def _build_index(self) -> None:
@@ -46,6 +51,18 @@ class Block8CacheIndex:
             raise ValueError("Block-8 cache does not match the required status")
         if "parts" not in merged:
             self._build_direct_index(merged)
+            store = merged.get("training_store")
+            if store is not None:
+                path = Path(str(store["path"]))
+                if not path.is_absolute():
+                    path = self.cache_root / path
+                shape = tuple(int(value) for value in store["shape"])
+                if shape != (len(self.locations), 197, 768):
+                    raise ValueError("Block-8 training store shape mismatch")
+                if path.stat().st_size != int(store["bytes"]):
+                    raise ValueError("Block-8 training store byte size mismatch")
+                self._training_store_path = path
+                self._training_store_shape = shape
             return
         for part_entry in merged["parts"]:
             part_manifest_path = Path(part_entry["manifest_path"])
@@ -98,6 +115,7 @@ class Block8CacheIndex:
                 if image_key in self.locations:
                     raise ValueError(f"duplicate cached image key: {image_key}")
                 self.locations[image_key] = (path, local_index)
+                self._global_locations[image_key] = offset + local_index
             offset += count
         if offset != len(inventory):
             raise ValueError("direct cache did not consume its inventory")
@@ -125,6 +143,16 @@ class Block8CacheIndex:
         missing = [value for value in ids if value not in self.locations]
         if missing:
             raise KeyError(f"{len(missing)} image keys are absent; first={missing[0]}")
+        if self._training_store_path is not None:
+            if self._training_store is None:
+                self._training_store = np.memmap(
+                    self._training_store_path,
+                    mode="r",
+                    dtype=np.float16,
+                    shape=self._training_store_shape,
+                )
+            indices = [self._global_locations[value] for value in ids]
+            return torch.from_numpy(np.array(self._training_store[indices], copy=True))
         grouped: dict[Path, list[tuple[int, int]]] = defaultdict(list)
         for output_index, dicom_id in enumerate(ids):
             path, local_index = self.locations[dicom_id]

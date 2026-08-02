@@ -1,6 +1,6 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`LUNA_PRIMARY_GOLD_AND_SPLIT_COMPLETE__CACHE_TRAIN_HOLD`
+状态：`SPLIT_COMPLETE__CACHE_IN_PROGRESS__TRAIN_QUEUE_PREPARED`
 
 日期：2026-08-03
 
@@ -12,9 +12,13 @@
 Gold 与训练候选患者交集为 0。现在仍不能理解为“插入 GPU 就会自动开始训练”，
 正式 split 已完成并通过独立泄漏复算。首次正式训练前还必须完成：
 
-1. 使用已钉住的本地 BiomedCLIP 生成新的 Block-8 与文本缓存；
-2. 完成缓存哈希、形状、有限值和样本覆盖审计；
-3. 按正式 Run Registry 启动仅使用 Train/Dev 的开发训练。
+1. 完成正在运行的、本地 BiomedCLIP outcome-free Block-8 与文本缓存；
+2. 完成缓存哈希、形状、有限值和样本覆盖审计，并从已验证 shard 构建连续
+   FP16 memory-mapped 训练访问存储；
+3. 由已冻结的双 GPU keeper 按正式 Run Registry 启动仅使用 Train/Dev 的开发训练。
+
+初始开发队列已冻结为 D201-D205（Luna-primary 10/25/50/75/100% patient-level
+嵌套子集）和 M301-H1/H2；H0 复用 D205。规则标签不参与任何训练。
 
 当前真实数据证据、计数和哈希见
 [真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
@@ -50,6 +54,9 @@ python scripts/04e_prepare_gold_audit_roster.py --mode preflight
 python scripts/04f_finalize_human_review.py --mode preflight
 python scripts/05_freeze_splits.py --mode preflight
 python scripts/06_cache_vit_tokens.py --mode preflight
+python scripts/06b_build_training_store.py --mode preflight
+python scripts/07a_prepare_development_queue.py --mode preflight
+python scripts/07b_run_development_queue.py --mode preflight
 python scripts/07_train.py --mode preflight
 python scripts/08_evaluate.py --mode preflight
 ```
@@ -153,6 +160,14 @@ python scripts/06_cache_vit_tokens.py --mode formal --formal `
   --device cuda:0
 ```
 
+缓存完成后，正式训练前还必须构建顺序等价的连续访问存储；该步骤逐 shard 验证
+SHA-256、shape 和有限值，并记录 41.175 GiB 文件自身的 SHA-256：
+
+```powershell
+python scripts/06b_build_training_store.py --mode formal --formal `
+  --cache-root results/cache/full_repartition_v1
+```
+
 ### 5. 训练
 
 训练只读取 `train` 和 `dev`；训练 receipt 明确记录
@@ -166,11 +181,14 @@ python scripts/07_train.py --mode formal --formal `
   --text-cache results/cache/full_repartition_v1/text_cache.pt `
   --weights MODEL_ROOT/open_clip_pytorch_model.bin `
   --label-quality-audit manifests/receipts/human_silver_accuracy_audit.json `
+  --run-registry results/run_registry.jsonl `
   --output results/runs/prta_seed17 `
   --device cuda:0
 ```
 
-断点恢复使用 `--resume PATH_TO_LAST.pt`，仍写入一个新的输出目录，避免覆盖旧证据。
+断点恢复使用 `--resume SAME_OUTPUT_ROOT/last.pt`，必须回到同一输出目录并通过
+config/input hash 身份核验；只原子更新 `training_progress.json` 和 Registry，已有
+checkpoint、最终 receipt、预测和指标仍拒绝覆盖。
 
 ### 6. 一次性内部测试
 
@@ -196,7 +214,9 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
   `Unclear` 排除；250 条人工审核/Gold 候选 roster 已生成；
 - 已完成两名 >5 年资历医生的 Luna 辅助单列共识复核：250 条 Gold，246 条确认、
   4 条修正、排除 0；2,297 条 roster 患者相关 Silver 继续隔离；
-- split 已冻结并独立审计；缓存尚未启动；
+- split 已冻结并独立审计；outcome-free 全量缓存正在进行，训练访问存储待缓存完成
+  后自动构建；
+- 七个初始 Train/Dev 开发配置已准备，双 GPU keeper 代码与 20 分钟任务监控已就绪；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
 - pilot 数字仅用于工程与流程决策，不是论文科学结论。

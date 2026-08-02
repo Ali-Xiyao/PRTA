@@ -445,3 +445,11 @@
   implementation therefore uses replace-in-place atomic files only for
   `training_progress.json` and the unified registry; configs, checkpoints,
   final receipts, predictions, and metrics retain refuse-overwrite behavior.
+- Random training directly from 571 torch shards would repeatedly deserialize
+  entire ~72 MiB tensors for two-image lookups. A single 41.175 GiB contiguous
+  FP16 store enables page-level random reads via `numpy.memmap`; it is derived
+  only after every source shard hash/shape/finite-value check passes, and its
+  own byte count and SHA-256 are recorded in the cache manifest.
+- Because two GPUs may finish/start runs concurrently, the unified registry
+  needs a cross-process lock around read-modify-replace. The Windows lock-file
+  implementation prevents one run closeout from erasing the other run's row.

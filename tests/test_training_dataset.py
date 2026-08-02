@@ -1,6 +1,9 @@
 import torch
 
-from prta_cxr.data.cache_writer import write_block8_cache
+from prta_cxr.data.cache_writer import (
+    build_block8_training_store,
+    write_block8_cache,
+)
 from prta_cxr.data.token_cache import Block8CacheIndex, image_cache_key
 from prta_cxr.data.training_dataset import PRTAFeatureDataset
 
@@ -52,3 +55,26 @@ def test_feature_dataset_joins_cache_text_and_label(tmp_path):
     assert item["finding_text"].shape == (512,)
     assert item["transition_text"].shape == (512,)
     assert item["target"] == 0
+
+
+def test_feature_dataset_prefers_contiguous_training_store(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("source-a", f"image-{index}.png"),
+            "source": "source-a",
+            "image_path": f"image-{index}.png",
+        }
+        for index in range(3)
+    ]
+    expected = (
+        torch.arange(3 * 197 * 768, dtype=torch.float32).reshape(3, 197, 768)
+        / 10_000
+    )
+    root = tmp_path / "cache"
+    write_block8_cache(root, inventory, expected, shard_size=2)
+    receipt = build_block8_training_store(root)
+    assert receipt["rows"] == 3
+    index = Block8CacheIndex(root)
+    actual = index.get_many([inventory[2]["image_key"], inventory[0]["image_key"]])
+    assert index._training_store_path is not None
+    assert torch.equal(actual, expected[[2, 0]].to(torch.float16))
