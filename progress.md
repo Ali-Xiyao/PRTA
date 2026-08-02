@@ -184,3 +184,37 @@
   enforced that HOLD in the runner. Final repository gates pass 37/37 tests,
   Ruff, compileall, diff-check, main preflight, and downstream split/cache/train/
   evaluation preflights without opening any protected surface.
+
+## 2026-08-02 independent-silver protocol authorization
+
+- The user replaced the proposed full-scale strict evidence workflow with a
+  rule-blind independent-intersection protocol and asked for a trial.
+- The external AI request will contain no rule label, confidence, rationale,
+  evidence quotation, patient identifier, or private alias mapping. Its only
+  per-row output is `sample_id` plus one of the five progression labels or
+  `Unclear`.
+- Exact rule/AI agreement is admitted as silver; mismatch and `Unclear` are
+  excluded. Agreement is explicitly not treated as ground truth.
+- Source-specific agreement is mandatory. A later 200-300-row stratified human
+  accuracy audit remains a hard prerequisite for formal training or paper use.
+- Started Phase 13. Full labeling, split, cache, training, and evaluation are
+  not authorized by this trial.
+- Added separate prompt/schema/config, batch preparation, resume-safe runner,
+  exact-intersection merge, exclusion manifest, source/label audits, and a
+  formal training gate that requires a completed 200-300-row human audit
+  receipt.
+- Reused the exact historical 150-row selection (`c7a44d86...858f9`) while
+  keeping all historical strict outputs immutable. The new external payload
+  contained only short aliases, finding, and prior/current reports.
+- Completed the independent AI pilot 150/150 in eight batches with zero failed
+  outputs or retries. Total external time was 344.991 seconds.
+- The local intersection admitted 103/150 Silver rows, excluded 30 mismatches
+  and 17 `Unclear` rows. MIMIC retained 52/75 (69.33%) and CheXpert Plus 51/75
+  (68.00%); `Worse` was the lowest rule stratum at 17/30 (56.67%).
+- Disabled both repeated pilot execution and full execution in the frozen
+  config. No full label expansion, split, cache, training, test, gold, or
+  external-confirmation surface was opened.
+- Updated both supplied authority documents, README, readiness commands,
+  migration map, and the new pilot status receipt. Final validation passes
+  49/49 tests, Ruff, compileall, all relevant preflights, runtime artifact
+  re-audit, and `git diff --check`.

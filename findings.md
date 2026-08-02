@@ -17,6 +17,30 @@
 - Formal work continues to require explicit authorization plus the repository's
   double acknowledgement lock.
 
+## Independent-silver protocol decision - 2026-08-02
+
+- The strict v6 pilot established that evidence-heavy per-row review is costly
+  and failure-prone; it remains useful as engineering validation but is not the
+  full-scale labeling authority.
+- Future large-scale labeling should use two independent automated judgments:
+  deterministic rules locally and a rule-blind AI label from the report pair.
+- The AI must not receive the rule label. Exact non-`Unclear` agreement alone
+  enters the silver manifest; all mismatches and `Unclear` responses are
+  excluded rather than repaired or adjudicated automatically.
+- Overall agreement is insufficient: MIMIC and CheXpert Plus require separate
+  rates, and the final corpus requires a source-by-five-label human audit of
+  roughly 200-300 rows before training or paper claims.
+- The simplified two-field output eliminated the engineering failures observed
+  in the strict evidence pilot: all 8 batches and all 150 IDs passed without a
+  retry, at 344.991 seconds total external time.
+- Pilot exact-agreement retention was 103/150 (68.67%). Source retention was
+  similar (MIMIC 69.33%, CheXpert Plus 68.00%), but that is retention rather
+  than clinical accuracy and still requires separate source-level human audit.
+- Rule-label retention varied materially: Resolved 74.07%, Stable 73.33%, New
+  70.00%, Improved 69.70%, and Worse 56.67%. The low Worse intersection is a
+  priority stratum for the later human accuracy sample, not a reason to expose
+  the rule answer or tune against this pilot.
+
 ## Initial code state
 
 - The clean repository has validated PRTA/CMCP/cache/evaluation core and

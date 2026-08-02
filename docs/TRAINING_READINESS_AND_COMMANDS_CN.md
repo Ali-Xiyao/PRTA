@@ -1,6 +1,6 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`LUNA_PILOT_COMPLETE__FULL_LABEL_SPLIT_CACHE_TRAIN_HOLD`
+状态：`INDEPENDENT_SILVER_PILOT_PASS__FULL_LABEL_SPLIT_CACHE_TRAIN_HOLD`
 
 日期：2026-08-02
 
@@ -10,16 +10,17 @@
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
 但现在还不能理解为“插入 GPU 就会自动开始训练”。在首次正式运行前仍必须完成：
 
-1. 对已冻结的 238,511 个 pair 生成规则候选并完成 Luna 审核；
-2. 完成标签规模、五类覆盖、冲突拒绝和小规模人工抽检门；
+1. 对 148,798 个规则候选完成 rule-blind AI 独立标签与本地一致交集；
+2. 全量后按 source × 五类完成 200–300 条人工准确率抽检门；
 3. 从新的合规候选池重新冻结 patient-disjoint 80/10/10 split；
 4. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
 5. 用户单独授权具体的缓存或训练运行。
 
 当前真实数据证据、计数和哈希见
 [真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
-Luna pilot 的接受率、来源差异、失败率和全量 HOLD 依据见
-[Luna Pilot 状态](LUNA_PILOT_STATUS_CN.md)。
+当前独立交集 pilot 的来源一致率、吞吐和全量 HOLD 依据见
+[Independent Silver Pilot 状态](INDEPENDENT_SILVER_PILOT_STATUS_CN.md)。历史
+证据型流程见 [Luna Pilot 状态](LUNA_PILOT_STATUS_CN.md)，不再作为全量方案。
 
 旧的 debug、小 cohort、R 编号临时 roster 不再作为训练规模上限，也不能直接
 复制为新 split。揭示过结果的 test、protected gold、external confirmation 和
@@ -32,9 +33,10 @@ Luna pilot 的接受率、来源差异、失败率和全量 HOLD 依据见
 ```powershell
 python scripts/00_preflight.py
 python scripts/01_build_pairs.py --mode preflight
-python scripts/02_prepare_luna_batches.py --mode preflight
-python scripts/03_run_luna_labeling.py --mode preflight
-python scripts/04_merge_and_audit_labels.py --mode preflight
+python scripts/02b_prepare_independent_pilot.py --mode preflight
+python scripts/02c_prepare_independent_batches.py --mode preflight
+python scripts/03b_run_independent_labeling.py --mode preflight
+python scripts/04b_merge_independent_silver.py --mode preflight
 python scripts/05_freeze_splits.py --mode preflight
 python scripts/06_cache_vit_tokens.py --mode preflight
 python scripts/07_train.py --mode preflight
@@ -52,7 +54,7 @@ python scripts/08_evaluate.py --mode synthetic --output results/smoke/evaluation
 ## 正式执行顺序（仅在逐阶段授权后）
 
 下面是命令模板，不是本次运行授权。所有正式入口都要求 `--formal` 和精确环境
-确认值；Luna 还额外要求 `--execute`，内部测试还额外要求
+确认值；独立 AI runner 还额外要求 `--execute`，内部测试还额外要求
 `--open-internal-test`。
 
 ### 1. 构建全量候选 pair
@@ -73,32 +75,37 @@ python scripts/01_build_pairs.py --mode formal --formal `
   --audit-output manifests/receipts/pair_build.json
 ```
 
-### 2. 标注与合并
+### 2. 独立标注与本地交集合并
+
+以下命令展示接口形状；当前配置只授权 150 条 pilot，
+`full_execution_enabled=false`，所以不得把全量候选直接传入 runner。正式全量
+命令只有在用户单独授权并更新配置后才可运行。
 
 ```powershell
-python scripts/02_prepare_luna_batches.py --mode formal --formal `
-  --pairs manifests/pairs/full_candidate_pairs.jsonl `
-  --candidate-output manifests/labels/rule_candidates.jsonl `
-  --batch-dir manifests/labels/luna_batches `
-  --receipt-output manifests/receipts/luna_prepare.json
-
-python scripts/03_run_luna_labeling.py --mode formal --formal --execute `
-  --batch-dir manifests/labels/luna_batches `
-  --output-dir manifests/labels/luna_outputs `
-  --receipt-output manifests/receipts/luna_run.json
-
-python scripts/04_merge_and_audit_labels.py --mode formal --formal `
+python scripts/02c_prepare_independent_batches.py --mode formal --formal `
   --candidates manifests/labels/rule_candidates.jsonl `
-  --luna-dir manifests/labels/luna_outputs `
-  --output manifests/labels/verified_samples.jsonl `
-  --audit-output manifests/receipts/label_merge.json
+  --batch-dir manifests/labels/independent_batches `
+  --receipt-output manifests/receipts/independent_prepare.json
+
+python scripts/03b_run_independent_labeling.py --mode formal --scope full `
+  --formal --execute `
+  --batch-dir manifests/labels/independent_batches `
+  --output-dir manifests/labels/independent_outputs `
+  --receipt-output manifests/receipts/independent_run.json
+
+python scripts/04b_merge_independent_silver.py --mode formal --formal `
+  --candidates manifests/labels/rule_candidates.jsonl `
+  --ai-output-dir manifests/labels/independent_outputs `
+  --accepted-output manifests/labels/silver_accepted.jsonl `
+  --excluded-output manifests/labels/silver_excluded.jsonl `
+  --audit-output manifests/receipts/independent_merge.json
 ```
 
 ### 3. 从头冻结新 split
 
 ```powershell
 python scripts/05_freeze_splits.py --mode formal --formal `
-  --input manifests/labels/verified_samples.jsonl `
+  --input manifests/labels/silver_accepted.jsonl `
   --output manifests/splits/full_repartition_v1.jsonl `
   --audit-output manifests/receipts/full_repartition_v1.json
 ```
@@ -130,6 +137,7 @@ python scripts/07_train.py --mode formal --formal `
   --cache-root results/cache/full_repartition_v1 `
   --text-cache results/cache/full_repartition_v1/text_cache.pt `
   --weights MODEL_ROOT/open_clip_pytorch_model.bin `
+  --label-quality-audit manifests/receipts/human_silver_accuracy_audit.json `
   --output results/runs/prta_seed17 `
   --device cuda:0
 ```
@@ -155,8 +163,8 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
 
 - 已读取允许范围内的真实报告、检查图像存在性并生成真实 source/pair manifest；
 - 未读取真实图像像素；
-- 未生成真实规则/Luna 标签、split 或缓存；
-- 未调用 Luna；
+- 已生成 148,798 个真实规则候选；独立 AI pilot 已完成 150 条并保留 103 条 Silver；
+- 未运行全量独立 AI 标注、人工准确率抽检、split 或缓存；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
-- 未产生任何可用于论文结论的数字。
+- pilot 数字仅用于工程与流程决策，不是论文科学结论。

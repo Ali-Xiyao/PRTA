@@ -43,21 +43,21 @@ VLM 只在全部 ViT 实验完成后做一次附加部署：
 
 这部分只回答“PRTA 表征能否迁移到 VLM”，不做 VLM 基线大矩阵，不把其他方法强行部署成 VLM，也不让 VLM 结果反向牵引主方法。
 
-### 0.2 Luna 生成标签的正式名称
+### 0.2 独立交集 Silver 标签的正式名称
 
-使用 GPT-5.6 Luna 批量读取纵向报告、抽取证据并输出标签是可行的数据构建方案，但论文中应称为：
+使用规则程序与 rule-blind AI 独立判断并只保留一致交集，是可行的大规模数据构建方案，论文中应称为：
 
-- `LLM-verified silver labels`；
-- `Luna-adjudicated pseudo-labels`；
+- `rule–AI agreement silver labels`；
+- `independently cross-checked pseudo-labels`；
 - `report-derived weak supervision`。
 
-不能将 Luna 批量生成的标签直接称为人工 Gold。最低人工环节是一个小规模、分层的临床抽检，而不是重新人工标注整套训练集。
+不能将自动一致标签直接称为人工 Gold 或声称必然正确。最低人工环节是在全量完成后按来源与五类做 200–300 条分层准确率抽检，而不是重新人工标注整套训练集。
 
 ### 0.3 最终执行顺序
 
 ```text
 新项目重构与 parity
-→ 扩大纵向样本、Luna 批量审核、医生抽检
+→ 扩大纵向样本、rule-blind AI 交集、医生抽检
 → 仅在 Train/Dev 上把主 ViT 指标做上去
 → 冻结数据、方法、指标和测试协议
 → 正式 baseline
@@ -144,7 +144,7 @@ Improved ↔ Worse
 New      ↔ Resolved
 ```
 
-### 2.2 报告监督与 Luna 审核 Pipeline
+### 2.2 报告监督与独立交集 Silver Pipeline
 
 ```text
 原始纵向 study
@@ -153,82 +153,77 @@ New      ↔ Resolved
     ↓
 相邻合格 PRIOR–CURRENT 配对
     ↓
-规则抽取候选 finding 与 progression
+规则程序生成候选 progression（仅本地保存）
     ↓
-GPT-5.6 Luna 读取两份报告并抽取证据
+AI 只读取 finding、PRIOR 报告、CURRENT 报告
     ↓
-日期匹配 / finding 归属 / 否定 / 不确定性 / 冲突检查
+AI 独立输出五类标签之一或 Unclear
     ↓
-Tier-A 接受 / Tier-B 保留 / Reject
+本地比较 Rule Label 与 AI Label
+    ↓
+完全一致且非 Unclear → Silver；否则排除
+    ↓
+完成 source × 五类的 200–300 条人工准确率抽检
     ↓
 患者级 Train / Dev / Internal-test 划分
 ```
 
-#### Luna 强制输出的 JSON 字段
+#### AI 强制输出的 JSON 字段
 
 ```json
 {
-  "sample_id": "hashed-id",
-  "finding": "Pleural Effusion",
-  "verified_label": "Improved",
-  "decision": "accept",
-  "prior_evidence": "moderate right pleural effusion",
-  "current_evidence": "small residual right pleural effusion",
-  "comparison_evidence": "decreased since the prior examination",
-  "comparison_matches_selected_prior": true,
-  "finding_match": true,
-  "negation_conflict": false,
-  "uncertainty_conflict": false,
-  "temporal_conflict": false,
-  "reason_code": "explicit_direction_consistent_state"
+  "sample_id": "short-batch-local-alias",
+  "ai_label": "Improved"
 }
 ```
 
-#### Tier-A：主训练集
+`ai_label` 只能为：
+
+```text
+Stable / Improved / Worse / New / Resolved / Unclear
+```
+
+外发请求中严禁包含规则候选标签、患者标识、原始 sample hash 或
+alias-to-original 映射。AI 不输出理由、置信度或原文证据；代码必须拒绝缺行、
+多行、重复 ID、未知标签和任何额外字段。
+
+#### Silver：主训练候选
 
 同时满足：
 
-- 规则候选与 Luna 标签一致，或 Luna 给出明确证据并通过固定补充词表；
-- PRIOR、CURRENT 或比较语句中存在可定位证据；
-- finding 归属明确；
-- 选择的 PRIOR 与报告中的比较对象不冲突；
-- 不存在否定、不确定性和时间方向冲突；
-- New/Resolved 与两个时间点的 finding 状态一致。
+- 规则与 AI 相互独立；
+- AI 输出不是 `Unclear`；
+- `rule_label == ai_label` 完全一致；
+- 样本通过 ID、schema、来源和患者隔离检查。
 
-#### Tier-B：规模扩展集
+#### Excluded
 
-允许以下情况：
+以下样本不进入 silver 训练清单：
 
-- 方向较明确，但某一项证据不完整；
-- Luna 接受而规则未覆盖该表达；
-- 可进入数据规模/标签质量实验，但不默认混入最终主训练。
+- 规则与 AI 标签不一致；
+- AI 输出 `Unclear`；
+- AI 输出缺失、重复、未知或 schema/ID 不合法。
 
-#### Reject
-
-以下样本直接拒绝：
-
-- 报告比较对象不是所选 PRIOR；
-- finding 无法归属；
-- 只有模糊或推测表达；
-- 否定、不确定性或时间方向冲突；
-- 规则与 Luna 冲突；
-- 缺少可引用的证据句。
+规则与 AI 一致只表示标签可信度较高，不证明标签一定正确。不得把自动一致率
+写成 gold accuracy，也不得人工逐条修补后回填为自动 silver。
 
 ### 2.3 临床抽检最小方案
 
-不新增人工大规模标注集。建议审核 300 条：
+不新增人工大规模标注集。全量自动标注完成后，按
+`数据源 × 五类 Silver 标签` 固定随机种子分层抽取 200–300 条：
 
-- 250 条 Luna 接受样本：五类各 50 条，尽量覆盖不同 finding 与来源；
-- 50 条 Luna Reject/Conflict 样本；
-- 医生只判断“报告证据是否支持该 finding 的该 progression”；
+- MIMIC-CXR 与 CheXpert Plus 分别覆盖，不能用总体结果替代来源结果；
+- 五类均须覆盖，尽量同时覆盖不同 finding；
+- 医生只判断“报告是否支持该 finding 的该 progression”；
 - 第二位医生仅复核第一位医生判为错误、无法判断或存在争议的样本。
 
 建议质量门：
 
-- Tier-A 总体医生一致率 ≥ 90%；
+- Silver 总体医生一致率建议 ≥ 90%；
 - 任一类别医生一致率 ≥ 80%；
+- 必须报告 MIMIC-CXR 与 CheXpert Plus 各自准确率和置信区间；
 - 若未通过，冻结训练，修订规则、prompt 或接受门；
-- prompt 修订后必须重新运行全量 Luna 标注，不能逐行人工修补错误标签。
+- prompt 或规则修订后必须重新运行全量标注，不能逐行人工修补错误标签。
 
 若只有一名医生，称为 `clinician-audited subset`；若两名医生独立审核并裁决分歧，可称为 `expert reference subset`。
 
@@ -371,10 +366,12 @@ PRTA-CXR/
 │       ├── visualizations/
 │       └── vlm_additional/
 ├── prompts/
-│   ├── luna_label_v1.md
-│   └── luna_verify_v1.md
+│   ├── independent_silver_label_v1.md
+│   ├── luna_label_v1.md              # 历史严格 pilot
+│   └── luna_verify_v1.md             # 历史严格 pilot
 ├── schemas/
-│   └── luna_label_batch.schema.json
+│   ├── independent_silver_label_batch.schema.json
+│   └── luna_label_batch.schema.json  # 历史严格 pilot
 ├── src/prta_cxr/
 │   ├── data/
 │   ├── models/
@@ -386,8 +383,12 @@ PRTA-CXR/
 │   ├── 00_preflight.py
 │   ├── 01_build_pairs.py
 │   ├── 02_prepare_luna_batches.py
+│   ├── 02b_prepare_independent_pilot.py
+│   ├── 02c_prepare_independent_batches.py
 │   ├── 03_run_luna_labeling.py
+│   ├── 03b_run_independent_labeling.py
 │   ├── 04_merge_and_audit_labels.py
+│   ├── 04b_merge_independent_silver.py
 │   ├── 05_freeze_splits.py
 │   ├── 06_cache_vit_tokens.py
 │   ├── 07_train.py
@@ -465,7 +466,7 @@ PRTA-CXR/
 
 未通过 parity 不进入数据扩展。
 
-### Phase 1：数据扩展、Luna 标签与医生抽检
+### Phase 1：数据扩展、独立交集 Silver 与医生抽检
 
 **目标**：在不新增人工大规模标注的前提下，扩大训练数据并提高标签精度。
 
@@ -473,11 +474,11 @@ PRTA-CXR/
 
 1. 扩大已批准公开数据源中的合格纵向 pair；
 2. 规则提取候选；
-3. Luna 批量审核；
-4. 生成 Tier-A / Tier-B / Reject；
-5. 完成 300 条医生抽检；
-6. 修订并冻结 prompt/规则；
-7. 重新运行全量标签；
+3. AI 在看不到规则标签的前提下批量输出单一标签；
+4. 本地取规则与 AI 的非 `Unclear` 完全一致交集；
+5. 分来源统计一致率并排除 mismatch/`Unclear`；
+6. 全量完成后分层抽取 200–300 条做人工准确率检查；
+7. 必要时修订并冻结 prompt/规则后重新运行全量标签；
 8. 排除历史 test、医生审计集和现有 Gold；
 9. 按患者冻结 Train/Dev/Internal-test。
 
@@ -500,8 +501,8 @@ PRTA-CXR/
 |---|---|---|
 | D0 | 旧训练规模 + 旧规则标签 | 迁移后的基准 |
 | D1 | 扩展规模 + 旧规则标签 | 分离“规模收益” |
-| D2 | 扩展规模 + Luna Tier-A | 分离“质量收益” |
-| D3 | 扩展规模 + Tier-A+B | 测试质量-数量权衡 |
+| D2 | 扩展规模 + Rule/AI agreement Silver | 分离“质量收益” |
+| D3 | 扩展规模 + Rule-only | 测试质量-数量权衡 |
 
 #### 2.2 有限方法开发
 
@@ -581,7 +582,7 @@ PRTA-CXR/
 - w/o CMCP；
 - w/o temporal inversion；
 - w/o state preservation；
-- 可选：rule-only labels 替代 Luna Tier-A。
+- 可选：rule-only labels 替代 Rule/AI agreement Silver。
 
 所有消融使用同一 split、同一最终 head、同一训练预算和三个 seeds；不在正式 test 上选择变体。
 
@@ -656,7 +657,7 @@ PRTA-CXR/
 
 ---
 
-## 5. Luna / Codex 批处理建议
+## 5. 独立 AI / Codex 批处理建议
 
 GPT-5.6 Luna 适合明确、重复、可验证的抽取与分类任务。Codex CLI 的非交互执行可通过 stdin 读取批次，并以 JSON Schema 约束输出。
 
@@ -670,7 +671,7 @@ cat artifacts/label_inputs/batch_0001.txt \
       --sandbox read-only \
       --ignore-user-config \
       --ignore-rules \
-      --output-schema schemas/luna_label_batch.schema.json \
+      --output-schema schemas/independent_silver_label_batch.schema.json \
       -o artifacts/label_outputs/batch_0001.json \
       -
 ```
@@ -678,12 +679,12 @@ cat artifacts/label_inputs/batch_0001.txt \
 执行约束：
 
 - 每批 20–30 条；
-- 输入仅包含随机 `sample_id`，不含真实 patient ID；
+- 输入仅包含短 `sample_id`、finding 和前后报告，不含规则标签或真实 patient ID；
 - 只使用已去标识、许可允许处理的报告；
 - 每批保存 input hash、output hash、模型名、CLI 版本、运行日期、prompt hash、schema hash；
 - 非法 JSON、缺字段、重复 sample_id、未知标签全部 fail-closed；
 - 失败批次可使用同一 prompt 重试，不能人工改写模型输出；
-- Luna 全量初筛后，仅对 conflict/uncertain 项做第二次 verifier pass；
+- AI 只输出单一标签；mismatch 和 `Unclear` 直接排除，不做第二次自动裁决；
 - 正式运行前先以 100–200 条 pilot 验证结构化输出、速度、额度和失败率。
 
 ---
@@ -752,13 +753,13 @@ Resolved → New
 R001  New repo skeleton
 R002  Legacy parity
 L101  Candidate extraction
-L102  Luna pilot
+L102  Independent-label pilot
 L103  Clinician audit
 L104  Frozen full labeling
 D201  Old-size rule labels
 D202  Full-size rule labels
-D203  Full-size Tier-A
-D204  Full-size Tier-A+B
+D203  Full-size Rule/AI agreement Silver
+D204  Full-size Rule-only
 M301  Head screening
 M302  Loss screening
 M303  Adapter-range screening
@@ -783,7 +784,7 @@ X801  PRTA-to-VLM additional deployment
 
 ### Table 1：数据与标签构建
 
-| Source | Candidate patients | Candidate pairs | Candidate rows | Rule-valid | Luna Tier-A | Tier-B | Reject | Final train/dev/test |
+| Source | Candidate patients | Candidate pairs | Candidate rows | Rule-valid | AI-labeled | Silver | Mismatch/Unclear | Final train/dev/test |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | MIMIC-CXR |  |  |  |  |  |  |  |  |
 | CheXpert |  |  |  |  |  |  |  |  |
@@ -795,7 +796,7 @@ X801  PRTA-to-VLM additional deployment
 | Label pipeline | Coverage | Clinician agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject precision |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Rule-only |  |  |  |  |  |  |  |  |
-| Luna Tier-A |  |  |  |  |  |  |  |  |
+| Rule/AI agreement Silver |  |  |  |  |  |  |  |  |
 
 ### Table 3：正式主结果
 

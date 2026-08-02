@@ -17,6 +17,10 @@ contracts, not legacy experiment namespaces.
 
 - `contracts.py`: one five-label/inversion/sample/Luna contract.
 - `labeling.py`: exact-ID Luna merge and Tier-A/B/Reject audit.
+- `independent_silver.py`: new rule-blind two-field AI contract, exact
+  rule/AI intersection, exclusion manifests, and source-specific audits.
+- `quality_gate.py`: new mandatory 200-300-row source-by-label human accuracy
+  receipt gate for formal training.
 - `data/pairing.py`: adjacent patient-time pairing.
 - `data/manifests.py`: JSONL, unique-ID, and patient leakage checks.
 - `models/heads.py`: native H0 and H1 paper heads.

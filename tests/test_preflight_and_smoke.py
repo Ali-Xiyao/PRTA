@@ -13,6 +13,10 @@ def test_preflight_is_no_data_and_hashes_authority():
     assert result["real_data_opened"] is False
     assert result["absolute_path_hits"] == []
     assert "schemas/luna_label_batch.schema.json" in result["authority_hashes"]
+    assert (
+        "schemas/independent_silver_label_batch.schema.json"
+        in result["authority_hashes"]
+    )
 
 
 def test_synthetic_smoke_saves_checkpoint_and_receipt(tmp_path):

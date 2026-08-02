@@ -15,10 +15,11 @@ Qwen SFT attempts are intentionally absent.
 
 The full data-to-training code path and synthetic validation are implemented.
 Real source manifests, exclusions, and the 238,511-pair candidate pool are now
-prepared and audited. Formal scientific experiments have **not** been started;
-the 150-row Luna engineering pilot is complete but full labeling is on HOLD.
-Split freeze, caching, training, and internal testing remain separately gated
-and require explicit authorization.
+prepared and audited. Formal scientific experiments have **not** been started.
+The rule-blind independent-label pilot completed 150/150 rows and retained 103
+exact-agreement Silver rows; full labeling is still disabled. Split freeze,
+human accuracy audit, caching, training, and internal testing remain separately
+gated and require explicit authorization.
 
 ## Start here
 
@@ -36,7 +37,10 @@ and require explicit authorization.
    current counts, hashes, and the next execution gate.
 7. Review the
    [Luna pilot status](docs/LUNA_PILOT_STATUS_CN.md) before authorizing any
-   full-scale label expansion.
+   historical strict label expansion.
+8. Use the current
+   [independent Silver pilot status](docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md)
+   as the authority for future full-scale labeling decisions.
 
 ## Local engineering validation
 

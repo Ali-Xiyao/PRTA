@@ -170,17 +170,20 @@ PRTA-CXR/
 
 ---
 
-# 3. Phase 1：数据扩展、Luna 标签与临床抽检
+# 3. Phase 1：数据扩展、独立交集 Silver 与临床抽检
 
 ## 3.1 简单说明
 
-Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证据原文、时间顺序、否定、不确定性、finding 归属和患者隔离检查；医生只做分层抽检与争议复核。
+规则程序先在本地产生候选标签；AI 在看不到规则标签的前提下，只读取目标 finding 和前后报告，独立输出五类之一或 `Unclear`。代码只把非 `Unclear` 且与规则完全一致的样本纳入 Silver；不一致和 `Unclear` 直接排除。AI 不输出理由、置信度或证据引用。
 
-建议输出层级：
+固定输出状态：
 
-- **Tier-A**：证据充分、无冲突，进入主训练集；
-- **Tier-B**：较可信但证据不完全，保留用于质量—数量实验；
-- **Reject**：比较对象、finding、否定、不确定性或时间关系存在冲突。
+- **Silver**：`rule_label == ai_label` 且 AI 非 `Unclear`，进入训练候选；
+- **Excluded-mismatch**：规则与 AI 不一致，不进入训练；
+- **Excluded-unclear**：AI 输出 `Unclear`，不进入训练。
+
+自动一致只表示可信度提高，不代表 ground truth。全量结束后必须按
+`source × 五类 Silver 标签` 分层抽检 200–300 条并报告人工准确率；该收据未完成前正式训练和论文使用均为 HOLD。MIMIC-CXR 与 CheXpert Plus 必须分别报告一致率。
 
 ## 3.2 数据与标签任务清单
 
@@ -189,17 +192,38 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | L101 | 盘点已批准数据源与许可 | 数据卡与可用字段 | P0 |  |  |  |  |  |  |  |  |  |
 | L102 | 构建纵向 Pair Candidates | 相邻 Study 配对 manifest | P0 |  |  |  |  |  | L101 |  |  |  |
 | L103 | 运行规则候选提取 | Rule-valid 与拒绝原因 | P0 |  |  |  |  |  | L102 |  |  |  |
-| L104 | 设计 Luna Prompt + JSON Schema | 固定 v1 Prompt/Schema | P0 |  |  |  |  |  | L103 |  |  |  |
-| L105 | Luna Pilot 100–200 条 | 结构合法率、一致性和吞吐报告 | P0 |  |  |  |  |  | L104 |  |  |  |
-| L106 | 第一次全量 Luna 审核 | Tier-A/B/Reject manifests | P0 |  |  |  |  |  | L105 |  |  |  |
-| L107 | 分层抽取约 300 条医生审核 | 约 250 Accept + 50 Reject/Conflict | P0 |  |  |  |  |  | L106 |  |  |  |
-| L108 | 计算总体与类别一致率 | 总体建议 ≥90%，各类建议 ≥80% | P0 |  |  |  |  |  | L107 |  |  |  |
+| L104 | 设计 rule-blind AI Prompt + 两字段 Schema | 外发无规则标签；只输出 sample_id + ai_label | P0 |  |  | 完成 | 2026-08-02 | `prompts/independent_silver_label_v1.md` | L103 | PASS |  |  |
+| L105 | 独立标签 Pilot 100–200 条 | 结构合法率、分来源一致率和吞吐报告 | P0 |  |  | 完成 | 2026-08-02 | `docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md` | L104 | PASS_PILOT |  | 150 条 |
+| L106 | 第一次全量独立 AI 标注 | AI outputs + Silver/Excluded manifests | P0 |  |  | HOLD |  |  | L105 + 单独授权 | HOLD | full config=false | 未启动 |
+| L107 | 分层抽取 200–300 条人工审核 | source × 五类 Silver 全覆盖 | P0 |  |  | HOLD |  |  | L106 |  |  | 全量后执行 |
+| L108 | 计算人工准确率 | 总体、分来源、分类别、95% CI | P0 |  |  | HOLD |  |  | L107 |  |  | 训练硬门 |
 | L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  |  |  |  | L108 |  |  |  |
 | L110 | 按冻结版本全量重跑 | 不得逐行人工修补 | P0 |  |  |  |  |  | L109 |  |  |  |
 | L111 | 排除历史 Test/Audit/Gold | 排除 manifest hash | P0 |  |  |  |  |  | L110 |  |  |  |
 | L112 | 患者级冻结 Train/Dev/Test | Patient overlap = 0 | P0 |  |  |  |  |  | L111 |  |  |  |
 
-## 3.3 Luna Pilot 确认
+## 3.3 独立交集 Silver Pilot 确认
+
+| 检查项 | 目标/标准 | 实际结果 | 是否通过 | 证据/路径 | 备注 |
+|---|---|---|---|---|---|
+| 冻结样本 | 与旧 pilot 相同 150 条 | hash `c7a44d86...858f9` | 是 | `independent_silver_v1/pilot_prepare_receipt.json` | 两来源各 75 |
+| AI 外发字段 | 不含 rule label/患者 ID/alias map | 仅 alias、finding、前后报告 | 是 | batch receipt | 规则盲法 |
+| AI 输出字段 | 仅 sample_id + ai_label | 150/150 合法 | 是 | 8 个 output JSON | 无理由/置信度/证据 |
+| 精确 ID | 150/150，重复 0 | 150/150 | 是 | run receipt | 短 alias 后本地恢复 |
+| 批次失败 | 0 | 0/8 | 是 | run receipt | 无重试 |
+| 总体 Silver | 记录 | 103/150（68.67%） | 已记录 | merge audit | 非 ground truth accuracy |
+| MIMIC Silver | 单独报告 | 52/75（69.33%） | 已记录 | merge audit | 13 mismatch + 10 Unclear |
+| CheXpert Plus Silver | 单独报告 | 51/75（68.00%） | 已记录 | merge audit | 17 mismatch + 7 Unclear |
+| 全量运行 | 需要单独授权 | 未启动 | HOLD | config full=false | 不自动从 pilot 扩展 |
+| 人工准确率抽检 | 全量后 200–300 条 | 未开始 | HOLD | training gate | 正式训练/论文前必须完成 |
+
+五类规则候选的 Silver 保留率：Improved 23/33（69.70%）、New 21/30
+（70.00%）、Resolved 20/27（74.07%）、Stable 22/30（73.33%）、Worse
+17/30（56.67%）。`Worse` 是后续人工抽检和误差分析的重点层。
+
+### 3.3.1 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
+
+以下 150 条严格证据流程只保留为 runner/schema/证据门工程验证。新全量标签不再要求逐条三段引用，也不得将此表的 Tier-A/Reject 当作新 Silver 清单。
 
 | 检查项 | 目标/标准 | 实际结果 | 是否通过 | 证据/路径 | 备注 |
 |---|---|---|---|---|---|
@@ -216,14 +240,30 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 
 ## 3.4 数据漏斗汇总
 
-| Source | Candidate Patients | Candidate Pairs | Candidate Rows | Rule-valid | Luna Tier-A | Tier-B | Reject | Train Rows | Dev Rows | Test Rows | Audit Rows | Gold Quarantine |
+| Source | Candidate Patients | Candidate Pairs | Candidate Rows | Rule-valid | AI-labeled | Silver | Mismatch | Unclear | Train Rows | Dev Rows | Test Rows | Human Audit |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| MIMIC-CXR |  |  |  |  |  |  |  |  |  |  |  |  |
-| CheXpert |  |  |  |  |  |  |  |  |  |  |  |  |
+| MIMIC-CXR pilot | 75 | 75 | 75 | 75 | 75 | 52 | 13 | 10 |  |  |  |  |
+| CheXpert Plus pilot | 75 | 75 | 75 | 75 | 75 | 51 | 17 | 7 |  |  |  |  |
 | Other Approved Source |  |  |  |  |  |  |  |  |  |  |  |  |
-| Total |  |  |  |  |  |  |  |  |  |  |  |  |
+| Pilot Total | 150 | 150 | 150 | 150 | 150 | 103 | 30 | 17 |  |  |  | 未开始 |
 
-## 3.5 Luna 批次运行日志
+## 3.5 独立 AI 批次运行日志
+
+| Batch ID | Rows | Model | Input Hash | Output Hash | Seconds | Invalid | Retries | Status |
+|---|---:|---|---|---|---:|---:|---:|---|
+| batch_00000 | 20 | gpt-5.6-luna | 339ca4c7 | 5e60bc88 | 56.808 | 0 | 0 | PASS |
+| batch_00001 | 20 | gpt-5.6-luna | 024f0336 | 1bafd3be | 32.164 | 0 | 0 | PASS |
+| batch_00002 | 20 | gpt-5.6-luna | 7024732e | 662302b7 | 45.132 | 0 | 0 | PASS |
+| batch_00003 | 20 | gpt-5.6-luna | d3371f30 | 9cec4c70 | 50.557 | 0 | 0 | PASS |
+| batch_00004 | 20 | gpt-5.6-luna | d5a5d008 | 27934aa3 | 43.902 | 0 | 0 | PASS |
+| batch_00005 | 20 | gpt-5.6-luna | 94506d5d | 188e23c9 | 50.198 | 0 | 0 | PASS |
+| batch_00006 | 20 | gpt-5.6-luna | 40f970fa | 18762079 | 34.532 | 0 | 0 | PASS |
+| batch_00007 | 10 | gpt-5.6-luna | 22e62018 | 67844387 | 31.698 | 0 | 0 | PASS |
+
+合计 150 条、344.991 秒、平均 43.124 秒/批。按单路顺序调用线性外推
+148,798 条约 95.1 小时（约 4.0 天）；仅作资源估计，不是全量启动授权。
+
+### 3.5.1 历史严格 Luna v6 批次日志
 
 > 复制模板行继续增加批次。每批必须保存 Prompt、Schema、Input 和 Output Hash。
 
@@ -238,9 +278,9 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | batch_00006 | 20 | gpt-5.6-luna | e36f91da | c65db59e | 029aed8d | 241206e1 | 7 | 0 | 13 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | v6 alias |
 | batch_00007 | 10 | gpt-5.6-luna | e36f91da | c65db59e | bd4284d7 | 05cd9274 | 1 | 0 | 9 | 0 | 0 | 2026-08-02 | 2026-08-02 | PASS | final short batch |
 
-## 3.6 临床抽检与一致性
+## 3.6 临床抽检与准确率
 
-| Audit ID | Progression | Finding | Source | Luna Decision | Luna Label | Clinician Decision | Agreement | Second Review | Adjudicated Label | Evidence Sufficient? | Notes |
+| Audit ID | Silver Label | Finding | Source | Rule Label | AI Label | Clinician Decision | Correct? | Second Review | Adjudicated Label | Evidence Sufficient? | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 |  |  |  |  |  |  |  |  |  |  |  |  |
 |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -253,27 +293,26 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | Label Pipeline | Coverage | Clinician Agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject Precision | 95% CI | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
 | Rule-only |  |  |  |  |  |  |  |  |  |  |
-| Luna Tier-A |  |  |  |  |  |  |  |  |  |  |
-| Luna Tier-A+B |  |  |  |  |  |  |  |  |  |  |
+| Rule/AI agreement Silver | 68.67% pilot retention | 未完成 |  |  |  |  |  | N/A |  | pilot 非准确率 |
 
 ## 3.8 标签冻结确认
 
-- [ ] Pairing 规则已冻结。
-- [ ] Luna Prompt、Schema 和 Model ID 已冻结。
-- [ ] 非法输出处理为 Fail-closed。
-- [ ] 抽检样本在全量标注完成前已通过固定随机种子抽取。
+- [x] Pairing 规则已冻结。
+- [x] Rule-blind AI Prompt、两字段 Schema 和 Model ID 已完成 pilot 冻结。
+- [x] 非法输出处理为 Fail-closed。
+- [ ] 全量完成后按 source × 五类固定随机种子抽取 200–300 条。
 - [ ] 医生抽检只用于质量估计和规则级修订，不逐行手工修补全量标签。
 - [ ] Prompt 或规则若修改，所有标签按新版本全量重跑。
 - [ ] 历史 Test、Audit 和 Expert Gold 患者已全部排除。
 - [ ] Train/Dev/Internal Test 的患者交集为 0。
 - [ ] 数据许可、隐私和报告去标识已由负责人确认。
 
-**数据版本**：`PRTA-CXR Luna pilot v6（full expansion HOLD）`
-**Label Manifest Hash**：`9b7ba10d3b4f693f31e441960c68d8cb9dce478c28177ee7c949646a47267dbd`
+**数据版本**：`PRTA-CXR independent-silver pilot v1（full expansion HOLD）`
+**Pilot Silver Manifest Hash**：`e4be33b5e2ee9d01f5ae227d01b4fe816972f65b09ec65ccce9d1f409ab655c2`
 **Split Manifest Hash**：  
 **确认人**：  
 **日期**：`2026-08-02`
-**决策**：`HOLD`（未完成 stress set、医生抽检、来源偏差处置与全量吞吐/额度方案）
+**决策**：`HOLD`（全量标注未授权；200–300 条 source × 五类人工准确率抽检未完成）
 
 ---
 
@@ -287,8 +326,8 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 
 - **D0**：旧规模 + 旧规则标签；
 - **D1**：扩展规模 + 旧规则标签；
-- **D2**：扩展规模 + Luna Tier-A；
-- **D3**：扩展规模 + Tier-A+B。
+- **D2**：扩展规模 + Rule/AI agreement Silver；
+- **D3**：扩展规模 + Rule-only（质量—数量对照）。
 
 开发轴：
 
@@ -303,8 +342,8 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | D201 | D0：旧规模 + 旧规则标签 | 新项目开发基准 | P0 |  |  |  |  |  |  |  |  |  |
 | D202 | D1：扩展规模 + 旧规则标签 | 测量纯数据规模收益 | P0 |  |  |  |  |  | D201 |  |  |  |
-| D203 | D2：扩展规模 + Luna Tier-A | 测量标签质量收益 | P0 |  |  |  |  |  | D202 |  |  |  |
-| D204 | D3：扩展规模 + Tier-A+B | 质量—数量权衡 | P1 |  |  |  |  |  | D203 |  |  |  |
+| D203 | D2：扩展规模 + Rule/AI agreement Silver | 测量标签质量收益 | P0 |  |  |  |  |  | D202 |  |  |  |
+| D204 | D3：扩展规模 + Rule-only | 质量—数量权衡 | P1 |  |  |  |  |  | D203 |  |  |  |
 | M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选 | P0 |  |  |  |  |  | D203 |  |  |  |
 | M302 | 类别不平衡 Loss Screening | WCE/BalSoftmax/CB-Focal | P0 |  |  |  |  |  | M301 |  |  |  |
 | M303 | Adapter 范围 Screening | 最多两个候选 | P1 |  |  |  |  |  | M302 |  |  |  |
@@ -509,7 +548,7 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | A504 | w/o CMCP | 移除 Counterfactual PRIOR | 检验正确 PRIOR 依赖 | P0 |  |  |  |  |
 | A505 | w/o Temporal Inversion | 移除反转约束 | 检验时间方向性 | P0 |  |  |  |  |
 | A506 | w/o State Preservation | 移除 State Loss | 检验当前状态保持 | P0 |  |  |  |  |
-| A507 | Rule-only Labels | 替换 Luna Tier-A | 数据监督消融，可选 | P2 |  |  |  |  |
+| A507 | Rule-only Labels | 替换 Rule/AI agreement Silver | 数据监督消融，可选 | P2 |  |  |  |  |
 
 ## 7.3 消融汇总
 
@@ -783,7 +822,7 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 
 ## Table 1：数据与标签构建
 
-| Source | Candidate Patients | Candidate Pairs | Candidate Rows | Rule-valid | Luna Tier-A | Tier-B | Reject | Train | Dev | Test | Gold Quarantine |
+| Source | Candidate Patients | Candidate Pairs | Candidate Rows | Rule-valid | AI-labeled | Silver | Mismatch | Unclear | Train | Dev | Test |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | MIMIC-CXR |  |  |  |  |  |  |  |  |  |  |  |
 | CheXpert |  |  |  |  |  |  |  |  |  |  |  |
@@ -795,8 +834,7 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | Label Pipeline | Coverage | Clinician Agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject Precision | 95% CI |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | Rule-only |  |  |  |  |  |  |  |  |  |
-| Luna Tier-A |  |  |  |  |  |  |  |  |  |
-| Luna Tier-A+B |  |  |  |  |  |  |  |  |  |
+| Rule/AI agreement Silver |  |  |  |  |  |  |  |  |  |
 
 ## Table 3：正式主结果
 
@@ -944,7 +982,7 @@ Luna 负责全量第一轮结构化打标或复核；代码负责 Schema、证�
 | 优先级 | P0 / P1 / P2 / P3 |
 | Seed | 17 / 29 / 43 / N/A |
 | Split | Train / Dev / Internal-test / Expert-Gold / Audit / N/A |
-| 标签层级 | Rule-only / Tier-A / Tier-B / Tier-A+B / Reject / N/A |
+| 标签层级 | Rule-only / Silver / Excluded-mismatch / Excluded-unclear / N/A |
 | Progression | Stable / Improved / Worse / New / Resolved / N/A |
 | Luna Decision | Accept / Tier-B / Reject / Conflict / Uncertain / N/A |
 | 阶段决策 | GO / HOLD / STOP |

@@ -39,6 +39,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--weights", type=Path)
+    parser.add_argument("--label-quality-audit", type=Path)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--formal", action="store_true")
@@ -60,6 +61,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                             args.cache_root,
                             args.text_cache,
                             args.weights,
+                            args.label_quality_audit,
                             args.output,
                         )
                     ),
@@ -77,6 +79,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "cache_root": args.cache_root,
             "text_cache": args.text_cache,
             "weights": args.weights,
+            "label_quality_audit": args.label_quality_audit,
             "output": args.output,
         }
         missing = [name for name, value in required.items() if value is None]
@@ -86,6 +89,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
 
         from prta_cxr.data.token_cache import Block8CacheIndex
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
+        from prta_cxr.quality_gate import load_completed_human_silver_audit
         from prta_cxr.training.engine import (
             PRTATrainModel,
             load_training_config,
@@ -97,6 +101,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         )
 
         config = load_training_config(args.config)
+        load_completed_human_silver_audit(args.label_quality_audit)
         rows = read_jsonl(args.split_manifest)
         cache = Block8CacheIndex(args.cache_root)
         train_dataset = PRTAFeatureDataset(
@@ -138,6 +143,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                 "cache_manifest": sha256_file(
                     args.cache_root / "cache_manifest.json"
                 ),
+                "label_quality_audit": sha256_file(args.label_quality_audit),
             },
             resume_path=args.resume,
         )

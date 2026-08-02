@@ -126,11 +126,41 @@ Status: complete
 - Run tests/static/preflight gates, update the durable labeling receipt,
   commit, push to the local-only remote, and verify equality.
 
+### Phase 13 - Independent-intersection silver protocol
+Status: complete
+
+- Preserve the strict evidence-based 150-row pilot as engineering history.
+- Add a separate rule-blind AI interface whose external payload contains only
+  a short sample alias, target finding, prior/current reports, and temporal
+  semantics; never expose the rule label or alias-to-original map.
+- Accept a training silver row only when the local rule label exactly equals
+  the independent AI label and the AI label is not `Unclear`.
+- Record mismatches and `Unclear` rows as exclusions, with source-specific
+  agreement statistics.
+
+### Phase 14 - Simplified 150-row pilot
+Status: complete
+
+- Reuse the frozen deterministic 150-patient selection for a comparable pilot.
+- Run one canary before the remaining batches and fail closed on schema or ID
+  mismatch.
+- Report MIMIC and CheXpert Plus agreement separately; do not launch the full
+  148,798-row expansion from this pilot authorization.
+
+### Phase 15 - Audit gate, documentation, and local handoff
+Status: complete
+
+- Encode a required 200-300-row source-by-five-label human audit before formal
+  training or paper use of the full silver corpus.
+- Update the active manuals/status documents, run repository verification,
+  commit, and push only to the local bare remote.
+
 ## Next Step
 
-Hold full Luna expansion until the user selects a source-aware candidate
-strategy and supplies concurrency/quota plus stress-set/clinician-audit plans;
-do not launch split, cache, training, or evaluation.
+Hold full labeling until a new explicit authorization enables the frozen full
+config. Then complete full rule-blind labeling, followed by the mandatory
+200-300-row human accuracy audit before training. Split, cache, training, and
+evaluation remain unauthorized.
 
 ## Decisions
 
@@ -144,6 +174,10 @@ do not launch split, cache, training, or evaluation.
 | Require a separate internal-test open flag | Training completion must not silently consume the test partition. |
 | Treat the new user approval as manifest-phase authority only | The preceding handoff named inventory/manifests as the next step, not training or outcome opening. |
 | Treat the 2026-08-02 follow-up approval as labeling-phase authority | The immediately preceding handoff named rule candidates and Luna review as the next gate; split/cache/train remain separately unauthorized. |
+| Supersede the strict evidence workflow only for future full silver construction | The completed v6 pilot remains immutable engineering evidence; the new protocol gets separate prompt/schema/config/artifacts. |
+| Keep the rule label local | The AI judgment must be independent and cannot receive a candidate-answer hint. |
+| Require exact non-Unclear agreement for silver admission | Agreement raises confidence but is not asserted as ground truth; all other rows are excluded. |
+| Require a 200-300-row source-by-label human audit before training/paper use | The lightweight audit measures silver accuracy without blocking automated labeling itself. |
 
 ## Errors Encountered
 

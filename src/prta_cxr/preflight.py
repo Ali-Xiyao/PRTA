@@ -22,6 +22,9 @@ def run_preflight(root: Path | None = None) -> dict[str, Any]:
         root / "schemas" / "luna_label_batch.schema.json",
         root / "prompts" / "luna_label_v1.md",
         root / "prompts" / "luna_verify_v1.md",
+        root / "schemas" / "independent_silver_label_batch.schema.json",
+        root / "prompts" / "independent_silver_label_v1.md",
+        root / "configs" / "labeling" / "independent_silver_v1.json",
     ]
     missing = [
         path.relative_to(root).as_posix()

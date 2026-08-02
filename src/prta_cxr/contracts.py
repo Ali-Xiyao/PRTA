@@ -101,8 +101,10 @@ def validate_sample(row: Mapping[str, Any]) -> dict[str, Any]:
         _nonempty_string(result, key)
     if result["progression_label"] not in PROGRESSION_LABELS:
         raise ContractError("unknown progression_label")
-    if result["label_tier"] not in {"Tier-A", "Tier-B", "Reject"}:
-        raise ContractError("label_tier must be Tier-A, Tier-B, or Reject")
+    if result["label_tier"] not in {"Tier-A", "Tier-B", "Reject", "Silver"}:
+        raise ContractError(
+            "label_tier must be Tier-A, Tier-B, Reject, or Silver"
+        )
     interval = result["interval_days"]
     if not isinstance(interval, (int, float)) or interval < 0:
         raise ContractError("interval_days must be non-negative")
