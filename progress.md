@@ -586,3 +586,7 @@
   outcome, trust, figure, VLM, and table stages. It reuses the existing initial
   queue process, stops outcome-closed on non-GO, and has a resume-safe pre-open
   identity for the formal outcome session.
+- Launched the committed formal-program keeper as PID 39208. Its state is
+  `WAITING_INITIAL_DEVELOPMENT_QUEUE`, it points to the frozen senior-consensus
+  Gold JSONL and local hashed Qwen assets, and both stdout/stderr are empty. It
+  is waiting on the existing PID 25716 rather than launching a duplicate queue.
