@@ -721,3 +721,12 @@
   keepers are alive, checkpoints and registry rows are current, active stderr
   logs are empty, GPU memory is about 4.48 GiB per device at 78/76 C, H: has
   423.4 GiB free, and no protected outcome/protocol-freeze marker exists.
+- The 06:55 CST heartbeat found D204 through all 4,293 batches of epoch 4 and
+  in its fixed-Dev evaluation, with best Dev Macro-F1 0.4229 at epoch 3. D205
+  reached batch 5,400/5,692 of its first full-data epoch. Both should emit
+  their next fixed-Dev result within roughly 5-15 minutes. Queue state remains
+  3/7 complete, D204+D205 running, and two M301 variants planned. Both training
+  children and keepers are alive, artifact timestamps and registry rows are
+  current, active stderr logs are empty, GPU memory is about 4.48 GiB per
+  device at 75/57 C, H: has 423.4 GiB free, and protected outcome/protocol-
+  freeze markers remain absent.
