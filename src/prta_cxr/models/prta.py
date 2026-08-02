@@ -112,6 +112,7 @@ class FrozenTailWithAdapters(nn.Module):
         adapter_rank: int,
         dropout: float = 0.0,
         final_norm: nn.Module | None = None,
+        adapter_indices: Sequence[int] | None = None,
     ) -> None:
         super().__init__()
         if len(frozen_blocks) != 4:
@@ -121,9 +122,19 @@ class FrozenTailWithAdapters(nn.Module):
             block.eval().requires_grad_(False)
         self.final_norm = final_norm if final_norm is not None else nn.Identity()
         self.final_norm.eval().requires_grad_(False)
-        self.adapters = nn.ModuleList(
-            BottleneckAdapter(width, adapter_rank, dropout=dropout)
-            for _ in frozen_blocks
+        indices = tuple(range(4)) if adapter_indices is None else tuple(adapter_indices)
+        if not indices or any(index not in range(4) for index in indices):
+            raise ValueError("adapter indices must be a non-empty subset of 0..3")
+        if len(indices) != len(set(indices)):
+            raise ValueError("adapter indices must be unique")
+        self.adapter_indices = indices
+        self.adapters = nn.ModuleDict(
+            {
+                str(index): BottleneckAdapter(
+                    width, adapter_rank, dropout=dropout
+                )
+                for index in indices
+            }
         )
 
     def train(self, mode: bool = True):
@@ -134,13 +145,16 @@ class FrozenTailWithAdapters(nn.Module):
         return self
 
     def forward(self, tokens: torch.Tensor) -> torch.Tensor:
-        for block, adapter in zip(
-            self.frozen_blocks, self.adapters, strict=True
-        ):
+        for index, block in enumerate(self.frozen_blocks):
             # Frozen parameters still participate in autograd so gradients can
             # reach adapters inserted before later frozen blocks.
             frozen_output = block(tokens)
-            tokens = adapter(frozen_output)
+            key = str(index)
+            tokens = (
+                self.adapters[key](frozen_output)
+                if key in self.adapters
+                else frozen_output
+            )
         return self.final_norm(tokens)
 
     def forward_frozen(self, tokens: torch.Tensor) -> torch.Tensor:
@@ -205,6 +219,7 @@ class PRTATemporalAdapter(nn.Module):
         dropout: float = 0.0,
         frozen_final_norm: nn.Module | None = None,
         cross_time_alignment: bool = True,
+        adapter_indices: Sequence[int] | None = None,
     ) -> None:
         super().__init__()
         if width % heads:
@@ -215,6 +230,7 @@ class PRTATemporalAdapter(nn.Module):
             adapter_rank=adapter_rank,
             dropout=dropout,
             final_norm=frozen_final_norm,
+            adapter_indices=adapter_indices,
         )
         self.cross_time_alignment = bool(cross_time_alignment)
         self.query_projection = nn.Sequential(

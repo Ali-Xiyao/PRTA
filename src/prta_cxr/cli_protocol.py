@@ -10,6 +10,7 @@ from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.contracts import sha256_file
 from prta_cxr.data.manifests import read_jsonl
 from prta_cxr.data.sealing import seal_split_surfaces
+from prta_cxr.quality_gate import derive_completed_human_silver_audit
 
 
 def seal_split_surfaces_main(argv: Sequence[str] | None = None) -> int:
@@ -59,4 +60,32 @@ def seal_split_surfaces_main(argv: Sequence[str] | None = None) -> int:
     write_jsonl_atomic(args.cache_input_output, cache_input)
     write_json_atomic(args.audit_output, audit)
     print(json.dumps(audit, indent=2, sort_keys=True))
+    return 0
+
+
+def derive_silver_quality_gate_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Derive the frozen Silver quality gate from senior review"
+    )
+    parser.add_argument("--mode", choices=("preflight", "formal"), default="preflight")
+    parser.add_argument("--senior-audit", type=Path)
+    parser.add_argument("--comparisons", type=Path)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--formal", action="store_true")
+    args = parser.parse_args(argv)
+    if args.mode == "preflight":
+        if args.formal:
+            parser.error("preflight cannot carry --formal")
+        print(json.dumps({"status": "PASS_SILVER_QUALITY_GATE_PREFLIGHT"}, indent=2))
+        return 0
+    require_formal_authorization(formal_flag=args.formal)
+    if not all((args.senior_audit, args.comparisons, args.output)):
+        parser.error("formal quality gate requires audit/comparisons/output")
+    senior_audit = json.loads(args.senior_audit.read_text(encoding="utf-8"))
+    comparisons = read_jsonl(args.comparisons)
+    result = derive_completed_human_silver_audit(senior_audit, comparisons)
+    if not result["training_gate_passed"]:
+        raise RuntimeError("senior panel confirmation failed the Silver gate")
+    write_json_atomic(args.output, result)
+    print(json.dumps(result, indent=2, sort_keys=True))
     return 0

@@ -470,3 +470,15 @@
   evaluation input-hash repair. Full repository gates now pass 78 tests, Ruff,
   compileall, and diff checks. Registered the pre-freeze cache-input issue as
   `DEV-001` in the paper experiment record before resuming.
+- Resumed the identical outcome-free cache as PID 30444. A fresh audit found
+  17,408/146,110 images in 68 atomic shards, an active process, zero stderr,
+  and GPU 1 still idle.
+- Added explicit `tail4` versus `last2` adapter placement and a deterministic
+  derivation of the 250-row human Silver quality gate. Focused tests and Ruff
+  pass after correcting stale guessed test paths.
+- Formally wrote
+  `formal_program_v1/receipts/human_silver_accuracy_audit.json`: 250 reviewed
+  rows, 0.984 overall and for each source, all five label strata present,
+  `training_gate_passed=true`, and explicit Luna-assisted/not-blind wording.
+  The receipt file SHA-256 is
+  `b6c7d4cc1784deef5e45640d0c0151b68504a51f7f70b5b922ef67eba034b2c9`.

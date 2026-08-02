@@ -1,10 +1,78 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from prta_cxr.contracts import PROGRESSION_LABELS, ContractError
+from prta_cxr.contracts import (
+    PROGRESSION_LABELS,
+    ContractError,
+    canonical_sha256,
+)
+
+
+def derive_completed_human_silver_audit(
+    senior_audit: Mapping[str, Any],
+    comparisons: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    if senior_audit.get("status") != (
+        "PASS_SENIOR_LUNA_ASSISTED_REVIEW_COMPLETE_GOLD_FROZEN"
+    ):
+        raise ContractError("senior panel audit is not formally complete")
+    if senior_audit.get("comparison_sha256") != canonical_sha256(comparisons):
+        raise ContractError("senior comparison manifest hash mismatch")
+    if len(comparisons) != 250:
+        raise ContractError("senior quality audit must contain 250 rows")
+    sources = sorted({str(row["source"]) for row in comparisons})
+    labels = list(PROGRESSION_LABELS)
+    strata = Counter(
+        f"{row['source']}|{row['luna_label']}" for row in comparisons
+    )
+    exact = [bool(row["luna_human_exact"]) for row in comparisons]
+    by_source = {
+        source: sum(
+            bool(row["luna_human_exact"])
+            for row in comparisons
+            if row["source"] == source
+        )
+        / sum(row["source"] == source for row in comparisons)
+        for source in sources
+    }
+    by_label = {
+        label: sum(
+            bool(row["luna_human_exact"])
+            for row in comparisons
+            if row["luna_label"] == label
+        )
+        / sum(row["luna_label"] == label for row in comparisons)
+        for label in labels
+    }
+    return {
+        "schema": "prta-cxr.human-silver-accuracy-audit.v1",
+        "status": "PASS_HUMAN_SILVER_ACCURACY_AUDIT",
+        "completed": True,
+        "reviewed_rows": len(comparisons),
+        "stratification": "source_x_five_label",
+        "sources": sources,
+        "labels": labels,
+        "silver_accuracy": sum(exact) / len(exact),
+        "accuracy_by_source": by_source,
+        "accuracy_by_label": by_label,
+        "strata_counts": dict(sorted(strata.items())),
+        "review_manifest_sha256": canonical_sha256(comparisons),
+        "review_mode": senior_audit["review_mode"],
+        "metric_interpretation": (
+            "Luna-visible senior-panel confirmation rate, not blind accuracy"
+        ),
+        "medical_ground_truth_claim": False,
+        "training_gate_passed": (
+            sum(exact) / len(exact) >= 0.90
+            and min(by_source.values()) >= 0.80
+            and min(by_label.values()) >= 0.80
+        ),
+    }
 
 
 def load_completed_human_silver_audit(path: Path) -> dict[str, Any]:

@@ -30,6 +30,15 @@ from prta_cxr.models.prta import (
 from prta_cxr.training.losses import progression_classification_loss
 
 
+def _adapter_indices(model: Mapping[str, Any]) -> tuple[int, ...]:
+    scope = str(model.get("adapter_scope", "tail4"))
+    if scope == "tail4":
+        return (0, 1, 2, 3)
+    if scope == "last2":
+        return (2, 3)
+    raise ValueError("adapter_scope must be tail4 or last2")
+
+
 class PRTATrainModel(nn.Module):
     def __init__(
         self,
@@ -58,6 +67,7 @@ class PRTATrainModel(nn.Module):
             cross_time_alignment=bool(
                 components.get("cross_time_alignment", True)
             ),
+            adapter_indices=_adapter_indices(model),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
         head_name = str(model.get("native_head", "H0"))
@@ -108,6 +118,7 @@ class _NativeTemporalBaseline(nn.Module):
             adapter_rank=int(model["adapter_rank"]),
             dropout=float(model.get("dropout", 0.0)),
             final_norm=final_norm,
+            adapter_indices=_adapter_indices(model),
         )
         self.finding_projection = nn.Sequential(
             nn.LayerNorm(512), nn.Linear(512, self.width)

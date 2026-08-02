@@ -429,3 +429,9 @@
   `762def7cc4340d2bb6492b903ff9e89381ef48d90cd384f442d7e70738474bf6`,
   and outcome-free cache input
   `31b1c3095faf53c37ef60db519a02b6d13ad6df8e428095c34d087b067412d08`.
+- The senior-panel comparison can satisfy the registered 200-300-row Silver
+  quality gate only under its real interpretation: Luna-visible assisted
+  confirmation/correction, not blind medical accuracy. It contains exactly 25
+  rows per source-by-label stratum; overall/source confirmation is 0.984 and
+  the weakest label stratum is Improved at 0.96, so the configured 0.95 gate
+  passes without claiming independent ground truth.

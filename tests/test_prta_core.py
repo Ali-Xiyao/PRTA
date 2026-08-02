@@ -75,3 +75,17 @@ def test_native_baseline_families_produce_five_logits(family):
     assert output is None
     assert logits.shape == (2, 5)
     assert query.shape == (2, 16)
+
+
+def test_adapter_scope_can_be_limited_to_last_two_tail_blocks():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        adapter_indices=(2, 3),
+    )
+    assert tuple(adapter.tail.adapter_indices) == (2, 3)
+    assert set(adapter.tail.adapters) == {"2", "3"}

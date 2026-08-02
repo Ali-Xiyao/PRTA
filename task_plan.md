@@ -468,6 +468,16 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
 - 2026-08-03: split-surface sealing tests/preflight passed; Ruff found one long
   description line and one import-order normalization. Wrapped the description
   and applied the import-only formatter before formal sealing.
+- 2026-08-03: the first post-compaction focused-test command guessed the old
+  paths `src/prta_cxr/model.py`, `src/prta_cxr/engine.py`, and
+  `tests/test_core_training.py`. Repository inventory located the implemented
+  modules under `models/`, `training/`, and `tests/test_prta_core.py`; the
+  corrected focused suite and Ruff check pass. No runtime artifact changed.
+- 2026-08-03: Silver-quality derivation preflight passed, but the first formal
+  write supplied `--formal` without the second authorization environment
+  variable, so the fail-closed guard rejected it before output creation. Retry
+  under the user's active full-program authority with the exact required
+  `PRTA_CXR_ALLOW_FORMAL` value; never weaken the guard.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
