@@ -573,6 +573,14 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   `src/prta_cxr/cli_development.py`; the tracked entrypoint named by script 07c
   is `cli_development_selection.py`. Use the exact module before building the
   controller; no queue or process was changed.
+- 2026-08-03: pre-launch controller review found that formal queue execution
+  mutates status/PID/log fields in place while protocol freeze compared the
+  whole post-run queue to the original planned-queue hash. Project only the
+  immutable plan fields and normalize status to `PLANNED` for identity; retain
+  runtime state separately and add a regression test before launch.
+- 2026-08-03: the first formal-program keeper lint pass applied one automatic
+  fix and stopped on one 91-character device parsing expression before tests.
+  Wrap it and rerun protocol, outcome-session, and keeper preflight gates.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

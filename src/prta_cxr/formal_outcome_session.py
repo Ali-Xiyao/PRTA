@@ -139,6 +139,19 @@ def run_formal_outcome_session(
     if not output_root.exists() and resume:
         raise FileNotFoundError("cannot resume a missing formal outcome output")
     output_root.mkdir(parents=True, exist_ok=resume)
+    identity_path = output_root / "session_identity.json"
+    identity = {
+        "schema": "prta-cxr.formal-outcome-session-identity.v1",
+        "protocol_freeze_sha256": freeze["receipt_file_sha256"],
+        "output_root": str(output_root.resolve()),
+    }
+    if identity_path.exists():
+        if json.loads(identity_path.read_text(encoding="utf-8")) != identity:
+            raise ValueError("formal outcome resume identity differs")
+    elif resume:
+        raise ValueError("formal outcome resume identity is missing")
+    else:
+        write_json_atomic(identity_path, identity)
     predictions_root = output_root / "predictions"
     predictions_root.mkdir(exist_ok=True)
     state_path = output_root / "session_state.json"
@@ -229,10 +242,15 @@ def run_formal_outcome_session(
         if not resume or comparable != candidate:
             raise ValueError("formal outcome session marker already exists or differs")
     else:
-        if resume:
-            raise ValueError(
-                "resume requested before formal outcome session was opened"
-            )
+        protected_prediction_roots = (
+            predictions_root / "internal_test",
+            predictions_root / "gold",
+        )
+        if any(
+            path.is_dir() and any(path.iterdir())
+            for path in protected_prediction_roots
+        ):
+            raise ValueError("protected predictions exist without outcome marker")
         write_json_atomic(session_marker, marker_value)
     internal_rows = read_jsonl(
         Path(freeze["input_paths"]["sealed_internal_test_manifest"])

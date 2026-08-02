@@ -504,3 +504,12 @@
   metric from frozen artifacts, but leaves early candidate/pair fields as
   `N/A—not frozen` because those aggregate receipts are not part of the formal
   runtime. It never fills such cells from chat history or legacy debug counts.
+- Queue execution mutates scheduler state in place, so a scientifically frozen
+  queue identity must exclude PID/device/log/timestamps and normalize the
+  mutable status back to `PLANNED`. The protocol now hashes this immutable plan
+  projection while retaining runtime state for operations and auditing.
+- One controller can safely automate the long program only if it preserves the
+  gates. The keeper waits for the existing initial runner, executes each Dev
+  selection queue in order, stops before outcomes on non-GO, requires a clean
+  worktree for protocol freeze, and resumes the one-time outcome session only
+  under an immutable pre-open identity.

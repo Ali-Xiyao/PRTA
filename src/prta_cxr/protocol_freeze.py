@@ -12,6 +12,28 @@ from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.run_registry import read_run_registry
 
 
+def queue_plan_projection(queue: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    keys = (
+        "experiment_id",
+        "stage",
+        "config_path",
+        "config_sha256",
+        "effective_config_sha256",
+        "train_fraction",
+        "seed",
+        "internal_test_opened",
+        "gold_opened",
+    )
+    return [
+        {
+            "experiment_id": row["experiment_id"],
+            "status": "PLANNED",
+            **{key: row[key] for key in keys if key != "experiment_id"},
+        }
+        for row in queue
+    ]
+
+
 def _git_state(repo_root: Path) -> tuple[str, str]:
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -65,7 +87,7 @@ def freeze_formal_protocol(
     queue = json.loads(formal_queue.read_text(encoding="utf-8"))
     if len(queue) != int(matrix["generated_runs"]):
         raise ValueError("formal queue count differs from matrix receipt")
-    if canonical_sha256(queue) != matrix["queue_sha256"]:
+    if canonical_sha256(queue_plan_projection(queue)) != matrix["queue_sha256"]:
         raise ValueError("formal queue hash differs from matrix receipt")
     commit, _ = _git_state(repo_root)
     config_hashes = {
@@ -162,6 +184,7 @@ def freeze_formal_protocol(
         "table_implementation": (
             repo_root / "src/prta_cxr/reporting/paper_tables.py"
         ),
+        "program_keeper": repo_root / "src/prta_cxr/program_keeper.py",
     }
     result = {
         "schema": "prta-cxr.protocol-freeze.v1",

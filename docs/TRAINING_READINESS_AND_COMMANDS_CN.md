@@ -284,3 +284,34 @@ python scripts/12_build_paper_tables.py --mode formal --formal `
   --vlm-result FORMAL_ROOT/vlm_additional/result.json `
   --output FORMAL_ROOT/paper_results
 ```
+
+上述全流程可由 `13_run_formal_program_keeper.py` 在后台串联。它不会接管或
+重复启动当前初始队列，而是等待其 `scheduler_receipt.json`；所有后续阶段仍
+逐一执行相同 GO/HOLD、协议冻结和一次性 outcome 门。关键路径必须传入真实
+冻结 artifact，模型只通过 config/index 定位：
+
+```powershell
+python scripts/13_run_formal_program_keeper.py --mode formal --formal `
+  --output FORMAL_ROOT/program_keeper_v1 `
+  --initial-queue FORMAL_ROOT/development/initial_queue_v1/run_queue.json `
+  --split-manifest FORMAL_ROOT/splits/train_dev_v1.jsonl `
+  --sealed-internal-test FORMAL_ROOT/sealed/internal_test_labeled_v1.jsonl `
+  --gold-manifest GOLD_MANIFEST.jsonl `
+  --cache-root FORMAL_ROOT/cache/full_repartition_v1 `
+  --gold-cache-root FORMAL_ROOT/cache/gold_candidate_v1 `
+  --weights BIOMEDCLIP_ROOT/open_clip_pytorch_model.bin `
+  --quality-audit FORMAL_ROOT/receipts/human_silver_accuracy_audit.json `
+  --run-registry FORMAL_ROOT/run_registry.jsonl `
+  --development-runs-root FORMAL_ROOT/development/runs `
+  --formal-runs-root FORMAL_ROOT/formal_runs `
+  --protocol-config configs/experiments/formal_protocol_v1.json `
+  --trust-config configs/experiments/trust_audits/protocol_v1.json `
+  --case-selection-config configs/experiments/visualizations/case_selection_v1.json `
+  --vlm-config configs/experiments/vlm_additional/protocol_v1.json `
+  --vlm-model-config QWEN_MODEL_ROOT/config.json `
+  --vlm-model-index QWEN_MODEL_ROOT/model.safetensors.index.json `
+  --devices cuda:0,cuda:1 --outcome-device cuda:0 --poll-seconds 30
+```
+
+`program_state.json` 是可变进度面，`program_receipt.json` 只在全程序正式完成
+时产生。Dev gate 为 HOLD/STOP 时不会创建 protocol freeze 或读取 outcome。

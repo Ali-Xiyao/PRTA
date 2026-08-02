@@ -581,3 +581,8 @@
   test nor Gold selected a model and that Rule labels never entered training.
 - Main cache subsequently reached 131,840/146,110 images (515 atomic shards,
   90.23%); training remains 0/7 behind the unchanged cache/store gate.
+- Added the formal-program keeper for automatic Loss, Adapter, three-seed,
+  Dev-baseline, development-gate, formal-matrix, protocol-freeze, one-time
+  outcome, trust, figure, VLM, and table stages. It reuses the existing initial
+  queue process, stops outcome-closed on non-GO, and has a resume-safe pre-open
+  identity for the formal outcome session.

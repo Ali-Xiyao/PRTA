@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from prta_cxr.contracts import sha256_file
-from prta_cxr.protocol_freeze import validate_protocol_freeze
+from prta_cxr.contracts import canonical_sha256, sha256_file
+from prta_cxr.protocol_freeze import queue_plan_projection, validate_protocol_freeze
 
 
 def test_validate_protocol_freeze_detects_changed_input(tmp_path):
@@ -20,3 +20,28 @@ def test_validate_protocol_freeze_detects_changed_input(tmp_path):
     input_path.write_text("{\"changed\": true}\n", encoding="utf-8")
     with pytest.raises(ValueError, match="input changed"):
         validate_protocol_freeze(receipt, receipt_path=receipt_path)
+
+
+def test_queue_plan_projection_ignores_runtime_scheduler_fields():
+    planned = {
+        "experiment_id": "B401-S17",
+        "status": "PLANNED",
+        "stage": "formal",
+        "config_path": "config.json",
+        "config_sha256": "a",
+        "effective_config_sha256": "b",
+        "train_fraction": 1.0,
+        "seed": 17,
+        "internal_test_opened": False,
+        "gold_opened": False,
+    }
+    completed = {
+        **planned,
+        "status": "PASS_TRAINING_FINISHED",
+        "pid": 123,
+        "device": "cuda:0",
+        "stdout_path": "run.stdout.log",
+    }
+    assert canonical_sha256([planned]) == canonical_sha256(
+        queue_plan_projection([completed])
+    )
