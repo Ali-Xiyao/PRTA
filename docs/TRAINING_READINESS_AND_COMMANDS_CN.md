@@ -270,3 +270,17 @@ python scripts/11_vlm_additional.py --mode formal --formal `
 中断后仅允许原身份恢复：在同一命令上加 `--resume`。VLM 结果收据明确记录
 64-token/60-active+4-reserved、零可训练 VLM 参数、无像素旁路、结构有效率、
 finding 一致性、时间矛盾率，以及 `prta_changed_after_vlm=false`。
+
+最后由下列命令自动复算 Table 1–8 和 Expert Gold 附表。它要求图表和 VLM
+均已形成终态收据（VLM 可以是 `HOLD_OMIT_ADDITIONAL`），并输出 JSON、中文
+Markdown 和最终化 SHA-256 收据：
+
+```powershell
+python scripts/12_build_paper_tables.py --mode formal --formal `
+  --protocol-freeze FORMAL_ROOT/receipts/protocol_freeze_v1.json `
+  --outcome-session FORMAL_ROOT/formal_outcome/session_receipt.json `
+  --trust-audit FORMAL_ROOT/trust/trust_audit.json `
+  --figure-manifest FORMAL_ROOT/figures/figure_manifest.json `
+  --vlm-result FORMAL_ROOT/vlm_additional/result.json `
+  --output FORMAL_ROOT/paper_results
+```

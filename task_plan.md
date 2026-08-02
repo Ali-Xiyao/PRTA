@@ -561,6 +561,18 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
 - 2026-08-03: the first portability-fix lint pass stopped on one 90-character
   model-asset validation comprehension before tests. Wrap it and rerun the
   unchanged preflight/protocol/VLM gate.
+- 2026-08-03: a synthetic metric-key inspection omitted the required
+  `labels=` keyword and raised before producing output. Rerun with the frozen
+  five-label order before implementing the table mapper; no artifact or real
+  outcome was involved.
+- 2026-08-03: the first paper-table lint found six remaining long lines after
+  four automatic fixes, but the following successful preflight masked Ruff's
+  nonzero code at the shell-command level. Record lint as failed, wrap the six
+  expressions, and use explicit fail-fast sequencing on the next gate.
+- 2026-08-03: stage-orchestrator inspection guessed nonexistent
+  `src/prta_cxr/cli_development.py`; the tracked entrypoint named by script 07c
+  is `cli_development_selection.py`. Use the exact module before building the
+  controller; no queue or process was changed.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

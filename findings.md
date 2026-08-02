@@ -499,3 +499,8 @@
   evaluation cohort is the 250-row senior Gold after the common outcome open.
   Model paths stay portable because protocol freeze hashes the local model
   config/index, referenced weight shards, and tokenizer assets.
+- Final paper tables should distinguish reproducible N/A values from missing
+  work. The generator recomputes final split/source counts and every outcome
+  metric from frozen artifacts, but leaves early candidate/pair fields as
+  `N/A—not frozen` because those aggregate receipts are not part of the formal
+  runtime. It never fills such cells from chat history or legacy debug counts.

@@ -575,3 +575,9 @@
 - Main cache progress reached 123,392/146,110 images (482 atomic shards,
   84.45%). Cache and queue-keeper stderr remain empty; the initial development
   queue remains 0/7 behind the completed-cache and training-store gate.
+- Added an outcome-locked paper finalizer that automatically recomputes Table
+  1-8, the Expert Gold appendix, the Dev-selected strongest baseline, and all
+  artifact hashes. It emits explicit N/A provenance and records that neither
+  test nor Gold selected a model and that Rule labels never entered training.
+- Main cache subsequently reached 131,840/146,110 images (515 atomic shards,
+  90.23%); training remains 0/7 behind the unchanged cache/store gate.

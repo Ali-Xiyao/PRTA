@@ -157,6 +157,11 @@ def freeze_formal_protocol(
         "vlm_fixed64": repo_root / "src/prta_cxr/vlm/fixed64.py",
         "vlm_projector": repo_root / "src/prta_cxr/vlm/projector.py",
         "vlm_scorer": repo_root / "src/prta_cxr/vlm/frozen_qwen.py",
+        "table_entrypoint": repo_root / "scripts/12_build_paper_tables.py",
+        "table_cli": repo_root / "src/prta_cxr/cli_tables.py",
+        "table_implementation": (
+            repo_root / "src/prta_cxr/reporting/paper_tables.py"
+        ),
     }
     result = {
         "schema": "prta-cxr.protocol-freeze.v1",

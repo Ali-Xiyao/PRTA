@@ -324,6 +324,10 @@ def run_vlm_additional(
     result = {
         "schema": "prta-cxr.vlm-additional-result.v1",
         "status": "PASS_VLM_ADDITIONAL_FINISHED",
+        "protocol_freeze_sha256": freeze["receipt_file_sha256"],
+        "vlm_protocol_sha256": sha256_file(
+            Path(freeze["input_paths"]["vlm_config"])
+        ),
         "paper_inclusion": "GO_ADDITIONAL" if included else "HOLD_OMIT_ADDITIONAL",
         "source_method": source_id,
         "training_rows": len(train_dataset),
