@@ -513,3 +513,10 @@
   selection queue in order, stops before outcomes on non-GO, requires a clean
   worktree for protocol freeze, and resumes the one-time outcome session only
   under an immutable pre-open identity.
+- Windows cannot use `os.kill(pid, 0)` as the queue's authoritative liveness
+  test: for a terminated child it can surface `SystemError`/WinError 87 or keep
+  a stale process identity from being reconciled. The runner now queries the
+  native process exit code through `OpenProcess`/`GetExitCodeProcess` and treats
+  only `STILL_ACTIVE` as alive, with a regression test that keeps the child
+  handle open after termination. This preserves queue identities while safely
+  releasing a GPU for the next planned run.

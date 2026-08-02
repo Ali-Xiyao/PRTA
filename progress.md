@@ -635,3 +635,17 @@
   both keepers are alive, stderr logs are empty, and H: has 424.6 GiB free.
   The queue remains 0 complete, 2 running, and 5 planned, with no protected
   outcome-open or protocol-freeze marker.
+- D201 formally closed at 04:14:57 CST with `PASS_TRAINING_FINISHED`, frozen
+  early stopping after epoch 8, and best fixed-Dev Macro-F1 0.4045 at epoch 4.
+  Its receipt confirms Internal-test and protected outcomes were not opened.
+  The original Windows keeper did not reconcile the exited child because
+  `os.kill(pid, 0)` is not a reliable exit-state probe on this host. Replaced
+  it with native `GetExitCodeProcess` detection, added a live/dead child
+  regression test, and passed the full 109-test suite, Ruff, compileall, and
+  diff checks in commit `55fd22c`.
+- Restarted only the queue keeper, preserving D202 PID 17960 and all artifacts.
+  The first restart failed closed before queue access because the formal
+  authorization environment variable was absent; the authorized retry is
+  healthy as PID 10548 with empty stderr. It reconciled D201 and launched D203
+  on GPU0 as PID 6780 while D202 continues on GPU1. The queue is now 1/7
+  complete, 2/7 running, and 4/7 planned; no protected outcome was opened.

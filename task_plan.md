@@ -593,6 +593,15 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   PowerShell `foreach` block and hit an empty-pipe parser error before reading
   runtime state. Collected rows into an explicit array and reran the same
   read-only audit successfully; no experiment process or artifact was touched.
+- 2026-08-03: the first patched queue-keeper restart omitted the required
+  `PRTA_CXR_ALLOW_FORMAL` environment variable and failed closed at the formal
+  authorization gate before reading or mutating the queue. Relaunched with the
+  unchanged command plus the already-authorized environment value; D202 stayed
+  alive throughout, D201 was reconciled, and D203 started on the released GPU.
+- 2026-08-03: a follow-up receipt summary repeated the invalid direct pipe from
+  a PowerShell `foreach` block and failed before output. Reused the documented
+  explicit-array pattern on the next read-only probe; runtime state was not
+  affected.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap
