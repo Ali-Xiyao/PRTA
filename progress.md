@@ -655,3 +655,12 @@
   retains that exact waiting state, sees the queue as 1 complete / D202+D203
   running / 4 planned, and has empty stdout/stderr. Queue keeper PID 10548 and
   both training children remained alive through the restart.
+- The 04:35 CST heartbeat confirmed the repaired queue remains healthy. D202
+  completed all 1,441 training batches of epoch 6 and entered fixed-Dev
+  evaluation; its best Dev Macro-F1 remains 0.4430 at epoch 2, so the frozen
+  patience rule will decide closeout after this Dev pass. D203 completed all
+  2,868 training batches of epoch 0 and entered its first fixed-Dev evaluation.
+  Both GPUs are active at about 4.48 GiB and 75/75 C; both training children,
+  queue keeper PID 10548, and formal keeper PID 37228 are alive with zero-byte
+  stderr logs. The queue is 1 complete, 2 running, and 4 planned; H: has
+  424.6 GiB free, and no outcome-open/protocol-freeze marker exists.
