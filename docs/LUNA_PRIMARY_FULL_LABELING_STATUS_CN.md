@@ -30,6 +30,14 @@ Worse 23,311。Silver manifest SHA-256 为
 该 roster 状态为 `GOLD_PENDING_HUMAN_REVIEW`，`gold_rows=0`。只有 250 条全部
 经人工确认后，才可以称为 Gold；当前人工审核未完成，因此训练和论文使用仍为 HOLD。
 
+人工交付材料已经准备完成：
+
+- [人工盲审规则](PRTA_CXR_Gold人工盲审规则_CN.md)
+- [250条人工盲审表](../outputs/gold_human_review_20260802/PRTA_CXR_Gold人工盲审表_v1.xlsx)
+
+盲审表不包含 Luna 标签、规则标签、患者哈希或原始样本 ID。审核人员完成全部行后，
+项目侧才可按 `review_id` 解盲并冻结人工确认的 Gold。
+
 ## 运行产物
 
 运行目录：`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\luna_primary_full_v1`

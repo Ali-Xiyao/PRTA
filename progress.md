@@ -293,3 +293,17 @@
   remains a Silver accuracy audit and cannot make unreviewed rows Gold.
 - Started Phase 19. This authorization covers labeling and roster preparation,
   not GPU training, cache generation, internal-test opening, or paper claims.
+
+## 2026-08-02 blind human-review handoff
+
+- Added `docs/PRTA_CXR_Gold人工盲审规则_CN.md` with label definitions,
+  boundary cases, unusable reasons, blinding requirements, and completion gates.
+- Exported 250 cases to
+  `outputs/gold_human_review_20260802/PRTA_CXR_Gold人工盲审表_v1.xlsx` after a
+  stable blind shuffle. The workbook contains only review alias, source,
+  target finding, PRIOR/CURRENT reports, and reviewer-entry fields.
+- Workbook re-import checks confirmed 250 rows, 125 rows per source, valid QC
+  formulas, and zero occurrences of `luna_label`, `patient_id_hash`,
+  `sample_id`, or `clinician_label`. All four sheets passed rendered visual QA.
+- Human responses, deblinding, Gold freeze, split, cache, and training remain
+  pending; no scientific outcome gate was opened.

@@ -9,6 +9,8 @@ dist/
 results/**
 !results/README.md
 !results/smoke/.gitkeep
+outputs/**/_preview/
+outputs/**/*.inspect.ndjson
 manifests/receipts/*.json
 manifests/splits/*.json*
 manifests/labels/*.json*

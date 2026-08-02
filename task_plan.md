@@ -186,7 +186,7 @@ Status: complete
   local/remote equality.
 
 ### Phase 19 - Luna-primary policy and full-run authority
-Status: in progress
+Status: complete
 
 - Replace rule-Luna agreement admission with Luna-primary five-class labels
   inside the already frozen 148,798-row candidate pool.
@@ -232,11 +232,21 @@ Status: complete
 - Run repository/runtime audits, commit, push only to the local bare remote,
   and verify equality.
 
+### Phase 24 - Blind human-review handoff
+Status: complete (review responses pending)
+
+- Write the Chinese review protocol for the seven allowed human dispositions.
+- Export the frozen 250-row roster as a blind workbook with no Luna label,
+  rule label, patient hash, or original sample ID.
+- Add validated input fields, completion formulas, a codebook, and QC counts;
+  keep deblinding and Gold freeze closed until the completed workbook returns.
+
 ## Next Step
 
-Complete final runtime/repository audits, close the labeling switch, update the
-manual/result tables, and push the code/document package only to the local bare
-remote. Stop before training; Gold remains pending complete human review.
+Send the blind workbook and Chinese protocol to the human reviewers. After all
+250 rows are complete, import responses by immutable `review_id`, deblind only
+inside the project, calculate Luna accuracy by source and label, and freeze the
+human-confirmed Gold manifest. Stop before split/cache/training authorization.
 
 ## Completion record - 2026-08-02
 
