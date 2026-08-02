@@ -194,7 +194,8 @@ PRTA-CXR/
 | L103 | 运行规则候选提取 | Rule-valid 与拒绝原因 | P0 |  |  |  |  |  | L102 |  |  |  |
 | L104 | 设计 rule-blind AI Prompt + 两字段 Schema | 外发无规则标签；只输出 sample_id + ai_label | P0 |  |  | 完成 | 2026-08-02 | `prompts/independent_silver_label_v1.md` | L103 | PASS |  |  |
 | L105 | 独立标签 Pilot 100–200 条 | 结构合法率、分来源一致率和吞吐报告 | P0 |  |  | 完成 | 2026-08-02 | `docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md` | L104 | PASS_PILOT |  | 150 条 |
-| L106 | 第一次全量独立 AI 标注 | AI outputs + Silver/Excluded manifests | P0 |  |  | HOLD |  |  | L105 + 单独授权 | HOLD | full config=false | 未启动 |
+| L105S | Sol盲审同一150条 | Luna–Sol、分来源、分类别、Worse、三方分歧 | P0 |  |  | 完成 | 2026-08-02 | `docs/SOL_BLIND_REVIEW_STATUS_CN.md` | L105 | PASS_AGREEMENT | 非医学准确率 | Sol 150/150 |
+| L106 | 第一次全量独立 AI 标注 | Luna outputs + Silver/Excluded manifests | P0 |  |  | HOLD |  |  | L105S + 政策选择 + 单独授权 | HOLD | full config=false | 未启动 |
 | L107 | 分层抽取 200–300 条人工审核 | source × 五类 Silver 全覆盖 | P0 |  |  | HOLD |  |  | L106 |  |  | 全量后执行 |
 | L108 | 计算人工准确率 | 总体、分来源、分类别、95% CI | P0 |  |  | HOLD |  |  | L107 |  |  | 训练硬门 |
 | L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  |  |  |  | L108 |  |  |  |
@@ -221,7 +222,23 @@ PRTA-CXR/
 （70.00%）、Resolved 20/27（74.07%）、Stable 22/30（73.33%）、Worse
 17/30（56.67%）。`Worse` 是后续人工抽检和误差分析的重点层。
 
-### 3.3.1 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
+### 3.3.1 Sol 对 Luna 的同 roster 盲审
+
+| 检查项 | 实际结果 | 解释 |
+|---|---:|---|
+| Sol结构与ID | 150/150，8/8批，0失败/重试 | 工程PASS |
+| Luna–Sol六类一致 | 121/150（80.67%），κ=0.765 | `Unclear`作为第六类 |
+| 双方明确五类一致 | 115/124（92.74%），κ=0.908 | 覆盖124/150，不是医学准确率 |
+| MIMIC明确一致 | 58/61（95.08%） | 单独报告 |
+| CheXpert Plus明确一致 | 57/63（90.48%） | 单独报告 |
+| Improved / New / Resolved / Stable / Worse明确一致 | 95.83% / 85.71% / 95.00% / 96.00% / 95.00% | New最低；Worse 19/20 |
+| 30条规则–Luna分歧 | Sol支持Luna 21、规则4、第三标签1、Unclear 4 | 支持取消规则五分类硬准入 |
+| 人工准确率 | 未完成 | 仍需200–300条 |
+
+Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。这不是
+自动政策切换或全量授权；规则继续负责候选结构、finding、异常过滤和审计。
+
+### 3.3.2 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
 
 以下 150 条严格证据流程只保留为 runner/schema/证据门工程验证。新全量标签不再要求逐条三段引用，也不得将此表的 Tier-A/Reject 当作新 Silver 清单。
 

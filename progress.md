@@ -218,3 +218,40 @@
   migration map, and the new pilot status receipt. Final validation passes
   49/49 tests, Ruff, compileall, all relevant preflights, runtime artifact
   re-audit, and `git diff --check`.
+
+## 2026-08-02 Sol blind-review authorization
+
+- The user authorized a Sol blind review of the same frozen 150 rows after
+  explicitly separating AI-AI agreement from medical accuracy.
+- Sol will receive the same short alias, finding, prior report, and current
+  report only. Rule and Luna labels remain local.
+- This scope authorizes only the 150-row Sol review and three-way audit. Full
+  labeling, split, cache, training, and all outcome surfaces remain closed.
+- Started Phase 16 with one-canary-then-resume and fail-closed ID/schema gates.
+- Added a model/config/hash-pinned Sol authority and deterministic three-way
+  audit with Wilson intervals, six-class and decisive five-class agreement,
+  Cohen's kappa, confusion matrices, source/label strata, and focused mismatch
+  accounting. Focused tests and Ruff passed before the external call.
+- Rebuilt the same 150-row roster at the identical candidate hash and ran
+  `gpt-5.6-sol`: 8/8 batches and 150/150 IDs passed with zero failed outputs
+  and zero retries. Total Sol external time was 378.974 seconds.
+- Luna-Sol agreement was 121/150 (80.67%, six-class including `Unclear`,
+  kappa 0.765). On the 124 rows where both models were decisive, agreement was
+  115/124 (92.74%, kappa 0.908).
+- Decisive agreement was 57/63 (90.48%) for CheXpert Plus and 58/61 (95.08%)
+  for MIMIC. By Luna label it was Improved 95.83%, New 85.71%, Resolved 95%,
+  Stable 96%, and Worse 95%.
+- Within the 30 rule-Luna mismatches, Sol supported Luna 21 times, the rule 4
+  times, a third label once, and returned `Unclear` 4 times. This pilot favors
+  removing rule-label agreement as an admission requirement, but does not
+  estimate medical accuracy or authorize the policy switch/full expansion.
+- Froze the completed Sol pilot config with both pilot and full execution
+  disabled. No split, cache, training, test, gold, or external outcome opened.
+- Added `docs/SOL_BLIND_REVIEW_STATUS_CN.md` and synchronized README, readiness,
+  the experiment plan, execution manual, legacy map, and the earlier
+  independent-pilot status without silently activating Luna-primary admission.
+- Final validation passes 52/52 tests, Ruff, compileall, main/Sol/downstream
+  preflights, and `git diff --check`. Independent runtime re-audit confirmed
+  identical Luna/Sol input hashes, four allowed external fields, 150 unique
+  two-field Sol outputs, zero failed files, and a comparison hash matching the
+  frozen v2 audit.

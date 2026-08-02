@@ -1,6 +1,6 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`INDEPENDENT_SILVER_PILOT_PASS__FULL_LABEL_SPLIT_CACHE_TRAIN_HOLD`
+状态：`SOL_BLIND_REVIEW_PASS__LUNA_PRIMARY_POLICY_PENDING__FULL_LABEL_SPLIT_CACHE_TRAIN_HOLD`
 
 日期：2026-08-02
 
@@ -21,6 +21,9 @@
 当前独立交集 pilot 的来源一致率、吞吐和全量 HOLD 依据见
 [Independent Silver Pilot 状态](INDEPENDENT_SILVER_PILOT_STATUS_CN.md)。历史
 证据型流程见 [Luna Pilot 状态](LUNA_PILOT_STATUS_CN.md)，不再作为全量方案。
+同一150条的 Sol 盲审结果见
+[Sol Blind Review 状态](SOL_BLIND_REVIEW_STATUS_CN.md)：明确五类一致率92.74%，
+但该结果不是医学准确率，且尚未自动切换为 Luna-primary 全量政策。
 
 旧的 debug、小 cohort、R 编号临时 roster 不再作为训练规模上限，也不能直接
 复制为新 split。揭示过结果的 test、protected gold、external confirmation 和
@@ -37,6 +40,7 @@ python scripts/02b_prepare_independent_pilot.py --mode preflight
 python scripts/02c_prepare_independent_batches.py --mode preflight
 python scripts/03b_run_independent_labeling.py --mode preflight
 python scripts/04b_merge_independent_silver.py --mode preflight
+python scripts/04c_compare_sol_review.py --mode preflight
 python scripts/05_freeze_splits.py --mode preflight
 python scripts/06_cache_vit_tokens.py --mode preflight
 python scripts/07_train.py --mode preflight

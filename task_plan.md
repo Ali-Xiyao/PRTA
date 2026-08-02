@@ -155,12 +155,41 @@ Status: complete
 - Update the active manuals/status documents, run repository verification,
   commit, and push only to the local bare remote.
 
+### Phase 16 - Sol blind-review authority and three-way audit code
+Status: complete
+
+- Reuse the exact frozen 150-row candidate roster and the same report-only
+  input fields; never expose the Luna label, rule label, patient ID, or private
+  alias map to Sol.
+- Add a separately gated `gpt-5.6-sol` pilot authority and a deterministic
+  three-way comparison of rule, Luna, and Sol outputs.
+- Report six-class and decisive five-class agreement, Cohen's kappa, complete
+  confusion, source/label strata, `Worse`, the 30 rule-Luna mismatches, and the
+  17 Luna-Unclear rows without calling any agreement an accuracy estimate.
+
+### Phase 17 - Sol canary and 150-row blind review
+Status: complete
+
+- Run one 20-row canary, then resume the remaining seven batches only after
+  schema and exact-ID checks pass.
+- Preserve all raw outputs and timing receipts; do not retry or manually repair
+  a structurally invalid output.
+
+### Phase 18 - Sol comparison status, verification, and local handoff
+Status: complete
+
+- Write the bounded Sol-vs-Luna result and retain the 200-300-row human audit
+  requirement.
+- Keep full labeling, split, cache, training, test, gold, and external outcomes
+  closed.
+- Run repository gates, commit, push only to the local bare remote, and verify
+  local/remote equality.
+
 ## Next Step
 
-Hold full labeling until a new explicit authorization enables the frozen full
-config. Then complete full rule-blind labeling, followed by the mandatory
-200-300-row human accuracy audit before training. Split, cache, training, and
-evaluation remain unauthorized.
+Await the user's explicit decision on whether to replace Rule-Luna intersection
+with Luna-primary admission inside the current candidate pool. Do not enable
+full labeling, split, cache, training, or evaluation from the Sol pilot alone.
 
 ## Decisions
 
@@ -178,6 +207,8 @@ evaluation remain unauthorized.
 | Keep the rule label local | The AI judgment must be independent and cannot receive a candidate-answer hint. |
 | Require exact non-Unclear agreement for silver admission | Agreement raises confidence but is not asserted as ground truth; all other rows are excluded. |
 | Require a 200-300-row source-by-label human audit before training/paper use | The lightweight audit measures silver accuracy without blocking automated labeling itself. |
+| Treat Sol review as agreement evidence, not Luna accuracy | Correlated AI errors remain possible; only human review can estimate clinical correctness. |
+| Keep rule outputs for diagnostics but reconsider them as admission labels | Sol review tests whether Luna can become the primary classifier while automation remains responsible for candidate structure and audits. |
 
 ## Errors Encountered
 

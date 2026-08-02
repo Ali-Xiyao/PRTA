@@ -105,3 +105,9 @@ def test_completed_pilot_and_full_execution_are_both_held():
         _require_execution_enabled(config, scope="pilot", row_count=150)
     with pytest.raises(FormalExecutionBlocked, match="full execution"):
         _require_execution_enabled(config, scope="full", row_count=148798)
+
+
+def test_completed_sol_review_is_held_against_rerun():
+    config = Path("configs/labeling/sol_blind_review_v1.json")
+    with pytest.raises(FormalExecutionBlocked, match="pilot execution"):
+        _require_execution_enabled(config, scope="pilot", row_count=150)

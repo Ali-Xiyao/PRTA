@@ -41,6 +41,34 @@
   priority stratum for the later human accuracy sample, not a reason to expose
   the rule answer or tune against this pilot.
 
+## Sol blind-review analysis contract - 2026-08-02
+
+- Luna-Sol agreement measures inter-model consistency, not Luna correctness;
+  shared training signals and report ambiguity can create correlated errors.
+- Primary reporting must include all six outputs including `Unclear`; a
+  separate decisive five-class agreement must state its reduced denominator.
+- The frozen 150-row roster is rule-stratified and therefore evaluates the
+  existing rule-extractable candidate pool, not every possible report pair.
+- The 30 rule-Luna mismatches require four-way accounting: Sol supports Luna,
+  supports rule, selects a third label, or returns `Unclear`. The 17 Luna-
+  `Unclear` rows require a separate Sol-label distribution.
+- The blind comparison passed all engineering gates. Six-class Luna-Sol
+  agreement was 80.67% because 26 rows had at least one `Unclear`; among 124
+  mutually decisive rows, five-class agreement was 92.74% with kappa 0.908.
+- Both sources cleared 90% decisive agreement: CheXpert Plus 90.48% and MIMIC
+  95.08%. Their all-six-class rates were 80.00% and 81.33%, respectively.
+- `Worse` was not the weakest decisive Luna stratum: Sol agreed on 19/20
+  decisive Luna-Worse rows (95%), with three further Sol `Unclear` and one
+  New-versus-Worse disagreement. New was the lowest decisive label stratum at
+  30/35 (85.71%).
+- In the 30 rule-Luna mismatches, Sol favored Luna 21 versus rule 4 (plus one
+  third label and four `Unclear`). This is pilot evidence for Luna as the main
+  five-class generator inside the current rule-extractable candidate pool, not
+  proof of correctness and not evidence for label-agnostic candidate coverage.
+- Of 103 prior rule-Luna exact rows, Sol confirmed 94, differed on 4, and was
+  `Unclear` on 5. Across all 9 mutually decisive Luna-Sol disagreements, zero
+  were direct Improved/Worse or New/Resolved opposite-direction pairs.
+
 ## Initial code state
 
 - The clean repository has validated PRTA/CMCP/cache/evaluation core and

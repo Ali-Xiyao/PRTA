@@ -258,6 +258,21 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     config = _require_execution_enabled(
         args.config, scope=args.scope, row_count=authority_row_count
     )
+    if args.model != config.get("model"):
+        raise FormalExecutionBlocked(
+            "requested model does not match the independent-label config"
+        )
+    prompt_hash = sha256_file(args.prompt)
+    schema_hash = sha256_file(args.schema)
+    for batch_path, batch in zip(batch_paths, input_batches, strict=True):
+        if batch.get("prompt_sha256") != prompt_hash:
+            raise FormalExecutionBlocked(
+                f"prompt hash mismatch for {batch_path.name}"
+            )
+        if batch.get("output_schema_sha256") != schema_hash:
+            raise FormalExecutionBlocked(
+                f"schema hash mismatch for {batch_path.name}"
+            )
     if args.timeout_seconds < 1:
         parser.error("timeout-seconds must be positive")
     if args.output_dir.exists() and not args.resume:
@@ -384,8 +399,8 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
         "rows": row_count,
         "external_call_made": True,
         "rule_label_in_external_payload": False,
-        "prompt_sha256": sha256_file(args.prompt),
-        "schema_sha256": sha256_file(args.schema),
+        "prompt_sha256": prompt_hash,
+        "schema_sha256": schema_hash,
         "config_authorized_scope": config["authorized_scope"],
         "batches": receipts,
     }

@@ -4,6 +4,11 @@
 
 状态：`PILOT_PASS__FULL_LABELING_HOLD__TRAINING_HOLD`
 
+后续更新：同一150条已经完成 Sol 盲审。明确五类 Luna–Sol 一致率为
+115/124（92.74%），30条规则–Luna分歧中Sol支持Luna 21条、支持规则4条。
+这支持考虑 Luna-primary，但尚未得到切换政策或全量运行授权。详见
+[Sol 盲审状态](SOL_BLIND_REVIEW_STATUS_CN.md)。
+
 ## 结论
 
 新简化方案已经在与历史严格 pilot 完全相同的 150 条样本上跑通。AI 外发请求
