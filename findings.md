@@ -459,3 +459,8 @@
   training: same source/finding/view/interval bin when possible, progressively
   relaxed only for support, always a different patient, with deterministic
   sample-hash selection.
+- Batch size 16 has ample memory headroom on a 24 GiB RTX 3090 for the current
+  PRTA implementation: a full synthetic forward/backward through four frozen
+  tail blocks plus trainable adapters peaked below 4 GiB reserved. Formal OOM
+  risk is therefore more likely to come from loader/process behavior than the
+  core model tensor graph.

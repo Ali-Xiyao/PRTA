@@ -116,9 +116,11 @@ def run_training_queue(
         if len(complete) == len(rows):
             if changed:
                 replace_json_atomic(queue_path, rows)
+            stage = str(rows[0].get("stage", "initial_development"))
             result = {
                 "schema": "prta-cxr.training-queue-receipt.v1",
-                "status": "PASS_INITIAL_DEVELOPMENT_QUEUE_FINISHED",
+                "status": "PASS_TRAINING_QUEUE_FINISHED",
+                "stage": stage,
                 "completed": len(complete),
                 "total": len(rows),
                 "internal_test_opened": False,

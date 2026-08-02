@@ -513,3 +513,9 @@
   checkpoint and records True-minus-Wrong Macro-F1 without opening test/Gold.
 - Full gates now pass 86 tests. Cache progress is 50,944/146,110 images (199
   shards, 34.87%), while the keeper remains at 0/7 and stderr is empty.
+- Implemented the Dev-only stage selector for Head, Loss, Adapter scope, and
+  three-seed confirmation. Equivalent WCE/tail4/seed-17 runs are reused; only
+  the two alternative losses, one last2 scope, and seeds 29/43 are newly queued.
+- Ran one synthetic GPU1 forward/backward engineering step with batch 16 and
+  the real frozen BiomedCLIP tail: PASS, logits `[16,5]`, peak allocated 3.718
+  GiB and reserved 3.969 GiB. It read no real outcomes and is not a paper run.
