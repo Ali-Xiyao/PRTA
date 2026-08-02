@@ -217,7 +217,7 @@ Status: complete
   patient/source integrity; do not start training.
 
 ### Phase 22 - Human-audit and Gold-review rosters
-Status: complete (human review pending)
+Status: complete
 
 - Generate a deterministic 200-300-row source-by-Luna-label Silver accuracy
   audit roster, with no overlap into training while review is pending.
@@ -259,7 +259,7 @@ Status: superseded by Phase 27
 - Commit and push only to the local bare remote; do not start split/cache/train.
 
 ### Phase 27 - Senior-doctor Luna-assisted review handoff
-Status: in progress (package complete; responses pending)
+Status: complete
 
 - Rebuild the same frozen 250-row roster in a newly shuffled workbook.
 - Show the five-class Luna label while keeping all first-review answers absent.
@@ -269,14 +269,36 @@ Status: in progress (package complete; responses pending)
   blind agreement; keep Gold freeze and training closed until the workbook
   returns and passes exact-ID/completeness audits.
 
+### Phase 28 - Compact response import and senior-consensus Gold freeze
+Status: complete
+
+- Accept the doctor-returned compact A-H workbook without modifying its 250
+  labels or pretending the deleted reviewer/date columns were filled.
+- Bind a separate user-attested provenance receipt: two physicians, each with
+  more than five years of clinical experience, producing one shared result
+  column while seeing the Luna label.
+- Verify exact `review_id`, report, source, finding, and displayed Luna-label
+  binding; freeze all decisive senior-consensus rows as Gold and retain every
+  roster patient in quarantine.
+- Report confirmation/correction statistics without calling this independent
+  blind accuracy or inter-rater agreement; stop before split/cache/training.
+
+### Phase 29 - Gold result documentation, verification, and local handoff
+Status: complete
+
+- Synchronize the active status/manual/result surfaces with the frozen audit,
+  hashes, source/label counts, and four corrected cases.
+- Run repository and runtime conservation/leakage gates, commit, push only to
+  the local bare remote, and verify local/remote equality.
+
 ## Next Step
 
-Wait for the completed senior-doctor Luna-assisted workbook. Import it by
-immutable `review_id`, calculate confirmation/correction statistics, and freeze
-only decisive senior-doctor five-class labels while retaining all 250 patients
-in quarantine. Stop before split/cache/training.
+After separate user authorization, freeze a new patient-disjoint 80/10/10
+split from the 124,430 training-eligible Silver rows while preserving the 250
+Gold patients and their 2,297 Silver rows in quarantine. Stop before
+cache/training unless those stages are separately authorized.
 
-## Completion record - 2026-08-02
+## Completion record - 2026-08-03
 
 - Full Luna-primary output: 7,440/7,440 batches and 148,798/148,798 unique
   candidate IDs; final runtime audit PASS.
@@ -286,9 +308,18 @@ in quarantine. Stop before split/cache/training.
 - Gold candidate roster: 250 rows, 250 unique patients, exact 25 rows per
   source-by-five-label stratum. All 2,297 Silver rows belonging to those
   patients are quarantined, leaving 124,430 training-eligible Silver rows with
-  zero patient overlap. Gold remains `GOLD_PENDING_HUMAN_REVIEW`.
-- Full execution flag is closed. Tests (60), Ruff, compile, preflight, output
-  audit, and local-only handoff verification all remain required before training.
+  zero patient overlap.
+- Senior Luna-assisted panel result: two user-attested physicians with more
+  than five years of experience produced one consensus column while seeing the
+  Luna label; 246/250 labels were confirmed, four corrected, zero excluded,
+  and all 250 decisive rows are frozen as Gold. This is assisted panel
+  confirmation/correction, not independent blind accuracy or inter-rater
+  agreement.
+- Gold manifest SHA256:
+  `564d9b389b6c0f80354a5880ed30aabfdb66281535d14b2f3626f9fa14a8bcad`.
+- Full repository verification passes with 67 tests, Ruff, compile, human-review
+  preflight, and zero Gold/training-patient overlap. Split, cache, training, and
+  internal-test execution remain closed behind separate gates.
 
 ## Decisions
 

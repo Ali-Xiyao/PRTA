@@ -10,7 +10,11 @@ from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.cli_labeling import synthetic_samples
 from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.data.manifests import read_jsonl
-from prta_cxr.human_review import finalize_human_review, read_human_review_xlsx
+from prta_cxr.human_review import (
+    SENIOR_COMPACT_REVIEW_MODE,
+    finalize_human_review,
+    read_human_review_xlsx,
+)
 from prta_cxr.luna_primary import (
     apply_training_patient_quarantine,
     select_gold_audit_roster,
@@ -54,13 +58,31 @@ def _synthetic_responses(roster: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "displayed_luna_label": row["luna_label"],
             "human_label": row["luna_label"],
             "unusable_reason": "",
-            "reviewer_id": "synthetic-reviewer",
-            "review_date": "2026-08-02",
+            "reviewer_id": "",
+            "review_date": "",
             "notes_optional": "",
-            "review_mode": "luna_assisted_senior_v2",
+            "review_mode": SENIOR_COMPACT_REVIEW_MODE,
         }
         for index, row in enumerate(roster, start=1)
     ]
+
+
+def _synthetic_provenance() -> dict[str, Any]:
+    return {
+        "annotation_structure": "single_consensus_column",
+        "attestation_date": "2026-08-03",
+        "attestation_source": "user",
+        "clinical_experience_each": ">5 years",
+        "formal_training_authorized": False,
+        "independent_annotations_available": False,
+        "luna_label_visible_to_reviewers": True,
+        "review_mode": "luna_assisted_senior_panel_consensus",
+        "reviewer_count": 2,
+        "reviewer_group_id": "synthetic-senior-panel",
+        "row_level_review_dates_recorded": False,
+        "row_level_reviewer_ids_recorded": False,
+        "schema": "prta-cxr.senior-review-provenance.v1",
+    }
 
 
 def finalize_human_review_main(argv: list[str] | None = None) -> int:
@@ -74,6 +96,7 @@ def finalize_human_review_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expected-workbook-sha256")
     parser.add_argument("--roster", type=Path)
     parser.add_argument("--roster-audit", type=Path)
+    parser.add_argument("--review-provenance", type=Path)
     parser.add_argument("--quarantine", type=Path)
     parser.add_argument("--silver", type=Path)
     parser.add_argument("--training-eligible-silver", type=Path)
@@ -97,6 +120,7 @@ def finalize_human_review_main(argv: list[str] | None = None) -> int:
             quarantine,
             training,
             workbook_sha256="0" * 64,
+            review_provenance=_synthetic_provenance(),
         )
         _print(
             {
@@ -116,6 +140,7 @@ def finalize_human_review_main(argv: list[str] | None = None) -> int:
         args.workbook,
         args.roster,
         args.roster_audit,
+        args.review_provenance,
         args.quarantine,
         args.silver,
         args.training_eligible_silver,
@@ -139,6 +164,9 @@ def finalize_human_review_main(argv: list[str] | None = None) -> int:
         raise RuntimeError("returned workbook hash differs from formal authority")
     roster = read_jsonl(args.roster)
     roster_audit = json.loads(args.roster_audit.read_text(encoding="utf-8"))
+    review_provenance = json.loads(
+        args.review_provenance.read_text(encoding="utf-8")
+    )
     if roster_audit.get("roster_sha256") != canonical_sha256(roster):
         raise RuntimeError("roster hash differs from frozen roster audit")
     responses = read_human_review_xlsx(args.workbook)
@@ -149,9 +177,13 @@ def finalize_human_review_main(argv: list[str] | None = None) -> int:
         read_jsonl(args.quarantine),
         read_jsonl(args.training_eligible_silver),
         workbook_sha256=workbook_hash,
+        review_provenance=review_provenance,
     )
     audit["roster_audit_sha256"] = sha256_file(args.roster_audit)
     audit["roster_manifest_sha256"] = canonical_sha256(roster)
+    audit["review_provenance_file_sha256"] = sha256_file(
+        args.review_provenance
+    )
     write_jsonl_atomic(args.responses_output, validated_responses)
     write_jsonl_atomic(args.comparison_output, comparisons)
     write_jsonl_atomic(args.gold_output, gold)

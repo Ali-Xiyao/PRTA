@@ -7,6 +7,8 @@ from prta_cxr.cli_labeling import synthetic_samples
 from prta_cxr.contracts import ContractError
 from prta_cxr.human_review import (
     HUMAN_REVIEW_HEADERS,
+    SENIOR_COMPACT_REVIEW_MODE,
+    SENIOR_LUNA_COMPACT_HEADERS,
     SENIOR_LUNA_REVIEW_HEADERS,
     finalize_human_review,
     read_human_review_xlsx,
@@ -46,6 +48,45 @@ def _responses(roster):
             "reviewer_id": "reviewer",
             "review_date": "2026-08-02",
             "notes_optional": "",
+        }
+        for index, row in enumerate(roster, start=1)
+    ]
+
+
+def _panel_provenance():
+    return {
+        "annotation_structure": "single_consensus_column",
+        "attestation_date": "2026-08-03",
+        "attestation_source": "user",
+        "clinical_experience_each": ">5 years",
+        "formal_training_authorized": False,
+        "independent_annotations_available": False,
+        "luna_label_visible_to_reviewers": True,
+        "review_mode": "luna_assisted_senior_panel_consensus",
+        "reviewer_count": 2,
+        "reviewer_group_id": "senior-panel",
+        "row_level_review_dates_recorded": False,
+        "row_level_reviewer_ids_recorded": False,
+        "schema": "prta-cxr.senior-review-provenance.v1",
+    }
+
+
+def _compact_responses(roster):
+    return [
+        {
+            "case_no": index,
+            "review_id": row["review_id"],
+            "source": row["source"],
+            "finding": row["finding"],
+            "prior_report": row["prior_report"],
+            "current_report": row["current_report"],
+            "displayed_luna_label": row["luna_label"],
+            "human_label": row["luna_label"],
+            "unusable_reason": "",
+            "reviewer_id": "",
+            "review_date": "",
+            "notes_optional": "",
+            "review_mode": SENIOR_COMPACT_REVIEW_MODE,
         }
         for index, row in enumerate(roster, start=1)
     ]
@@ -101,6 +142,55 @@ def test_finalize_human_review_rejects_missing_unusable_reason():
             quarantine,
             training,
             workbook_sha256="b" * 64,
+        )
+
+
+def test_finalize_compact_panel_review_uses_attested_provenance():
+    silver = _silver_pool()
+    roster, quarantine, _ = select_gold_audit_roster(silver)
+    training, _, _ = apply_training_patient_quarantine(silver, quarantine)
+    responses = _compact_responses(roster)
+    responses[0]["human_label"] = (
+        "Improved" if roster[0]["luna_label"] != "Improved" else "Worse"
+    )
+    validated, comparisons, gold, excluded, audit = finalize_human_review(
+        roster,
+        responses,
+        silver,
+        quarantine,
+        training,
+        workbook_sha256="c" * 64,
+        review_provenance=_panel_provenance(),
+    )
+    assert len(validated) == 250
+    assert len(comparisons) == 250
+    assert len(gold) == 250
+    assert not excluded
+    assert audit["overall"]["exact_rows"] == 249
+    assert audit["review_mode"] == SENIOR_COMPACT_REVIEW_MODE
+    assert audit["attested_reviewer_count"] == 2
+    assert audit["unique_reviewer_ids"] == 0
+    assert audit["unique_review_dates"] == 0
+    assert audit["single_human_reviewer_reference"] is False
+    assert audit["independent_blind_review"] is False
+    assert all(
+        row["label_source"] == "senior_luna_assisted_panel_consensus_v2"
+        for row in gold
+    )
+
+
+def test_finalize_compact_panel_review_requires_provenance():
+    silver = _silver_pool()
+    roster, quarantine, _ = select_gold_audit_roster(silver)
+    training, _, _ = apply_training_patient_quarantine(silver, quarantine)
+    with pytest.raises(ContractError, match="requires provenance"):
+        finalize_human_review(
+            roster,
+            _compact_responses(roster),
+            silver,
+            quarantine,
+            training,
+            workbook_sha256="d" * 64,
         )
 
 
@@ -250,3 +340,63 @@ def test_read_senior_luna_assisted_workbook(tmp_path):
     assert parsed[0]["displayed_luna_label"] == "Stable"
     assert parsed[0]["human_label"] == "Stable"
     assert parsed[0]["review_mode"] == "luna_assisted_senior_v2"
+
+
+def test_read_compact_senior_panel_workbook(tmp_path):
+    path = tmp_path / "compact_senior_review.xlsx"
+    rows = []
+    rows.append(
+        '<row r="1">'
+        + "".join(
+            _inline_cell(f"{_column_name(index)}1", header)
+            for index, header in enumerate(SENIOR_LUNA_COMPACT_HEADERS)
+        )
+        + "</row>"
+    )
+    for index in range(1, 251):
+        values = [
+            index,
+            f"review_{index - 1:04d}",
+            "mimic",
+            "Edema",
+            "prior report",
+            "current report",
+            "Stable",
+            "Stable",
+        ]
+        cells = "".join(
+            _inline_cell(f"{_column_name(column)}{index + 1}", value)
+            for column, value in enumerate(values)
+        )
+        rows.append(f'<row r="{index + 1}">{cells}</row>')
+    worksheet = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+        f"<sheetData>{''.join(rows)}</sheetData></worksheet>"
+    )
+    workbook = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
+        'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+        '<sheets><sheet name="资深医生复核" sheetId="1" '
+        'r:id="rId1"/></sheets></workbook>'
+    )
+    relationships = (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" '
+        'Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+        'relationships/worksheet" '
+        'Target="worksheets/sheet1.xml"/></Relationships>'
+    )
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("xl/workbook.xml", workbook)
+        archive.writestr("xl/_rels/workbook.xml.rels", relationships)
+        archive.writestr("xl/worksheets/sheet1.xml", worksheet)
+    parsed = read_human_review_xlsx(path)
+    assert len(parsed) == 250
+    assert parsed[0]["displayed_luna_label"] == "Stable"
+    assert parsed[0]["human_label"] == "Stable"
+    assert parsed[0]["reviewer_id"] == ""
+    assert parsed[0]["review_date"] == ""
+    assert parsed[0]["review_mode"] == SENIOR_COMPACT_REVIEW_MODE

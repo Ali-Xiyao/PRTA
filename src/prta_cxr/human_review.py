@@ -47,6 +47,8 @@ SENIOR_LUNA_REVIEW_HEADERS = (
     "备注（可选）",
     "填写状态",
 )
+SENIOR_LUNA_COMPACT_HEADERS = SENIOR_LUNA_REVIEW_HEADERS[:8]
+SENIOR_COMPACT_REVIEW_MODE = "luna_assisted_senior_panel_compact_v2"
 
 _MAIN_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 _REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -187,9 +189,15 @@ def read_human_review_xlsx(
         for index in range(len(SENIOR_LUNA_REVIEW_HEADERS))
     )
     if full_header == SENIOR_LUNA_REVIEW_HEADERS:
-        assisted = True
+        review_schema = "senior_full"
+    elif (
+        full_header[: len(SENIOR_LUNA_COMPACT_HEADERS)]
+        == SENIOR_LUNA_COMPACT_HEADERS
+        and not any(full_header[len(SENIOR_LUNA_COMPACT_HEADERS) :])
+    ):
+        review_schema = "senior_compact"
     elif full_header[: len(HUMAN_REVIEW_HEADERS)] == HUMAN_REVIEW_HEADERS:
-        assisted = False
+        review_schema = "blind"
     else:
         raise ContractError("human review XLSX headers do not match the frozen schema")
     if set(rows_by_number) - set(range(1, 252)):
@@ -198,7 +206,7 @@ def read_human_review_xlsx(
     responses = []
     for index in range(2, 252):
         row = rows_by_number.get(index, {})
-        if assisted:
+        if review_schema == "senior_full":
             responses.append(
                 {
                     "case_no": row.get(0),
@@ -214,6 +222,24 @@ def read_human_review_xlsx(
                     "review_date": _review_date(row.get(10)),
                     "notes_optional": _normalize_text(row.get(11)),
                     "review_mode": "luna_assisted_senior_v2",
+                }
+            )
+        elif review_schema == "senior_compact":
+            responses.append(
+                {
+                    "case_no": row.get(0),
+                    "review_id": _normalize_text(row.get(1)),
+                    "source": _normalize_text(row.get(2)),
+                    "finding": _normalize_text(row.get(3)),
+                    "prior_report": _normalize_text(row.get(4)),
+                    "current_report": _normalize_text(row.get(5)),
+                    "displayed_luna_label": _normalize_text(row.get(6)),
+                    "human_label": _normalize_text(row.get(7)),
+                    "unusable_reason": "",
+                    "reviewer_id": "",
+                    "review_date": "",
+                    "notes_optional": "",
+                    "review_mode": SENIOR_COMPACT_REVIEW_MODE,
                 }
             )
         else:
@@ -262,6 +288,41 @@ def _stats(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _validate_review_provenance(
+    provenance: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    if provenance is None:
+        raise ContractError("compact senior review requires provenance metadata")
+    value = dict(provenance)
+    expected = {
+        "schema": "prta-cxr.senior-review-provenance.v1",
+        "review_mode": "luna_assisted_senior_panel_consensus",
+        "reviewer_count": 2,
+        "clinical_experience_each": ">5 years",
+        "annotation_structure": "single_consensus_column",
+        "independent_annotations_available": False,
+        "luna_label_visible_to_reviewers": True,
+        "row_level_reviewer_ids_recorded": False,
+        "row_level_review_dates_recorded": False,
+        "attestation_source": "user",
+        "formal_training_authorized": False,
+    }
+    for field, expected_value in expected.items():
+        if value.get(field) != expected_value:
+            raise ContractError(
+                f"senior review provenance mismatch for {field}"
+            )
+    _require_string(value, "reviewer_group_id")
+    attestation_date = _require_string(value, "attestation_date")
+    try:
+        datetime.strptime(attestation_date, "%Y-%m-%d")
+    except ValueError as error:
+        raise ContractError(
+            "provenance attestation_date must use YYYY-MM-DD"
+        ) from error
+    return value
+
+
 def finalize_human_review(
     roster_rows: Sequence[Mapping[str, Any]],
     response_rows: Sequence[Mapping[str, Any]],
@@ -270,6 +331,7 @@ def finalize_human_review(
     training_eligible_rows: Sequence[Mapping[str, Any]],
     *,
     workbook_sha256: str,
+    review_provenance: Mapping[str, Any] | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -315,19 +377,25 @@ def finalize_human_review(
         row = dict(raw)
         review_id = _require_string(row, "review_id")
         label = _require_string(row, "human_label")
-        _require_string(row, "reviewer_id")
-        review_date = _require_string(row, "review_date")
-        try:
-            datetime.strptime(review_date, "%Y-%m-%d")
-        except ValueError as error:
-            raise ContractError("review_date must use YYYY-MM-DD") from error
+        review_mode = _normalize_text(row.get("review_mode")) or "blind_v1"
+        allowed_modes = {
+            "blind_v1",
+            "luna_assisted_senior_v2",
+            SENIOR_COMPACT_REVIEW_MODE,
+        }
+        if review_mode not in allowed_modes:
+            raise ContractError(f"unknown human review mode: {review_mode}")
+        if review_mode != SENIOR_COMPACT_REVIEW_MODE:
+            _require_string(row, "reviewer_id")
+            review_date = _require_string(row, "review_date")
+            try:
+                datetime.strptime(review_date, "%Y-%m-%d")
+            except ValueError as error:
+                raise ContractError("review_date must use YYYY-MM-DD") from error
         if label not in HUMAN_REVIEW_LABELS:
             raise ContractError(f"unknown human label: {label}")
         if label == "Unusable" and not _normalize_text(row.get("unusable_reason")):
             raise ContractError("Unusable response requires unusable_reason")
-        review_mode = _normalize_text(row.get("review_mode")) or "blind_v1"
-        if review_mode not in {"blind_v1", "luna_assisted_senior_v2"}:
-            raise ContractError(f"unknown human review mode: {review_mode}")
         review_modes.add(review_mode)
         if review_id in response_by_id:
             raise ContractError("duplicate review_id in human responses")
@@ -337,6 +405,12 @@ def finalize_human_review(
     if len(review_modes) != 1:
         raise ContractError("human responses mix incompatible review modes")
     review_mode = next(iter(review_modes))
+    compact_review = review_mode == SENIOR_COMPACT_REVIEW_MODE
+    provenance = (
+        _validate_review_provenance(review_provenance)
+        if compact_review
+        else None
+    )
 
     validated_silver = [validate_sample(row) for row in silver_rows]
     silver_by_id = {row["sample_id"]: row for row in validated_silver}
@@ -365,7 +439,10 @@ def finalize_human_review(
     for response in response_rows:
         review_id = response["review_id"].strip()
         roster = roster_by_id[review_id]
-        if review_mode == "luna_assisted_senior_v2":
+        if review_mode in {
+            "luna_assisted_senior_v2",
+            SENIOR_COMPACT_REVIEW_MODE,
+        }:
             displayed_luna_label = _require_string(
                 response, "displayed_luna_label"
             )
@@ -423,22 +500,24 @@ def finalize_human_review(
                 "review_id": review_id,
                 "human_label": human_label,
                 "unusable_reason": _normalize_text(response.get("unusable_reason")),
-                "reviewer_id": response["reviewer_id"].strip(),
-                "review_date": response["review_date"].strip(),
+                "reviewer_id": _normalize_text(response.get("reviewer_id")),
+                "review_date": _normalize_text(response.get("review_date")),
+                "reviewer_group_id": (
+                    provenance["reviewer_group_id"] if provenance else ""
+                ),
                 "notes_optional": _normalize_text(response.get("notes_optional")),
             }
         )
         if decisive:
-            label_source = (
-                "senior_luna_assisted_review_v2"
-                if review_mode == "luna_assisted_senior_v2"
-                else "blind_human_review_v1"
-            )
-            gold_status = (
-                "HUMAN_REVIEWED_LUNA_ASSISTED_SINGLE_REVIEWER"
-                if review_mode == "luna_assisted_senior_v2"
-                else "HUMAN_REVIEWED_SINGLE_REVIEWER"
-            )
+            if compact_review:
+                label_source = "senior_luna_assisted_panel_consensus_v2"
+                gold_status = "HUMAN_REVIEWED_LUNA_ASSISTED_PANEL_CONSENSUS"
+            elif review_mode == "luna_assisted_senior_v2":
+                label_source = "senior_luna_assisted_review_v2"
+                gold_status = "HUMAN_REVIEWED_LUNA_ASSISTED_SINGLE_REVIEWER"
+            else:
+                label_source = "blind_human_review_v1"
+                gold_status = "HUMAN_REVIEWED_SINGLE_REVIEWER"
             gold.append(
                 sample
                 | {
@@ -449,8 +528,11 @@ def finalize_human_review(
                     "luna_label": roster["luna_label"],
                     "human_label": human_label,
                     "luna_human_exact": exact,
-                    "reviewer_id": response["reviewer_id"].strip(),
-                    "review_date": response["review_date"].strip(),
+                    "reviewer_id": _normalize_text(response.get("reviewer_id")),
+                    "review_date": _normalize_text(response.get("review_date")),
+                    "reviewer_group_id": (
+                        provenance["reviewer_group_id"] if provenance else ""
+                    ),
                     "gold_status": gold_status,
                     "training_eligible": False,
                 }
@@ -504,9 +586,12 @@ def finalize_human_review(
     if len(training) + len(held_silver) != len(validated_silver):
         raise ContractError("training/quarantine Silver conservation failed")
     gold_patients = {row["patient_id_hash"] for row in gold}
-    reviewer_ids = {row["reviewer_id"] for row in responses}
-    review_dates = {row["review_date"] for row in responses}
-    assisted_review = review_mode == "luna_assisted_senior_v2"
+    reviewer_ids = {row["reviewer_id"] for row in responses if row["reviewer_id"]}
+    review_dates = {row["review_date"] for row in responses if row["review_date"]}
+    assisted_review = review_mode in {
+        "luna_assisted_senior_v2",
+        SENIOR_COMPACT_REVIEW_MODE,
+    }
     audit = {
         "schema": "prta-cxr.human-review-gold-freeze.v2",
         "status": (
@@ -521,6 +606,10 @@ def finalize_human_review(
         "unique_review_ids": len({row["review_id"] for row in comparisons}),
         "unique_roster_patients": len(roster_patients),
         "workbook_sha256": workbook_sha256,
+        "review_provenance": provenance,
+        "review_provenance_sha256": (
+            canonical_sha256(provenance) if provenance else None
+        ),
         "responses_sha256": canonical_sha256(responses),
         "comparison_sha256": canonical_sha256(comparisons),
         "overall": _stats(comparisons),
@@ -529,9 +618,13 @@ def finalize_human_review(
         "worse": by_luna_label["Worse"],
         "confusion_luna_rows_human_columns": confusion,
         "gold_status": (
-            "GOLD_SENIOR_LUNA_ASSISTED_REVIEW_COMPLETE"
-            if assisted_review
-            else "GOLD_HUMAN_REVIEW_COMPLETE_SINGLE_REVIEWER"
+            "GOLD_SENIOR_LUNA_ASSISTED_PANEL_CONSENSUS_COMPLETE"
+            if compact_review
+            else (
+                "GOLD_SENIOR_LUNA_ASSISTED_REVIEW_COMPLETE"
+                if assisted_review
+                else "GOLD_HUMAN_REVIEW_COMPLETE_SINGLE_REVIEWER"
+            )
         ),
         "gold_rows": len(gold),
         "gold_unique_patients": len(gold_patients),
@@ -550,7 +643,12 @@ def finalize_human_review(
         "excluded_manifest_sha256": canonical_sha256(excluded),
         "unique_reviewer_ids": len(reviewer_ids),
         "unique_review_dates": len(review_dates),
-        "single_human_reviewer_reference": len(reviewer_ids) == 1,
+        "attested_reviewer_count": (
+            provenance["reviewer_count"] if provenance else len(reviewer_ids)
+        ),
+        "single_human_reviewer_reference": (
+            not compact_review and len(reviewer_ids) == 1
+        ),
         "medical_ground_truth_claim": False,
         "formal_training_authorized": False,
         "split_cache_training_started": False,

@@ -1,6 +1,6 @@
 # PRTA-CXR Luna-primary 全量标签状态
 
-日期：2026-08-02
+日期：2026-08-03
 
 ## 结论
 
@@ -27,20 +27,24 @@ Worse 23,311。Silver manifest SHA-256 为
 患者唯一。其所有 2,297 条 Silver 行均已从训练可用清单移除，训练可用 Silver 为
 124,430 条，患者交集为 0。
 
-该 roster 状态为 `GOLD_PENDING_SENIOR_REVIEW`，`gold_rows=0`。第一轮医生填写结果已
-按用户要求清除，未保留为 Gold 或准确率证据。当前改由资深医生在可见 Luna 标签的
-条件下进行确认/修正；在 250 条全部完成并通过导入审计前，训练和论文使用仍为 HOLD。
+该 roster 已完成资深医生复核并冻结为
+`GOLD_SENIOR_LUNA_ASSISTED_PANEL_CONSENSUS_COMPLETE`：250/250 条均为明确五分类，
+Gold 行数和患者数均为 250，排除 0。两名临床资历均超过 5 年的医生在可见 Luna
+标签后共同形成一列共识结果；246/250（98.4%）确认 Luna，4 条被修正。该比例是
+辅助复核确认率，不是独立盲审准确率或医生间一致率。详细结果见
+[资深医生 Gold 状态](SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)。
 
-新的资深医生交付材料已经准备完成：
+资深医生交付与回收材料：
 
 - [Luna辅助复核说明](PRTA_CXR_Gold资深医生_Luna辅助复核说明_v2_CN.md)
 - [标签判定规则](PRTA_CXR_Gold标签判定规则_v2_CN.md)
 - [250条资深医生复核表](../outputs/gold_human_review_senior_20260802/PRTA_CXR_Gold资深医生_Luna辅助复核表_v2.xlsx)
 - [可直接转交的压缩包](../outputs/gold_human_review_senior_20260802/PRTA_CXR_Gold_Senior_Doctor_Luna_Assisted_Review_Package_v2.zip)
+- [已填写的八列回传表](../outputs/PRTA_CXR_Gold资深医生_Luna辅助复核表_v2.xlsx)
 
-新表显示 Luna 标签，但不包含第一位医生答案、患者哈希或原始样本 ID。本轮属于
-Luna 辅助复核，不再称为独立盲审；完成全部行后，项目侧才可按 `review_id` 导入并
-冻结资深医生确认/修正后的 Gold。
+回传表显示 Luna 标签，但不包含第一位医生答案、患者哈希或原始样本 ID。医生删除了
+未填写的尾部元数据列，程序按冻结的 A-H 简化契约导入，并用独立来源声明记录两名
+医生、资历与共识方式；没有补写医生身份、日期或标签。
 
 ## 运行产物
 
@@ -52,3 +56,6 @@ Luna 辅助复核，不再称为独立盲审；完成全部行后，项目侧才
 - `review/gold_pending_human_review_roster.jsonl`：250 条人工复核名单。
 - `review/luna_primary_training_eligible.jsonl`：去除 roster 患者后的唯一训练候选入口。
 - `review/gold_audit_roster_audit.json`：分层与患者隔离审计。
+- `senior_panel_gold_v1/gold_senior_consensus.jsonl`：250 条最终 Gold。
+- `senior_panel_gold_v1/luna_senior_comparison.jsonl`：Luna–医生确认/修正对照。
+- `senior_panel_gold_v1/senior_review_audit.json`：正式 Gold 冻结审计。

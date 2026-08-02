@@ -186,10 +186,11 @@ Luna 不输出理由、置信度或证据引用。
 - **Excluded-unclear**：Luna 输出 `Unclear`，不进入训练；
 - **Invalid**：缺行、重复 ID、未知标签或额外字段，有界重试仍失败则 fail-closed。
 
-模型间一致不代表 ground truth。全量结束后必须按 `source × 五类 Silver 标签`
-固定抽取 250 条并报告人工准确率；该收据未完成前正式训练和论文使用均为 HOLD。
-MIMIC-CXR 与 CheXpert Plus 必须分别报告准确率。该名单只有在每条均经人工确认后
-才能成为 Gold；抽样复核不能把其余 Luna 标签变成 Gold。
+模型间一致不代表 ground truth。全量结束后按 `source × 五类 Silver 标签` 固定抽取
+的 250 条已完成两名 >5 年资历医生的 Luna 辅助单列共识复核：246 条确认、4 条
+修正、0 条排除。MIMIC-CXR 与 CheXpert Plus 均为 123/125（98.4%）确认。该比例
+不是独立盲审准确率；只有这 250 条医生共识标签成为 Gold，其余 Luna 标签仍为
+Silver。
 
 ## 3.2 数据与标签任务清单
 
@@ -202,11 +203,11 @@ MIMIC-CXR 与 CheXpert Plus 必须分别报告准确率。该名单只有在每�
 | L105 | 独立标签 Pilot 100–200 条 | 结构合法率、分来源一致率和吞吐报告 | P0 |  |  | 完成 | 2026-08-02 | `docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md` | L104 | PASS_PILOT |  | 150 条 |
 | L105S | Sol盲审同一150条 | Luna–Sol、分来源、分类别、Worse、三方分歧 | P0 |  |  | 完成 | 2026-08-02 | `docs/SOL_BLIND_REVIEW_STATUS_CN.md` | L105 | PASS_AGREEMENT | 非医学准确率 | Sol 150/150 |
 | L106 | 第一次全量 Luna-primary 标注 | Luna outputs + Silver/Unclear manifests | P0 |  |  | 完成 | 2026-08-02 | `luna_primary_full_v1/merged/luna_primary_merge_audit.json` | L105S + 单独授权 | PASS | 64个无重叠断点分片 | 126,727 Silver；22,071 Unclear |
-| L107 | 分层抽取 200–300 条人工审核 | source × 五类 Silver 全覆盖 | P0 |  |  | HOLD |  |  | L106 |  |  | 全量后执行 |
-| L108 | 计算人工准确率 | 总体、分来源、分类别、95% CI | P0 |  |  | HOLD |  |  | L107 |  |  | 训练硬门 |
-| L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  |  |  |  | L108 |  |  |  |
-| L110 | 按冻结版本全量重跑 | 不得逐行人工修补 | P0 |  |  |  |  |  | L109 |  |  |  |
-| L111 | 排除历史 Test/Audit/Gold | 排除 manifest hash | P0 |  |  |  |  |  | L110 |  |  |  |
+| L107 | 分层抽取 200–300 条人工审核 | source × 五类 Silver 全覆盖 | P0 |  |  | 完成 | 2026-08-03 | `senior_panel_gold_v1/senior_review_audit.json` | L106 | PASS | Luna可见、两医生单列共识 | 250条 |
+| L108 | 计算人工确认/修正 | 总体、分来源、分类别、完整混淆 | P0 |  |  | 完成 | 2026-08-03 | `docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md` | L107 | PASS | 非独立盲审准确率 | 246确认、4修正 |
+| L109 | 冻结 Prompt/Rules/Schema | 生成 Freeze Receipt | P0 |  |  | 完成 | 2026-08-03 | Luna full config + Gold audit | L108 | PASS | 未修改prompt |  |
+| L110 | 按冻结版本全量重跑 | 不得逐行人工修补 | P0 |  |  | N/A | 2026-08-03 | 原L106保持冻结 | L109 | 无需重跑 | 质量门通过 |  |
+| L111 | 排除历史 Test/Audit/Gold | 排除 manifest hash | P0 |  |  | 完成 | 2026-08-03 | `review/luna_primary_training_eligible.jsonl` | L109 | PASS | 2,297行隔离 | 124,430训练候选 |
 | L112 | 患者级冻结 Train/Dev/Test | Patient overlap = 0 | P0 |  |  |  |  |  | L111 |  |  |  |
 
 ## 3.3 独立交集 Silver Pilot 确认
@@ -222,7 +223,7 @@ MIMIC-CXR 与 CheXpert Plus 必须分别报告准确率。该名单只有在每�
 | MIMIC Silver | 单独报告 | 52/75（69.33%） | 已记录 | merge audit | 13 mismatch + 10 Unclear |
 | CheXpert Plus Silver | 单独报告 | 51/75（68.00%） | 已记录 | merge audit | 17 mismatch + 7 Unclear |
 | 全量运行 | 需要单独授权 | 已完成 148,798 条 | PASS | `luna_primary_full_v1` | full config 已回锁 |
-| 人工准确率抽检 | 全量后 200–300 条 | 未开始 | HOLD | training gate | 正式训练/论文前必须完成 |
+| 人工辅助复核 | 全量后 200–300 条 | 250/250完成；246确认、4修正 | PASS | `senior_panel_gold_v1` | Luna可见，不是独立准确率 |
 
 五类规则候选的 Silver 保留率：Improved 23/33（69.70%）、New 21/30
 （70.00%）、Resolved 20/27（74.07%）、Stable 22/30（73.33%）、Worse
@@ -239,13 +240,30 @@ MIMIC-CXR 与 CheXpert Plus 必须分别报告准确率。该名单只有在每�
 | CheXpert Plus明确一致 | 57/63（90.48%） | 单独报告 |
 | Improved / New / Resolved / Stable / Worse明确一致 | 95.83% / 85.71% / 95.00% / 96.00% / 95.00% | New最低；Worse 19/20 |
 | 30条规则–Luna分歧 | Sol支持Luna 21、规则4、第三标签1、Unclear 4 | 支持取消规则五分类硬准入 |
-| 人工准确率 | 未完成 | 仍需200–300条 |
+| 资深医生辅助确认 | 246/250（98.4%） | 两名>5年资历医生、单列共识；非独立盲审 |
 
 Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用户已
 据此单独授权全量 Luna-primary 标注；规则继续负责候选结构、finding、异常过滤和
 审计，但不再作为五分类准入条件。该授权不包含 split、缓存或训练。
 
-### 3.3.2 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
+### 3.3.2 资深医生 Luna 辅助 Gold 冻结
+
+| 检查项 | 实际结果 | 解释 |
+|---|---:|---|
+| 回传绑定 | 250/250，错误0 | ID、来源、finding、前后报告、Luna标签精确一致 |
+| 医生构成 | 2名，临床资历均>5年 | 共同形成一列共识标签 |
+| 审核可见性 | 可见Luna标签 | 辅助复核，不是独立盲审 |
+| Luna确认 | 246/250（98.4%） | 两来源均123/125 |
+| 医生修正 | 4/250（1.6%） | 以医生共识作为Gold标签 |
+| Gold / 排除 | 250 / 0 | 全部为明确五分类 |
+| Gold–训练患者重叠 | 0 | 250名患者、2,297条Silver继续隔离 |
+| Gold manifest hash | `564d9b389b6c0f80354a5880ed30aabfdb66281535d14b2f3626f9fa14a8bcad` | 冻结 |
+
+四条修正：`review_0071` Stable→Resolved、`review_0093` Improved→Stable、
+`review_0194` Worse→Stable、`review_0213` Improved→Stable。详细来源与 finding 见
+`docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md`。
+
+### 3.3.3 历史严格 Luna v6 工程 Pilot（不再作为全量方案）
 
 以下 150 条严格证据流程只保留为 runner/schema/证据门工程验证。新全量标签不再要求逐条三段引用，也不得将此表的 Tier-A/Reject 当作新 Silver 清单。
 
@@ -317,17 +335,17 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 | Label Pipeline | Coverage | Clinician Agreement | New PPV | Resolved PPV | Improved PPV | Stable PPV | Worse PPV | Reject Precision | 95% CI | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
 | Rule-only |  |  |  |  |  |  |  |  |  |  |
-| Luna-primary Silver | 126,727/148,798（85.17%） | 未完成 |  |  |  |  |  | N/A |  | 人工审核前非 Gold |
+| Luna-primary Silver | 126,727/148,798（85.17%） | 246/250辅助确认（98.4%） | 100% | 100% | 96% | 98% | 98% | N/A |  | Luna可见的医生共识复核；非独立准确率 |
 
 ## 3.8 标签冻结确认
 
 - [x] Pairing 规则已冻结。
 - [x] Rule-blind AI Prompt、两字段 Schema 和 Model ID 已完成 pilot 冻结。
 - [x] 非法输出处理为 Fail-closed。
-- [ ] 全量完成后按 source × 五类固定随机种子抽取 200–300 条。
-- [ ] 医生抽检只用于质量估计和规则级修订，不逐行手工修补全量标签。
+- [x] 全量完成后按 source × 五类固定随机种子抽取 250 条。
+- [x] 医生复核只用于质量门和冻结250条Gold，不逐行手工修补全量标签。
 - [ ] Prompt 或规则若修改，所有标签按新版本全量重跑。
-- [ ] 历史 Test、Audit 和 Expert Gold 患者已全部排除。
+- [x] 历史 Test、Audit 和当前 Gold 患者已全部排除。
 - [ ] Train/Dev/Internal Test 的患者交集为 0。
 - [ ] 数据许可、隐私和报告去标识已由负责人确认。
 
@@ -335,8 +353,8 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 **Pilot Silver Manifest Hash**：`e4be33b5e2ee9d01f5ae227d01b4fe816972f65b09ec65ccce9d1f409ab655c2`
 **Split Manifest Hash**：  
 **确认人**：  
-**日期**：`2026-08-02`
-**决策**：`LABELING_COMPLETE__TRAIN_HOLD`（250 条 source × 五类人工准确率审核未完成）
+**日期**：`2026-08-03`
+**决策**：`LABELING_AND_GOLD_COMPLETE__SPLIT_TRAIN_HOLD`（下一门为patient-disjoint split）
 
 ---
 
@@ -957,7 +975,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | 项目 | 内容 |
 |---|---|
-| Gold Manifest Hash |  |
+| Gold Manifest Hash | `564d9b389b6c0f80354a5880ed30aabfdb66281535d14b2f3626f9fa14a8bcad` |
 | 冻结 Model Checkpoint Hash |  |
 | 冻结 Config Hash |  |
 | 冻结 Temperature/Threshold |  |

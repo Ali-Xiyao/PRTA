@@ -317,3 +317,13 @@
 - The frozen 250-row roster and patient quarantine remain unchanged. The senior
   doctor supplies the final human label; `Unclear`/`Unusable` remain excluded
   and no training authority is created by completing the workbook.
+- 2026-08-03 final senior-panel result: all 250 rows were decisive and became
+  Gold. Luna was confirmed on 246/250 (98.4%); the two-physician consensus
+  corrected four rows: Stable-to-Resolved pleural effusion, Improved-to-Stable
+  atelectasis, Worse-to-Stable atelectasis, and Improved-to-Stable pleural
+  effusion. Each source had 123/125 confirmation (98.4%).
+- This is Luna-assisted panel consensus from two physicians with more than five
+  years of clinical experience each, recorded in one shared column. It is not
+  independent double annotation or inter-rater agreement. The human consensus
+  label is the Gold label for all 250 rows, while the full patient quarantine
+  remains intact with zero overlap into the 124,430-row training candidate set.

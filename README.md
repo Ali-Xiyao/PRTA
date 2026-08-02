@@ -25,8 +25,11 @@ deterministic code constructs and audits candidates, every valid non-`Unclear`
 Luna five-class output becomes Silver, and the rule label is diagnostic only.
 Full labeling is now complete; see the
 [Luna-primary full-labeling status](docs/LUNA_PRIMARY_FULL_LABELING_STATUS_CN.md).
-The human audit, Gold confirmation, split freeze, caching, training, and
-internal testing remain separately gated.
+The 250-row senior-physician Luna-assisted panel review is also complete:
+246/250 Luna labels were confirmed, four were corrected, and all 250 decisive
+consensus labels are frozen as patient-quarantined Gold. See the
+[senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md).
+Split freeze, caching, training, and internal testing remain separately gated.
 
 ## Start here
 
@@ -50,6 +53,9 @@ internal testing remain separately gated.
    as the authority for future full-scale labeling decisions.
 9. Review the blind [Sol-vs-Luna status](docs/SOL_BLIND_REVIEW_STATUS_CN.md)
    for the evidence supporting the frozen Luna-primary policy.
+10. Use the
+    [senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)
+    for the human confirmation/correction result and exact artifact boundary.
 
 ## Local engineering validation
 

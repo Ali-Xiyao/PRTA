@@ -337,3 +337,44 @@
   Ruff, compileall, formalizer preflight, direct parse of the new workbook, and
   `git diff --check`.
 - Gold freeze, split, cache, internal test, and GPU training remain closed.
+
+## 2026-08-03 senior-consensus Gold import authorization
+
+- The user authorized formal import and Gold freeze from the returned workbook
+  at `outputs/PRTA_CXR_Gold资深医生_Luna辅助复核表_v2.xlsx`.
+- Read-only artifact inspection found a compact A-H return: the doctors removed
+  the unused trailing columns and filled exactly one `资深医生标签` column.
+  All 250 labels are valid and decisive; 250 review IDs are unique; source,
+  finding, prior/current reports, and displayed Luna labels bind exactly to the
+  frozen roster with zero mismatches.
+- User-attested provenance: two physicians, each with more than five years of
+  clinical experience, produced the single result column. This will be recorded
+  as Luna-assisted panel consensus, not two independent annotations.
+- Started Phase 28. Split, cache, internal test, and GPU training remain closed.
+- Added explicit compact A-H workbook schema support and a separate
+  `senior-review-provenance.v1` authority recording two reviewers, >5 years of
+  experience each, Luna-visible single-column consensus, and absence of
+  row-level identities/dates. The original returned workbook remains unedited.
+- Extended the Gold finalizer to require that provenance for compact returns,
+  verify the displayed Luna label against the frozen roster, and mark outputs
+  as panel consensus rather than independent review. Seven focused tests,
+  focused Ruff/compileall, the compact synthetic preflight, and diff-check pass.
+- Full validation then passed 67 tests, repository-wide Ruff/compileall, direct
+  parsing of the real returned workbook, and workbook hash pinning at
+  `b2caf748...c429`.
+- Formally froze `senior_panel_gold_v1`: 250/250 decisive Gold rows, 250 unique
+  patients, 246/250 Luna confirmations (98.4%), four physician corrections,
+  zero exclusions, 2,297 quarantined Silver rows, 124,430 training-eligible
+  Silver rows, and zero Gold/training patient overlap.
+- Independent re-read reproduced all four canonical manifest hashes. The Gold
+  manifest hash is `564d9b38...8bcad`; the audit file SHA-256 is
+  `26f4f2e5...9b10b`. No split, cache, internal test, or training was started.
+- Synchronized the README, Luna status, training-readiness guide, both paper
+  authority documents, and a dedicated senior-panel Gold status page with the
+  final counts, four corrections, terminology boundary, and frozen hashes.
+- Final repository validation passed 67 tests, repository-wide Ruff,
+  compileall, compact human-review preflight, split preflight, and
+  `git diff --check`. A fresh runtime re-read reconfirmed 250 Gold rows, 246
+  confirmations, four corrections, zero exclusions, zero Gold/training patient
+  overlap, 2,297 quarantined Silver rows, and 124,430 training-eligible Silver
+  rows. The formal split/cache/training flag remains false.

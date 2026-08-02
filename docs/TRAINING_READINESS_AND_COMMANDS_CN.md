@@ -1,20 +1,20 @@
 # PRTA-CXR 训练就绪状态与执行命令
 
-状态：`LUNA_PRIMARY_LABELING_COMPLETE__HUMAN_AUDIT_SPLIT_CACHE_TRAIN_HOLD`
+状态：`LUNA_PRIMARY_AND_GOLD_COMPLETE__SPLIT_CACHE_TRAIN_HOLD`
 
-日期：2026-08-02
+日期：2026-08-03
 
 ## 结论
 
 当前项目已经具备从 source manifest 到正式训练、断点和内部测试的代码路径，
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
-但现在还不能理解为“插入 GPU 就会自动开始训练”。在首次正式运行前仍必须完成：
+资深医生 Gold 门已完成：250 条全部为明确五分类，246 条确认 Luna、4 条修正，
+Gold 与训练候选患者交集为 0。现在仍不能理解为“插入 GPU 就会自动开始训练”，
+首次正式训练前还必须完成：
 
-1. 完成 250 条 source × 五类 Luna Silver 资深医生辅助复核门；
-2. 确认每条 Gold 候选均经资深医生复核后，才可称为 Gold；
-3. 从新的合规候选池重新冻结 patient-disjoint 80/10/10 split；
-4. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
-5. 用户单独授权具体的缓存或训练运行。
+1. 从 124,430 条合规训练候选重新冻结 patient-disjoint 80/10/10 split；
+2. 指定本地 BiomedCLIP 模型目录和 GPU，生成新的 Block-8 与文本缓存；
+3. 用户单独授权具体的缓存或训练运行。
 
 当前真实数据证据、计数和哈希见
 [真实数据准备状态](REAL_DATA_PREPARATION_STATUS_CN.md)。
@@ -26,6 +26,8 @@
 用户已据此冻结并授权 Luna-primary 全量政策；该结果仍不是医学准确率，人工门不变。
 完整全量计数、哈希、训练隔离和 Gold 状态见
 [Luna-primary 全量标签状态](LUNA_PRIMARY_FULL_LABELING_STATUS_CN.md)。
+资深医生确认/修正、Gold 哈希和患者隔离见
+[资深医生 Gold 状态](SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)。
 
 旧的 debug、小 cohort、R 编号临时 roster 不再作为训练规模上限，也不能直接
 复制为新 split。揭示过结果的 test、protected gold、external confirmation 和
@@ -45,6 +47,7 @@ python scripts/04b_merge_independent_silver.py --mode preflight
 python scripts/04c_compare_sol_review.py --mode preflight
 python scripts/04d_merge_luna_primary.py --mode preflight
 python scripts/04e_prepare_gold_audit_roster.py --mode preflight
+python scripts/04f_finalize_human_review.py --mode preflight
 python scripts/05_freeze_splits.py --mode preflight
 python scripts/06_cache_vit_tokens.py --mode preflight
 python scripts/07_train.py --mode preflight
@@ -186,7 +189,9 @@ python scripts/08_evaluate.py --mode formal --formal --open-internal-test `
 - 已生成 148,798 个真实规则候选；独立 AI pilot 已完成 150 条并保留 103 条 Silver；
 - 已完成 148,798 条全量 Luna-primary 标注：126,727 条 Silver、22,071 条
   `Unclear` 排除；250 条人工审核/Gold 候选 roster 已生成；
-- 第一轮人工结果已清除；资深医生 Luna 辅助复核尚未回收，split 和缓存未启动；
+- 已完成两名 >5 年资历医生的 Luna 辅助单列共识复核：250 条 Gold，246 条确认、
+  4 条修正、排除 0；2,297 条 roster 患者相关 Silver 继续隔离；
+- split 和缓存尚未启动；
 - 未启动 GPU 训练；
 - 未打开 internal-test、protected gold 或 external confirmation；
 - pilot 数字仅用于工程与流程决策，不是论文科学结论。
