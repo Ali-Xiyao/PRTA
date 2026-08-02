@@ -1,7 +1,8 @@
+import pytest
 import torch
 from torch import nn
 
-from prta_cxr.models.heads import NativeH0Head, NativeH1Head
+from prta_cxr.models.heads import NativeH0Head, NativeH1Head, NativeH2Head
 from prta_cxr.models.prta import (
     PRTATemporalAdapter,
     cmcp_margin_loss,
@@ -9,6 +10,7 @@ from prta_cxr.models.prta import (
     state_preservation_loss,
     transition_alignment_loss,
 )
+from prta_cxr.training.engine import build_train_model
 
 
 def model() -> PRTATemporalAdapter:
@@ -33,6 +35,7 @@ def test_prta_shapes_native_heads_and_gradient_path():
     assert NativeH0Head(16)(output, query).shape == (3, 5)
     logits = NativeH1Head(16)(output, query)
     assert logits.shape == (3, 5)
+    assert NativeH2Head(16)(output, query).shape == (3, 5)
     logits.sum().backward()
     assert any(
         parameter.grad is not None
@@ -48,3 +51,27 @@ def test_losses_and_inversion_are_finite():
     assert torch.isfinite(state_preservation_loss(first, second))
     logits = torch.arange(5.0).unsqueeze(0)
     assert invert_progression_logits(logits).tolist() == [[0.0, 2.0, 1.0, 4.0, 3.0]]
+
+
+@pytest.mark.parametrize("family", ("current_only", "siamese_diff", "tila"))
+def test_native_baseline_families_produce_five_logits(family):
+    config = {
+        "model": {
+            "family": family,
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "dropout": 0.0,
+        }
+    }
+    value = build_train_model(
+        [nn.Identity() for _ in range(4)], nn.Identity(), config
+    )
+    output, logits, query = value(
+        torch.randn(2, 9, 16),
+        torch.randn(2, 9, 16),
+        torch.randn(2, 512),
+    )
+    assert output is None
+    assert logits.shape == (2, 5)
+    assert query.shape == (2, 16)

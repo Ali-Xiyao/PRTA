@@ -9,7 +9,7 @@
   "state_tokens": 20,
   "transition_tokens": 20,
   "progression_labels": ["Stable", "Improved", "Worse", "New", "Resolved"],
-  "native_heads": ["H0", "H1"],
+  "native_heads": ["H0", "H1", "H2"],
   "default_native_head": "H0",
   "fixed64_is_main_head": false
 }

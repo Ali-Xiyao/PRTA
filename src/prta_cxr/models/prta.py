@@ -204,6 +204,7 @@ class PRTATemporalAdapter(nn.Module):
         transition_tokens: int = 20,
         dropout: float = 0.0,
         frozen_final_norm: nn.Module | None = None,
+        cross_time_alignment: bool = True,
     ) -> None:
         super().__init__()
         if width % heads:
@@ -215,6 +216,7 @@ class PRTATemporalAdapter(nn.Module):
             dropout=dropout,
             final_norm=frozen_final_norm,
         )
+        self.cross_time_alignment = bool(cross_time_alignment)
         self.query_projection = nn.Sequential(
             nn.LayerNorm(width),
             nn.Linear(width, width),
@@ -268,12 +270,15 @@ class PRTATemporalAdapter(nn.Module):
         current = self.tail(current_block8)
         conditioned_current = current + query_condition.unsqueeze(1)
         conditioned_prior = prior + query_condition.unsqueeze(1)
-        aligned_prior, _ = self.cross_time(
-            self.cross_norm(conditioned_current),
-            self.cross_norm(conditioned_prior),
-            self.cross_norm(prior),
-            need_weights=False,
-        )
+        if self.cross_time_alignment:
+            aligned_prior, _ = self.cross_time(
+                self.cross_norm(conditioned_current),
+                self.cross_norm(conditioned_prior),
+                self.cross_norm(prior),
+                need_weights=False,
+            )
+        else:
+            aligned_prior = conditioned_prior
         relation = torch.cat(
             (
                 current,

@@ -968,7 +968,7 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | Deviation ID | Date | 原协议 | 拟修改内容 | 修改原因 | 是否接触 Test/Gold | 批准人 | 决策 | 新版本/Hash | 影响范围 | 备注 |
 |---|---|---|---|---|---|---|---|---|---|---|
-|  |  |  |  |  |  |  |  |  |  |  |
+| DEV-001 | 2026-08-03 | 开发脚本不得读取Internal-test outcome | 缓存于52 shards暂停；拆分Train/Dev、sealed Internal-test及无标签cache input后原身份续跑 | 原cache脚本虽不使用标签但解析了全split行 | 仅被动解析字段；无训练/预测/指标/选择 | 用户完整程序授权；文档严格门 | ACCEPTED_PRE_FREEZE_REPAIR | cache input canonical `31b1c309…12d08` | cache输入面 | 13,312图像保留；inventory hash不变 |
 |  |  |  |  |  |  |  |  |  |  |  |
 
 ## 13.4 Gold 解封与运行登记

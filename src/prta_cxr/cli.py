@@ -91,7 +91,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
         from prta_cxr.quality_gate import load_completed_human_silver_audit
         from prta_cxr.training.engine import (
-            PRTATrainModel,
+            build_train_model,
             load_training_config,
             train_model,
         )
@@ -128,7 +128,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         )
         visual, _ = load_biomedclip_visual(args.weights)
         blocks, final_norm = tail_modules(visual)
-        model = PRTATrainModel(blocks, final_norm, config)
+        model = build_train_model(blocks, final_norm, config)
         receipt = train_model(
             model,
             train_loader,

@@ -4,19 +4,22 @@ import json
 import os
 import random
 from collections.abc import Mapping
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 from torch import nn
+from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from prta_cxr.artifacts import write_json_atomic
 from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256
-from prta_cxr.models.heads import NativeH0Head, NativeH1Head
+from prta_cxr.evaluation.progression import classification_metrics
+from prta_cxr.models.heads import NativeH0Head, NativeH1Head, NativeH2Head
 from prta_cxr.models.prta import (
+    FrozenTailWithAdapters,
     PRTATemporalAdapter,
     PRTATrainingHeads,
     cmcp_margin_loss,
@@ -24,6 +27,7 @@ from prta_cxr.models.prta import (
     temporal_inversion_loss,
     transition_alignment_loss,
 )
+from prta_cxr.training.losses import progression_classification_loss
 
 
 class PRTATrainModel(nn.Module):
@@ -34,33 +38,175 @@ class PRTATrainModel(nn.Module):
         config: Mapping[str, Any],
     ) -> None:
         super().__init__()
+        self.config = dict(config)
         model = config["model"]
+        components = dict(model.get("components", {}))
+        width = int(model.get("width", 768))
+        self.finding_conditioning = bool(
+            components.get("finding_conditioning", True)
+        )
+        self.dual_branch = bool(components.get("dual_branch", True))
         self.adapter = PRTATemporalAdapter(
             frozen_tail,
-            width=768,
+            width=width,
             heads=int(model["heads"]),
             adapter_rank=int(model["adapter_rank"]),
             state_tokens=int(model["state_tokens"]),
             transition_tokens=int(model["transition_tokens"]),
             dropout=float(model.get("dropout", 0.0)),
             frozen_final_norm=final_norm,
+            cross_time_alignment=bool(
+                components.get("cross_time_alignment", True)
+            ),
         )
-        self.training_heads = PRTATrainingHeads()
+        self.training_heads = PRTATrainingHeads(visual_width=width)
         head_name = str(model.get("native_head", "H0"))
         if head_name == "H0":
-            self.native_head: nn.Module = NativeH0Head()
+            self.native_head: nn.Module = NativeH0Head(width)
         elif head_name == "H1":
-            self.native_head = NativeH1Head(dropout=float(model.get("dropout", 0.0)))
+            self.native_head = NativeH1Head(
+                width, dropout=float(model.get("dropout", 0.0))
+            )
+        elif head_name == "H2":
+            self.native_head = NativeH2Head(
+                width, dropout=float(model.get("dropout", 0.0))
+            )
         else:
-            raise ValueError("native_head must be H0 or H1")
+            raise ValueError("native_head must be H0, H1, or H2")
 
     def forward(
         self, prior: torch.Tensor, current: torch.Tensor, finding_text: torch.Tensor
     ) -> tuple[Any, torch.Tensor, torch.Tensor]:
         query = self.training_heads.finding_query(finding_text)
+        if not self.finding_conditioning:
+            query = torch.zeros_like(query)
         output = self.adapter(prior, current, query)
+        if not self.dual_branch:
+            output = replace(
+                output,
+                state_tokens=output.transition_tokens,
+                state_embedding=output.transition_embedding,
+            )
         logits = self.native_head(output, query)
         return output, logits, query
+
+
+class _NativeTemporalBaseline(nn.Module):
+    def __init__(
+        self,
+        frozen_tail: list[nn.Module],
+        final_norm: nn.Module,
+        config: Mapping[str, Any],
+    ) -> None:
+        super().__init__()
+        self.config = dict(config)
+        model = config["model"]
+        self.width = int(model.get("width", 768))
+        self.tail = FrozenTailWithAdapters(
+            frozen_tail,
+            width=self.width,
+            adapter_rank=int(model["adapter_rank"]),
+            dropout=float(model.get("dropout", 0.0)),
+            final_norm=final_norm,
+        )
+        self.finding_projection = nn.Sequential(
+            nn.LayerNorm(512), nn.Linear(512, self.width)
+        )
+
+    def _encode(self, value: torch.Tensor) -> torch.Tensor:
+        return self.tail(value)
+
+
+class CurrentOnlyTrainModel(_NativeTemporalBaseline):
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 2),
+            nn.Linear(self.width * 2, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, prior, current, finding_text):
+        del prior
+        query = self.finding_projection(finding_text)
+        pooled = self._encode(current).mean(dim=1)
+        return None, self.head(torch.cat((pooled, query), dim=-1)), query
+
+
+class SiameseDiffTrainModel(_NativeTemporalBaseline):
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 5),
+            nn.Linear(self.width * 5, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior).mean(dim=1)
+        current_value = self._encode(current).mean(dim=1)
+        signed = current_value - prior_value
+        features = torch.cat(
+            (current_value, prior_value, signed, signed.abs(), query), dim=-1
+        )
+        return None, self.head(features), query
+
+
+class TILATrainModel(_NativeTemporalBaseline):
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        model = config["model"]
+        self.attention = nn.MultiheadAttention(
+            self.width,
+            int(model["heads"]),
+            dropout=float(model.get("dropout", 0.0)),
+            batch_first=True,
+        )
+        self.norm = nn.LayerNorm(self.width)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 4),
+            nn.Linear(self.width * 4, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior)
+        current_value = self._encode(current)
+        attended, _ = self.attention(
+            self.norm(current_value + query.unsqueeze(1)),
+            self.norm(prior_value + query.unsqueeze(1)),
+            self.norm(prior_value),
+            need_weights=False,
+        )
+        current_pool = current_value.mean(dim=1)
+        attended_pool = attended.mean(dim=1)
+        features = torch.cat(
+            (current_pool, attended_pool, current_pool - attended_pool, query),
+            dim=-1,
+        )
+        return None, self.head(features), query
+
+
+def build_train_model(
+    frozen_tail: list[nn.Module],
+    final_norm: nn.Module,
+    config: Mapping[str, Any],
+) -> nn.Module:
+    family = str(config["model"].get("family", "prta"))
+    registry = {
+        "prta": PRTATrainModel,
+        "current_only": CurrentOnlyTrainModel,
+        "siamese_diff": SiameseDiffTrainModel,
+        "tila": TILATrainModel,
+    }
+    if family not in registry:
+        raise ValueError(f"unsupported model family: {family}")
+    return registry[family](frozen_tail, final_norm, config)
 
 
 def load_training_config(path: Path) -> dict[str, Any]:
@@ -85,7 +231,7 @@ def seed_everything(seed: int) -> None:
 
 
 def _loss(
-    model: PRTATrainModel,
+    model: nn.Module,
     batch: Mapping[str, Any],
     weights: Mapping[str, float],
     device: torch.device,
@@ -96,9 +242,17 @@ def _loss(
     transition_text = batch["transition_text"].to(device)
     target = batch["target"].to(device)
     output, logits, _ = model(prior, current, finding)
-    total = float(weights.get("classification", 1.0)) * F.cross_entropy(
-        logits, target
+    total = float(weights.get("classification", 1.0)) * progression_classification_loss(
+        logits, target, model.config.get("classification_loss")
     )
+    auxiliary_requested = any(
+        float(weights.get(name, 0.0))
+        for name in ("alignment", "state", "inversion", "cmcp")
+    )
+    if output is None:
+        if auxiliary_requested:
+            raise ValueError("native baselines require zero auxiliary-loss weights")
+        return total, logits
     projected_text = model.training_heads.transition_text(transition_text)
     total = total + float(weights.get("alignment", 0.0)) * transition_alignment_loss(
         output.transition_embedding, projected_text
@@ -125,7 +279,7 @@ def _loss(
 
 @torch.no_grad()
 def evaluate_loader(
-    model: PRTATrainModel,
+    model: nn.Module,
     loader: DataLoader,
     *,
     weights: Mapping[str, float],
@@ -135,8 +289,9 @@ def evaluate_loader(
     loss_sum = 0.0
     correct = 0
     count = 0
-    targets: list[int] = []
-    predictions: list[int] = []
+    metric_rows: list[dict[str, str]] = []
+    nll_sum = 0.0
+    brier_sum = 0.0
     for batch in loader:
         loss, logits = _loss(model, batch, weights, device)
         prediction = logits.argmax(dim=-1).cpu()
@@ -145,20 +300,41 @@ def evaluate_loader(
         loss_sum += float(loss) * batch_count
         correct += int((prediction == target).sum())
         count += batch_count
-        targets.extend(target.tolist())
-        predictions.extend(prediction.tolist())
-    f1 = []
-    for label in range(len(PROGRESSION_LABELS)):
-        pairs = list(zip(targets, predictions, strict=True))
-        tp = sum(t == label and p == label for t, p in pairs)
-        fp = sum(t != label and p == label for t, p in pairs)
-        fn = sum(t == label and p != label for t, p in pairs)
-        denominator = 2 * tp + fp + fn
-        f1.append(0.0 if denominator == 0 else 2 * tp / denominator)
+        probabilities = logits.softmax(dim=-1).cpu()
+        one_hot = F.one_hot(target, num_classes=len(PROGRESSION_LABELS)).float()
+        nll_sum += float(F.cross_entropy(logits.cpu(), target, reduction="sum"))
+        brier_sum += float(((probabilities - one_hot) ** 2).sum())
+        for sample_id, patient, truth, predicted in zip(
+            batch["sample_id"],
+            batch["patient_id_hash"],
+            target.tolist(),
+            prediction.tolist(),
+            strict=True,
+        ):
+            metric_rows.append(
+                {
+                    "patient_id": str(patient),
+                    "observation_id": str(sample_id),
+                    "target": PROGRESSION_LABELS[int(truth)],
+                    "prediction": PROGRESSION_LABELS[int(predicted)],
+                }
+            )
+    metrics = classification_metrics(metric_rows, labels=PROGRESSION_LABELS)
+    ordinary = metrics["ordinary"]
     return {
         "loss": loss_sum / count,
         "accuracy": correct / count,
-        "macro_f1": sum(f1) / len(f1),
+        "macro_f1": ordinary["macro_f1"],
+        "balanced_accuracy": ordinary["balanced_accuracy"],
+        "min_class_recall": ordinary["min_class_recall"],
+        "opposite_direction_error_rate": ordinary[
+            "opposite_direction_error_rate"
+        ],
+        "nll": nll_sum / count,
+        "brier": brier_sum / count,
+        "patient_balanced": metrics["patient_balanced"],
+        "ordinary": ordinary,
+        "patients": metrics["patients"],
         "rows": count,
     }
 
@@ -175,7 +351,7 @@ def _save_checkpoint(path: Path, value: Mapping[str, Any]) -> None:
 
 
 def train_model(
-    model: PRTATrainModel,
+    model: nn.Module,
     train_loader: DataLoader,
     dev_loader: DataLoader,
     *,

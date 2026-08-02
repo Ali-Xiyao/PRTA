@@ -298,7 +298,7 @@ Status: complete
   the local bare remote, and verify local/remote equality.
 
 ### Phase 30 - Full-program authority, readiness audit, and 20-minute monitor
-Status: in progress
+Status: complete
 
 - Re-read both paper authority documents, inventory implemented versus missing
   experiment surfaces, inspect GPU/model/data/disk/process state, and bind the
@@ -317,11 +317,14 @@ Status: complete
   overlap across Train/Dev/Internal-test/Gold before caching.
 
 ### Phase 32 - Full Block-8/text cache and input audit
-Status: pending
+Status: in progress
 
 - Bind the local BiomedCLIP checkpoint, build resume-safe caches for the frozen
   split, and verify exact sample/image/text lineage, shapes, finite values,
   storage conservation, and completion markers.
+- Before resuming the cache, materialize a labeled Train/Dev manifest, a sealed
+  labeled Internal-test manifest, and an all-split outcome-free cache-input
+  manifest. No development/cache script may parse the sealed test labels.
 
 ### Phase 33 - Train/Dev performance development
 Status: pending
@@ -447,6 +450,24 @@ Block-8/text cache without opening Internal-test or Gold outcomes.
   `pytest` import plus Ruff import-order/line-length issues. The functional
   resume round-trip passed; add the import and format the two code locations
   before rerunning the same focused gate.
+- 2026-08-03: a test-inventory command guessed nonexistent `test_model.py` and
+  `test_evaluation.py`, then a follow-up `rg` returned exit 1 solely because no
+  metric-specific test matched. The real model coverage is in
+  `tests/test_prta_core.py`; use exact inventory paths and tolerate no-match
+  searches without treating them as code failures.
+- 2026-08-03: H2/imbalance-loss focused tests passed, while Ruff found one
+  now-unused functional import and one import-order normalization. Remove and
+  normalize those imports before the next full gate; functionality was not
+  affected.
+- 2026-08-03: after 20 cache shards, code audit found that the full split input
+  includes Internal-test labels. The cacher ignores labels semantically but had
+  already parsed them, violating the strict no-outcome-read wording. Stop the
+  exact cache PID, preserve completed shards, register a pre-freeze deviation,
+  derive outcome-separated manifests, and resume from the identical image
+  inventory. No prediction/metric/model selection occurred.
+- 2026-08-03: split-surface sealing tests/preflight passed; Ruff found one long
+  description line and one import-order normalization. Wrapped the description
+  and applied the import-only formatter before formal sealing.
 
 - 2026-08-02: a code-inventory command guessed a nonexistent
   `src/prta_cxr/cli_utils.py`; the existing CLI modules and script bootstrap

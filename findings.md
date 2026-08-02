@@ -391,3 +391,41 @@
 - The frozen split references 146,110 unique images across 124,430 rows and 12
   findings. All image paths exist. A full FP16 Block-8 cache is estimated at
   41.175 GiB across 571 shards of 256 images, safely below current H: capacity.
+- Training/evaluation audit found additional formal blockers: only PRTA H0/H1
+  exists; H2, Current-only, Siamese Diff, and TILA are absent; imbalance-loss
+  selection and component switches are absent; Dev metrics omit balanced
+  accuracy/min recall/ODER/NLL/Brier; scripts 09-11 are dry-run gates only.
+- The formal evaluator currently compares checkpoint input hashes including the
+  training-only label-quality audit against an evaluation hash map that omits
+  that field, so every real checkpoint would fail equality. It also supports
+  Internal-test only, not Gold, interventions, temperature scaling, bootstrap,
+  subgroup analysis, or immutable one-time-open receipts. These must be fixed
+  before protocol freeze, not worked around after test access.
+- The authority documents still contain legacy D0/D1/D3 Rule-label experiments,
+  while the later user-frozen policy says Rule labels are diagnostic-only and
+  never training labels. Formal implementation must resolve this in favor of
+  Luna-primary scaling and mark Rule-only D3/A507 N/A unless the user explicitly
+  reverses the later policy; automation remains structural only.
+- Reusable patient-balanced confusion metrics and hierarchical patient
+  bootstrap code already exist, but the trainer reimplements a weaker metric
+  subset instead of calling them. The dataset also drops source/finding/view/
+  interval metadata from each batch, preventing registered subgroup outputs.
+- A strict run-receipt field contract exists but is not wired into training,
+  evaluation, interventions, or figures. Formal orchestration should reuse that
+  contract rather than inventing a parallel registry schema.
+- The single labeled split manifest is not an acceptable development input:
+  both cache and training CLIs parse the entire file before filtering, exposing
+  Internal-test labels in process memory. The cache does not use those labels
+  and no model/prediction exists, but strict protocol requires separate labeled
+  Train/Dev, sealed labeled Internal-test, and outcome-free cache manifests.
+- Formal sealing now provides 107,731 labeled Train/Dev rows, 16,699 labeled
+  Internal-test rows in the sealed directory, and 124,430 outcome-free cache
+  rows containing only sample/source/finding/image paths/split. Independent
+  audit found no patient or label fields, exact ID conservation, and the same
+  146,110-image inventory hash as the 52 completed cache shards.
+- Canonical hashes are Train/Dev
+  `925ec2cbbba7b2093a410cc24da39f0941e927f4c083d039702fba0c7473d538`,
+  sealed Internal-test
+  `762def7cc4340d2bb6492b903ff9e89381ef48d90cd384f442d7e70738474bf6`,
+  and outcome-free cache input
+  `31b1c3095faf53c37ef60db519a02b6d13ad6df8e428095c34d087b067412d08`.

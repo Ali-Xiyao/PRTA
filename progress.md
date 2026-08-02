@@ -433,3 +433,40 @@
 - Focused cache tests (9), Ruff, and compileall pass after the repair. A full
   frozen-path audit found 146,110 unique images, 12 findings, zero missing
   image files, and an estimated 41.175 GiB/571-shard FP16 cache footprint.
+- Full repository verification passed 69 tests, Ruff, compileall, and diff
+  checks. Committed the frozen split documentation plus resume-safe cacher as
+  `b691041` and pushed it to the local-only remote.
+- Launched the formal full cache on GPU 0 as PID 25880 with batch size 32 and
+  shard size 256. The first atomic shard completed successfully; build state is
+  `IN_PROGRESS` at 256/146,110 images with no stderr, and GPU 1 remains free.
+- Began the parallel Phase-33 code audit while caching. Confirmed that the
+  existing generic trainer is only a basic PRTA H0/H1 path and that the formal
+  evaluator contains a deterministic input-hash mismatch; trust/figure/VLM
+  scripts remain unimplemented gates. None of these surfaces will be allowed to
+  reach test data until repaired and frozen.
+- Two read-only test inventory commands returned nonzero for guessed/missing
+  test filenames and an empty `rg` match. Located the actual core test file;
+  neither command changed code or runtime state.
+- Added the H2 query-attentive native head and all three registered imbalance
+  losses with gradient tests. Seven focused tests pass; corrected the two Ruff
+  import-only findings from the first pass.
+- At 20 completed cache shards, detected a pre-freeze isolation defect: the
+  cache source JSONL carried unused Internal-test labels. Registered the issue
+  before protocol freeze and will stop only PID 25880, preserving completed
+  atomic shards and logs. No optimizer, prediction, metric, or test-driven
+  decision has occurred.
+- Stopped only PID 25880 at a clean recorded boundary: 13,312 images / 52
+  shards, zero temporary files, zero stderr. Added a formal split-surface
+  sealing CLI with exact ID conservation and a minimal outcome-free cache
+  schema. Eleven focused tests and preflight pass; corrected the first Ruff
+  pass's line/import-only findings.
+- Formally generated and independently audited the outcome-separated split
+  surfaces. The cache-input manifest contains exactly six approved fields,
+  zero forbidden outcome/patient fields, and reproduces the existing cache
+  inventory hash, so all 13,312 completed images can be resumed without
+  rewriting or changing cache identity.
+- Implemented H2, the three imbalance losses, Current-only/Siamese-Diff/TILA
+  native model families, PRTA component switches, richer Dev metrics, and the
+  evaluation input-hash repair. Full repository gates now pass 78 tests, Ruff,
+  compileall, and diff checks. Registered the pre-freeze cache-input issue as
+  `DEV-001` in the paper experiment record before resuming.

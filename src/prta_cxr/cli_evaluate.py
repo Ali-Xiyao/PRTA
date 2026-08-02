@@ -127,7 +127,7 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
         parser.error("formal evaluation arguments missing: " + ", ".join(missing))
     from prta_cxr.data.token_cache import Block8CacheIndex
     from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
-    from prta_cxr.training.engine import PRTATrainModel
+    from prta_cxr.training.engine import build_train_model
     from prta_cxr.vision.biomedclip import load_biomedclip_visual, tail_modules
 
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
@@ -140,11 +140,14 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
         "weights": sha256_file(args.weights),
         "cache_manifest": sha256_file(args.cache_root / "cache_manifest.json"),
     }
-    if expected != current:
+    expected_evaluation_inputs = {
+        key: expected.get(key) for key in current
+    }
+    if expected_evaluation_inputs != current:
         raise ValueError("evaluation inputs do not match checkpoint input hashes")
     visual, _ = load_biomedclip_visual(args.weights)
     blocks, final_norm = tail_modules(visual)
-    model = PRTATrainModel(blocks, final_norm, checkpoint["config"])
+    model = build_train_model(blocks, final_norm, checkpoint["config"])
     model.load_state_dict(checkpoint["model_state"])
     model.to(torch.device(args.device))
     dataset = PRTAFeatureDataset(

@@ -184,15 +184,39 @@ def metrics_from_confusion(
         out=np.zeros_like(true_positive),
         where=support > 0,
     )
+    total = float(confusion.sum())
+    accuracy = 0.0 if total <= 0 else float(true_positive.sum() / total)
+    label_index = {label: index for index, label in enumerate(labels)}
+    opposite_pairs = (
+        ("Improved", "Worse"),
+        ("Worse", "Improved"),
+        ("New", "Resolved"),
+        ("Resolved", "New"),
+    )
+    opposite = sum(
+        confusion[label_index[left], label_index[right]]
+        for left, right in opposite_pairs
+        if left in label_index and right in label_index
+    )
     return {
         "macro_f1": float(f1.mean()),
         "balanced_accuracy": float(recall.mean()),
+        "accuracy": accuracy,
+        "min_class_recall": float(recall.min()),
+        "opposite_direction_error_rate": (
+            0.0 if total <= 0 else float(opposite / total)
+        ),
         "per_class_f1": {
             label: float(value) for label, value in zip(labels, f1, strict=True)
         },
         "support": {
             label: float(value) for label, value in zip(labels, support, strict=True)
         },
+        "per_class_recall": {
+            label: float(value)
+            for label, value in zip(labels, recall, strict=True)
+        },
+        "confusion": confusion.astype(float).tolist(),
     }
 
 
