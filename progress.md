@@ -1336,3 +1336,13 @@
   is current at 14 rows, all new stdout/stderr logs are empty, both GPUs are
   healthy, H: has 413.7 GiB free, and protected-outcome and protocol-freeze
   markers remain absent.
+- The 04:39 CST heartbeat found the Dev-baseline gate healthy and still 0/3
+  complete. `M305-B401-S17` has completed all 5,692 epoch-3 training batches
+  and is entering fixed-Dev evaluation, with best Dev Macro-F1 0.3608 at epoch
+  2. `M305-B402-S17` is at epoch 2, batch 4,700/5,692 with best 0.4298 at
+  epoch 0 and is expected to enter its next evaluation in roughly 5-10
+  minutes; `M305-B403-S17` remains planned until a GPU is released. Both live
+  children and the keeper are alive, atomic best/last checkpoints are present
+  and hashed, all five monitored logs remain empty, the 14-row registry is
+  current, H: has 413.1 GiB free, and protected-outcome and protocol-freeze
+  markers remain absent.
