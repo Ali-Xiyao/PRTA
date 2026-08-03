@@ -1366,3 +1366,14 @@
   and hashed, all five monitored logs remain empty, the 14-row registry is
   current, H: has 413.1 GiB free, and protected-outcome and protocol-freeze
   markers remain absent.
+- The 05:39 CST heartbeat verified the Dev-baseline gate is 2/3 complete.
+  `M305-B401-S17` finished cleanly with best Dev Macro-F1 0.3666 at epoch 5;
+  its receipt hashes to `48853dc9...e2a1`. `M305-B402-S17` finished cleanly
+  with best 0.4410 at epoch 2; its receipt hashes to `e5606fcf...a931`.
+  Their child processes exited normally and the keeper launched the final
+  frozen baseline `M305-B403-S17` on GPU0; it is at epoch 1, batch
+  3,700/5,692 with initial best Dev Macro-F1 0.4003 and an estimated 30-50
+  minutes remaining. GPU1 is idle, the live child and keeper are healthy,
+  every stderr log is empty, all checkpoints are present and hashed, the
+  registry is current at 15 rows, H: has 412.8 GiB free, and protected-outcome
+  and protocol-freeze markers remain absent.
