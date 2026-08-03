@@ -858,3 +858,12 @@
   alive, checkpoints and registry rows are current, stderr logs are empty, GPU
   memory is about 4.55/4.58 GiB at 75/68 C, H: has 421.5 GiB free, and no
   protected outcome/protocol-freeze marker exists.
+- The 11:35 CST heartbeat found both head variants improved on fixed Dev.
+  M301-H1 is at epoch 3, batch 1,200/5,692 with best Macro-F1 0.4485 at epoch
+  2, while M301-H2 is at epoch 2, batch 1,100/5,692 with best Macro-F1 0.4430
+  at epoch 1. Their next Dev passes are expected in roughly 25-35 minutes.
+  Queue state remains 5/7 complete with both runs active. Both children and
+  keepers are alive, atomic best/last checkpoints are current, stderr logs are
+  empty, registry identities are consistent, GPU memory is about 4.55/4.58 GiB
+  at 78/74 C, H: has 421.5 GiB free, and protected outcome/protocol-freeze
+  markers remain absent.
