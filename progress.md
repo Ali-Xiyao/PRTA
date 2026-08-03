@@ -900,3 +900,11 @@
   checkpoints and registry rows are current, stderr logs are empty, GPU memory
   is about 4.55/4.58 GiB at 77/75 C, H: has 421.5 GiB free, and protected
   markers remain absent.
+- The 13:15 CST heartbeat found both M301 variants through their current full
+  epochs and entering fixed-Dev evaluation: H1 completed all 5,692 batches of
+  epoch 5 with best Macro-F1 0.4485 at epoch 2, while H2 completed epoch 4
+  with best 0.4430 at epoch 1. Their next frozen Dev/early-stopping decisions
+  are expected within roughly 5-15 minutes. Queue state remains 5/7 complete.
+  Both children and keepers are alive, stderr logs are empty, checkpoint and
+  registry identities are current, GPU memory is about 4.55/4.58 GiB at 73/73
+  C, H: has 421.5 GiB free, and protected markers remain absent.
