@@ -1040,3 +1040,13 @@
   empty, registry identities remain unchanged, GPU memory is about 4.48 GiB
   per device at 78/76 C, H: has 416.1 GiB free, and protected-outcome and
   protocol-freeze markers remain absent.
+- The 18:18 CST heartbeat found M302-BS safely past its epoch-6 fixed-Dev
+  evaluation and at epoch 7, batch 2,000/5,692, while M302-CBF has completed
+  all 5,692 epoch-6 batches and is entering fixed-Dev evaluation. Their best
+  Dev Macro-F1 values remain 0.4349 and 0.4536; the next CBF result is expected
+  in roughly 5-10 minutes. The queue remains 0/2 complete and the program
+  remains `RUNNING_LOSS_STAGE`; both children and the keeper are alive,
+  atomic checkpoints remain present, all active logs are empty, registry
+  identities are current, GPU memory is about 4.48 GiB per device, H: has
+  416.1 GiB free, and protected-outcome and protocol-freeze markers remain
+  absent.
