@@ -1289,3 +1289,16 @@
   queue and 12-row registry identities remain unchanged, GPU memory is about
   4.48 GiB per device at 80/83 C, H: has 413.7 GiB free, and protected-outcome
   and protocol-freeze markers remain absent.
+- The 03:19 CST heartbeat found `M304-S29` safely through its epoch-7 fixed-Dev
+  evaluation (Dev Macro-F1 0.4374, not a new best) and training epoch 8 at
+  batch 3,400/5,692 with frozen best 0.4630 at epoch 4; its next evaluation is
+  expected in roughly 10-15 minutes. `M304-S43` is at epoch 7, batch
+  4,700/5,692 with frozen best 0.4594 at epoch 4 and is expected to enter its
+  next evaluation in roughly 5-10 minutes. The scheduler remains 0/2 complete
+  and both seeds continue to terminal receipts before any cross-seed
+  conclusion. Program status remains `RUNNING_CONFIRM_STAGE`; both children
+  and keeper are alive, atomic best/last checkpoints are present and hashed,
+  all five monitored logs remain empty, queue and 12-row registry identities
+  remain unchanged, GPU memory is about 4.48 GiB per device at 80/81 C, H:
+  has 413.7 GiB free, and protected-outcome and protocol-freeze markers remain
+  absent.
