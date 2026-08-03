@@ -1235,3 +1235,12 @@
   remain unchanged, GPU memory is about 4.48 GiB per device at 82/84 C, H:
   has 413.7 GiB free, and protected-outcome and protocol-freeze markers remain
   absent.
+- The 01:39 CST heartbeat found `M304-S29` safely past its epoch-4 fixed-Dev
+  evaluation and at epoch 5, batch 2,000/5,692, with best Dev Macro-F1 improved
+  to 0.4630. `M304-S43` is at epoch 4, batch 5,600/5,692 with best 0.4443 and
+  is entering its next evaluation. No cross-seed conclusion is drawn before
+  both frozen runs finish. Program status remains `RUNNING_CONFIRM_STAGE`;
+  both children and keeper are alive, atomic checkpoints are current, all logs
+  are empty, queue and registry identities remain unchanged, GPU memory is
+  about 4.48 GiB per device at 82/84 C, H: has 413.7 GiB free, and
+  protected-outcome and protocol-freeze markers remain absent.
