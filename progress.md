@@ -1080,3 +1080,12 @@
   `RUNNING_ADAPTER_STAGE`; the keeper and adapter child are alive, stderr is
   empty, H: has 416.1 GiB free, and protected-outcome/protocol-freeze markers
   remain absent.
+- The 19:38 CST heartbeat found `M303-last2` safely past its first fixed-Dev
+  evaluation and training epoch 1 at batch 1,400/5,692. Its initial Dev
+  Macro-F1 is 0.4005; the frozen run continues without tuning, with the next
+  evaluation expected in roughly 25-35 minutes. Program status remains
+  `RUNNING_ADAPTER_STAGE`; the adapter child and keeper are alive, atomic
+  best/last checkpoints exist, stderr logs are empty, registry identity and
+  config hashes are unchanged, GPU 0 uses about 2.94 GiB at 72 C, GPU 1 is
+  idle, H: has 415.0 GiB free, and protected-outcome and protocol-freeze
+  markers remain absent.
