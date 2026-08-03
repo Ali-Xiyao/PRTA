@@ -1346,3 +1346,13 @@
   and hashed, all five monitored logs remain empty, the 14-row registry is
   current, H: has 413.1 GiB free, and protected-outcome and protocol-freeze
   markers remain absent.
+- The 04:59 CST heartbeat found the Dev-baseline gate healthy and still 0/3
+  complete. `M305-B401-S17` is at epoch 6, batch 5,000/5,692 and improved its
+  best Dev Macro-F1 to 0.3666 at epoch 5, with its next evaluation expected in
+  roughly 5 minutes. `M305-B402-S17` is at epoch 4, batch 3,800/5,692 and
+  improved its best to 0.4410 at epoch 2, with its next evaluation expected in
+  roughly 5-10 minutes; `M305-B403-S17` remains planned until a GPU is
+  released. Both live children and the keeper are alive, atomic best/last
+  checkpoints are present and hashed, all five monitored logs remain empty,
+  the 14-row registry is current, H: has 413.1 GiB free, and protected-outcome
+  and protocol-freeze markers remain absent.
