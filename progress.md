@@ -908,3 +908,12 @@
   Both children and keepers are alive, stderr logs are empty, checkpoint and
   registry identities are current, GPU memory is about 4.55/4.58 GiB at 73/73
   C, H: has 421.5 GiB free, and protected markers remain absent.
+- The 13:35 CST heartbeat found M301-H1 at epoch 6, batch 3,700/5,692 after
+  epoch-5 Dev Macro-F1 0.4349, with best 0.4485 at epoch 2. M301-H2 is at
+  epoch 5, batch 3,000/5,692 after epoch-4 Dev Macro-F1 0.4301, with best
+  0.4430 at epoch 1. Their next frozen Dev/early-stopping decisions are
+  expected in roughly 15-25 minutes. Queue state remains 5/7 complete with
+  both variants active. Both children and keepers are alive, last/best
+  checkpoints and registry rows are current, stderr logs are empty, GPU memory
+  is about 4.55/4.58 GiB at 79/76 C, H: has 421.5 GiB free, and protected
+  markers remain absent.
