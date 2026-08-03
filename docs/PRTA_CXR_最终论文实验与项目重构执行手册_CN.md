@@ -7,6 +7,15 @@
 > 旧项目：`Ali-Xiyao/VisualVIT`  
 > 新主项目建议名称：`PRTA-CXR`
 
+> **正式执行状态（2026-08-04）**：本手册授权的程序已在主方法开发出口门
+> 触发 `STOP_DEVELOPMENT_GATE`。PRTA 三 Seed Dev Macro-F1 均值为
+> 0.458680，未达到 0.52；Seed-17 相对最强 temporal baseline 的增益为
+> 0.005959，未达到 +0.03；平均 ODER 0.042202 高于该 baseline 的
+> 0.037021。因此未生成 Protocol Freeze Receipt，未运行正式
+> Baseline/Ablation，Internal-test 与 Gold 从未解封，VLM 附加部署亦未启动。
+> 本 STOP 是本轮正式程序的终态，不允许以查看 protected outcome 或静默改动
+> 冻结配置的方式绕过。
+
 ---
 
 ## 0. 最终决策

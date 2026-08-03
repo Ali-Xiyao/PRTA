@@ -327,7 +327,7 @@ Status: complete
   manifest. No development/cache script may parse the sealed test labels.
 
 ### Phase 33 - Train/Dev performance development
-Status: in progress
+Status: complete - STOP_DEVELOPMENT_GATE
 
 - Implement any still-missing D2xx/M3xx data-scaling, head, adapter, and loss
   variants required by the authority documents; use only Train/Dev.
@@ -336,27 +336,27 @@ Status: in progress
   Internal-test or Gold.
 
 ### Phase 34 - Formal protocol and method freeze
-Status: pending
+Status: not run - upstream STOP at Phase 33
 
 - Freeze the selected PRTA method, baseline/ablation list, three seeds, metrics,
   bootstrap, calibration, intervention, subgroup, visualization, checkpoint,
   and one-time test-read protocol with hashes and a freeze receipt.
 
 ### Phase 35 - Formal baselines and PRTA main runs
-Status: pending
+Status: not run - upstream STOP at Phase 33
 
 - Execute B401-B404 for seeds 17/29/43 under equal frozen budgets; include B405
   only if its stable native implementation is available before freeze.
 - Validate checkpoints and Dev outputs without choosing anything from test.
 
 ### Phase 36 - Formal ablations
-Status: pending
+Status: not run - upstream STOP at Phase 33
 
 - Execute A500-A506 across seeds 17/29/43 with the same split, head, and budget;
   run optional A507 only if its frozen Rule-only label manifest is valid.
 
 ### Phase 37 - One-time evaluation, trust, calibration, and subgroups
-Status: pending
+Status: not run - upstream STOP at Phase 33; outcomes remain sealed
 
 - After the protocol freeze and all formal training complete, open Internal-test
   and the 250-row Gold once for frozen inference only.
@@ -364,19 +364,19 @@ Status: pending
   Dev only, and preregistered source/finding/progression/view/interval analyses.
 
 ### Phase 38 - Figures and failure analysis
-Status: pending
+Status: not run - upstream STOP at Phase 33
 
 - Produce V701-V708 from frozen results and select qualitative cases only by
   the preregistered, outcome-independent bucket rules.
 
 ### Phase 39 - PRTA-to-VLM appendix
-Status: pending
+Status: not run - upstream STOP at Phase 33
 
 - Freeze the final PRTA checkpoint, implement X801-X806 as a single appendix
   path, and ensure VLM outcomes cannot alter the ViT method or claims.
 
 ### Phase 40 - Paper tables, final audit, and local handoff
-Status: pending
+Status: complete - terminal STOP reconciliation and local-only handoff
 
 - Populate the unified Run Registry and Tables 1-8, reconcile every planned
   task with an artifact or explicit N/A/HOLD/STOP rationale, run final audits,
@@ -384,9 +384,28 @@ Status: pending
 
 ## Next Step
 
-Pin and strictly load the local BiomedCLIP model root, estimate/cache storage,
-then implement resume-safe full-cache orchestration and begin the frozen
-Block-8/text cache without opening Internal-test or Gold outcomes.
+The authorized formal program is terminal at
+`STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`. Do not create a protocol-freeze
+receipt, run the formal baseline/ablation matrix, or open Internal-test/Gold.
+Any new scientific path requires a separate user-authorized protocol rather
+than tuning around this closed gate.
+
+## Terminal formal-program record - 2026-08-04
+
+- The bounded Train/Dev program and three diagnostic Dev baselines completed
+  without opening Internal-test or Gold.
+- Final PRTA three-seed Dev Macro-F1 values were 0.453588, 0.463033, and
+  0.459419 (mean 0.458680); no seed reached 0.48 and the mean did not reach
+  0.52.
+- The strongest temporal Dev baseline was `M305-B403-S17` at 0.447629. PRTA
+  seed 17 improved by only 0.005959, below the frozen +0.03 requirement, and
+  mean PRTA ODER 0.042202 exceeded the baseline's 0.037021.
+- Positive findings were preserved: mean minimum-class recall was 0.318904,
+  seed range was within 0.10, and all three True-minus-wrong-PRIOR gaps were
+  positive (0.112643, 0.116636, 0.118459).
+- The immutable decision is `STOP_DEVELOPMENT_GATE`; formal outcomes were never
+  opened. Program-state SHA256 is
+  `01c9aa6a5831fd06efd4c98138f1399bab05da0d721d784146de31b482c76e85`.
 
 ## Completion record - 2026-08-03
 

@@ -542,3 +542,12 @@
   Train/Dev confirmation but do not by themselves settle the preregistered
   development decision; the frozen B401-B403 seed-17 Dev-baseline gate must
   complete before the keeper can issue the Phase-33 GO/HOLD/STOP receipt.
+- The complete frozen development gate issued `STOP`, not GO or HOLD. PRTA's
+  three-seed Dev Macro-F1 was 0.453588/0.463033/0.459419 (mean 0.458680), so
+  the mean >=0.52 and every-seed >=0.48 checks failed. The strongest temporal
+  baseline was M305-B403-S17 at 0.447629; seed-17 PRTA gained only 0.005959,
+  below the preregistered +0.03, and mean PRTA ODER 0.042202 exceeded the
+  baseline's 0.037021. Mean minimum-class recall (0.318904), seed range, and
+  all three positive prior gaps passed, but those bounded positives cannot
+  override the failed gate. The keeper correctly stopped before protocol
+  freeze, formal matrices, Internal-test, Gold, figures, or the VLM appendix.

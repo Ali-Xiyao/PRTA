@@ -62,13 +62,13 @@ PRIOR 干预 + 时间反转 + 校准 + 亚组 + 可视化
 |---|---|---:|---|---|---|---:|---|---|---|
 | Phase 0 | 新项目重构与 Parity | 10 |  |  |  |  | Parity / Tests / Leakage |  |  |
 | Phase 1 | 数据扩展、Luna 标签、临床抽检与冻结划分 | 12 | 12 | 0 | 0 | 100% | PASS | 完成 | `formal_program_v1/splits/full_repartition_v1.audit.json` |
-| Phase 2 | 主方法性能开发 | 13 |  |  |  |  | Dev 出口门 |  |  |
-| Phase 3 | 正式协议冻结 | 5 |  |  |  |  | Freeze Receipt |  |  |
-| Phase 4 | 正式 Baseline | 5 |  |  |  |  | 三 Seed 完成 |  |  |
-| Phase 5 | 正式 Ablation | 8 |  |  |  |  | 核心消融完成 |  |  |
-| Phase 6 | 可信性、校准与亚组 | 14 |  |  |  |  | Trust Evidence |  |  |
-| Phase 7 | 可视化与错误分析 | 8 |  |  |  |  | 正文图完成 |  |  |
-| Phase 8 | VLM 附加部署 | 6 |  |  |  |  | 不影响 ViT 主线 |  |  |
+| Phase 2 | 主方法性能开发 | 13 | Codex formal program | 2026-08-04 | 已完成 | 100% | Dev 出口门 | **STOP** | `formal_program_v1/program_keeper_v1/program_state.json` |
+| Phase 3 | 正式协议冻结 | 5 |  |  | 未启动（上游 STOP） | 0% | Freeze Receipt | STOP | 未生成 Freeze Receipt |
+| Phase 4 | 正式 Baseline | 5 |  |  | 未启动（上游 STOP） | 0% | 三 Seed 完成 | STOP | 仅完成 Dev 诊断基线，不是正式矩阵 |
+| Phase 5 | 正式 Ablation | 8 |  |  | 未启动（上游 STOP） | 0% | 核心消融完成 | STOP | N/A—Phase 2 STOP |
+| Phase 6 | 可信性、校准与亚组 | 14 |  |  | 未启动（上游 STOP） | 0% | Trust Evidence | STOP | Internal-test/Gold 未解封 |
+| Phase 7 | 可视化与错误分析 | 8 |  |  | 未启动（上游 STOP） | 0% | 正文图完成 | STOP | N/A—无正式 outcome |
+| Phase 8 | VLM 附加部署 | 6 |  |  | 未启动（上游 STOP） | 0% | 不影响 ViT 主线 | STOP | N/A—ViT 主线未通过出口门 |
 
 ## 1.3 近期决策与风险登记
 
@@ -387,51 +387,54 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | 任务 ID | 任务 | 交付物/验收标准 | 优先级 | 负责人 | 计划完成 | 状态 | 实际完成 | 证据/路径 | 前置依赖 | 阶段决策 | 风险 | 备注 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| D201 | D0：10% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue |  |  |  |  |
-| D202 | D1：25% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D201 |  |  |  |
-| D203 | D2：50% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D202 |  |  |  |
-| D204 | D3：75% Luna-primary Train | patient-level 嵌套规模点 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D203 |  |  |  |
-| D205 | D4：100% Luna-primary Train | 全量开发集 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D204 |  |  |  |
-| M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选；H0复用D205 | P0 |  |  | 已准备 | 2026-08-03 | formal queue | D205 |  |  |  |
-| M302 | 类别不平衡 Loss Screening | WCE/BalSoftmax/CB-Focal | P0 |  |  |  |  |  | M301 |  |  |  |
-| M303 | Adapter 范围 Screening | 最多两个候选 | P1 |  |  |  |  |  | M302 |  |  |  |
-| M304 | 最终候选三 Seed 确认 | Seeds 17/29/43 | P0 |  |  |  |  |  | M303 |  |  |  |
-| M305 | Dev 错误与类别诊断 | 低于出口门时执行 | P1 |  |  |  |  |  | M304 |  |  |  |
-| M306 | Dev Performance Gate | F1/Recall/Prior Gap/ODER | P0 |  |  |  |  |  | M304 |  |  |  |
-| M307 | 冻结最终 Checkpoint 选择规则 | 仅基于 Dev | P0 |  |  |  |  |  | M306 |  |  |  |
-| M308 | 生成 Performance-development Report | 记录所有尝试与停止理由 | P1 |  |  |  |  |  | M307 |  |  |  |
-| M309 | 确定 GO/HOLD/STOP | 进入正式实验前决策 | P0 |  |  |  |  |  | M308 |  |  |  |
+| D201 | D0：10% Luna-primary Train | patient-level 嵌套规模点 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/D201/training_receipt.json` |  | 继续开发 |  | Train/Dev only |
+| D202 | D1：25% Luna-primary Train | patient-level 嵌套规模点 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/D202/training_receipt.json` | D201 | 继续开发 |  | Train/Dev only |
+| D203 | D2：50% Luna-primary Train | patient-level 嵌套规模点 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/D203/training_receipt.json` | D202 | 继续开发 |  | Train/Dev only |
+| D204 | D3：75% Luna-primary Train | patient-level 嵌套规模点 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/D204/training_receipt.json` | D203 | 继续开发 |  | Train/Dev only |
+| D205 | D4：100% Luna-primary Train | 全量开发集 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/D205/training_receipt.json` | D204 | 继续开发 |  | Train/Dev only |
+| M301 | H0/H1/H2 Head Screening | Seed 17 单轴筛选；H0复用D205 | P0 | Codex |  | 完成 | 2026-08-03 | `development/runs/M301-H1/training_receipt.json`; `development/runs/M301-H2/training_receipt.json`; `program_keeper_v1/loss/selection_receipt.json` | D205 | H0 retained |  | Train/Dev only |
+| M302 | 类别不平衡 Loss Screening | WCE/BalSoftmax/CB-Focal | P0 | Codex |  | 完成 | 2026-08-03 | `program_keeper_v1/loss/selection_receipt.json` | M301 | CBF selected |  | Train/Dev only |
+| M303 | Adapter 范围 Screening | 最多两个候选 | P1 | Codex |  | 完成 | 2026-08-03 | `program_keeper_v1/adapter/selection_receipt.json` | M302 | parent retained |  | Adapter 未超越 CBF |
+| M304 | 最终候选三 Seed 确认 | Seeds 17/29/43 | P0 | Codex |  | 完成 | 2026-08-04 | `program_keeper_v1/confirm/scheduler_receipt.json` | M303 | 进入门禁 |  | Protected outcomes sealed |
+| M305 | Dev 错误与类别诊断 | 低于出口门时执行 | P1 | Codex |  | 完成 | 2026-08-04 | `program_keeper_v1/dev_baselines/scheduler_receipt.json` | M304 | 诊断完成 |  | B401-B403 seed-17 Dev-only |
+| M306 | Dev Performance Gate | F1/Recall/Prior Gap/ODER | P0 | Codex |  | 完成 | 2026-08-04 | `program_keeper_v1/program_state.json` | M304/M305 | **STOP** |  | Frozen gate failed |
+| M307 | 冻结最终 Checkpoint 选择规则 | 仅基于 Dev | P0 |  |  | 不适用 | 2026-08-04 | 无 Freeze Receipt | M306 | STOP |  | 不得在 STOP 后冻结正式方法 |
+| M308 | 生成 Performance-development Report | 记录所有尝试与停止理由 | P1 | Codex |  | 完成 | 2026-08-04 | `task_plan.md`; `findings.md`; `progress.md` | M306 | STOP |  | 终态审计 |
+| M309 | 确定 GO/HOLD/STOP | 进入正式实验前决策 | P0 | Codex |  | 完成 | 2026-08-04 | program-state SHA256 `01c9aa6a…6e85` | M308 | **STOP** |  | Formal outcomes never opened |
 
 ## 4.3 开发结果登记
 
 | Run ID | Axis | Data Config | Head | Loss | Adapter Scope | Seed | Dev Macro-F1 | Balanced Acc | Accuracy | Min Recall | Prior Gap | ODER | Train Hours | VRAM GB | Status | Decision | Evidence/Notes |
 |---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|
-| D201 | Data | D0 (10%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| D202 | Data | D1 (25%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| D203 | Data | D2 (50%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| D204 | Data | D3 (75%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| D205 | Data | D4 (100%) | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
+| D201 | Data | D0 (10%) | H0 | Weighted CE | tail4 | 17 | 0.404543 |  |  | 0.246014 |  | 0.076263 |  |  | PASS | 继续开发 | Luna-primary |
+| D202 | Data | D1 (25%) | H0 | Weighted CE | tail4 | 17 | 0.442975 |  |  | 0.370158 |  | 0.047042 |  |  | PASS | 继续开发 | Luna-primary |
+| D203 | Data | D2 (50%) | H0 | Weighted CE | tail4 | 17 | 0.439180 |  |  | 0.302726 |  | 0.054782 |  |  | PASS | 继续开发 | Luna-primary |
+| D204 | Data | D3 (75%) | H0 | Weighted CE | tail4 | 17 | 0.437730 |  |  | 0.384966 |  | 0.062583 |  |  | PASS | 继续开发 | Luna-primary |
+| D205 | Data | D4 (100%) | H0 | Weighted CE | tail4 | 17 | 0.442987 |  |  | 0.340387 | 0.105443 | 0.066063 |  |  | PASS | 继续开发 | Luna-primary |
 | M301-H0 | Head | D4 | H0 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | REUSE_D205 |  | 不重复训练 |
-| M301-H1 | Head | D4 | H1 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| M301-H2 | Head | D4 | H2 | Weighted CE | tail4 | 17 |  |  |  |  |  |  |  |  | PLANNED |  | Luna-primary |
-| M302-WCE | Loss | D2 |  | Weighted CE | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M302-BS | Loss | D2 |  | Balanced Softmax | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M302-CBF | Loss | D2 |  | CB-Focal | Current | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M303-A | Adapter | D2 |  |  | Candidate-A | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M303-B | Adapter | D2 |  |  | Candidate-B | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M304-S17 | Confirm | Final | Final | Final | Final | 17 |  |  |  |  |  |  |  |  |  |  |  |
-| M304-S29 | Confirm | Final | Final | Final | Final | 29 |  |  |  |  |  |  |  |  |  |  |  |
-| M304-S43 | Confirm | Final | Final | Final | Final | 43 |  |  |  |  |  |  |  |  |  |  |  |
+| M301-H1 | Head | D4 | H1 | Weighted CE | tail4 | 17 | 0.448510 |  |  | 0.338019 |  | 0.050462 |  |  | PASS | H0 retained | Luna-primary |
+| M301-H2 | Head | D4 | H2 | Weighted CE | tail4 | 17 | 0.443018 |  |  | 0.398633 |  | 0.062342 |  |  | PASS | H0 retained | Luna-primary |
+| M302-WCE | Loss | D4 | H0 | Weighted CE | tail4 | 17 | 0.442987 |  |  | 0.340387 | 0.105443 | 0.066063 |  |  | REUSE_D205 | rejected |  |
+| M302-BS | Loss | D4 | H0 | Balanced Softmax | tail4 | 17 | 0.434865 |  |  | 0.416786 |  | 0.076683 |  |  | PASS | rejected |  |
+| M302-CBF | Loss | D4 | H0 | CB-Focal | tail4 | 17 | 0.453588 | 0.437855 | 0.557362 | 0.250569 | 0.112643 | 0.043082 |  |  | PASS | selected |  |
+| M303-A | Adapter | D4 | H0 | CB-Focal | last2 | 17 | 0.453134 |  |  | 0.273349 |  | 0.044342 |  |  | PASS | parent retained |  |
+| M303-B | Adapter | D4 | H0 | CB-Focal | Candidate-B | 17 |  |  |  |  |  |  |  |  | NOT_RUN_SELECTOR | N/A | Frozen bounded search did not require second candidate |
+| M304-S17 | Confirm | Final | H0 | CB-Focal | tail4 | 17 | 0.453588 | 0.437855 | 0.557362 | 0.250569 | 0.112643 | 0.043082 |  |  | PASS | gate input | M302-CBF reused |
+| M304-S29 | Confirm | Final | H0 | CB-Focal | tail4 | 29 | 0.463033 | 0.468142 | 0.543262 | 0.355353 | 0.116636 | 0.051902 |  |  | PASS | gate input |  |
+| M304-S43 | Confirm | Final | H0 | CB-Focal | tail4 | 43 | 0.459419 | 0.453486 | 0.567623 | 0.350789 | 0.118459 | 0.031621 |  |  | PASS | gate input |  |
+| M305-B401-S17 | Dev baseline | D4 | Native | WCE | Current-only | 17 | 0.366551 | 0.381855 | 0.482599 | 0.180579 |  | 0.055322 |  |  | PASS | diagnostic | Train/Dev only |
+| M305-B402-S17 | Dev baseline | D4 | Native | WCE | Siamese Diff | 17 | 0.440957 | 0.435446 | 0.561622 | 0.246143 |  | 0.027181 |  |  | PASS | diagnostic | Train/Dev only |
+| M305-B403-S17 | Dev baseline | D4 | Native | WCE | Temporal Attention | 17 | 0.447629 | 0.430795 | 0.557962 | 0.218679 |  | 0.037021 |  |  | PASS | strongest temporal | Train/Dev only |
 
 ## 4.4 Scaling 结果
 
 | Train Fraction | Patients | Rows | Label Tier | Strong Baseline F1 | PRTA F1 | Gain | CI Low | CI High | Seed Count | Notes |
 |---|---:|---:|---|---:|---:|---:|---:|---:|---:|---|
-| 10% |  |  |  |  |  |  |  |  |  |  |
-| 25% |  |  |  |  |  |  |  |  |  |  |
-| 50% |  |  |  |  |  |  |  |  |  |  |
-| 75% |  |  |  |  |  |  |  |  |  |  |
-| 100% |  |  |  |  |  |  |  |  |  |  |
+| 10% | 2,604 | 9,282 | Luna-primary Silver |  | 0.404543 |  |  |  | 1 | D201 |
+| 25% | 6,511 | 23,043 | Luna-primary Silver |  | 0.442975 |  |  |  | 1 | D202 |
+| 50% | 13,022 | 45,885 | Luna-primary Silver |  | 0.439180 |  |  |  | 1 | D203 |
+| 75% | 19,534 | 68,676 | Luna-primary Silver |  | 0.437730 |  |  |  | 1 | D204 |
+| 100% | 26,045 | 91,065 | Luna-primary Silver | 0.447629 | 0.458680 | 0.011051 |  |  | 3 | PRTA 三 Seed均值；baseline 为M305-B403-S17 seed17，仅用于出口门诊断 |
 
 ## 4.5 开发出口门
 
@@ -446,18 +449,24 @@ Pilot判断：`SUPPORT_LUNA_PRIMARY_LABELER_WITHIN_CURRENT_CANDIDATE_POOL`。用
 
 | 指标 | 预设门槛 | 实际结果 | 是否通过 | 备注 |
 |---|---:|---:|---|---|
-| Dev Macro-F1 |  |  |  |  |
-| 相对最强 Baseline 增益 |  |  |  |  |
-| Min-class Recall |  |  |  |  |
-| True–Wrong PRIOR Gap |  |  |  |  |
-| ODER |  |  |  |  |
-| 三 Seed 稳定性 |  |  |  |  |
+| Dev Macro-F1 | mean ≥0.52；每 Seed ≥0.48 | mean 0.458680；0.453588/0.463033/0.459419 | 否 | 两项均失败 |
+| 相对最强 Baseline 增益 | Seed-17 ≥+0.03 | +0.005959（0.453588 vs 0.447629） | 否 | strongest temporal=M305-B403-S17 |
+| Min-class Recall | mean ≥0.20 | mean 0.318904 | 是 | 三 Seed 0.250569/0.355353/0.350789 |
+| True–Wrong PRIOR Gap | 三 Seed均为正 | 0.112643/0.116636/0.118459 | 是 | matched wrong-patient PRIOR |
+| ODER | PRTA mean ≤ strongest temporal | 0.042202 vs 0.037021 | 否 | 门禁失败 |
+| 三 Seed 稳定性 | range ≤0.10 | range 0.009445 | 是 | 无单 Seed 崩溃 |
 
-**开发结论**：`GO / HOLD / STOP`  
-**冻结候选 Config**：  
-**负责人**：  
-**日期**：  
-**说明**：
+**开发结论**：`STOP`
+
+**冻结候选 Config**：未生成；STOP 发生在 Protocol Freeze 之前
+
+**负责人**：Codex formal program
+
+**日期**：2026-08-04
+
+**说明**：终态 `STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`。Internal-test 与
+Gold 从未解封；正式 Baseline/Ablation、可信性、图表和 VLM 均未启动。
+Program-state SHA256：`01c9aa6a5831fd06efd4c98138f1399bab05da0d721d784146de31b482c76e85`。
 
 ---
 

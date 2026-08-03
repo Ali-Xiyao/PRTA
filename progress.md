@@ -1395,3 +1395,21 @@
   present and hashed, all monitored logs remain empty, the 15-row registry is
   current, H: has 412.8 GiB free, and protected-outcome and protocol-freeze
   markers remain absent.
+- The 06:39 CST heartbeat verified the final Dev baseline and formal keeper
+  both exited cleanly. `M305-B403-S17` finished after epoch 7 with best Dev
+  Macro-F1 0.447629 at epoch 3; its receipt hashes to `6ec1524f...802d` and
+  best checkpoint to `d8a0d17a...9a46`. The 3/3 Dev-baseline queue receipt
+  hashes to `b47ccfff...f448`, all three terminal rows are current in the
+  15-row registry, both GPUs are idle, and the final keeper/B403 stderr logs
+  are empty. Two earlier failed resume attempts remain preserved in their
+  historical stderr logs (missing formal flag; transient atomic-replace
+  permission error), and both were later resolved without altering run
+  identity. H: has 412.8 GiB free. The frozen development gate issued
+  `STOP_DEVELOPMENT_GATE`: PRTA mean
+  three-seed Dev Macro-F1 was 0.458680 (<0.52), no seed reached 0.48, seed-17
+  gain over the strongest temporal baseline was 0.005959 (<0.03), and mean
+  ODER 0.042202 exceeded the baseline's 0.037021. Mean minimum-class recall,
+  seed range, and all positive prior gaps passed but did not override the STOP
+  gate. Program state is terminal
+  `STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`; no protocol freeze was created
+  and Internal-test/Gold were never opened.
