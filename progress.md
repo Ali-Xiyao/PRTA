@@ -955,3 +955,13 @@
   alive, atomic best/last checkpoints exist, active stderr logs are empty,
   registry identities are current, GPU memory is about 4.48 GiB per device at
   80/79 C, H: has 420.4 GiB free, and protected markers remain absent.
+- The 15:20 CST heartbeat found both M302 variants safely past their second
+  fixed-Dev evaluations and training epoch 2: M302-BS is at batch 1,300/5,692
+  with best Dev Macro-F1 0.4324 (epoch 1), while M302-CBF is at batch
+  1,200/5,692 with best Dev Macro-F1 0.4185 (epoch 1). Their next Dev passes
+  are expected in roughly 25-35 minutes. The loss queue remains 0/2 complete
+  and the program remains `RUNNING_LOSS_STAGE`; both children and the keeper
+  are alive, atomic best/last checkpoints are current, all active stderr logs
+  are empty, registry identities remain unchanged, GPU memory is about 4.48
+  GiB per device at 77/77 C, H: has 420.4 GiB free, and protected outcome and
+  protocol-freeze markers remain absent.
