@@ -536,3 +536,9 @@
   immutable M302-CBF parent at 0.453588, and therefore did not qualify under
   the frozen positive-gain selector. The method remained M302-CBF and moved to
   independent confirmation seeds 29 and 43 without opening protected outcomes.
+- The two independent M302-CBF confirmation seeds finished cleanly with best
+  Dev Macro-F1 0.463033 (seed 29) and 0.459419 (seed 43), both at epoch 4,
+  while Internal-test and Gold remained sealed. These runs provide stable
+  Train/Dev confirmation but do not by themselves settle the preregistered
+  development decision; the frozen B401-B403 seed-17 Dev-baseline gate must
+  complete before the keeper can issue the Phase-33 GO/HOLD/STOP receipt.

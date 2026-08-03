@@ -1324,3 +1324,15 @@
   progress, every stderr log is empty, the 12-row registry remains consistent,
   H: has 413.7 GiB free, and protected-outcome and protocol-freeze markers
   remain absent.
+- The 04:19 CST heartbeat verified the confirmation queue closed 2/2 as
+  `PASS_TRAINING_QUEUE_FINISHED` without opening Internal-test or Gold.
+  `M304-S43` finished after epoch 8 with frozen best Dev Macro-F1 0.4594 at
+  epoch 4; its 42,578-byte receipt hashes to `198ca435...905e`, its best
+  checkpoint to `1213cfaa...124f`, and the queue receipt to
+  `353da34b...13ab`. The keeper then advanced within Phase 33 to the frozen
+  Dev-baseline gate: `M305-B401-S17` and `M305-B402-S17` are alive on GPUs
+  0/1 and have completed all 5,692 epoch-0 training batches before their first
+  fixed-Dev evaluations, while `M305-B403-S17` remains planned. The registry
+  is current at 14 rows, all new stdout/stderr logs are empty, both GPUs are
+  healthy, H: has 413.7 GiB free, and protected-outcome and protocol-freeze
+  markers remain absent.
