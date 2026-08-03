@@ -1314,3 +1314,13 @@
   remains healthy. GPU1 is active at 84 C with about 4.48 GiB allocated, all
   stderr logs remain empty, H: has 413.7 GiB free, and protected-outcome and
   protocol-freeze markers remain absent.
+- The 03:59 CST heartbeat found `M304-S43` at epoch 8, batch 5,600/5,692 and
+  entering its terminal fixed-Dev evaluation, with frozen best Dev Macro-F1
+  0.4594 at epoch 4 and an estimated 5-10 minutes remaining for the receipt
+  and scheduler closeout. `M304-S29` remains independently verified
+  `PASS_TRAINING_FINISHED`; GPU0 is idle and its receipt/checkpoint hashes are
+  unchanged. The scheduler remains 1/2 complete, the remaining child and
+  keeper are alive, GPU1 retains about 4.48 GiB while evaluation is in
+  progress, every stderr log is empty, the 12-row registry remains consistent,
+  H: has 413.7 GiB free, and protected-outcome and protocol-freeze markers
+  remain absent.
