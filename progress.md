@@ -1031,3 +1031,12 @@
   checkpoints remain present, all active logs are empty, registry identities
   are current, GPU memory is about 4.48 GiB per device at 78/75 C, H: has
   416.1 GiB free, and no protected-outcome or protocol-freeze marker exists.
+- The 17:58 CST heartbeat found both loss variants training epoch 6: M302-BS
+  is at batch 4,500/5,692 and M302-CBF at batch 2,400/5,692. Their best
+  fixed-Dev Macro-F1 values remain 0.4349 and 0.4536, respectively; the next
+  evaluations are expected in roughly 10-20 minutes. The queue remains 0/2
+  complete and the program remains `RUNNING_LOSS_STAGE`; both children and
+  the keeper are alive, atomic checkpoints are current, all active logs are
+  empty, registry identities remain unchanged, GPU memory is about 4.48 GiB
+  per device at 78/76 C, H: has 416.1 GiB free, and protected-outcome and
+  protocol-freeze markers remain absent.
