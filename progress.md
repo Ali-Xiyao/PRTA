@@ -926,3 +926,16 @@
   keepers are alive, stderr logs are empty, checkpoints and registry identities
   remain valid, GPU memory is about 4.55/4.58 GiB, H: has 421.5 GiB free, and
   protected markers remain absent.
+- M301-H1 and M301-H2 formally closed at 13:56:41 and 13:59:38 CST with
+  `PASS_TRAINING_FINISHED`, frozen early stopping after 7 and 6 epochs, and
+  best Dev Macro-F1 0.4485 and 0.4430. Receipt hashes begin
+  `a1a0b255932f7061` and `37fdb9c7d1550299`; both confirm protected outcomes
+  remained sealed. The frozen head-selection rule retained D205 because no
+  candidate exceeded its 0.4430 baseline by the required 0.015, despite H1's
+  higher raw 0.4485. The formal keeper then prepared and launched loss variants
+  M302-BS/M302-CBF on GPUs 0/1 as PIDs 39620/26108. At the 14:15 CST heartbeat
+  they were at epoch 0 batches 2,700 and 2,500 of 5,692, with first Dev passes
+  expected in roughly 20-30 minutes. Program status is `RUNNING_LOSS_STAGE`;
+  both children and the keeper are alive, stderr logs are empty, registry and
+  selection receipts are current, H: has 421.5 GiB free, and protected markers
+  remain absent.
