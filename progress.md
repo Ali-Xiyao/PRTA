@@ -1059,3 +1059,13 @@
   logs are empty, registry identities are current, GPU memory is about 4.48
   GiB per device at 77/75 C, H: has 416.1 GiB free, and no protected-outcome
   or protocol-freeze marker exists.
+- The 18:58 CST heartbeat recorded M302-BS as
+  `PASS_TRAINING_FINISHED` after frozen early stopping at eight completed
+  epochs, with best fixed-Dev Macro-F1 0.4349 at epoch 3 and a complete
+  Train/Dev-only receipt (`protected_outcomes_opened=false`). Its best-model
+  SHA-256 is `7041302d...403309d`. M302-CBF has completed all 5,692 epoch-7
+  batches and is in fixed-Dev evaluation with current best 0.4536; its terminal
+  result is expected in roughly 5-10 minutes. The loss queue is 1/2 complete,
+  GPU 0 is released, GPU 1 and the keeper remain healthy, all stderr logs are
+  empty, the registry now contains the BS terminal record, H: has 416.1 GiB
+  free, and protected-outcome and protocol-freeze markers remain absent.
