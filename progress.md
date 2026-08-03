@@ -1105,3 +1105,11 @@
   identities remain unchanged, GPU 0 uses about 2.94 GiB at 69 C, GPU 1 is
   idle, H: has 414.9 GiB free, and protected-outcome and protocol-freeze
   markers remain absent.
+- The 20:38 CST heartbeat found `M303-last2` safely past its epoch-2 fixed-Dev
+  evaluation and at epoch 3, batch 2,900/5,692. Its best Dev Macro-F1 improved
+  to 0.4306 at epoch 2; the next evaluation is expected in roughly 15-25
+  minutes. Program status remains `RUNNING_ADAPTER_STAGE`; the adapter child
+  and keeper are alive, atomic checkpoints are current, all logs are empty,
+  registry and config identities are unchanged, GPU 0 uses about 2.94 GiB at
+  72 C, GPU 1 is idle, H: has 414.9 GiB free, and protected-outcome and
+  protocol-freeze markers remain absent.
