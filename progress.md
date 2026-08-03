@@ -1302,3 +1302,15 @@
   remain unchanged, GPU memory is about 4.48 GiB per device at 80/81 C, H:
   has 413.7 GiB free, and protected-outcome and protocol-freeze markers remain
   absent.
+- The 03:39 CST heartbeat verified `M304-S29` reached
+  `PASS_TRAINING_FINISHED` after epoch 8 with frozen best Dev Macro-F1 0.4630
+  at epoch 4. Its child exited normally, GPU0 was released, the 42,620-byte
+  training receipt hashes to `cf4a44f8...c1966`, the best checkpoint hashes
+  to `d158401a...c840`, and the unified registry row now contains the terminal
+  checkpoint, receipt, and end time. `M304-S43` safely completed its epoch-7
+  evaluation (Dev Macro-F1 0.4331, not a new best) and is training epoch 8 at
+  batch 2,000/5,692 with frozen best 0.4594 at epoch 4; its expected remaining
+  time is roughly 15-25 minutes. The scheduler is 1/2 complete and the keeper
+  remains healthy. GPU1 is active at 84 C with about 4.48 GiB allocated, all
+  stderr logs remain empty, H: has 413.7 GiB free, and protected-outcome and
+  protocol-freeze markers remain absent.
