@@ -1181,3 +1181,12 @@
   are empty, queue and registry identities are current, GPU memory is about
   4.48 GiB per device at 75/69 C, H: has 414.8 GiB free, and protected-outcome
   and protocol-freeze markers remain absent.
+- The 23:39 CST heartbeat found both confirmation seeds safely past their
+  epoch-0 fixed-Dev evaluations and training epoch 1. `M304-S29` is at batch
+  3,600/5,692 with Dev Macro-F1 0.4105, while `M304-S43` is at batch
+  2,800/5,692 with Dev Macro-F1 0.4194. Their next evaluations are expected in
+  roughly 10-20 minutes. Program status remains `RUNNING_CONFIRM_STAGE`; both
+  children and keeper are alive, atomic checkpoints are current, all logs are
+  empty, queue and registry identities remain unchanged, GPU memory is about
+  4.48 GiB per device at 79/82 C, H: has 413.7 GiB free, and protected-outcome
+  and protocol-freeze markers remain absent.
