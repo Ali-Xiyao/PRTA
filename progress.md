@@ -772,3 +772,13 @@
   stderr logs are empty, checkpoint and registry artifacts are current, GPU
   memory is about 4.48 GiB per device at 77/72 C, H: has 422.8 GiB free, and
   protected outcome/protocol-freeze markers remain absent.
+- The 08:35 CST heartbeat found D204 at epoch 8, batch 3,200/4,293 after its
+  epoch-7 Dev Macro-F1 improved to 0.4377, exceeding the frozen minimum-delta
+  rule and correctly advancing the best checkpoint from epoch 4 to epoch 7.
+  Its next Dev pass is expected in roughly 10-20 minutes. D205 completed all
+  5,692 batches of epoch 3 and entered fixed-Dev evaluation; best Dev Macro-F1
+  remains 0.4430 at epoch 1, with the next result expected in roughly 5-15
+  minutes. Queue state remains 3/7 complete with two M301 variants planned.
+  Both children and keepers are alive, active stderr logs are empty, artifact
+  and registry identities are current, GPU memory is about 4.48 GiB per device
+  at 68/76 C, H: has 422.8 GiB free, and protected markers remain absent.
