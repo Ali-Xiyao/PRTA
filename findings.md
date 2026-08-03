@@ -527,3 +527,8 @@
   bounded 3.15-second exponential schedule while preserving the same atomic
   replace operation and still raises after exhaustion. A regression test
   forces two sharing violations before success.
+- In the frozen loss comparison, M302-CBF reached Dev Macro-F1 0.453588 versus
+  D205's 0.442987 and preserved the prior-control audit gap (0.112643 versus
+  0.105443). It was therefore the sole qualified loss variant under the
+  predeclared selector and became the immutable parent for adapter experiment
+  `M303-last2`; Internal-test and Gold remained sealed throughout selection.

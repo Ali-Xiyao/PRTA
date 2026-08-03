@@ -1069,3 +1069,14 @@
   GPU 0 is released, GPU 1 and the keeper remain healthy, all stderr logs are
   empty, the registry now contains the BS terminal record, H: has 416.1 GiB
   free, and protected-outcome and protocol-freeze markers remain absent.
+- The 19:18 CST heartbeat confirmed the loss stage terminally complete at 2/2.
+  M302-CBF passed frozen early stopping with best fixed-Dev Macro-F1 0.4536 at
+  epoch 3, best-model SHA-256 `b33b88df...c49605a`, complete receipt SHA-256
+  `b857c80a...88ae353`, and no protected outcomes opened. The frozen selector
+  qualified and chose M302-CBF over D205 without worsening the prior-control
+  gap, then prepared and launched the single adapter run `M303-last2` on GPU 0.
+  At audit time it was healthy at epoch 0, batch 4,000/5,692, with its first
+  fixed-Dev result expected in roughly 10-20 minutes. Program status is now
+  `RUNNING_ADAPTER_STAGE`; the keeper and adapter child are alive, stderr is
+  empty, H: has 416.1 GiB free, and protected-outcome/protocol-freeze markers
+  remain absent.
