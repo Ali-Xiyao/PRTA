@@ -809,3 +809,16 @@
   stderr logs are empty, checkpoints and registry rows are current, GPU memory
   is about 4.48 GiB per device at 77/45 C, H: has 422.8 GiB free, and no
   protected outcome/protocol-freeze marker exists.
+- D205 formally closed at 09:44:08 CST with `PASS_TRAINING_FINISHED`, frozen
+  early stopping after 6 epochs, and best fixed-Dev Macro-F1 0.4430 at epoch
+  1. Its receipt hash begins `d0372f4e20d0caca` and confirms protected
+  outcomes remained sealed. The queue immediately launched M301-H1 on GPU0 as
+  PID 39688. At the 09:55 CST heartbeat, M301-H1 was at epoch 0, batch
+  2,100/5,692 and should reach its first fixed-Dev pass in roughly 20-30
+  minutes. D204 was at epoch 11, batch 2,700/4,293 after epoch-10 Dev Macro-F1
+  0.4215, with best 0.4377 at epoch 7 and its next Dev decision expected in
+  about 10-20 minutes. Queue state is 4/7 complete, D204+M301-H1 running, and
+  M301-H2 planned. Both children and keepers are alive, active stderr logs are
+  empty, checkpoints and registry rows are current, GPU memory is about
+  4.55/4.48 GiB at 78/75 C, H: has 422.8 GiB free, and protected markers are
+  absent.
