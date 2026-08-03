@@ -993,3 +993,13 @@
   empty, registry identities remain current, GPU memory is about 4.48 GiB per
   device at 77/76 C, H: has 418.8 GiB free, and no protected-outcome or
   protocol-freeze marker exists.
+- The 16:38 CST heartbeat found both variants safely past their epoch-3
+  fixed-Dev evaluations and training epoch 4. M302-BS is at batch 2,200/5,692
+  and improved its best Dev Macro-F1 to 0.4349; M302-CBF is at batch
+  1,100/5,692 and improved sharply to 0.4536. No selection is made while the
+  frozen runs remain active; their next Dev passes are expected in roughly
+  20-30 minutes. The queue remains 0/2 complete and the program remains
+  `RUNNING_LOSS_STAGE`; both children and the keeper are alive, atomic
+  checkpoints are current, all active logs are empty, registry identities are
+  unchanged, GPU memory is about 4.48 GiB per device, H: has 417.0 GiB free,
+  and protected-outcome and protocol-freeze markers remain absent.
