@@ -1244,3 +1244,13 @@
   are empty, queue and registry identities remain unchanged, GPU memory is
   about 4.48 GiB per device at 82/84 C, H: has 413.7 GiB free, and
   protected-outcome and protocol-freeze markers remain absent.
+- The 01:59 CST heartbeat found `M304-S29` through all 5,692 epoch-5 batches
+  and entering fixed-Dev evaluation, with best Dev Macro-F1 0.4630 at epoch 4.
+  `M304-S43` is at epoch 5, batch 2,900/5,692 and improved its best Dev
+  Macro-F1 to 0.4594 at epoch 4. Both frozen seeds continue to terminal
+  receipts before any conclusion. Program status remains
+  `RUNNING_CONFIRM_STAGE`; both children and keeper are alive, atomic
+  checkpoints are current, all logs are empty, queue and registry identities
+  remain unchanged, GPU memory is about 4.48 GiB per device at 82/84 C, H:
+  has 413.7 GiB free, and protected-outcome and protocol-freeze markers remain
+  absent.
