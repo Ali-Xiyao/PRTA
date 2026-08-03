@@ -532,3 +532,7 @@
   0.105443). It was therefore the sole qualified loss variant under the
   predeclared selector and became the immutable parent for adapter experiment
   `M303-last2`; Internal-test and Gold remained sealed throughout selection.
+- The last-two-block adapter reached Dev Macro-F1 0.453134, slightly below its
+  immutable M302-CBF parent at 0.453588, and therefore did not qualify under
+  the frozen positive-gain selector. The method remained M302-CBF and moved to
+  independent confirmation seeds 29 and 43 without opening protected outcomes.
