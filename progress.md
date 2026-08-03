@@ -1377,3 +1377,12 @@
   every stderr log is empty, all checkpoints are present and hashed, the
   registry is current at 15 rows, H: has 412.8 GiB free, and protected-outcome
   and protocol-freeze markers remain absent.
+- The 05:59 CST heartbeat found the Dev-baseline gate healthy at 2/3 complete.
+  The final frozen baseline `M305-B403-S17` is at epoch 3, batch
+  5,100/5,692, improved its best Dev Macro-F1 to 0.4375 at epoch 2, and is
+  expected to enter its next fixed-Dev evaluation in roughly 5 minutes, with
+  an estimated 20-40 minutes remaining to its terminal receipt. GPU1 remains
+  idle; the live child and keeper are healthy, its atomic best/last checkpoints
+  are present and hashed, all monitored logs remain empty, the 15-row registry
+  is current, H: has 412.8 GiB free, and protected-outcome and protocol-freeze
+  markers remain absent.
