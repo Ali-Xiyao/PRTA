@@ -1254,3 +1254,14 @@
   remain unchanged, GPU memory is about 4.48 GiB per device at 82/84 C, H:
   has 413.7 GiB free, and protected-outcome and protocol-freeze markers remain
   absent.
+- The 02:19 CST heartbeat found both confirmation seeds training epoch 6:
+  `M304-S29` is at batch 4,400/5,692 with best Dev Macro-F1 0.4630 at epoch 4
+  and its next evaluation expected in roughly 5-10 minutes; `M304-S43` is at
+  batch 700/5,692 with best 0.4594 at epoch 4 and its next evaluation expected
+  in roughly 25-35 minutes. The scheduler remains 0/2 complete and both frozen
+  seeds continue to terminal receipts before any conclusion. Program status
+  remains `RUNNING_CONFIRM_STAGE`; both children and keeper are alive, atomic
+  best/last checkpoints are present and hashed, all five monitored logs remain
+  empty, queue and 12-row registry identities remain unchanged, GPU memory is
+  about 4.48 GiB per device at 82/83 C, H: has 413.7 GiB free, and
+  protected-outcome and protocol-freeze markers remain absent.
