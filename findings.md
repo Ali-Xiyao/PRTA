@@ -597,3 +597,15 @@
 - 来源间五类一致率几乎相同：CheXpert Plus `83.99%`（κ=`0.7615`），MIMIC-CXR-JPG `84.11%`（κ=`0.7831`），不支持“问题仅来自某一数据源”的解释。
 - 按 Luna 标签，五类一致率为 Stable `90.16%`、Improved `87.22%`、Worse `80.32%`、New `71.02%`、Resolved `67.78%`。这说明 Tier A 中时间边界类（尤其 New/Resolved）和 Worse 值得优先人工审查。
 - 旧 150 条 pilot 的 decisive 五类一致率为 `92.74%`、κ=`0.9084`，本轮 Tier A 分别低约 8.70 个百分点和 0.1364；但两批样本选择机制不同，因此只能说明 Tier A 富集了不一致/困难样本，不能单凭 Sol 认定 Luna 错标。
+
+# 2026-08-04 Sol-authoritative Train 标签版本
+
+- 用户已把人工决策从“只读审计”提升为“以 Sol 为准替换 Tier A Luna 标签”。五分类 Sol 输出有 3,572 条；`Unclear` 有 294 条，按先前已冻结的不确定样本废弃策略从新训练版本排除。
+- 当前运行根包含 `formal_program_v1`、`poststop_audits` 等版本化目录；旧 TracIn/Luna/Sol 产物无需也不应原地修改。
+- 初次用 `rg --files` 搜索 Train manifest 没有命中并返回退出码 1，未读取任何数据文件。后续目录只读枚举确认正式 split/cache 位于 `formal_program_v1`，需要从安全回执或 Train-only 路径进一步解析权威输入，避免打开 protected outcome 文件。
+- 正式 split 表面只有组合开放文件 `formal_program_v1/splits/train_dev_v1.jsonl`，未发现独立的 91,065-row Train JSONL。TracIn 的 `train_all_scores.csv` 确实覆盖 91,065 条 Train，但只含审计/标签/ID字段，不含训练清单所需的完整图像、报告和时间字段，不能直接替代训练 manifest。
+- 因此安全实现应对开放的 `train_dev_v1.jsonl` 做单次流式过滤：仅把 `split=train` 行物化到新版本，Dev 行不改、不输出、不参与标签 join；Internal-test 和 Gold 文件仍完全不打开。源组合文件及输出都必须哈希绑定。
+- Sol-authoritative 正式物化 PASS：源 Train 91,065 行中 3,572 行采用 Sol 五分类权威，实际标签值变化 570 行，Sol/Luna 同值但 provenance 改为 Sol 的有 3,002 行，294 条 Sol `Unclear` 被排除；新 Train 为 90,771 行。
+- 可直接供后续训练的组合 manifest 为 107,437 行（Train 90,771 + Dev 16,666）。Dev 行没有 JSON 解析或重写，而是原始字节复制；独立原始行流哈希为 `28c9f7dea729ebb24ba34cc20ddd5078ba735f2ebdc2fc6a164225404f25373d`，记录的 Dev 修改数为 0。
+- 新 Train SHA-256=`7306898c6b31af50956fa4ee32c5b6b8ba468751e6fc4e26f6a9353355fff219`；新 Train+Dev SHA-256=`d798feb5adc65955add617371a38e337d9ffe721a18756e958851a50d51c897b`。旧输入前后哈希一致，Internal-test/Gold 未打开，训练未启动。
+- 私有新 Train 文件为 246,876,831 bytes，组合 Train+Dev 为 292,407,707 bytes；provenance 为 1,298,615 bytes，Unclear exclusion 表为 78,913 bytes。独立审计 SHA-256=`f898233c0370e9746bdc80d64f480f3c2394fe319baef6d2049b41335a1a27c5`。

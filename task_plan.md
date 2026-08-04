@@ -457,13 +457,38 @@ Status: completed
 - Keep row-level reports/results private, track only aggregate counts/hashes,
   run repository checks, and push only to the local bare remote.
 
+### Phase 49 - Human-authorized Sol label replacement contract
+Status: completed
+
+- Preserve the completed Luna, TracIn, and Sol audit artifacts unchanged; create
+  a new versioned Train label manifest rather than rewriting frozen evidence.
+- Replace Luna labels only for the 3,572 Tier-A rows where Sol returned one of
+  the five valid classes. Treat the 294 Sol `Unclear` rows as excluded from the
+  new training-eligible manifest, consistent with the earlier uncertainty rule.
+- Do not read or modify Dev, Internal-test, Gold, checkpoints, or results.
+
+### Phase 50 - Train manifest remap and conservation audit
+Status: completed
+
+- Locate and hash the current 91,065-row Train manifest without opening sealed
+  outcomes, join by exact sample ID, and generate a private versioned manifest.
+- Prove 3,572 label replacements, 294 exclusions, no unknown IDs or duplicate
+  rows, unchanged non-label fields, and an expected 90,771-row output.
+
+### Phase 51 - Freeze receipt, code checks, and local-only handoff
+Status: completed
+
+- Emit private row-level provenance plus Git-safe aggregate counts/hashes; do
+  not authorize or launch retraining from this label-only decision.
+- Run tests/privacy checks, update the active documents, commit, push only to
+  the local bare remote, and verify local/remote commit equality.
+
 ## Next Step
 
-Keep the 3,866-row Sol and Luna outputs immutable. If label correctness must be
-resolved, build a separate physician adjudication queue from the 294 Sol
-`Unclear`, 570 decisive disagreements, and especially the 39 opposite-direction
-cases. Do not change labels, splits, or training data from this automated
-agreement audit alone; Internal-test/Gold remain entirely out of scope.
+Keep the Sol-authoritative manifest frozen and inactive. A future retraining
+request must explicitly select the new Train+Dev manifest hash, create a new
+experiment lineage, and must not reinterpret this label replacement as
+authorization to open Internal-test/Gold or reuse the stopped formal outcomes.
 
 ## Terminal formal-program record - 2026-08-04
 

@@ -1477,3 +1477,14 @@
 - 全量完成：194/194 批、3,866/3,866 条；15 个分片回执齐全，stderr 0，失败尝试 0。统一复核回执确认所有批次均为 `gpt-5.6-sol`、`medium`，且全部既有输出哈希/ID/schema 通过。
 - 已在全部 Sol 输出封存后完成 Luna 比较：全体一致 77.65%，Sol Unclear 7.60%，decisive 五类一致 84.04%，κ=0.7720；570 条明确分歧、39 条方向相反。私有全量 CSV/JSONL、聚合 JSON、内部 Markdown 与哈希回执已生成。
 - 已完成代码收口：完成态配置锁死再次执行，Git 仅记录聚合计数和私有文件哈希；`ruff`、`compileall` 与全仓 `pytest` 均通过（125 passed）。输入路径门禁显式拒绝 Internal-test/Gold。
+
+# 2026-08-04 人工授权 Sol 标签替换
+
+- 用户在人工查看后明确决定：Tier A 全部以 Sol 判断为准，替换对应 Luna 结果。
+- 执行解释固定为：3,572 条 Sol 明确五分类覆盖 Luna；294 条 Sol `Unclear` 按既有策略从新训练标签版本排除，不强制映射为五分类。
+- 本轮只创建新的 Train-only 版本与审计回执；旧 Luna/TracIn/Sol 产物保持不变，不读取 Dev、Internal-test、Gold，也不启动重训。
+- Train manifest 定位的第一次 `rg --files` 正则搜索未命中（退出码 1，无文件读取）；已改用受限目录枚举，确认权威正式数据表面在 `formal_program_v1` 下，下一步从公开回执/配置定位精确 Train-only 输入。
+- 已实现 Sol-authoritative 流式物化器：以 TracIn Train 91,065-ID allowlist 在组合 manifest 中先按 ID 分流，只解析 Train 行；Dev 原始 JSONL 行逐字节复制并单独哈希验证。单元测试覆盖“一致标签重绑定、分歧标签替换、Unclear 排除、Dev 不进入 Train 输出”。
+- 正式物化已完成并发出 PASS 回执：新 Train 90,771 行，新 Train+Dev 107,437 行；3,572 条 Sol 权威、570 个实际标签值变化、3,002 个同值 provenance 重绑定、294 个 Unclear 排除，Dev 16,666 行原始字节哈希保持一致。未启动训练。
+- 独立磁盘重读审计 PASS：新 Train ID 集精确等于旧 Train 减 294 个排除 ID；87,199 个非 Tier-A Train 行逐字段不变，570/3,002 的变更/重绑定动作与 provenance 一致；Train-only 与组合文件的 Train 字节流相同，16,666 个 Dev 原始行字节流哈希相同。
+- 收口检查全部通过：Ruff、compileall、全仓 pytest（126 passed）、Git diff whitespace 和 Git-safe 文档隐私扫描均 PASS；未发现训练/队列进程。新版本状态保持 `PASS_FROZEN_NOT_TRAINED`。
