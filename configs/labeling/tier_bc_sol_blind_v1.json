@@ -1,0 +1,49 @@
+{
+  "schema": "prta-cxr.tier-bc-sol-blind-completed.v1",
+  "status": "PASS_READ_ONLY_TIER_BC_SOL_REVIEW",
+  "authorization_date": "2026-08-04",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "coverage": {
+    "tier_bc_total": 13334,
+    "previously_reviewed_union": 7366,
+    "reviewed_now": 5968,
+    "tier_b_train_reviewed_now": 2912,
+    "tier_c_train_reviewed_now": 3056,
+    "batches": 299,
+    "shard_receipts": 30,
+    "failed_attempts": 0
+  },
+  "comparison": {
+    "decisive_rows": 4604,
+    "sol_unclear": 1364,
+    "decisive_exact": 3513,
+    "decisive_disagreement": 1091,
+    "decisive_agreement_rate": 0.763032,
+    "cohen_kappa": 0.67583,
+    "flagged_union_rows": 2548,
+    "tier_b_decisive_agreement_rate": 0.648699,
+    "tier_c_decisive_agreement_rate": 0.863377
+  },
+  "quality_flag_counts": {
+    "PAIRING_ABNORMAL": 864,
+    "TEMPORAL_DIRECTION_AMBIGUOUS": 749,
+    "FINDING_NOT_JUDGEABLE": 447,
+    "REPORT_INSUFFICIENT": 398,
+    "NEGATION_OR_UNCERTAINTY_CONFLICT": 222
+  },
+  "private_hashes": {
+    "preparation_receipt": "bb85d01a9617b0d228d941c420fd2350d9f043c56de7383e24d96b035d4c5ed7",
+    "final_audit_receipt": "37fae5956eb1aa43e57551e53783a5de2219f28a4c76be8e96b5af4bb1eb1970",
+    "independent_audit": "98c3b3e177fa179aade7fde116ad6091d85edc03f5622165bfb85f10f72945b0",
+    "all_review_results": "f82523fb6b1b5593cfeef84cf471c98b41e6d5b6249bc16d07d1069d01b0bb75",
+    "all_flagged_for_review": "6c84a4964ba182b542c6eb833127511f6897a322b38b925143350a1696c1305f",
+    "aggregate_summary": "ddd44b1482732cee7fae9c30beea75dab88231c6fdc6ecd12d6cb6441edc51a6"
+  },
+  "claim_boundary": "sol_review_signal_not_medical_gold",
+  "labels_modified": 0,
+  "samples_deleted": 0,
+  "splits_modified": 0,
+  "training_started": false,
+  "post_relabel_metrics_computed": false
+}

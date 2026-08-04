@@ -562,11 +562,46 @@ Status: completed
 - Run repository gates, commit the code and Git-safe counts/hashes, push only
   to the local bare remote, and leave GitHub origin unchanged.
 
+### Phase 60 - Tier-B/C Sol coverage audit and blind roster
+Status: completed
+
+- Reconcile every Tier-B/C TracIn candidate against all completed Sol review
+  namespaces by exact sample ID and cohort; report already-reviewed versus
+  missing rows without assuming that a cohort-level review implies coverage.
+- Build a private report-only roster for every still-unreviewed Tier-B/C row,
+  exposing only batch-local alias, finding, PRIOR report, and CURRENT report.
+- Freeze exact candidate/batch hashes and require `gpt-5.6-sol` with medium
+  reasoning; fail closed on model, schema, alias, or row-count drift.
+
+### Phase 61 - Full missing Tier-B/C Sol blind review
+Status: completed
+
+- Run one canary, then resume-safe non-overlapping shards until every frozen
+  missing row has exactly one valid Sol result.
+- Do not expose Luna/TracIn/model-risk fields to Sol, and do not train, relabel,
+  delete, repartition, or recompute model metrics.
+
+### Phase 62 - Comparison, private audit package, and conservation receipt
+Status: completed
+
+- Compare Sol with the current label only after all blind outputs are sealed;
+  report agreement, Unclear, label/finding/source confusion, and Tier-B versus
+  Tier-C differences without calling Sol medical Gold.
+- Retain all row-level outputs outside Git and independently prove exact-ID
+  coverage, immutable inputs, and zero training or label mutation.
+
+### Phase 63 - Git-safe summary, verification, and local-only handoff
+Status: in progress
+
+- Track only code, aggregate counts, private hashes, and limitations; run the
+  repository gates and privacy scan.
+- Commit and push only to the local bare remote; never push private results or
+  access GitHub.
+
 ## Next Step
 
-No further action is authorized in this label-replacement task. The active
-Sol-authoritative label version is frozen and locally handed off; training or
-metric recomputation requires a separate explicit authorization.
+Freeze the Git-safe aggregate summary, run full repository/privacy gates, and
+push only the reviewed code and non-identifying hashes to the local bare remote.
 
 ## Terminal formal-program record - 2026-08-04
 

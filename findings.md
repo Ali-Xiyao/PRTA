@@ -639,3 +639,17 @@
 - 正式物化和独立审计都确认实际动作数与计划一致：Dev 1,347 值变化 + 12,073 同值重绑定 + 3,246 排除；Internal-test 1,433 + 12,155 + 3,111。新活动表面为 Train+Dev 104,191 和 Internal-test 13,588。
 - 新标签分布为 Dev Improved 1,954 / New 1,665 / Resolved 364 / Stable 6,816 / Worse 2,621；Internal-test 2,020 / 1,714 / 373 / 6,832 / 2,649。后续如重训，类别权重和样本计数必须从新表重新物化，不能沿用旧 16,666/16,699 计数。
 - Dev TracIn 全量表头包含 `sample_id`、`risk_tier`、`selection_reasons`、三种子预测/置信度/NLL/错误等字段，足以在 Sol 完成后识别“非 Context 高风险且 Sol 与当前标签一致”的困难样本；该表不需要也不得在盲审前 join 到外发批次。
+
+# 2026-08-04 Tier-B/C Sol 覆盖补审发现
+
+- TracIn 冻结审计包含 Tier B 2,921、Tier C 10,413，共 13,334 条；全部非 Context 中 Train 为 9,847、Dev 为 7,353，而 Tier A 3,866 条全部属于 Train。此前 Tier A 已全量 Sol 盲审，Dev 也已在 16,666 条全量复核中覆盖，因此预计 Tier B/C 的未复核缺口只会来自 Train，但必须用 exact sample ID 集合验证，不能仅凭这些聚合数推断。
+- 既有 `tier_a_sol_review.py` 已实现适合复用的安全接口：只从私有 `case_details.jsonl` 投影标准样本字段，外发时进一步缩减为 batch-local alias、finding、PRIOR/CURRENT 报告；固定 `gpt-5.6-sol`/`medium`，并对模型、schema、alias 和 exact-ID 守恒 fail-closed。
+- `protected_quality_review.py` 提供质量标志版 Sol 输出（五分类/Unclear + 报告不足、配对异常、finding 不可判断、时间方向含糊、否定/不确定冲突），比旧 Tier-A 只有类别的输出更适合本轮 Tier-B/C 质量复核；可复用其批次运行器，但 roster 必须由新的 exact-ID 缺口审计生成。
+- Exact-ID 三命名空间交集已经确定：Tier B/C 共 13,334 条，其中此前受保护队列全量复核覆盖 7,353 条、旧 150-row Sol pilot 命中 22 条（其中 9 条也已在受保护 Dev 中）、Tier-A 命名空间命中 0 条；去重后已有 Sol 结果 7,366 条，真正缺口为 5,968 条。
+- Tier/split 结构为 Tier B Train 2,921、Tier C Train 3,060、Tier C Dev 7,353；不存在 Tier B Dev。已覆盖为 Tier B Train 9、Tier C Train 4、Tier C Dev 7,353，因此待补审精确为 Tier B Train 2,912 + Tier C Train 3,056 = 5,968，全部属于 Train。
+- 旧 150-row pilot 不能简单忽略：它为 13 个不在全量 Dev 复核中的 Tier-B/C Train 样本提供了既有 Sol 结果，避免了重复调用。新的 roster 必须冻结这三个既有 review 集合的输入哈希及 union coverage 回执。
+- 5,968 条缺口已全部由 `gpt-5.6-sol`/`medium` 盲审完成：299/299 批、5,968/5,968 行、30/30 分片回执，失败尝试0、stderr 0；唯一 reused output 是已通过的 batch-0 canary，因此没有重复外部调用。
+- 补审总体 Sol 明确五类为4,604条，Unclear 1,364条（22.86%）；明确样本中与当前 Luna 标签一致3,513条、一致率76.30%、κ=0.67583，明确分歧1,091条。Unclear/分歧/质量标志去重并集2,548条。这些是自动复核信号，不是医学正确率。
+- Tier B 明显比 Tier C 更不稳定：Tier B 2,912条中 Unclear 760，明确一致率64.87%、κ=0.503383、明确分歧756；Tier C 3,056条中 Unclear 604，明确一致率86.34%、κ=0.817666、明确分歧335。
+- Tier B 的主要弱项仍是时间/边界类别：New 明确一致41.75%，Resolved 38.78%，Improved 60.82%，Worse 58.17%，Stable 82.84%。Tier C 各类明显更稳，明确一致率从 New 72.53% 到 Worse 92.38%。
+- 质量标志可重叠：PAIRING_ABNORMAL 864、TEMPORAL_DIRECTION_AMBIGUOUS 749、FINDING_NOT_JUDGEABLE 447、REPORT_INSUFFICIENT 398、NEGATION_OR_UNCERTAINTY_CONFLICT 222。

@@ -298,7 +298,7 @@ def prepare_protected_quality_main(argv: list[str] | None = None) -> int:
 
 def run_protected_quality_main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run protected blind quality batches")
-    parser.add_argument("--cohort", choices=tuple(COHORT_ROWS), required=True)
+    parser.add_argument("--cohort", required=True)
     parser.add_argument("--batch-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
@@ -320,6 +320,9 @@ def run_protected_quality_main(argv: list[str] | None = None) -> int:
         raise RuntimeError("unsupported protected-quality config")
     if config.get("execution_enabled") is not True:
         raise RuntimeError("protected-quality execution is closed")
+    cohort_rows = config.get("cohort_rows")
+    if not isinstance(cohort_rows, dict) or args.cohort not in cohort_rows:
+        raise RuntimeError("cohort is outside the review authority")
     if (
         args.model != config["model"]
         or args.reasoning_effort != config["reasoning_effort"]

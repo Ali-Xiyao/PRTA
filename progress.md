@@ -1537,3 +1537,25 @@
 - 最终仓库门禁 PASS：全仓 Ruff、compileall、`git diff --check` 和 134 项 pytest 全部通过。Git-safe 新配置/替换文档不含逐病例 patient/report/image/study 字段值；扫描唯一命中来自既有训练手册对输入 schema 字段名的说明，不是本轮新增病例数据。
 - 最终磁盘复核 PASS：Dev/Internal-test/Train+Dev/provenance/exclusions 的 SHA-256 分别为 `89ea77c1...60e0c`、`fe76a30e...44305`、`478e7cce...4cd21`、`77137a5e...c9ec`、`cf5ade98...fcfa`；源 Train+Dev、源 Internal-test、既有 Sol Train 和医生 Gold 的冻结哈希均未漂移。当前 PRTA 训练进程数为 0。
 - Sol-authoritative 替换实现与 Git-safe 活动配置已提交为 `7c2fe96`，并成功推送到本地 bare `main`。Phase 59 至此完成；GitHub origin 未访问、未推送，训练与指标计算仍未授权。
+
+# 2026-08-04 Tier-B/C GPT-5.6 Sol 覆盖补审
+
+- 用户授权检查 Tier B/C 中尚未由 Sol 复核的样本，并用 Sol 完成缺口复核。新增 Phase 60-63：先按 exact sample ID 对齐全部既有 Sol 命名空间，只为真正缺失行建立盲态 roster，再固定 `gpt-5.6-sol`/`medium` 执行；本任务不改标签、不训练、不删除、不调整划分、不计算新指标。
+- 已恢复 planning-with-files 上下文并定位既有 Tier-A 与受保护队列 Sol 批处理实现。当前设计选择复用质量标志版输出契约，以便 Tier B/C 不仅获得五分类/Unclear，还能记录报告、配对和时间方向问题；尚未发起任何 Sol 调用。
+- 首次私有产物盘点递归列出了数千个历史 batch 文件并导致工具输出截断；这只是只读文件名枚举，没有打开逐病例内容或改变文件。后续改为只列三个已知根目录的顶层/analysis 文件，并直接使用最终合并 JSONL 做 exact-ID 覆盖审计。
+- Exact-ID 覆盖审计完成：Tier B/C 13,334 条中已有 Sol 去重覆盖 7,366 条，尚缺 5,968 条，全部来自 Train（Tier B 2,912、Tier C 3,056）。旧 pilot 额外消除了 13 个原本会重复调用的 Train 样本；新批处理只会处理这 5,968 条。
+- 已新增独立 Tier-B/C 缺口准备、分片启动和只读比较入口，并把现有质量复核运行器泛化为由冻结 config 验证 cohort，而不是硬编码三个旧队列。新实现固定 5,968-row exact-ID 缺口、质量标志 schema、私有路径和零训练/零改标约束；下一步先过 Ruff/测试，再创建正式私有 roster。
+- 首轮聚焦门禁在执行任何数据准备或 Sol 调用前由 Ruff 停止：发现一个未使用的 `math` 导入和一处 93 字符行。已用最小格式修正移除导入并换行，行为与任务契约不变。
+- 修正后 Ruff、compileall 和 11 项聚焦测试全部通过。正式私有 roster 已冻结为 5,968 条/299 批；候选 SHA-256=`5a36c264...a8af`，metadata=`74117096...02d2`，config=`a6a4f90e...fdff`。回执确认外发字段仅为 alias/finding/PRIOR/CURRENT，Luna/TracIn/患者字段均未外发，训练或改标为 false。Phase 60 完成，进入 canary。
+- 20-row canary 一次通过：104.124 秒，失败尝试 0，模型 `gpt-5.6-sol`、推理强度 `medium`，匿名 alias 与恢复后的20个ID完全守恒。随后启动30个互不重叠、resume-safe 分片覆盖299批；batch 0 由首分片复用已验证 canary，不重复调用。训练/改标状态仍为 false。
+- 首轮运行监控：30/30 分片存活，48/299 批已落盘，完成分片回执尚为0，stderr 非空文件为0。所有分片仍处于盲态生成阶段，未进行 Luna 比较或标签修改。
+- 中段运行监控：157/299 批已落盘，30/30 分片仍存活，stderr 非空文件为0；尚无分片提前退出或完成，模型比较与任何标签动作仍未开始。
+- 全量生成终态：299/299 批、5,968/5,968 行、30/30 分片回执，`gpt-5.6-sol`/`medium` 唯一，失败尝试0、stderr 0、唯一复用为已验证 canary batch 0。Phase 61 完成。
+- 只读比较 PASS：总体明确五类4,604条，一致3,513（76.30%，κ=0.67583），Unclear 1,364，明确分歧1,091，需关注去重并集2,548；Tier B 明确一致64.87%且显著弱于 Tier C 的86.34%。标签修改、样本删除、划分修改、训练和改标后指标计算均为0/false。
+- 已新增独立磁盘审计入口，将再次核对 candidate/metadata/299个Sol output/5,968个comparison result 的 exact-ID 集、全部标准样本字段、风险等级、Sol标签与质量标志、30份分片回执、模型身份、失败尝试及所有最终文件哈希。
+- 首次 Git-safe 收口补丁因 TracIn 摘要标题与预期文本不完全一致而整体 fail-closed，未写入任何文件；读取实际标题后用精确上下文重新应用。
+- 独立磁盘审计 PASS：candidate/output/result/unique-ID 均为5,968，299批、30份分片回执，模型与推理强度固定，失败尝试0；标准样本字段、risk tier、Sol标签和质量标志逐条一致，输入/输出哈希全部匹配。独立审计 SHA-256=`98c3b3e1...45b0`。
+- 已生成 Git-safe 完成配置和中文聚合摘要，只记录分层计数、质量标志、私有文件哈希与“Sol不是医学Gold”的边界；逐病例报告、ID、路径和分数继续只留在 Git 外。
+- 新增 Git-safe 配置回归测试，锁定13,334总量、7,366既有覆盖、5,968本轮补审、Tier B/C分层、299批/30回执以及零修改/零训练约束。
+- 最终仓库门禁 PASS：全仓 Ruff、compileall、137项 pytest 和 `git diff --check` 全部通过。新 Git-safe 配置/摘要的逐病例字段扫描为0命中，当前 PRTA 训练进程数为0；本地 bare 仍与本轮开始提交 `993da6d` 对齐，缓存的 GitHub origin/main 仍为 `77f0c762...` 且未访问云端。
+- 首次暂存后 `git diff --cached --check` 发现中文摘要日期行有两个尾随空格；这是纯 Markdown 格式问题。已移除尾随空格并重新暂存，私有结果和执行状态不受影响。
