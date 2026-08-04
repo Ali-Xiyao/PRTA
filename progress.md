@@ -1536,3 +1536,4 @@
 - 源输入哈希复核的首条 PowerShell 命令再次触发“直接把 `foreach` 块接到管道”的空管道解析错误，命令在读取文件前即失败。按项目已记录的兼容写法改为先收集显式数组再输出；不影响任何数据或运行状态。
 - 最终仓库门禁 PASS：全仓 Ruff、compileall、`git diff --check` 和 134 项 pytest 全部通过。Git-safe 新配置/替换文档不含逐病例 patient/report/image/study 字段值；扫描唯一命中来自既有训练手册对输入 schema 字段名的说明，不是本轮新增病例数据。
 - 最终磁盘复核 PASS：Dev/Internal-test/Train+Dev/provenance/exclusions 的 SHA-256 分别为 `89ea77c1...60e0c`、`fe76a30e...44305`、`478e7cce...4cd21`、`77137a5e...c9ec`、`cf5ade98...fcfa`；源 Train+Dev、源 Internal-test、既有 Sol Train 和医生 Gold 的冻结哈希均未漂移。当前 PRTA 训练进程数为 0。
+- Sol-authoritative 替换实现与 Git-safe 活动配置已提交为 `7c2fe96`，并成功推送到本地 bare `main`。Phase 59 至此完成；GitHub origin 未访问、未推送，训练与指标计算仍未授权。

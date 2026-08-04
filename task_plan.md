@@ -555,7 +555,7 @@ Status: completed
   recompute any model metric in this label-replacement task.
 
 ### Phase 59 - Conservation audit, documentation, and local-only handoff
-Status: in progress
+Status: completed
 
 - Prove exact ID/action conservation, no duplicate or unknown rows, unchanged
   non-label fields, immutable source hashes, and unchanged physician Gold.
@@ -564,9 +564,9 @@ Status: in progress
 
 ## Next Step
 
-Freeze the Git-safe active-label config and replacement summary, update future
-command templates to the Sol-authoritative paths, run the full repository
-regression/privacy gates, then commit and push only to the local bare remote.
+No further action is authorized in this label-replacement task. The active
+Sol-authoritative label version is frozen and locally handed off; training or
+metric recomputation requires a separate explicit authorization.
 
 ## Terminal formal-program record - 2026-08-04
 
