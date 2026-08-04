@@ -1722,3 +1722,11 @@
   利用率 63%，GPU1 在 B403 Dev 评估阶段为 53%，活动 stderr 全为 0。五份
   config 哈希继续匹配，protected-name=0，H:/E: 尚余 408.1/244.5 GiB；
   最终 gate 与 scheduler receipt 尚未生成，预计剩余运行和收口约 1.5--3 小时。
+- 2026-08-05 05:45 CST 心跳：队列达到 4/5 terminal。seed 43 在 8 epochs
+  后 early-stop PASS，最佳 Macro-F1 0.488005（epoch 3），回执确认全部输入哈希
+  匹配且 Internal-test/protected outcomes 零读取。三个 PRTA seed 的冻结均值为
+  0.492736，seed range 为 0.008077。最后一条 B403 当前位于 epoch 6 的
+  800/5,588，最佳值保持 0.491505（epoch 2）；其 PID、scheduler 和 finalizer
+  均存活，GPU1 利用率 76%，stderr 为 0。GPU0 已正常释放至 0 MiB；五份 config
+  哈希全匹配，protected-name=0，H:/E: 尚余 408.1/244.5 GiB。最终 gate 与
+  scheduler receipt 等待 B403 完成，预计剩余运行与收口约 0.5--1.5 小时。

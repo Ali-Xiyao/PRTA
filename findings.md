@@ -778,3 +778,7 @@
 - B403 在 epoch 2 将暂存最佳 Macro-F1 提高至 0.491505；它尚未达到冻结的
   minimum epochs，不能视为最终 baseline 结果。无论其后是否超过 B402，已确认
   的 baseline-gain 失败结论不变，因为当前最强 baseline 已至少为 0.499292。
+- seed 43 已正式以最佳 Macro-F1 0.488005 PASS；三个 PRTA seed 的冻结均值为
+  0.492736，低于 `three_seed_mean >= 0.52`，因此第二项核心开发门槛也已确定失败。
+  seed range 仅 0.008077，说明跨种子稳定性较好，但稳定地低于均值目标不能替代
+  性能门槛。最终统一 gate 仍需等待 B403 回执后由收口程序正式生成。
