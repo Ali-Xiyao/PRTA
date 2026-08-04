@@ -1413,3 +1413,26 @@
   gate. Program state is terminal
   `STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`; no protocol freeze was created
   and Internal-test/Gold were never opened.
+- On 2026-08-04 the user authorized implementation of a separate full
+  Train/Dev approximate-TracIn data-quality audit. Phase 41 starts with the
+  protected-outcome firewall and read-only contracts; no training, deletion,
+  relabeling, repartitioning, Internal-test access, or Gold access is allowed.
+- Phase 41 completed with a dedicated `audit` package and entry point. The
+  path firewall rejects `sealed`, `internal_test`/`internal-test`, and `Gold`
+  spellings before a file open; the real preflight conserved exactly 91,065
+  Train plus 16,666 Dev rows, bound all six immutable checkpoint hashes, and
+  reported zero protected-outcome reads. Eleven focused tests now cover exact
+  split conservation, 300-probe source-by-label balance, Tier logic, a
+  synthetic mislabeled opponent, direct-gradient equality for Captum's fast
+  last-layer dot product, adapter-confirmation equality, and the absence of
+  training-loop calls. A real Seed-17 one-Train/one-Dev GPU smoke passed for
+  both Captum and the four-adapter confirmation without writing an audit
+  result or modifying an input.
+- The private full audit keeper waited rather than competing with two unrelated
+  22 GiB GPU jobs, then launched Seed 17 on GPU0 and Seed 29 on GPU1 when both
+  cards fell below the 4,000 MiB safety threshold. Both 91,065-row Train
+  prediction passes completed and were saved independently. Seed 17 completed
+  and checkpointed its full `best.pt` Captum/adapter contribution and entered
+  `last.pt`; Seed 29 reached 7,800/11,384 batches of the final adapter-minus
+  pass for `best.pt`. All stderr logs remain empty, private progress receipts
+  report `training_started=false`, and protected-outcome reads remain zero.

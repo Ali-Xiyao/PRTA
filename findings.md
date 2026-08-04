@@ -551,3 +551,25 @@
   all three positive prior gaps passed, but those bounded positives cannot
   override the failed gate. The keeper correctly stopped before protocol
   freeze, formal matrices, Internal-test, Gold, figures, or the VLM appendix.
+- The user separately authorized a post-STOP, read-only approximate-TracIn
+  audit over all 91,065 open Train rows and 16,666 open Dev rows. The protected
+  Internal-test and Gold surfaces are entirely out of scope: no parsing,
+  inference, structural inspection, or outcome access. Existing evidence is
+  limited to best/last checkpoint pairs for M302-CBF, M304-S29, and M304-S43,
+  so each seed must be scored as its own sparse two-checkpoint trajectory and
+  the final artifact must not be called full-trajectory TracIn or causal proof.
+- Captum 0.8's `TracInCPFast` primitive is usable for the exact last linear
+  layer when streamed checkpoint-first: each best/last checkpoint is loaded
+  once, 300 probe Jacobian/input embeddings are cached, and Train-by-probe
+  blocks are reduced into separate positive, negative, signed, and
+  self-influence columns. This avoids the public API's repeated 296 MiB
+  checkpoint reload for every Train batch while preserving the same dot
+  product, verified against a direct synthetic gradient calculation.
+- The frozen ViT's CUDA efficient-attention kernel does not implement
+  forward-mode AD, so an all-Train head-plus-four-adapter JVP is unavailable
+  in torch 2.5. The confirmation therefore uses a bounded symmetric central
+  finite difference along the summed probe-gradient direction. It requires
+  two inference passes per checkpoint, restores every in-memory parameter
+  exactly afterward, and matched the direct selected-parameter gradient dot
+  product on a synthetic fixture. Captum remains the primary exact
+  last-layer result; the adapter lane is explicitly a stability confirmation.

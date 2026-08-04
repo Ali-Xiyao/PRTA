@@ -32,6 +32,9 @@ data = [
 figures = [
   "matplotlib>=3.8",
 ]
+audit = [
+  "captum>=0.8,<0.9",
+]
 
 [project.scripts]
 prta-preflight = "prta_cxr.cli:preflight_main"

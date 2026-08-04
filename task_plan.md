@@ -382,13 +382,49 @@ Status: complete - terminal STOP reconciliation and local-only handoff
   task with an artifact or explicit N/A/HOLD/STOP rationale, run final audits,
   commit, and push only to the local bare remote.
 
+### Phase 41 - Post-STOP TracIn audit contract and firewall
+Status: complete
+
+- Add a separate read-only audit surface for exactly the open Train/Dev rows.
+- Reject any Internal-test/Gold path, forbid optimizer steps and source-data
+  mutation, and keep all row-level private outputs outside Git.
+- Bind the three independent best/last checkpoint pairs without treating
+  cross-seed checkpoints as one training trajectory.
+
+### Phase 42 - Full Train/Dev approximate-TracIn implementation
+Status: in progress
+
+- Infer all 16,666 Dev rows with the three frozen best checkpoints and select
+  the deterministic 300-row source-by-label probe roster.
+- Score every one of the 91,065 Train rows for negative/positive influence,
+  self-influence, loss, prediction disagreement, and structural risk.
+- Run the classification-head and four-adapter confirmation on the full
+  flagged candidate set; label unstable evidence rather than forcing a claim.
+
+### Phase 43 - Private audit package and independent validation
+Status: pending
+
+- Write complete Train/Dev score tables, every Tier-A/B/C candidate, the
+  private Markdown case document, full case JSONL, aggregate summary, and an
+  immutable audit receipt under the H: private runtime.
+- Verify exact row conservation, hashes, deterministic mapping, TracIn sign on
+  synthetic fixtures, and zero protected-outcome reads.
+
+### Phase 44 - Documentation, verification, and local-only handoff
+Status: pending
+
+- Track only code, tests, aggregate non-identifying counts, output hashes, and
+  the explicit approximate-TracIn limitations.
+- Run tests, Ruff, compile checks, privacy scans, commit, push only to the
+  local bare remote, and verify local/remote equality.
+
 ## Next Step
 
-The authorized formal program is terminal at
-`STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`. Do not create a protocol-freeze
-receipt, run the formal baseline/ablation matrix, or open Internal-test/Gold.
-Any new scientific path requires a separate user-authorized protocol rather
-than tuning around this closed gate.
+Run the three frozen-best Dev inference lanes, freeze the exact 300-probe
+roster, and then execute each seed's two-checkpoint full-Train scoring lane.
+The authorized formal program remains terminal at
+`STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`; this independent audit must never
+open Internal-test or Gold.
 
 ## Terminal formal-program record - 2026-08-04
 

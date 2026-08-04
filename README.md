@@ -57,6 +57,10 @@ caching, training, and internal testing remain sequentially gated.
 10. Use the
     [senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)
     for the human confirmation/correction result and exact artifact boundary.
+11. Use the
+    [Train/Dev-only approximate-TracIn audit guide](docs/PRTA_CXR_TracIn只读数据审计说明_CN.md)
+    for the post-STOP read-only data-quality audit; row-level outputs remain
+    private and must never enter Git.
 
 ## Local engineering validation
 
