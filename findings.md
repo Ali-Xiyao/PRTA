@@ -748,3 +748,7 @@
 - 00:11 CST 时两个暂存最佳值在完成/接近 epoch 3 后尚未进一步改变；这不构成
   退化或停滞证据，因为冻结 early-stopping 的 minimum epochs 为 6，且 seed 17
   正在正常 Dev 评估。必须继续等待其余 epochs、第三 seed 和两条时序基线。
+- 00:43 CST 时 seed 29 的 epoch-3 暂存最佳 Macro-F1 已由 0.483786 提高到
+  0.486053，seed 17 仍为 0.496082；两条轨迹均已进入 epoch 4 且双卡持续
+  计算，说明上一心跳的短时平台并非运行故障。该证据仍不足以判定三种子均值、
+  baseline gain 或最终 GO/HOLD，必须等五个冻结运行全部完成。

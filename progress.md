@@ -1663,3 +1663,12 @@
   尚余 409.3/244.5 GiB。活动 manifest、cache manifest、text cache、权重及
   五份 config 哈希全部与准备回执一致；protected marker=0，最终 gate/queue
   receipt 尚未生成。按当前速度估计完整五运行和收口尚需约 9--13 小时。
+- 2026-08-05 00:43 CST 心跳：队列仍为 0/5 terminal，当前并行的 seed 17
+  和 seed 29 均已进入 epoch 4，分别完成 4,700/5,588 与 4,200/5,588
+  batches。seed 17 暂存最佳 Macro-F1 仍为 0.496082；seed 29 在 epoch 3
+  将暂存最佳提高到 0.486053。两个训练 PID 42892/2992、scheduler PID
+  28944 与 finalizer PID 35788 均存活；GPU0/GPU1 利用率 96%/84%，显存
+  各 4,479 MiB，所有训练 stdout/stderr 仍为 0 字节。五份 config 哈希全部
+  与 queue 冻结值一致，运行目录 protected-name 扫描为 0，最终 gate 与
+  scheduler receipt 尚未生成。H:/E: 分别尚余约 409.3/244.5 GiB；按当前
+  速度估计完整五运行与收口仍需约 8.5--12.5 小时。
