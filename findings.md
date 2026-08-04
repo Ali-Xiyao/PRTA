@@ -1,5 +1,65 @@
 # Findings - full-data training pipeline
 
+## 2026-08-04 Sol all-risk rerun initial boundary
+
+- The historical development result remains `STOP_DEVELOPMENT_GATE`; the new
+  user authorization creates a separate label-version rerun and does not
+  authorize retrospective tuning or protected outcome access.
+- The private runtime still contains the previous formal program, cache,
+  development outputs, keeper state, and unified registry, so the safest path
+  is to prove subset compatibility and reuse immutable features while creating
+  new run identities rather than rebuilding or overwriting historical assets.
+- Both RTX 3090 GPUs are currently completely idle (0 MiB, 0% utilization),
+  with no Python training process. The only command-line match was the current
+  read-only PowerShell probe itself. Free space is approximately 410 GiB on H:
+  and 244 GiB on E:, sufficient for versioned rerun outputs.
+- The previous formal root is intact at
+  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_program_v1`.
+  Its reusable cache is `cache/full_repartition_v1`; historical development
+  outputs remain under `development/runs`, and terminal gate/state receipts
+  remain under `program_keeper_v1`. The split surfaces include outcome-free
+  `cache_input_v1.jsonl`, labeled `train_dev_v1.jsonl`, and separately sealed
+  `internal_test_labeled_v1.jsonl`; the rerun must use only the new active
+  Train/Dev manifest and must not parse the sealed file.
+- The exact historical gate inputs were PRTA `M302-CBF` (seed 17),
+  `M304-S29`, `M304-S43`, plus diagnostic baselines B401-B403 at seed 17.
+  The strongest temporal comparator was `M305-B403-S17` (Macro-F1 0.447629,
+  ODER 0.037021). The frozen gate failed on mean F1 0.458680, every seed below
+  0.48, seed-17 gain only +0.005959, and mean ODER 0.042202 above baseline.
+- The reusable store contains a 44.2-GB contiguous Block-8 feature file plus
+  cache manifest, text cache, image inventory, and training-store receipt.
+  No protected outcome needs to be read to determine cache subset coverage.
+- Frozen configs use PRTA/CB-Focal/tail4/H0 with rank 32, batch 16, LR 1e-4,
+  20-epoch maximum, 6-epoch minimum, patience 4, and seeds 17/29/43. The TILA
+  comparator uses the same optimization budget and seed 17. Although stored
+  class counts reflect the old labels, the formal CLI deterministically
+  rematerializes counts from the supplied Train rows before model creation.
+- The existing queue runner already launches versioned output directories on
+  two explicit CUDA devices, writes registry RUNNING/terminal rows, and keeps
+  Internal-test/Gold closed. A separate rerun queue/root can reuse this logic.
+- The local BiomedCLIP root is `H:\xiyao\model\biomedclip`; the rerun must bind
+  its weight hash to the cache encoder hash
+  `52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be`.
+  The completed 250-row human Silver quality audit remains the formal training
+  gate; it is not a label source and can be reused unchanged. Its 0.984 value
+  is explicitly Luna-visible senior-panel confirmation and must not be called
+  accuracy of the later Sol replacements. The user separately authorized this
+  rerun after manual inspection, so the receipt is only the pre-existing
+  clinical-QC gate and its limitation stays explicit in the rerun receipt.
+- To reproduce the earlier development decision rather than only the PRTA
+  mean, the rerun needs PRTA seeds 17/29/43 plus both temporal seed-17 baselines
+  B402 (Siamese Diff) and B403 (TILA). The same frozen function chooses the
+  stronger of those two. Current-only B401 is not part of that temporal maximum
+  and is unnecessary for the requested threshold comparison.
+- Image Block-8 features are label-free and safely reusable by subset. Static
+  dataset inspection initially raised a possible text-cache label-version risk
+  because per-sample transition embeddings would take precedence over label
+  prototypes. Direct inspection of both the writer and live cache resolved the
+  concern: the cache has no `transition_embeddings` key and contains exactly
+  12 finding embeddings plus 60 `finding|label` prototypes. Each rerun row
+  therefore selects the prototype from its current Sol label, so the existing
+  text cache is label-version safe and can be reused unchanged.
+
 ## 2026-08-04 Tier-B/C Sol-authoritative replacement exact-set audit
 
 - The replacement target is the exact union of 5,968 newly reviewed Train Tier-B/C rows and 13 pilot-only Train Tier-B/C rows already reviewed by Sol but never made authoritative. The sets are disjoint and all 5,981 IDs are present in the current 90,771-row active Train manifest.
@@ -661,3 +721,19 @@
 - Tier B 明显比 Tier C 更不稳定：Tier B 2,912条中 Unclear 760，明确一致率64.87%、κ=0.503383、明确分歧756；Tier C 3,056条中 Unclear 604，明确一致率86.34%、κ=0.817666、明确分歧335。
 - Tier B 的主要弱项仍是时间/边界类别：New 明确一致41.75%，Resolved 38.78%，Improved 60.82%，Worse 58.17%，Stable 82.84%。Tier C 各类明显更稳，明确一致率从 New 72.53% 到 Worse 92.38%。
 - 质量标志可重叠：PAIRING_ABNORMAL 864、TEMPORAL_DIRECTION_AMBIGUOUS 749、FINDING_NOT_JUDGEABLE 447、REPORT_INSUFFICIENT 398、NEGATION_OR_UNCERTAINTY_CONFLICT 222。
+# 2026-08-04 Sol-authoritative 全风险标签重跑发现
+
+- 旧开发门的精确比较对象为 PRTA seeds 17/29/43，以及 seed-17 的
+  Siamese-Diff (`B402`) 和 TILA (`B403`) 两条时序基线。原门槛仍是单 seed
+  Macro-F1 ≥0.48、三 seed 均值 ≥0.52、seed-17 相对最强时序基线增益 ≥0.03，
+  同时满足 min-recall、ODER、prior-gap 和 seed-range 条件。
+- 既有 Block-8 训练存储只绑定图像特征和 encoder hash，不绑定 Luna/Sol 标签；
+  text cache 只有 finding embeddings 与 finding×五分类 transition prototypes，
+  没有 sample-keyed transition embeddings。因此新标签可以安全复用缓存，
+  但必须逐行验证活动图像 key 与新的 finding×label prototype 均存在。
+- 正式训练 CLI 会从传入的活动 Train 行重新物化 class counts；新准备器仍会把
+  同一组新计数写入冻结 config，使登记配置与实际运行一致。五个运行保持原
+  epochs、early stopping、batch size、优化器预算、架构及 loss 设定不变。
+- 既有 250-row 人工审计是 Luna-visible senior-panel confirmation，而不是后续
+  Sol 替换的独立医学准确率证明。它只满足既有训练入口的临床 QC 结构门；
+  本次 Sol 权威化来自用户在人工查看后的明确授权，论文中必须分别披露。

@@ -629,10 +629,49 @@ Status: completed
 - Run repository/privacy gates, commit aggregate counts and private hashes,
   and push only to the local bare remote.
 
+### Phase 67 - Sol all-risk rerun contract and outcome firewall
+Status: complete
+
+- Bind the user's 2026-08-04 authorization to a new Train/Dev-only rerun on
+  the frozen 89,406-row Train and 13,420-row Dev active label version.
+- Preserve the earlier `STOP_DEVELOPMENT_GATE` as historical evidence; create
+  new run IDs, configs, receipts, checkpoints, predictions, and logs rather
+  than overwriting any prior run.
+- Keep Internal-test and physician Gold sealed. Compare against the previously
+  frozen development gates: Macro-F1 >= 0.48 per rerun seed, three-seed mean
+  >= 0.52, and PRTA gain >= 0.03 over the strongest equal-budget temporal
+  baseline, with minority-class and ODER diagnostics retained.
+
+### Phase 68 - Active-manifest/cache compatibility and rerun preflight
+Status: in progress
+
+- Prove the new Train/Dev IDs are a subset of the immutable outcome-free cache
+  and training store; materialize only a versioned index/filter if required.
+- Freeze label, manifest, cache, code, method, budget, seed, and GPU mappings
+  before launch; do not change architecture or tune from the new Dev result.
+
+### Phase 69 - Equal-budget Sol all-risk Train/Dev reruns
+Status: pending
+
+- Rerun PRTA at seeds 17/29/43 plus the frozen Siamese-Diff and TILA temporal
+  baselines at seed 17 under the same budget, using only the active Sol
+  Train/Dev labels.
+- Monitor both GPUs, checkpoints, logs, registry rows, completion markers, and
+  failure-safe resume identity until all required runs terminate.
+
+### Phase 70 - Gate comparison, documentation, and local-only handoff
+Status: pending
+
+- Recompute the frozen Dev metrics and compare the new-label results with both
+  the thresholds and the historical Luna-era results without post-hoc tuning.
+- Record GO/HOLD/STOP for this rerun, keep Internal-test/Gold sealed, run final
+  audits, and push only Git-safe aggregates/code to the local bare remote.
+
 ## Next Step
 
-No further label action is authorized. Keep the all-risk Sol version frozen and do
-not train or recompute metrics unless the user separately authorizes that work.
+Run the new fail-closed preparation entry point against the active 89,406-row
+Train and 13,420-row Dev surface, freeze its hashes/configs/queue, commit the
+Git-safe implementation locally, and then launch the five-run two-GPU queue.
 
 ## Terminal formal-program record - 2026-08-04
 

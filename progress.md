@@ -1,5 +1,39 @@
 # Progress - full-data training pipeline
 
+## 2026-08-04 Sol all-risk Train/Dev rerun authorization
+
+- User explicitly authorized retraining and comparison on the newly activated
+  Sol all-risk label version. This is a new Train/Dev-only rerun, not a rewrite
+  of the historical `STOP_DEVELOPMENT_GATE` result.
+- Frozen comparison targets carried forward: per-seed Dev Macro-F1 >= 0.48,
+  three-seed mean >= 0.52, and PRTA gain >= 0.03 over the strongest equal-budget
+  temporal baseline. Internal-test and physician Gold remain sealed unless a
+  later protocol gate and separate outcome-opening authority are satisfied.
+- No rerun process has been launched yet. The next gate is cache/manifest/code/
+  GPU compatibility and immutable run-registry freeze.
+- The first parallel runtime inventory returned aggregate exit code 1 because
+  one read-only `rg`/optional-directory branch had no match. No process or file
+  changed. The partial evidence confirmed preserved `formal_program_v1`,
+  `cache`, `development`, `program_keeper_v1`, and unified `run_registry.jsonl`
+  surfaces. Subsequent probes are split and treat no-match as non-fatal.
+- Live resource gate: both 24-GiB RTX 3090 GPUs are idle with no GPU process;
+  H: and E: have approximately 410 GiB and 244 GiB free. A first optional
+  listing of subpaths under `formal_program_v1` returned no rows without an
+  error, so the next probe resolves exact filesystem objects before assuming
+  directory layout.
+- Config/runner inspection recovered the exact PRTA and TILA budgets and the
+  formal CLI's runtime class-count rematerialization. One read guessed a
+  nonexistent `src/prta_cxr/data/cached_dataset.py`; the implemented dataset is
+  imported as `data/training_dataset.py`. The missing-file read changed no
+  state and the exact module is used next.
+- A potential old-label leak through per-sample transition text embeddings was
+  checked before launch. The writer and live `text_cache.pt` prove that only
+  finding embeddings and 60 label prototypes exist; no sample-keyed transition
+  map is present. Existing text features are therefore safe for the new labels.
+- A findings append initially used imprecise surrounding text and failed
+  closed; it was reapplied after locating the exact paragraph. No runtime file
+  or experiment state changed.
+
 ## 2026-08-04 Tier-B/C Sol-authoritative replacement exact counts
 
 - Exact-ID audit completed before materialization: current active Train 90,771 unique rows; replacement union 5,981 unique rows; overlap between the 5,968 new-review rows and 13 pilot-only rows is zero; all targets exist in active Train.
@@ -1580,3 +1614,17 @@
 
 - 用户明确授权用 Tier-B/C Sol 数据直接替换此前 Luna 数据。执行语义沿用已冻结策略：Sol 五分类成为权威标签，Sol `Unclear` 从新活动版本排除；旧版本只作为审计历史保留，不再作为未来活动入口。医生 Gold 不变，不启动训练或指标计算。
 - 为确保 Tier-B/C Train 不残留可用的 Luna 权威标签，本轮除5,968条新补审结果外，还会纳入此前 pilot 已复核但未权威化的13条 Train；所有集合先按 exact sample ID 去重并检查 Sol 结果冲突。
+# 2026-08-04 Sol-authoritative 全风险标签重跑
+
+- 用户已明确授权用最终替换后的 Sol-authoritative Train/Dev 数据重新训练，
+  并按原冻结门槛判断是否超过旧结果。执行边界固定为新运行身份和新私有输出根；
+  历史 `STOP_DEVELOPMENT_GATE` 不覆盖、不改写，Internal-test/Gold 不读取。
+- 两张 RTX 3090 当前均空闲，H: 约 410 GiB、E: 约 244 GiB 可用，未发现存活的
+  PRTA 训练进程。活动输入已重新确认是 Train 89,406 + Dev 13,420，SHA-256
+  `a39e03e64ac43faed9348d3f8aabe79eede8bf2e398bff7cb2b795673ca1aa41`。
+- 新增专用准备/收口模块与脚本，冻结三条 PRTA 种子和两条 seed-17 时序基线，
+  并复用既有 GO/HOLD/STOP 判定函数。路径防火墙会在打开文件前拒绝
+  Internal-test、Gold 和 sealed 路径；测试覆盖新身份、等预算、门槛差值和
+  protected-path 拒绝。
+- 聚焦 Ruff、compileall 与 9 项相关 pytest 全部通过。下一步在 Git 提交后运行
+  全量缓存映射预检并冻结私有五运行队列；尚未启动训练。
