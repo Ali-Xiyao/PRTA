@@ -1705,3 +1705,13 @@
   86%/87%，显存各 4,479 MiB；活动 stderr 仍为 0，五份 config 哈希全匹配，
   protected-name=0，H:/E: 尚余 408.8/244.5 GiB。最终 gate 与 scheduler
   receipt 尚未生成，预计剩余运行和收口约需 4.5--7.5 小时。
+- 2026-08-05 04:45 CST 补偿心跳（覆盖 03:12--04:44 间隔）：队列已推进到
+  3/5 terminal。`SOLR1-PRTA-S29` 在 10 epochs 后 early-stop PASS，最佳
+  Macro-F1 0.494122（epoch 5）；`SOLR1-B402-S17` 在 6 epochs 后 PASS，
+  最佳 0.499292（epoch 1）。两份新回执均记录 Internal-test/protected outcomes
+  零读取且全部输入哈希匹配。seed 43 当前 epoch 6 的 3,900/5,588，最佳值
+  已提高到 0.488005（epoch 3）；scheduler 已在 GPU1 启动最后一条 B403，
+  当前 epoch 0 的 400/5,588。scheduler、finalizer 与两个活动 PID 均存活；
+  GPU0/GPU1 利用率 87%/13%（B403 启动阶段），所有 stderr 为 0，五份 config
+  哈希匹配，protected-name=0，H:/E: 尚余 408.5/244.5 GiB。最终 gate 与
+  scheduler receipt 尚未生成；预计余下两运行和收口约 2.5--4 小时。
