@@ -524,7 +524,7 @@ Status: completed
 - List every flagged row privately without modifying any source artifact.
 
 ### Phase 56 - Read-only audit receipt and local-only handoff
-Status: in progress
+Status: completed
 
 - Prove source hashes unchanged, zero label/sample/split mutation, zero training
   or model inference, exact cohort/output counts, and row-level privacy.
@@ -533,10 +533,9 @@ Status: in progress
 
 ## Next Step
 
-Run the final repository regression/privacy checks, freeze the Git-safe
-aggregate summary and private hashes, then commit and push only to the local
-bare remote. Keep all 33,615 row-level records outside Git and leave GitHub
-origin unchanged.
+Terminal complete. Preserve the private row-level audit outside Git. Any later
+decision to alter Dev/Internal-test/Gold labels, retrain, or recompute metrics
+requires a separate explicit authorization and a new versioned protocol.
 
 ## Terminal formal-program record - 2026-08-04
 
