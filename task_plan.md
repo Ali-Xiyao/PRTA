@@ -598,11 +598,41 @@ Status: completed
 - Commit and push only to the local bare remote; never push private results or
   access GitHub.
 
+### Phase 64 - Tier-B/C Sol-authoritative replacement contract
+Status: completed
+
+- Bind the user's explicit authorization to replace Tier-B/C Luna-derived
+  Train labels with every available blind Sol decision.
+- Combine the 5,968-row full missing review with the 13 pilot-only Train rows
+  that were already reviewed but not yet authoritative; deduplicate by exact
+  sample ID and fail closed on conflicting Sol labels.
+- Retain Sol five-class decisions and exclude Sol `Unclear`; keep physician
+  Gold, active Sol Dev/Internal-test, and all historical manifests immutable.
+
+### Phase 65 - Versioned all-risk Train materialization and active switch
+Status: completed
+
+- Stream the current 90,771-row Sol-authoritative Train and replace every
+  Tier-B/C target, preserving all non-label fields exactly.
+- Rebuild Train+Dev from the new Train plus the frozen 13,420-row active Sol
+  Dev; carry forward the 13,588-row active Sol Internal-test and physician
+  Gold unchanged.
+- Create a new private active-label pointer and Git-safe config; do not train
+  or recompute metrics.
+
+### Phase 66 - Independent audit, documentation, and local-only handoff
+Status: completed
+
+- Prove exact ID/action conservation, input/output hashes, no duplicates,
+  unchanged non-label fields, unchanged Dev/Internal-test/Gold, and zero
+  training or metric computation.
+- Run repository/privacy gates, commit aggregate counts and private hashes,
+  and push only to the local bare remote.
+
 ## Next Step
 
-No further action is authorized in this read-only Tier-B/C review. The private
-results are frozen and the Git-safe code/summary is locally handed off; any
-label replacement or retraining requires a separate explicit authorization.
+No further label action is authorized. Keep the all-risk Sol version frozen and do
+not train or recompute metrics unless the user separately authorizes that work.
 
 ## Terminal formal-program record - 2026-08-04
 

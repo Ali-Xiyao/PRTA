@@ -58,3 +58,11 @@ Tier B 是更需要人工复核的层级，尤其是 `New` 和 `Resolved`：其�
 
 独立审计 SHA-256：
 `98c3b3e177fa179aade7fde116ad6091d85edc03f5622165bfb85f10f72945b0`。
+
+## 后续授权状态
+
+本摘要记录复核完成时的只读边界。其后用户已明确授权以 Sol 结果替换此前
+Luna-derived Train Tier B/C 标签。新活动版本共处理 5,981 条（含 13 条
+pilot-only 已复核样本），Sol 明确五分类 4,616 条，`Unclear` 排除 1,365 条；
+相对实际活动 Train 改类 1,093 条、同值权威重绑定 3,523 条。详见
+[Sol 全风险标签替换状态](PRTA_CXR_Sol全风险标签替换状态_CN.md)。

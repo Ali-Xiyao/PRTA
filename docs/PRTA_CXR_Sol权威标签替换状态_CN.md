@@ -1,5 +1,9 @@
 # PRTA-CXR Sol 权威标签替换状态
 
+> 此版本已被 2026-08-04 的
+> [Sol 全风险标签版本](PRTA_CXR_Sol全风险标签替换状态_CN.md)取代；本文件仅保留
+> 作为 Dev/Internal-test 首次 Sol 权威化的历史审计记录。
+
 日期：2026-08-04
 
 状态：`ACTIVE_SOL_AUTHORITATIVE_NOT_TRAINED`

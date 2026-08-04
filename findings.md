@@ -1,5 +1,13 @@
 # Findings - full-data training pipeline
 
+## 2026-08-04 Tier-B/C Sol-authoritative replacement exact-set audit
+
+- The replacement target is the exact union of 5,968 newly reviewed Train Tier-B/C rows and 13 pilot-only Train Tier-B/C rows already reviewed by Sol but never made authoritative. The sets are disjoint and all 5,981 IDs are present in the current 90,771-row active Train manifest.
+- New review actions are 4,604 decisive / 1,364 `Unclear`, including 1,091 changed labels and 3,513 same-value authority rebindings. Pilot-only actions are 12 decisive / 1 `Unclear`; 2 historical pilot Luna labels differ from the current active Train value, so applying Sol to the actual active baseline gives 2 changed and 10 same-value pilot actions. Combined active-baseline actions are therefore 4,616 decisive / 1,365 `Unclear`, 1,093 changed, and 3,523 same-value rebindings.
+- Applying the frozen `Unclear -> exclude` policy must yield exactly 89,406 Train rows. With the unchanged 13,420-row Sol-authoritative Dev surface, the new active Train+Dev manifest must contain exactly 102,826 rows.
+- Existing implementation patterns already enforce private output paths, immutable input hashes, byte-preserving copies for non-target rows, and versioned active pointers. The new materializer should reuse those contracts while leaving the current Dev, Internal-test, and physician-consensus Gold hashes unchanged.
+- The 2 pilot baseline mismatches are not silently normalized: provenance records both the historical review label and the current active label. Sol remains the user-authorized authority, so both rows take their Sol labels; this changes the active label value in both cases.
+
 ## User-authorized policy direction
 
 - Old debugging-only subsets and small-cohort partitions are not authorities for

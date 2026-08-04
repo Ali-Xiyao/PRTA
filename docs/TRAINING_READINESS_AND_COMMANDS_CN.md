@@ -7,11 +7,11 @@
 ## 结论
 
 > 2026-08-04 标签版本更新：未来训练/评价的活动标签表面已切换为
-> `configs/labeling/sol_authoritative_protected_v1.json` 所冻结的 Sol 版本。
-> Train+Dev 为 104,191 行，Internal-test 为 13,588 行；Sol `Unclear` 已排除，
+> `configs/labeling/sol_authoritative_all_risk_v1.json` 所冻结的全风险 Sol 版本。
+> Train+Dev 为 102,826 行，Internal-test 为 13,588 行；Sol `Unclear` 已排除，
 > 医生 Gold 250 条不变。旧 `formal_program_v1` 命令仅用于历史复现，不能作为
 > 新一轮活动标签入口。详见
-> [Sol 权威标签替换状态](PRTA_CXR_Sol权威标签替换状态_CN.md)。
+> [Sol 全风险标签替换状态](PRTA_CXR_Sol全风险标签替换状态_CN.md)。
 
 当前项目已经具备从 source manifest 到正式训练、断点和内部测试的代码路径，
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。

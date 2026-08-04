@@ -1,5 +1,9 @@
 # PRTA-CXR Sol 权威训练标签版本
 
+> 此 90,771-row Train 版本已被 2026-08-04 的
+> [Sol 全风险标签版本](PRTA_CXR_Sol全风险标签替换状态_CN.md)取代；本文件仅保留
+> 作为 Tier A Sol 权威化的历史审计记录。
+
 ## 决策
 
 根据用户确认的人工查看结果，Train Tier A 改为以 GPT-5.6 Sol 盲审判断为准。

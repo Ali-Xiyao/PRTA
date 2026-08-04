@@ -1,5 +1,19 @@
 # Progress - full-data training pipeline
 
+## 2026-08-04 Tier-B/C Sol-authoritative replacement exact counts
+
+- Exact-ID audit completed before materialization: current active Train 90,771 unique rows; replacement union 5,981 unique rows; overlap between the 5,968 new-review rows and 13 pilot-only rows is zero; all targets exist in active Train.
+- Frozen target counts: 4,616 decisive Sol five-class labels and 1,365 Sol `Unclear` exclusions. A later active-baseline verification found 2 pilot rows whose historical pilot Luna label differs from the current active Train label; therefore the correct active-baseline actions are 1,093 label-value changes and 3,523 same-value Sol authority rebindings. Expected new counts remain Train 89,406 and Train+Dev 102,826.
+- No label file has yet been materialized in this phase; no training or metric computation has started.
+- A first planning-file append assumed the generic heading `# Findings`; the repository uses `# Findings - full-data training pipeline`, so the patch failed closed and was reapplied against the exact heading without touching data artifacts.
+- A documentation read guessed a longer Tier-B/C summary filename that does not exist; the actual Git-safe file is `docs/PRTA_CXR_TierBC_Sol复核摘要_CN.md`. No artifact changed. The first focused implementation lint then found two 90-92 character lines; focused tests and compilation passed, and the two lines were wrapped before materialization.
+- The first formal materialization attempt stopped immediately after writing only `preopen_receipt.json`: the 5,968-row review result intentionally omits `split` because its preparation receipt freezes the roster as Train-only, while the new loader initially required an inline `split=train`. No label/provenance/active file was written. The loader now accepts an omitted split but rejects any explicit non-Train value, and resume is permitted only when the existing root contains exactly the matching preopen receipt.
+- The second materialization attempt stopped during the temporary Train stream because 2 of the 13 historical pilot-only rows have a pilot-era Luna label different from the current active Train Luna label (`Worse -> Stable` and `New -> Stable`). No final/private label file was published and the temporary file was removed. The implementation now permits this only for the explicitly identified pilot namespace, records both baselines, and computes change/same counts against the actual active Train surface; full-review rows remain strict.
+- Materialization completed from the unchanged inputs: 5,981 exact targets, 4,616 decisive Sol labels, 1,365 `Unclear` exclusions, 1,093 active-baseline label changes, 3,523 same-value authority rebindings, and 84,790 non-target Train rows copied byte-exact. The new active counts are Train 89,406 and Train+Dev 102,826.
+- Independent audit passed after rebuilding the target set from source artifacts. Dev and Internal-test are byte-identical to the previous active Sol version, physician Gold is unchanged, training remains false, and no replacement-version metric was computed.
+- The first full verification passed Ruff, all 139 pytest cases, compileall, and `git diff --check`; its final privacy grep returned nonzero only because the long-standing training manual documents the input schema names `patient_id, study_id, image_path`. This is a schema description, not row-level data. The privacy scan was narrowed to the newly added config/status surfaces and added diff content instead of weakening any artifact boundary.
+- Refined privacy scan passed with zero row-level fields in the new Git-safe config/status surfaces; current PRTA training process count is 0. Final runtime receipt and independent audit both PASS with Train 89,406, Dev 13,420, Train+Dev 102,826, Internal-test 13,588, and physician Gold 250.
+
 ## 2026-08-02 - Luna-primary full-run concurrency qualification
 
 - Prepared 7,440 rule-blind batches for all 148,798 frozen candidates; the
@@ -1560,3 +1574,8 @@
 - 最终仓库门禁 PASS：全仓 Ruff、compileall、137项 pytest 和 `git diff --check` 全部通过。新 Git-safe 配置/摘要的逐病例字段扫描为0命中，当前 PRTA 训练进程数为0；本地 bare 仍与本轮开始提交 `993da6d` 对齐，缓存的 GitHub origin/main 仍为 `77f0c762...` 且未访问云端。
 - 首次暂存后 `git diff --cached --check` 发现中文摘要日期行有两个尾随空格；这是纯 Markdown 格式问题。已移除尾随空格并重新暂存，私有结果和执行状态不受影响。
 - Tier-B/C 补审代码、聚合摘要和私有哈希已提交为 `2436893` 并成功推送本地 bare `main`；Phase 63 完成。GitHub origin 未访问、未推送，逐病例私有结果未进入 Git，标签替换与重训仍未授权。
+
+# 2026-08-04 Tier-B/C Sol-authoritative 标签替换
+
+- 用户明确授权用 Tier-B/C Sol 数据直接替换此前 Luna 数据。执行语义沿用已冻结策略：Sol 五分类成为权威标签，Sol `Unclear` 从新活动版本排除；旧版本只作为审计历史保留，不再作为未来活动入口。医生 Gold 不变，不启动训练或指标计算。
+- 为确保 Tier-B/C Train 不残留可用的 Luna 权威标签，本轮除5,968条新补审结果外，还会纳入此前 pilot 已复核但未权威化的13条 Train；所有集合先按 exact sample ID 去重并检查 Sol 结果冲突。
