@@ -651,7 +651,7 @@ Status: complete
   before launch; do not change architecture or tune from the new Dev result.
 
 ### Phase 69 - Equal-budget Sol all-risk Train/Dev reruns
-Status: in progress
+Status: complete
 
 - Rerun PRTA at seeds 17/29/43 plus the frozen Siamese-Diff and TILA temporal
   baselines at seed 17 under the same budget, using only the active Sol
@@ -660,7 +660,7 @@ Status: in progress
   failure-safe resume identity until all required runs terminate.
 
 ### Phase 70 - Gate comparison, documentation, and local-only handoff
-Status: pending
+Status: complete
 
 - Recompute the frozen Dev metrics and compare the new-label results with both
   the thresholds and the historical Luna-era results without post-hoc tuning.
@@ -669,10 +669,11 @@ Status: pending
 
 ## Next Step
 
-Continue the active 30-minute heartbeat monitor until all five frozen runs and
-the final `development_gate.json` are terminal. Preserve every checkpoint/log/
-failed run, use identity-preserving resume only if required, and do not open
-Internal-test or Gold when the Train/Dev queue finishes.
+Terminal `HOLD_DEVELOPMENT_GATE`: all five frozen Train/Dev runs and the final
+`development_gate.json` completed. Preserve every checkpoint, log, receipt,
+active-label version, and historical gate. Do not open Internal-test or Gold,
+do not tune around the failed thresholds, and await new user authority before
+any further scientific experiment.
 
 ## Terminal formal-program record - 2026-08-04
 
