@@ -60,6 +60,14 @@
 
 输入在复核前后的 SHA-256 完全一致，标签修改数为 0。
 
+## 后续授权动作
+
+在本只读复核完成后，用户另行明确授权以 Sol 替换此前 Luna-derived 数据。
+Dev 和 Internal-test 已生成新的 Sol-authoritative 版本：五分类直接替换，
+`Unclear` 排除；医生 Gold 保持不变。详见
+[Sol 权威标签替换状态](PRTA_CXR_Sol权威标签替换状态_CN.md)。本节不改变上文
+对“只读复核阶段”的历史描述。
+
 Git-safe 完整性哈希：
 
 - `final_audit_receipt.json`：`8614bd6bb64e777425aa254e38f8d674fe0b3acd4ae2b92bfead4b04b204bf4c`

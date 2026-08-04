@@ -629,4 +629,13 @@
 - `New` 是三个队列中最弱的当前标签（决定性一致率约 74%–77%），主要与 Worse/Stable 混淆并伴随高 Unclear；优先人工复核应聚焦这一时间边界类别，而不是把所有高模型风险样本视为错标。
 - 质量标志以配对异常 3,772 和时间方向含糊 3,388 最常见，其后是 finding 无法判断 2,371、报告不足 1,964、否定/不确定性冲突 1,215。标志可重叠，不能直接相加为病例数。
 - Gold 的 Sol–医生明确一致率 87.06%，Sol–Luna 为 88.56%，而 Luna–医生全量一致 98.40%。这支持把 26 条 Sol–医生明确分歧和 49 条 Unclear 作为复核候选，但不支持自动用 Sol 覆盖医生 Gold。
+- 项目既有 Luna-primary 规则明确规定五分类标签保留、`Unclear` 废弃；此前 Train Tier-A Sol 替换也采用 3,572 个五分类覆盖、294 个 `Unclear` 排除的同一语义。因此本次 Dev/Internal-test 替换应沿用该规则，不能把 `Unclear` 写入五分类 manifest。
+- Gold `progression_label` 已由两位资深医生共识冻结，`luna_label` 只是辅助/历史字段。用户要求替换“Luna 数据”不应被解释为自动推翻医生 Gold；如未来要把 Sol 设为 Gold 权威，需要单独明确授权和新 Gold 协议。
+- 既有 `apply_tier_a_sol_labels_main` 已证明适合复用的安全模式：输入先哈希、源 manifest 流式处理、五分类行改 `progression_label`/`label_source`、Unclear 独立排除、非标签字段逐字段不变、旧产物不修改、输出/回执再次哈希。
+- 正式消费者（训练、queue、protocol freeze、tables、figures）都接收显式 manifest 路径，没有仓库内统一活动指针。标签替换必须新增一个权威 active-label receipt/config，并让未来命令指向新 split surface；原 `formal_program_v1` 作为旧实验历史保持不可变。
+- Dev 与 Internal-test 的每一行都是 `luna_primary_report_label|Silver`，所以对这两组执行全量 Sol 决定性覆盖不存在误改人工标签的混合来源问题。预期新行数为 Dev 13,420、Internal-test 13,588，Unclear 排除分别为 3,246 和 3,111。
+- 新组合 Train+Dev 应为 90,771 + 13,420 = 104,191 行；Sol 明确权威行共 27,008，其中相对 Luna 值变化 2,780（Dev 1,347 + Internal-test 1,433），同值权威重绑定 24,228。
+- 冻结输入哈希：源 Train+Dev `b798d841...ca77`、源 Internal-test `8d7ff098...84d9`、Sol Train `7306898c...f219`、医生 Gold `e027916d...f91d`。物化前后必须完全一致。
+- 正式物化和独立审计都确认实际动作数与计划一致：Dev 1,347 值变化 + 12,073 同值重绑定 + 3,246 排除；Internal-test 1,433 + 12,155 + 3,111。新活动表面为 Train+Dev 104,191 和 Internal-test 13,588。
+- 新标签分布为 Dev Improved 1,954 / New 1,665 / Resolved 364 / Stable 6,816 / Worse 2,621；Internal-test 2,020 / 1,714 / 373 / 6,832 / 2,649。后续如重训，类别权重和样本计数必须从新表重新物化，不能沿用旧 16,666/16,699 计数。
 - Dev TracIn 全量表头包含 `sample_id`、`risk_tier`、`selection_reasons`、三种子预测/置信度/NLL/错误等字段，足以在 Sol 完成后识别“非 Context 高风险且 Sol 与当前标签一致”的困难样本；该表不需要也不得在盲审前 join 到外发批次。

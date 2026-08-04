@@ -531,11 +531,42 @@ Status: completed
 - Commit only code, aggregate counts, access disclosure, and private hashes;
   push only to the local bare remote and leave GitHub origin unchanged.
 
+### Phase 57 - Sol-authoritative protected-label replacement contract
+Status: completed
+
+- Record the user's explicit authorization to replace prior Luna-derived Dev
+  and Internal-test labels with the completed blind Sol review.
+- Retain only Sol's five-class decisions and exclude Sol `Unclear` rows under
+  the already-frozen uncertainty policy; do not coerce `Unclear` into a class.
+- Preserve the original manifests immutably and create a versioned active
+  replacement with exact provenance and before/after hashes.
+- Keep Gold physician consensus authoritative because it is not a Luna label;
+  retain Sol as a separate review field and never silently overwrite doctors.
+
+### Phase 58 - Versioned Dev/Internal-test materialization and active switch
+Status: completed
+
+- Materialize complete new Dev and Internal-test manifests from the exact
+  33,615-row Sol audit outputs, replacing every decisive Luna label and
+  excluding every Sol `Unclear` row.
+- Rebuild the active Train+Dev surface using the already frozen
+  Sol-authoritative Train plus the new Sol-authoritative Dev.
+- Update only explicit active manifests/config pointers; do not train or
+  recompute any model metric in this label-replacement task.
+
+### Phase 59 - Conservation audit, documentation, and local-only handoff
+Status: in progress
+
+- Prove exact ID/action conservation, no duplicate or unknown rows, unchanged
+  non-label fields, immutable source hashes, and unchanged physician Gold.
+- Run repository gates, commit the code and Git-safe counts/hashes, push only
+  to the local bare remote, and leave GitHub origin unchanged.
+
 ## Next Step
 
-Terminal complete. Preserve the private row-level audit outside Git. Any later
-decision to alter Dev/Internal-test/Gold labels, retrain, or recompute metrics
-requires a separate explicit authorization and a new versioned protocol.
+Freeze the Git-safe active-label config and replacement summary, update future
+command templates to the Sol-authoritative paths, run the full repository
+regression/privacy gates, then commit and push only to the local bare remote.
 
 ## Terminal formal-program record - 2026-08-04
 

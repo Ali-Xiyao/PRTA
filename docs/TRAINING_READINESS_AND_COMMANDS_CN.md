@@ -6,6 +6,13 @@
 
 ## 结论
 
+> 2026-08-04 标签版本更新：未来训练/评价的活动标签表面已切换为
+> `configs/labeling/sol_authoritative_protected_v1.json` 所冻结的 Sol 版本。
+> Train+Dev 为 104,191 行，Internal-test 为 13,588 行；Sol `Unclear` 已排除，
+> 医生 Gold 250 条不变。旧 `formal_program_v1` 命令仅用于历史复现，不能作为
+> 新一轮活动标签入口。详见
+> [Sol 权威标签替换状态](PRTA_CXR_Sol权威标签替换状态_CN.md)。
+
 当前项目已经具备从 source manifest 到正式训练、断点和内部测试的代码路径，
 且真实 source manifest、hash-only exclusions 和全量 adjacent pair pool 已构建并审计。
 资深医生 Gold 门已完成：250 条全部为明确五分类，246 条确认 Luna、4 条修正，
@@ -294,8 +301,8 @@ python scripts/12_build_paper_tables.py --mode formal --formal `
 python scripts/13_run_formal_program_keeper.py --mode formal --formal `
   --output FORMAL_ROOT/program_keeper_v1 `
   --initial-queue FORMAL_ROOT/development/initial_queue_v1/run_queue.json `
-  --split-manifest FORMAL_ROOT/splits/train_dev_v1.jsonl `
-  --sealed-internal-test FORMAL_ROOT/sealed/internal_test_labeled_v1.jsonl `
+  --split-manifest $SOL_TRAIN_DEV `
+  --sealed-internal-test $SOL_INTERNAL_TEST `
   --gold-manifest GOLD_MANIFEST.jsonl `
   --cache-root FORMAL_ROOT/cache/full_repartition_v1 `
   --gold-cache-root FORMAL_ROOT/cache/gold_candidate_v1 `

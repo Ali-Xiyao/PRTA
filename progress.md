@@ -1515,3 +1515,24 @@
 - 最终哈希回执确认三份受保护输入复核前后 SHA-256 完全一致，标签修改 0、删除 0、划分修改 0、训练/模型指标计算均未启动。逐样本结果继续仅位于 Git 外私有目录。
 - 最终仓库门禁通过：Ruff、全仓 pytest（132 passed）、`git diff --check` 和 Git-safe 摘要隐私扫描均 PASS。本地 bare 远端为 `E:\Xiyaowang\050_VisualVIT\PRTA-CXR-local.git`；GitHub origin 仅保留配置，不执行云端推送。
 - 只读标签质量任务的实现、Git-safe 摘要和私有哈希已提交为 `aecf2ab263e7441e041d2e3eb1f261ffdba342cf`，并成功推送到本地 bare `main`；本地工作树与 bare main 完全一致。缓存的 GitHub `origin/main` 仍为 `77f0c76272c3b39feb271ad24ba87a3c0c8691e6`，未执行云端访问或推送。
+
+# 2026-08-04 Sol-authoritative Dev/Internal-test 标签替换
+
+- 用户明确授权用已完成的 Sol 全量复核替换此前 Luna 数据。执行语义固定为：Dev/Internal-test 的 Sol 五分类直接成为新版本标签；Sol `Unclear` 按既有策略从新版本排除，不强制映射。
+- Gold 当前 `progression_label` 是两位资深医生共识而非 Luna，因此保持医生 Gold 不变；Sol 结果继续作为独立复核侧表。旧 manifest 不原地覆盖，后续入口切换到带哈希/回执的新版本，以保留回退和审计能力。
+- 本轮只做标签版本物化与入口切换；不训练、不重新计算模型指标。
+- 已恢复完整 planning-with-files 上下文并定位既有 Sol-authoritative Train 实现与配置。原 Train 新版本为 90,771 行，组合 Train+Dev 仍含原始 16,666 行 Dev；本轮将复用其流式、版本化、哈希守恒和 `Unclear` 排除模式。
+- 当前正式程序没有单一可变“active label”配置，训练/评估入口通过显式 `--split-manifest` 与 `--sealed-internal-test` 路径绑定。因此真正的切换应创建新版本化 split surface 与显式 active receipt/config，而不是破坏性覆盖 `formal_program_v1`。
+- 已精确定位既有私有 Train 版本：`train_sol_authoritative_v1.jsonl` 90,771 行，SHA-256 `7306898c6b31af50956fa4ee32c5b6b8ba468751e6fc4e26f6a9353355fff219`。新的组合 Train+Dev 将逐字节复用该 Train，再附加 Sol-authoritative Dev。
+- 源 Dev 16,666 行和 Internal-test 16,699 行的 `label_source` 均为 `luna_primary_report_label`、`label_tier=Silver`，确认它们全部属于用户要求替换的 Luna 数据，而非混合人工标签。
+- 已新增独立物化与审计入口：按 exact-ID 连接 Sol 结果，明确标签改为 Sol 权威来源，Unclear 写入排除表；新组合 manifest 逐字节复用既有 90,771 行 Sol Train。实现同时冻结医生 Gold 不变、禁止训练/指标计算，并为替换/同值重绑定/排除分别保留私有 provenance。
+- 聚焦 Ruff、compileall 与 10 项替换/旧 Train/受保护复核测试全部通过。正式物化 PASS：新 Dev 13,420、Internal-test 13,588、Train+Dev 104,191；值变化 1,347/1,433，同值 Sol 权威重绑定 12,073/12,155，Unclear 排除 3,246/3,111。
+- 新输出哈希：Dev `89ea77c1...60e0c`、Internal-test `fe76a30e...44305`、Train+Dev `478e7cce...4cd21`；医生 Gold 修改数 0，训练和指标计算均未启动。
+- 独立磁盘审计 PASS：新 Dev/Internal ID 集精确等于源 ID 减 Sol Unclear；所有保留行的非标签字段不变，标签与 Sol 完全一致，`label_source` 全部切为 Sol。组合 manifest 的前 90,771 行与既有 Sol Train 逐字节一致，医生 Gold 哈希不变。
+- 私有活动指针 SHA-256=`ddd707c791a3e62610516bc677fd0579340afd902b3fa6c76a170f82d5efdf66`，正式物化回执=`63b9fc6e...98ae9`，独立审计=`89104893...07c64`。
+- 已冻结 Git-safe 活动标签配置与中文替换状态文档，并将未来训练命令模板显式切换到新 Sol-authoritative Train+Dev/Internal-test 路径；新增配置回归测试锁定行数、核心哈希、Unclear 排除和医生 Gold 不变约束。正式训练仍保持关闭。
+- 首轮并行门禁使用了不存在的旧测试名 `test_apply_tier_a_sol_labels.py` 和 `test_protected_label_quality_review.py`，pytest 在收集前失败，未执行数据、训练或写入动作。已用 `rg --files` 定位实际测试为 `test_tier_a_sol_review.py` 与 `test_protected_quality_review.py`，随后按真实文件名重跑。
+- 最终哈希复核首次把 provenance 文件误写成不存在的 `label_replacement_provenance.jsonl`；其余活动文件、回执状态、Gold 不变和未训练状态已经验证，错误路径未产生任何写入。只读目录清单确认实际文件名为 `sol_authority_provenance.jsonl`，随后使用冻结回执中的真实名称重跑完整哈希核对。
+- 源输入哈希复核的首条 PowerShell 命令再次触发“直接把 `foreach` 块接到管道”的空管道解析错误，命令在读取文件前即失败。按项目已记录的兼容写法改为先收集显式数组再输出；不影响任何数据或运行状态。
+- 最终仓库门禁 PASS：全仓 Ruff、compileall、`git diff --check` 和 134 项 pytest 全部通过。Git-safe 新配置/替换文档不含逐病例 patient/report/image/study 字段值；扫描唯一命中来自既有训练手册对输入 schema 字段名的说明，不是本轮新增病例数据。
+- 最终磁盘复核 PASS：Dev/Internal-test/Train+Dev/provenance/exclusions 的 SHA-256 分别为 `89ea77c1...60e0c`、`fe76a30e...44305`、`478e7cce...4cd21`、`77137a5e...c9ec`、`cf5ade98...fcfa`；源 Train+Dev、源 Internal-test、既有 Sol Train 和医生 Gold 的冻结哈希均未漂移。当前 PRTA 训练进程数为 0。
