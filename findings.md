@@ -737,3 +737,7 @@
 - 既有 250-row 人工审计是 Luna-visible senior-panel confirmation，而不是后续
   Sol 替换的独立医学准确率证明。它只满足既有训练入口的临床 QC 结构门；
   本次 Sol 权威化来自用户在人工查看后的明确授权，论文中必须分别披露。
+- 真实预检确认新 Train 类别计数为 Improved 13,173 / New 15,486 /
+  Resolved 2,279 / Stable 41,700 / Worse 16,768；Dev 为 1,954 / 1,665 /
+  364 / 6,816 / 2,621。新的冻结配置已使用这些 Train counts，不再沿用旧
+  Luna-era 91,065-row 计数。

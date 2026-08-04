@@ -643,7 +643,7 @@ Status: complete
   baseline, with minority-class and ODER diagnostics retained.
 
 ### Phase 68 - Active-manifest/cache compatibility and rerun preflight
-Status: in progress
+Status: complete
 
 - Prove the new Train/Dev IDs are a subset of the immutable outcome-free cache
   and training store; materialize only a versioned index/filter if required.
@@ -651,7 +651,7 @@ Status: in progress
   before launch; do not change architecture or tune from the new Dev result.
 
 ### Phase 69 - Equal-budget Sol all-risk Train/Dev reruns
-Status: pending
+Status: in progress
 
 - Rerun PRTA at seeds 17/29/43 plus the frozen Siamese-Diff and TILA temporal
   baselines at seed 17 under the same budget, using only the active Sol
@@ -669,9 +669,9 @@ Status: pending
 
 ## Next Step
 
-Run the new fail-closed preparation entry point against the active 89,406-row
-Train and 13,420-row Dev surface, freeze its hashes/configs/queue, commit the
-Git-safe implementation locally, and then launch the five-run two-GPU queue.
+Launch and monitor the frozen five-run queue on both GPUs. Preserve every
+checkpoint/log/failed run, use identity-preserving resume only if required, and
+do not open Internal-test or Gold when the Train/Dev queue finishes.
 
 ## Terminal formal-program record - 2026-08-04
 

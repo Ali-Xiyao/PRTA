@@ -1628,3 +1628,20 @@
   protected-path 拒绝。
 - 聚焦 Ruff、compileall 与 9 项相关 pytest 全部通过。下一步在 Git 提交后运行
   全量缓存映射预检并冻结私有五运行队列；尚未启动训练。
+- 首次前台预检的外层 shell 在 124 秒达到工具超时，但 Python PID 29440 继续
+  健康执行；未重复启动。它最终独立完成并正常退出，错误仅是观察窗口过短，
+  不是预检或数据失败。
+- 正式预检 PASS：Train 89,406、Dev 13,420、总计 102,826；唯一 patient
+  28,613，跨 split 重叠 0，缺失缓存键 0，两个来源和五类标签完整。训练存储
+  `050a4837...40e540`、活动 manifest `a39e03e...1aa41`、权重
+  `52cc993c...576be` 的前后哈希均一致，protected read count=0。
+- 冻结队列 SHA-256=`c6b56beba9374ac283c679306783ec5d39aa3d6bc3355ef04b5ca3c7df2b2817`，
+  运行身份为 `SOLR1-PRTA-S17/S29/S43`、`SOLR1-B402-S17`、
+  `SOLR1-B403-S17`。准备回执绑定 Git commit `cdcf692`。
+- 22:04 CST 五运行队列正式启动；scheduler PID 28944，首批
+  `SOLR1-PRTA-S17`/`S29` 分别在 GPU0/GPU1。22:07 CST 两条均到 epoch 0
+  batch 400/5,588，显存各 4,479 MiB、GPU 利用率 94%/78%、stderr 均为空。
+  当前吞吐约每卡 2.5--3 batch/s，首个 Dev 指标预计约 35--45 分钟出现。
+- 私有只读收口守护器 PID 35788 已启动；它只等待 scheduler 的完成回执，
+  完成后调用冻结的 gate finalizer 写 `development_gate.json`，队列 HOLD 时
+  fail-closed。它不会打开 Internal-test/Gold，也不会启动额外训练。
