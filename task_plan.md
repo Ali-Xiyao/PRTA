@@ -483,12 +483,60 @@ Status: completed
 - Run tests/privacy checks, update the active documents, commit, push only to
   the local bare remote, and verify local/remote commit equality.
 
+### Phase 52 - Dev/Internal-test/Gold review authority and pre-open receipt
+Status: completed
+
+- Record the user's explicit 2026-08-04 authorization to open the complete Dev,
+  sealed Internal-test, and Gold labels solely for an independent Sol label
+  quality review. This does not authorize training, label mutation, deletion,
+  repartitioning, PRTA model inference, or post-correction metric estimation.
+- Hash every protected input before parsing and record that this review ends
+  the earlier label-blind seal for Internal-test/Gold; future scientific use
+  must disclose this controlled label-quality access.
+- Keep all row-level protected material outside Git and local-only.
+
+### Phase 53 - Blind rosters, quality schema, and cohort canaries
+Status: completed
+
+- Build exact private rosters for all Dev (16,666), Internal-test (16,699), and
+  Gold (250) rows. Gold physician labels and all existing labels remain local.
+- Externalize only batch alias, finding, PRIOR report, and CURRENT report; Sol
+  returns one six-class label plus controlled quality flags, with no free text.
+- Pin `gpt-5.6-sol` / `medium`; run one canary per cohort before expansion.
+
+### Phase 54 - Full 33,615-row Sol blind quality review
+Status: completed
+
+- Complete all 1,682 batches with exact ID conservation and resumable private
+  outputs. Never pass current labels, model predictions, TracIn risk, source,
+  patient identifiers, dates, paths, or physician labels to Sol.
+- Fail closed on schema, alias, model, effort, or batch-hash mismatch; never
+  silently fall back to another model or repair labels manually.
+
+### Phase 55 - Post-blind comparison and systematic quality analysis
+Status: completed
+
+- After every Sol output is frozen, compare against current cohort labels and
+  report disagreement, `Unclear`, controlled quality flags, confusion, kappa,
+  and source/label/finding stratification.
+- Join Dev-only TracIn risk locally to identify high-risk-but-Sol-agree hard
+  samples; never compute or tune model metrics from Internal-test/Gold.
+- List every flagged row privately without modifying any source artifact.
+
+### Phase 56 - Read-only audit receipt and local-only handoff
+Status: in progress
+
+- Prove source hashes unchanged, zero label/sample/split mutation, zero training
+  or model inference, exact cohort/output counts, and row-level privacy.
+- Commit only code, aggregate counts, access disclosure, and private hashes;
+  push only to the local bare remote and leave GitHub origin unchanged.
+
 ## Next Step
 
-Keep the Sol-authoritative manifest frozen and inactive. A future retraining
-request must explicitly select the new Train+Dev manifest hash, create a new
-experiment lineage, and must not reinterpret this label replacement as
-authorization to open Internal-test/Gold or reuse the stopped formal outcomes.
+Run the final repository regression/privacy checks, freeze the Git-safe
+aggregate summary and private hashes, then commit and push only to the local
+bare remote. Keep all 33,615 row-level records outside Git and leave GitHub
+origin unchanged.
 
 ## Terminal formal-program record - 2026-08-04
 

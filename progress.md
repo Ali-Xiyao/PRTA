@@ -1488,3 +1488,29 @@
 - 正式物化已完成并发出 PASS 回执：新 Train 90,771 行，新 Train+Dev 107,437 行；3,572 条 Sol 权威、570 个实际标签值变化、3,002 个同值 provenance 重绑定、294 个 Unclear 排除，Dev 16,666 行原始字节哈希保持一致。未启动训练。
 - 独立磁盘重读审计 PASS：新 Train ID 集精确等于旧 Train 减 294 个排除 ID；87,199 个非 Tier-A Train 行逐字段不变，570/3,002 的变更/重绑定动作与 provenance 一致；Train-only 与组合文件的 Train 字节流相同，16,666 个 Dev 原始行字节流哈希相同。
 - 收口检查全部通过：Ruff、compileall、全仓 pytest（126 passed）、Git diff whitespace 和 Git-safe 文档隐私扫描均 PASS；未发现训练/队列进程。新版本状态保持 `PASS_FROZEN_NOT_TRAINED`。
+
+# 2026-08-04 Dev / Internal-test / Gold Sol 标签质量复核
+
+- 用户明确授权启动独立只读标签质量任务，覆盖 Dev 全量 16,666、Internal-test 全量 16,699、Gold 全量 250；这是此前封存边界之后的新受控标签访问权限。
+- 本轮固定 `gpt-5.6-sol` / `medium`，外发仅批内 alias、finding、PRIOR、CURRENT；现有 Luna/医生标签、患者/日期/路径、TracIn 风险和模型预测均不外发。
+- 输出 schema 将包含六分类标签及受控质量标志，用于区分报告不足、配对异常、finding 不可判断等原因；不输出自由文本，不训练、不改标、不删样本、不重划分、不计算改标后指标。
+- 只读路径/哈希预检已开始。第一次使用错误文件名 `internal_test_v1.jsonl` 返回不存在，未解析内容；已通过目录枚举定位实际 `internal_test_labeled_v1.jsonl`。Dev 与 Gold 输入已完成只读字节哈希，尚未构建或外发任何受保护 roster。
+- 首次 Ruff 检查只发现一个未使用导入、编码参数简化和超长行等纯代码质量问题；当时未运行复核程序、未解析任何受保护标签、未调用 Sol。修正后再进入本地测试。
+- Ruff 修正后已通过。随后按旧命名查找 `tests/test_sol_tier_a_review.py` 时发现文件不存在；这是只读测试定位错误，改从实际 `test_independent_silver.py` 与 `test_sol_review.py` 提取约定。
+- 测试夹具继续查找时确认仓库没有 `tests/conftest.py`；测试数据由各测试模块自身构造。检查同时发现 Gold 的 `label_tier=Gold` 不符合通用 Silver 样本验证器，因此本任务采用局部 Gold 兼容验证与自有批构建器，不放宽全局训练数据契约。
+- 首轮聚焦测试 20/21 通过；唯一失败来自错误断言“外发 JSON 不得出现标签单词 Stable”，而合成 CURRENT 报告正文合法地含有该词。实际外发字段集合已正确限定，测试改为检查不存在 `progression_label`、`label_tier`、`patient_id_hash` 等键。
+- 修正后的 Ruff、compileall 与 21 项聚焦测试全部通过。开封前回执已在解析前写入，随后精确构建 Dev 16,666、Internal-test 16,699、Gold 250，共 33,615 条、1,682 批；三份输入哈希与预检完全一致，外发字段仍只有 alias/finding/PRIOR/CURRENT。
+- v1 三队列 canary 均在服务端响应 Schema 校验前失败：`quality_flags.uniqueItems` 不被响应格式支持，未产生任何有效 Sol 标签。失败 v1 私有目录原样保留；新增 v2 Schema 只移除该不兼容关键字，重复 flag 仍由本地严格验证器拒绝，并将重建全新 v2 回执与批次。
+- v2 三队列 canary 全部一次通过：Dev、Internal-test、Gold 各 20/20 条，固定 `gpt-5.6-sol`/`medium`，失败尝试均为 0，Schema、枚举、alias 和输出 ID 守恒全部通过。准备启动全量不重叠分片。
+- 全量复核已启动 30 个互不重叠、可断点续跑的后台分片：Dev 14、Internal-test 14、Gold 2。每个分片均有独立 PID、批次范围、stdout/stderr 和完成回执；已成功的 canary 首批只复用、不重复调用，未启动训练或标签修改。
+- 首次全量状态查询在逐 PID 调用 `Get-Process` 时达到 10 秒工具超时；命令已先成功读取 Dev 风险表头，未改变任何进程或文件。后续改为一次性进程快照再做 PID 集合比较。
+- 全量首轮健康检查：30/30 分片存活，Dev 57/834 批、Internal-test 55/835 批、Gold 7/13 批已落盘；所有 stderr 均为空，尚无失败或降级。按批上限估算已覆盖约 1,140 / 1,100 / 140 条。
+- 全仓测试全部通过（132 collected/passed），`git diff --check` 通过。组合隐私扫描最终退出码 1 是 `rg` 零匹配的正常结果；新增外发入口未发现患者哈希、图像路径、Luna 标签或医生标签字段。随后状态为 30/30 存活、Dev 80 批、Internal-test 78 批、Gold 10 批、stderr 0。
+- Gold 已完成 13/13 批并生成 2/2 正式分片回执；Dev/Internal-test 的其余 28 个分片继续运行且 stderr 为 0。新增本地只读收口守护器：只在三队列批次数精确达到冻结值后运行比较，超时则写 `HOLD_INCOMPLETE_REVIEW_TIMEOUT`，不自动重训、改标或删除数据。
+- 本地收口守护器 PID 37296 已启动并写出首个状态：Dev 116/834、Internal-test 112/835、Gold 13/13，状态 `WAITING_FOR_FULL_BLIND_REVIEW`；守护器 stderr 为空，最长等待 3 小时，完成后自动生成只读比较与哈希回执。
+- 19:51 CST 实时状态：Dev 568/834、Internal-test 579/835、Gold 13/13；28 个 Dev/Internal-test 分片仍存活，30 个分片及守护器 stderr 均为 0。启动后 35.9 分钟完成 1,166/1,682 批，实际吞吐约 32.44 批/分钟，按当前速度预计约 16 分钟后进入自动比较与最终哈希审计。
+- 20:13 CST 全量终态 PASS：Dev 834/834 批（16,666 条）、Internal-test 835/835 批（16,699 条）、Gold 13/13 批（250 条），总计 33,615 条。30 个正式分片回执均为 `gpt-5.6-sol`/`medium`、失败尝试 0，worker/keeper stderr 均为空。
+- 只读比较完成：Dev 明确一致 12,073/13,420=89.96%，Internal-test 12,155/13,588=89.45%，Gold 医生共识 175/201=87.06%；对应 κ 为 0.8504/0.8434/0.8378。Sol Unclear 分别为 3,246/3,111/49。
+- 全部需关注记录去重并集 9,984 条；Dev 高风险但 Sol 明确同意当前标签的困难样本 4,772 条。Gold 明确样本中 Sol–医生一致 175/201，Sol–Luna 一致 178/201；Luna–医生全量一致 246/250。
+- 最终哈希回执确认三份受保护输入复核前后 SHA-256 完全一致，标签修改 0、删除 0、划分修改 0、训练/模型指标计算均未启动。逐样本结果继续仅位于 Git 外私有目录。
+- 最终仓库门禁通过：Ruff、全仓 pytest（132 passed）、`git diff --check` 和 Git-safe 摘要隐私扫描均 PASS。本地 bare 远端为 `E:\Xiyaowang\050_VisualVIT\PRTA-CXR-local.git`；GitHub origin 仅保留配置，不执行云端推送。

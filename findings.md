@@ -609,3 +609,24 @@
 - 可直接供后续训练的组合 manifest 为 107,437 行（Train 90,771 + Dev 16,666）。Dev 行没有 JSON 解析或重写，而是原始字节复制；独立原始行流哈希为 `28c9f7dea729ebb24ba34cc20ddd5078ba735f2ebdc2fc6a164225404f25373d`，记录的 Dev 修改数为 0。
 - 新 Train SHA-256=`7306898c6b31af50956fa4ee32c5b6b8ba468751e6fc4e26f6a9353355fff219`；新 Train+Dev SHA-256=`d798feb5adc65955add617371a38e337d9ffe721a18756e958851a50d51c897b`。旧输入前后哈希一致，Internal-test/Gold 未打开，训练未启动。
 - 私有新 Train 文件为 246,876,831 bytes，组合 Train+Dev 为 292,407,707 bytes；provenance 为 1,298,615 bytes，Unclear exclusion 表为 78,913 bytes。独立审计 SHA-256=`f898233c0370e9746bdc80d64f480f3c2394fe319baef6d2049b41335a1a27c5`。
+
+# 2026-08-04 Dev/Internal-test/Gold Sol 只读标签质量复核
+
+- 用户已显式授权完整打开 Dev、Internal-test 和 Gold 标签用于独立 Sol 标签质量复核。这是此前 seal 后的新受控访问，必须在后续科学记录中披露；它不授权模型推理、训练、调参、改标或重新计算模型指标。
+- Dev 权威来源仍是 293,168,028-byte `train_dev_v1.jsonl`（SHA-256 `b798d8412dc8c1e02840d56f2221d11fca940a36ccf716ff2efb659cce36ca77`），正式构建时只选择 16,666 个 `split=dev` 行。
+- Gold 最终医生共识文件为 738,507 bytes，SHA-256 `e027916db1fb0a31f66cd5b72a60893ee538ff465ac97b9cdcf1246fe519f91d`；原始 250-row review roster 为 506,594 bytes，SHA-256 `0469e6c954c1fe0c7b81e4c371bf69fe0f7731894328a1a4cec9feba9b487e96`。Gold 医生标签必须在 Sol payload 中剥离。
+- 初次假设的 Internal-test 文件名 `internal_test_v1.jsonl` 不存在（仅路径检查，无内容解析）；受控目录枚举确认实际文件名为 `internal_test_labeled_v1.jsonl`，45,514,722 bytes。后续使用实际文件并在解析前冻结 SHA-256。
+- 实际 Internal-test 输入 `internal_test_labeled_v1.jsonl` SHA-256 为 `8d7ff0986793661827133351c089ca66caa728e33fb2b25fba771fe79d4684d9`。该哈希已在任何标签解析前记录。
+- Gold 最终文件由原 Silver 样本完整字段加医生共识 `progression_label` 和 `label_tier=Gold` 构成，同时还含 `luna_label`、`human_label` 等解盲字段。因此 roster 构建必须只提取 sample_id 映射所需的 finding/PRIOR/CURRENT，并把所有医生/Luna/Gold 状态字段完全留在本地；比较阶段以 `progression_label` 作为当前 Gold 标签。
+- 新复核脚本的首次 Ruff 失败仅涉及格式和一个未使用导入，不是数据或执行错误；在这些问题修复并通过测试前，不创建受保护 roster，也不发起任何 Sol 调用。
+- 旧测试文件名 `test_sol_tier_a_review.py` 并不存在；仓库实际的独立盲审约定位于 `test_independent_silver.py` 和 `test_sol_review.py`，本轮测试应复用这些真实接口而不是假设旧文件名。
+- Gold 记录使用 `label_tier=Gold`，而全局 `validate_sample` 只接受训练管线的 Tier-A/Tier-B/Reject/Silver。为避免扩大训练契约，本任务仅在局部验证时用兼容副本检查其余字段，并保留原始 Gold 值；盲审批次由独立只读构建器产生。
+- 报告原文可能自然包含 `Stable` 等标签词，因此隐私/盲态测试不能禁止这些词出现在报告内容中；正确门禁是精确限制 payload 字段，并禁止现有标签键、医生字段、患者标识和真实 sample ID 外发。
+- 正式私有 roster 构建 PASS：Dev 834 批、Internal-test 835 批、Gold 13 批，总计 1,682 批/33,615 条；候选 manifest 哈希分别为 Dev `9e409e3e90b19ce576c9c65e32697c13345ccafcecc4d4cbf2a52e2521b51c88`、Internal-test `c680b692d19c86aa59634f20806d79952e4ee73ebb808f1fcd1785a7a118d198`、Gold `3d8d87ca7bca3190eb9fdb6cf7dbf789b3fa05a43266f115fab8d5f49f90822e`。
+- Codex/OpenAI 响应格式的受支持 JSON Schema 子集不接受数组上的 `uniqueItems`。这不会降低本任务契约，因为 `validate_quality_output` 已独立检查并拒绝重复 flag；因此 v2 只移除服务端不兼容关键字，保留本地唯一性门禁和全部枚举约束。
+- v2 canary 延迟分别为 Dev 52.197 秒、Internal-test 40.958 秒、Gold 48.593 秒；三者均无重试或降级，说明以约 30 个并发、每片约 60 批执行时，预计全量需要约 35–55 分钟，具体取决于服务端并发吞吐。
+- 全量受保护标签复核完成 33,615/33,615，所有正式分片模型/推理强度一致且失败尝试为 0。决定性一致率为 Dev 89.96%、Internal-test 89.45%、Gold 医生共识 87.06%；κ 分别为 0.8504、0.8434、0.8378。
+- `New` 是三个队列中最弱的当前标签（决定性一致率约 74%–77%），主要与 Worse/Stable 混淆并伴随高 Unclear；优先人工复核应聚焦这一时间边界类别，而不是把所有高模型风险样本视为错标。
+- 质量标志以配对异常 3,772 和时间方向含糊 3,388 最常见，其后是 finding 无法判断 2,371、报告不足 1,964、否定/不确定性冲突 1,215。标志可重叠，不能直接相加为病例数。
+- Gold 的 Sol–医生明确一致率 87.06%，Sol–Luna 为 88.56%，而 Luna–医生全量一致 98.40%。这支持把 26 条 Sol–医生明确分歧和 49 条 Unclear 作为复核候选，但不支持自动用 Sol 覆盖医生 Gold。
+- Dev TracIn 全量表头包含 `sample_id`、`risk_tier`、`selection_reasons`、三种子预测/置信度/NLL/错误等字段，足以在 Sol 完成后识别“非 Context 高风险且 Sol 与当前标签一致”的困难样本；该表不需要也不得在盲审前 join 到外发批次。
