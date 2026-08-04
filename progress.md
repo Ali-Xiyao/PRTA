@@ -1715,3 +1715,10 @@
   GPU0/GPU1 利用率 87%/13%（B403 启动阶段），所有 stderr 为 0，五份 config
   哈希匹配，protected-name=0，H:/E: 尚余 408.5/244.5 GiB。最终 gate 与
   scheduler receipt 尚未生成；预计余下两运行和收口约 2.5--4 小时。
+- 2026-08-05 05:15 CST 心跳：队列仍为 3/5 terminal。seed 43 位于
+  epoch 7 的 3,800/5,588，最佳 Macro-F1 保持 0.488005（epoch 3）；B403
+  已完成 epoch 2 的 5,588/5,588，正在固定 Dev 评估，且把最佳值提高到
+  0.491505（epoch 2）。scheduler、finalizer 和两个活动 PID 均存活；GPU0
+  利用率 63%，GPU1 在 B403 Dev 评估阶段为 53%，活动 stderr 全为 0。五份
+  config 哈希继续匹配，protected-name=0，H:/E: 尚余 408.1/244.5 GiB；
+  最终 gate 与 scheduler receipt 尚未生成，预计剩余运行和收口约 1.5--3 小时。
