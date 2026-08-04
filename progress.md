@@ -1654,3 +1654,12 @@
   `prta-cxr-sol-rerun-monitor`，绑定当前任务。它会持续检查队列、GPU、日志、
   checkpoint、哈希与最终 gate，只在五运行、收口回执、文档和本地 handoff
   全部终态完成或出现真实权限阻塞时停止；Internal-test/Gold 保持禁止读取。
+- 2026-08-05 00:11 CST 心跳：队列仍为 0/5 terminal；seed 17 已完成
+  epoch 3 的 5,588/5,588 batches，正在固定 Dev 评估，暂存最佳 Macro-F1
+  0.496082；seed 29 位于 epoch 3 的 4,300/5,588，暂存最佳 0.483786。
+  两个训练 PID、scheduler PID 28944 和 finalizer PID 35788 均存活；四个
+  best/last checkpoint 均为约 310.3 MB，所有 stdout/stderr 仍为 0 字节。
+  GPU0 因 seed-17 Dev 评估暂时 compute-idle，GPU1 利用率 92%；H:/E: 分别
+  尚余 409.3/244.5 GiB。活动 manifest、cache manifest、text cache、权重及
+  五份 config 哈希全部与准备回执一致；protected marker=0，最终 gate/queue
+  receipt 尚未生成。按当前速度估计完整五运行和收口尚需约 9--13 小时。

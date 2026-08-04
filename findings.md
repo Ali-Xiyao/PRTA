@@ -745,3 +745,6 @@
   0.496082，seed 29 暂存最佳 0.483786。但它们仍处于 epoch 2，且 seed 43、
   B402、B403 尚未运行；因此现在只能报告“早期改善”，不能宣称通过三种子
   均值、baseline gain 或完整 GO 门。
+- 00:11 CST 时两个暂存最佳值在完成/接近 epoch 3 后尚未进一步改变；这不构成
+  退化或停滞证据，因为冻结 early-stopping 的 minimum epochs 为 6，且 seed 17
+  正在正常 Dev 评估。必须继续等待其余 epochs、第三 seed 和两条时序基线。
