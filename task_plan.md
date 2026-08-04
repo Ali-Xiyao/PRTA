@@ -669,9 +669,10 @@ Status: pending
 
 ## Next Step
 
-Launch and monitor the frozen five-run queue on both GPUs. Preserve every
-checkpoint/log/failed run, use identity-preserving resume only if required, and
-do not open Internal-test or Gold when the Train/Dev queue finishes.
+Continue the active 30-minute heartbeat monitor until all five frozen runs and
+the final `development_gate.json` are terminal. Preserve every checkpoint/log/
+failed run, use identity-preserving resume only if required, and do not open
+Internal-test or Gold when the Train/Dev queue finishes.
 
 ## Terminal formal-program record - 2026-08-04
 

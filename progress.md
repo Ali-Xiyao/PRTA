@@ -1645,3 +1645,12 @@
 - 私有只读收口守护器 PID 35788 已启动；它只等待 scheduler 的完成回执，
   完成后调用冻结的 gate finalizer 写 `development_gate.json`，队列 HOLD 时
   fail-closed。它不会打开 Internal-test/Gold，也不会启动额外训练。
+- 23:38 CST 现场复核：队列仍为 0/5 terminal，首批 seed 17/29 均在 epoch 2
+  末段，分别为 5,500/5,588 与 4,700/5,588；当前最佳 Dev Macro-F1 已达到
+  0.496082 与 0.483786，均超过冻结的单 seed 0.48 下限。两卡显存各
+  4,479 MiB、利用率 83%/76%，所有训练 stderr 仍为 0 字节，H: 尚余
+  409.3 GiB。三 seed 均值 0.52 和相对最强时序基线 +0.03 尚不能判定。
+- 用户要求的 30 分钟心跳自动化已创建并启用：
+  `prta-cxr-sol-rerun-monitor`，绑定当前任务。它会持续检查队列、GPU、日志、
+  checkpoint、哈希与最终 gate，只在五运行、收口回执、文档和本地 handoff
+  全部终态完成或出现真实权限阻塞时停止；Internal-test/Gold 保持禁止读取。
