@@ -1698,3 +1698,10 @@
   活动训练 PID 均存活，GPU0/GPU1 利用率 88%/80%，stderr 全为 0；五份
   config 哈希继续匹配，protected-name=0，H:/E: 尚余 408.8/244.5 GiB。
   最终 gate 与 scheduler receipt 尚未生成，预计剩余四运行和收口约 5--8 小时。
+- 2026-08-05 02:42 CST 心跳：队列仍为 1/5 terminal。seed 29 位于
+  epoch 8 的 900/5,588，最佳 Macro-F1 保持 0.494122（epoch 5）；seed 43
+  位于 epoch 2 的 3,700/5,588，epoch 1 将最佳值由 0.466218 小幅提高到
+  0.468736。scheduler、finalizer 和两个训练 PID 均存活，GPU0/GPU1 利用率
+  86%/87%，显存各 4,479 MiB；活动 stderr 仍为 0，五份 config 哈希全匹配，
+  protected-name=0，H:/E: 尚余 408.8/244.5 GiB。最终 gate 与 scheduler
+  receipt 尚未生成，预计剩余运行和收口约需 4.5--7.5 小时。
