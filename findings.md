@@ -585,3 +585,15 @@
   or Inf row; the candidate CSV, 17,200-line case JSONL, and 17,200-record
   Markdown agree exactly. All private-output hashes match the receipt, input
   hashes are unchanged, and Internal-test/Gold read counts remain zero.
+# 2026-08-04 Tier-A GPT-5.6 Sol 全量盲审启动发现
+
+- 近似 TracIn 私有审计共识别 `3,866` 条 Tier A，且全部来自 Train；本轮不触碰 Dev、Internal-test 或 Gold。
+- Tier A 分层数量为：CheXpert Plus 2,243（Improved 278 / Worse 443 / New 378 / Resolved 34 / Stable 1,110），MIMIC-CXR-JPG 1,623（Improved 278 / Worse 338 / New 309 / Resolved 61 / Stable 637）。
+- 旧 `configs/labeling/sol_blind_review_v1.json` 是 150 条 pilot 的封闭配置，且 `full_execution_enabled=false`；它不能被静默扩展为本轮 3,866 条正式盲审权限，必须建立新的专用配置与回执。
+- 本机 `codex exec` 支持显式 `--model` 和 `-c key=value` 覆盖；本轮将固定请求 `gpt-5.6-sol` 与 `model_reasoning_effort=medium`，任何不可用情况都 fail-closed，不回退模型或推理强度。
+- 私有来源 `case_details.jsonl` 含 Luna 标签和完整内部字段；对 Sol 的批次载荷必须重新投影，仅保留批内匿名 alias、finding、PRIOR 报告、CURRENT 报告。Luna 标签只在所有 Sol 输出落盘后用于本地比较。
+- 全量 Sol 盲审完成 `3,866/3,866`，194/194 批均固定为 `gpt-5.6-sol`、`medium`；失败尝试 0，输出 ID、枚举、schema 与输入批次全部守恒。
+- Sol–Luna 全体精确一致 `3,002/3,866 = 77.65%`；Sol 输出 `Unclear` 294 条（7.60%）。排除 `Unclear` 后五类一致为 `3,002/3,572 = 84.04%`，Cohen's κ=`0.7720`；明确分歧 570 条，其中方向相反 39 条。
+- 来源间五类一致率几乎相同：CheXpert Plus `83.99%`（κ=`0.7615`），MIMIC-CXR-JPG `84.11%`（κ=`0.7831`），不支持“问题仅来自某一数据源”的解释。
+- 按 Luna 标签，五类一致率为 Stable `90.16%`、Improved `87.22%`、Worse `80.32%`、New `71.02%`、Resolved `67.78%`。这说明 Tier A 中时间边界类（尤其 New/Resolved）和 Worse 值得优先人工审查。
+- 旧 150 条 pilot 的 decisive 五类一致率为 `92.74%`、κ=`0.9084`，本轮 Tier A 分别低约 8.70 个百分点和 0.1364；但两批样本选择机制不同，因此只能说明 Tier A 富集了不一致/困难样本，不能单凭 Sol 认定 Luna 错标。

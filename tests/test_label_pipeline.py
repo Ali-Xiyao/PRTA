@@ -115,6 +115,17 @@ def test_luna_command_is_argument_list_not_shell(tmp_path):
     assert command[-1] == "-"
 
 
+def test_luna_command_pins_reasoning_effort(tmp_path):
+    command = luna_command(
+        model="gpt-5.6-sol",
+        schema=tmp_path / "schema.json",
+        output=tmp_path / "output.json",
+        reasoning_effort="medium",
+    )
+    assert "-c" in command
+    assert 'model_reasoning_effort="medium"' in command
+
+
 def test_stratified_pilot_is_deterministic_unique_patient_and_balanced():
     samples = []
     for patient in range(30):

@@ -205,6 +205,10 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--model", default="gpt-5.6-luna")
+    parser.add_argument(
+        "--reasoning-effort",
+        choices=("minimal", "low", "medium", "high", "xhigh", "max"),
+    )
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--timeout-seconds", type=int, default=600)
@@ -215,7 +219,10 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
     preview = luna_command(
-        model=args.model, schema=args.schema, output=Path("OUTPUT.json")
+        model=args.model,
+        schema=args.schema,
+        output=Path("OUTPUT.json"),
+        reasoning_effort=args.reasoning_effort,
     )
     if args.mode == "preflight":
         config = _load_config(args.config)
@@ -281,6 +288,11 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
         raise FormalExecutionBlocked(
             "requested model does not match the independent-label config"
         )
+    configured_effort = config.get("reasoning_effort")
+    if configured_effort is not None and args.reasoning_effort != configured_effort:
+        raise FormalExecutionBlocked(
+            "requested reasoning effort does not match the independent-label config"
+        )
     prompt_hash = sha256_file(args.prompt)
     schema_hash = sha256_file(args.schema)
     for batch_path, batch in zip(batch_paths, input_batches, strict=True):
@@ -332,7 +344,10 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
                     f".{output.name}.tmp.{os.getpid()}.{attempt}"
                 )
                 command = luna_command(
-                    model=args.model, schema=args.schema, output=temporary
+                    model=args.model,
+                    schema=args.schema,
+                    output=temporary,
+                    reasoning_effort=args.reasoning_effort,
                 )
                 try:
                     completed = subprocess.run(
@@ -421,6 +436,7 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
                 "input_sha256": batch["input_sha256"],
                 "output_sha256": sha256_file(output),
                 "model": args.model,
+                "reasoning_effort": args.reasoning_effort,
                 "rows": len(rows),
                 "reused_existing_output": reused,
                 "prior_failed_attempts": len(
@@ -438,6 +454,8 @@ def run_independent_ai_main(argv: list[str] | None = None) -> int:
         "prompt_sha256": prompt_hash,
         "schema_sha256": schema_hash,
         "config_authorized_scope": config["authorized_scope"],
+        "model": args.model,
+        "reasoning_effort": args.reasoning_effort,
         "batches": receipts,
     }
     write_json_atomic(args.receipt_output, result)

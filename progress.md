@@ -1457,3 +1457,23 @@
   matching output hashes, immutable input hashes, zero protected reads, and no
   training or optimizer step. Phases 42-44 are terminal complete; only the
   final repository verification and local-bare handoff commit remain.
+- On 2026-08-04 the user authorized a full blind Sol review of exactly the
+  3,866 Tier-A candidates, preferring `gpt-5.6-sol` with medium reasoning. New
+  Phases 45-48 begin with a private report-only projection and exact-ID canary;
+  Luna labels and all TracIn/model-risk fields must remain absent from the Sol
+  payload. No relabeling, retraining, Internal-test access, or Gold access is
+  authorized by this comparison.
+# 2026-08-04 Tier-A GPT-5.6 Sol 全量盲审
+
+- 已确认本轮审计全集为 Train Tier A `3,866` 条；Internal-test/Gold 保持零读取边界。
+- 已确定旧 150 条 Sol pilot 配置不可作为本轮权限依据；正在建立新的全量盲审配置、私有匿名名册、严格输出 schema、断点续跑和 Luna 对比流程。
+- 模型策略固定为 `gpt-5.6-sol`、`medium`；先做小批 canary 验证模型身份、字段最小化、输出枚举和 alias 数量守恒，通过后再启动全量并发。
+- 私有 Tier-A 名册已生成并通过数量守恒：`3,866/3,866`，candidate manifest SHA-256 为 `62664433924c7770dc192505c0f802b5187dd767333ec24644150890e009371f`；两来源×五标签分层数量与 TracIn 回执完全一致。
+- 首次批次生成被仓库既有正式运行环境门禁拦截（未发生外部调用）；用户本轮已经明确授权，下一步将在单条命令进程内设置专用授权环境变量后重试，保持配置与数据不变。
+- 已生成 `194` 个匿名批次（batch size 20，末批 6 条）；批次回执确认外发项仅含 `sample_id` 短 alias、finding、prior_report、current_report，Luna 标签、患者标识和 alias map 均未外发。
+- `batch_00000` canary 已一次成功：20/20 行、34.792 秒、`gpt-5.6-sol`、`medium`，schema/alias/枚举校验全部通过，无失败尝试、无模型回退。现在可以按不重叠批次分片启动全量并发。
+- 已启动 15 个互不重叠的正式分片覆盖全部 194 批；首轮运行监控显示 15/15 分片存活、58/194 批（1,160 条）完成、错误日志 0，未发生模型或推理强度降级。
+- 全量中段监控：134/194 批、2,680/3,866 条完成；15/15 分片仍存活，stderr 非空文件为 0。Luna 标签尚未用于比较，确保剩余 Sol 调用继续保持盲态。
+- 全量完成：194/194 批、3,866/3,866 条；15 个分片回执齐全，stderr 0，失败尝试 0。统一复核回执确认所有批次均为 `gpt-5.6-sol`、`medium`，且全部既有输出哈希/ID/schema 通过。
+- 已在全部 Sol 输出封存后完成 Luna 比较：全体一致 77.65%，Sol Unclear 7.60%，decisive 五类一致 84.04%，κ=0.7720；570 条明确分歧、39 条方向相反。私有全量 CSV/JSONL、聚合 JSON、内部 Markdown 与哈希回执已生成。
+- 已完成代码收口：完成态配置锁死再次执行，Git 仅记录聚合计数和私有文件哈希；`ruff`、`compileall` 与全仓 `pytest` 均通过（125 passed）。输入路径门禁显式拒绝 Internal-test/Gold。

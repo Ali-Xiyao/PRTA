@@ -123,6 +123,12 @@ def test_completed_sol_review_is_held_against_rerun():
         _require_execution_enabled(config, scope="pilot", row_count=150)
 
 
+def test_completed_tier_a_sol_review_is_held_against_rerun():
+    config = Path("configs/labeling/tier_a_sol_blind_v1.json")
+    with pytest.raises(FormalExecutionBlocked, match="full execution"):
+        _require_execution_enabled(config, scope="full", row_count=3866)
+
+
 def test_completed_luna_primary_full_execution_is_held_against_rerun():
     config = Path("configs/labeling/luna_primary_full_v1.json")
     with pytest.raises(FormalExecutionBlocked, match="full execution"):

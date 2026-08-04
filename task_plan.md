@@ -418,14 +418,52 @@ Status: complete
 - Run tests, Ruff, compile checks, privacy scans, commit, push only to the
   local bare remote, and verify local/remote equality.
 
+### Phase 45 - Tier-A Sol blind-review contract and roster
+Status: completed
+
+- Project exactly the 3,866 Tier-A candidates into a new private roster whose
+  external payload contains only a batch-local alias, finding, PRIOR report,
+  and CURRENT report.
+- Never expose Luna labels, TracIn scores, risk reasons, split/source/patient
+  identifiers, dates, image paths, rule labels, or the alias map to Sol.
+- Pin `gpt-5.6-sol` with medium reasoning when the local Codex surface supports
+  it; fail closed rather than silently falling back to another model/effort.
+
+### Phase 46 - Canary, schema validation, and safe concurrency
+Status: completed
+
+- Run a small exact-ID canary, validate five-class-plus-`Unclear` outputs, and
+  preserve every raw attempt and timing receipt.
+- Select bounded concurrency only after the canary proves model availability,
+  blind payload integrity, deterministic local remapping, and resume safety.
+
+### Phase 47 - Full 3,866-row Sol blind review
+Status: completed
+
+- Complete every frozen Tier-A batch with one structurally valid Sol output;
+  no manual repair, Luna hint, or rule fallback is permitted.
+- Merge results locally and verify exact roster conservation, unique IDs,
+  model/effort identity, batch hashes, and zero protected-outcome access.
+
+### Phase 48 - Luna comparison, diagnosis, and local-only handoff
+Status: completed
+
+- Compare Sol against the pre-existing Luna labels overall and by split,
+  source, finding, Luna label, and especially `Worse`; report confusion,
+  agreement, kappa, and `Unclear` separately.
+- Treat disagreement as evidence of possible labeling ambiguity/error, not
+  proof that Luna or Sol is clinically correct; retain human review as the
+  correctness gate.
+- Keep row-level reports/results private, track only aggregate counts/hashes,
+  run repository checks, and push only to the local bare remote.
+
 ## Next Step
 
-Terminal complete: the full Train/Dev-only approximate-TracIn audit completed
-with exact row conservation, all Tier-A/B/C candidates listed without Top-K
-truncation, zero protected-outcome reads, immutable inputs, and a verified
-private receipt. No relabeling, deletion, repartitioning, retraining, or
-Internal-test/Gold access is authorized by this audit. The formal program
-remains terminal at `STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`.
+Keep the 3,866-row Sol and Luna outputs immutable. If label correctness must be
+resolved, build a separate physician adjudication queue from the 294 Sol
+`Unclear`, 570 decisive disagreements, and especially the 39 opposite-direction
+cases. Do not change labels, splits, or training data from this automated
+agreement audit alone; Internal-test/Gold remain entirely out of scope.
 
 ## Terminal formal-program record - 2026-08-04
 

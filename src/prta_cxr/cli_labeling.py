@@ -178,17 +178,30 @@ def prepare_luna_batches_main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def luna_command(*, model: str, schema: Path, output: Path) -> list[str]:
+def luna_command(
+    *,
+    model: str,
+    schema: Path,
+    output: Path,
+    reasoning_effort: str | None = None,
+) -> list[str]:
     executable = (
         shutil.which("codex.cmd") if os.name == "nt" else shutil.which("codex")
     )
     if not executable:
         raise RuntimeError("Codex CLI executable was not found")
-    return [
+    command = [
         executable,
         "exec",
         "-m",
         model,
+    ]
+    if reasoning_effort is not None:
+        command.extend(
+            ["-c", f'model_reasoning_effort="{reasoning_effort}"']
+        )
+    command.extend(
+        [
         "--ephemeral",
         "--sandbox",
         "read-only",
@@ -199,7 +212,9 @@ def luna_command(*, model: str, schema: Path, output: Path) -> list[str]:
         "-o",
         str(output),
         "-",
-    ]
+        ]
+    )
+    return command
 
 
 def prepare_luna_pilot_main(argv: list[str] | None = None) -> int:
