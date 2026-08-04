@@ -761,3 +761,6 @@
   的 Macro-F1 gap 为 +0.142636，且 protected outcomes 零读取。但这仍只是
   五运行中的第一条；三种子均值、seed-17 baseline gain 和完整 GO/HOLD 尚不能
   判定。与此同时 seed 29 的 epoch-5 最佳值已提高到 0.494122。
+- seed 43 的首轮 Dev Macro-F1 为 0.466218，低于单种子 0.48 门槛，但它仅完成
+  epoch 0 且仍在 epoch 1 训练；由于冻结 minimum epochs=6，这只是初始轨迹，
+  不能提前据此判定 seed 43 失败或改变配置。seed 29 的最佳值仍为 0.494122。

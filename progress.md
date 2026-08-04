@@ -1691,3 +1691,10 @@
   87%/86%，stderr 全部为 0，五份 config 哈希全匹配，protected-name=0，
   H:/E: 仍余 409.3/244.5 GiB。最终 gate/queue receipt 尚未生成；按当前并行
   接力速度估计剩余四运行与收口约需 5--8 小时。
+- 2026-08-05 02:12 CST 心跳：队列保持 1/5 terminal。seed 29 已进入
+  epoch 7 的 2,200/5,588，最佳 Macro-F1 保持 0.494122（epoch 5），最近
+  epoch-6 值为 0.484468；seed 43 已完成首轮 Dev，epoch-0 Macro-F1 为
+  0.466218，并在 epoch 1 完成 3,700/5,588。scheduler、finalizer 与两个
+  活动训练 PID 均存活，GPU0/GPU1 利用率 88%/80%，stderr 全为 0；五份
+  config 哈希继续匹配，protected-name=0，H:/E: 尚余 408.8/244.5 GiB。
+  最终 gate 与 scheduler receipt 尚未生成，预计剩余四运行和收口约 5--8 小时。
