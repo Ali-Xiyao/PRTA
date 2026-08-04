@@ -141,6 +141,7 @@ def _tier_row(index: int) -> dict[str, object]:
     for seed in (17, 29, 43):
         row[f"seed{seed}_negative_influence_magnitude"] = float(index)
         row[f"seed{seed}_self_influence"] = float(index)
+        row[f"seed{seed}_adapter_negative_percentile_within_source_label"] = index / 99
     return row
 
 

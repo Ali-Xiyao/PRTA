@@ -286,26 +286,26 @@ def tier_train_rows(rows: list[dict[str, Any]]) -> None:
                 )
     nll_percentiles = grouped_percentiles(rows, "mean_nll")
     for index, row in enumerate(rows):
-        negative_hits = sum(
+        negative_percentiles = [
             float(
                 row[
                     f"seed{seed}_negative_influence_magnitude_"
                     "percentile_within_source_label"
                 ]
             )
-            >= 0.95
             for seed in SEEDS
-        )
-        self_top10 = sum(
+        ]
+        self_percentiles = [
             float(row[f"seed{seed}_self_influence_percentile_within_source_label"])
-            >= 0.90
             for seed in SEEDS
-        )
-        self_top5 = sum(
-            float(row[f"seed{seed}_self_influence_percentile_within_source_label"])
-            >= 0.95
+        ]
+        adapter_percentiles = [
+            float(row[f"seed{seed}_adapter_negative_percentile_within_source_label"])
             for seed in SEEDS
-        )
+        ]
+        negative_hits = sum(value >= 0.95 for value in negative_percentiles)
+        self_top10 = sum(value >= 0.90 for value in self_percentiles)
+        self_top5 = sum(value >= 0.95 for value in self_percentiles)
         reasons = structural_reasons(row)
         repeated_error = int(row["wrong_seed_count"]) >= 2
         high_loss = nll_percentiles[index] >= 0.95
@@ -337,6 +337,24 @@ def tier_train_rows(rows: list[dict[str, Any]]) -> None:
         row["negative_influence_seed_hits_top5"] = negative_hits
         row["self_influence_seed_hits_top10"] = self_top10
         row["self_influence_seed_hits_top5"] = self_top5
+        row["negative_influence_median_percentile_three_seed"] = float(
+            np.median(negative_percentiles)
+        )
+        row["negative_influence_percentile_range_three_seed"] = float(
+            np.ptp(negative_percentiles)
+        )
+        row["self_influence_median_percentile_three_seed"] = float(
+            np.median(self_percentiles)
+        )
+        row["self_influence_percentile_range_three_seed"] = float(
+            np.ptp(self_percentiles)
+        )
+        row["adapter_negative_median_percentile_three_seed"] = float(
+            np.median(adapter_percentiles)
+        )
+        row["adapter_negative_percentile_range_three_seed"] = float(
+            np.ptp(adapter_percentiles)
+        )
         row["mean_nll_percentile_within_source_label"] = float(nll_percentiles[index])
         row["risk_tier"] = tier
         row["selection_reasons"] = sorted(set(reasons))

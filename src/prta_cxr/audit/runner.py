@@ -622,6 +622,33 @@ def _write_detailed_markdown(path: Path, rows: Sequence[Mapping[str, Any]]) -> N
                         f"self={_md(row.get(f'seed{seed}_self_influence'))}，"
                         f"adapter={_md(row.get(f'seed{seed}_adapter_signed_influence'))}\n"
                     )
+                if row["split"] == "train":
+                    negative_median = _md(
+                        row.get("negative_influence_median_percentile_three_seed")
+                    )
+                    negative_range = _md(
+                        row.get("negative_influence_percentile_range_three_seed")
+                    )
+                    self_median = _md(
+                        row.get("self_influence_median_percentile_three_seed")
+                    )
+                    self_range = _md(
+                        row.get("self_influence_percentile_range_three_seed")
+                    )
+                    adapter_median = _md(
+                        row.get("adapter_negative_median_percentile_three_seed")
+                    )
+                    adapter_range = _md(
+                        row.get("adapter_negative_percentile_range_three_seed")
+                    )
+                    handle.write(
+                        "- Three-seed aggregate: negative percentile median/range="
+                        f"{negative_median} / {negative_range}; "
+                        "self percentile median/range="
+                        f"{self_median} / {self_range}; "
+                        "adapter percentile median/range="
+                        f"{adapter_median} / {adapter_range}\n"
+                    )
                 handle.write(
                     f"\n**PRIOR report**\n\n{_md(row.get('prior_report'))}\n\n"
                 )
@@ -681,6 +708,12 @@ def _score_fields(split: str) -> list[str]:
                 "negative_influence_seed_hits_top5",
                 "self_influence_seed_hits_top10",
                 "self_influence_seed_hits_top5",
+                "negative_influence_median_percentile_three_seed",
+                "negative_influence_percentile_range_three_seed",
+                "self_influence_median_percentile_three_seed",
+                "self_influence_percentile_range_three_seed",
+                "adapter_negative_median_percentile_three_seed",
+                "adapter_negative_percentile_range_three_seed",
                 "adapter_confirmation_unstable",
             ]
         )
