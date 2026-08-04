@@ -591,7 +591,7 @@ Status: completed
   coverage, immutable inputs, and zero training or label mutation.
 
 ### Phase 63 - Git-safe summary, verification, and local-only handoff
-Status: in progress
+Status: completed
 
 - Track only code, aggregate counts, private hashes, and limitations; run the
   repository gates and privacy scan.
@@ -600,8 +600,9 @@ Status: in progress
 
 ## Next Step
 
-Freeze the Git-safe aggregate summary, run full repository/privacy gates, and
-push only the reviewed code and non-identifying hashes to the local bare remote.
+No further action is authorized in this read-only Tier-B/C review. The private
+results are frozen and the Git-safe code/summary is locally handed off; any
+label replacement or retraining requires a separate explicit authorization.
 
 ## Terminal formal-program record - 2026-08-04
 
