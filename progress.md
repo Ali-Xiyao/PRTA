@@ -1680,3 +1680,14 @@
   checkpoint 均存在且 last checkpoint 持续更新。五份冻结 config 哈希全部
   匹配，protected-name 扫描为 0，H:/E: 仍余 409.3/244.5 GiB；最终 gate 与
   scheduler receipt 尚未生成。预计完整五运行与收口仍需约 8--12 小时。
+- 2026-08-05 01:42 CST 心跳：队列首次达到 1/5 terminal。`SOLR1-PRTA-S17`
+  已按冻结 early-stopping 在 6 epochs 后生成 `PASS_TRAINING_FINISHED` 回执，
+  最佳 Dev Macro-F1 为 0.496082（epoch 1），best/last checkpoint 与完整 history
+  均已封存；回执明确记录 `internal_test_opened=false`、
+  `protected_outcomes_opened=false`，输入哈希与冻结值一致。seed 29 已进入
+  epoch 6 的 2,700/5,588，且 epoch 5 将最佳值提高到 0.494122；scheduler
+  自动在释放的 GPU0 上启动 seed 43，当前为 epoch 0 的 3,700/5,588。
+  scheduler、finalizer 和两个活动训练 PID 均存活，GPU0/GPU1 利用率
+  87%/86%，stderr 全部为 0，五份 config 哈希全匹配，protected-name=0，
+  H:/E: 仍余 409.3/244.5 GiB。最终 gate/queue receipt 尚未生成；按当前并行
+  接力速度估计剩余四运行与收口约需 5--8 小时。

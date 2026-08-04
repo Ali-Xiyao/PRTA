@@ -756,3 +756,8 @@
   0.467551，均未超过各自暂存最佳；这只是正常的逐 epoch 波动，两条轨迹仍在
   epoch 5 健康计算，且冻结 minimum epochs=6 尚未达到，不能据此提前停止或
   调参。最终判断仍必须等待第三 seed、两条 baseline 与统一 gate。
+- seed 17 已形成首个正式终态证据：6 epochs 后 early-stop PASS，最佳 Dev
+  Macro-F1 0.496082，超过单种子 0.48 下限，真实先验相对 matched-wrong-prior
+  的 Macro-F1 gap 为 +0.142636，且 protected outcomes 零读取。但这仍只是
+  五运行中的第一条；三种子均值、seed-17 baseline gain 和完整 GO/HOLD 尚不能
+  判定。与此同时 seed 29 的 epoch-5 最佳值已提高到 0.494122。
