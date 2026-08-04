@@ -1672,3 +1672,11 @@
   与 queue 冻结值一致，运行目录 protected-name 扫描为 0，最终 gate 与
   scheduler receipt 尚未生成。H:/E: 分别尚余约 409.3/244.5 GiB；按当前
   速度估计完整五运行与收口仍需约 8.5--12.5 小时。
+- 2026-08-05 01:12 CST 心跳：队列仍为 0/5 terminal；seed 17 与 seed 29
+  均进入 epoch 5，分别完成 4,300/5,588 与 3,300/5,588 batches，暂存最佳
+  Macro-F1 仍为 0.496082（epoch 1）与 0.486053（epoch 3）。两个训练 PID、
+  scheduler PID 28944 和 finalizer PID 35788 均存活，GPU0/GPU1 利用率
+  95%/92%，显存各 4,479 MiB；stdout/stderr 仍全部为 0 字节，四个 best/last
+  checkpoint 均存在且 last checkpoint 持续更新。五份冻结 config 哈希全部
+  匹配，protected-name 扫描为 0，H:/E: 仍余 409.3/244.5 GiB；最终 gate 与
+  scheduler receipt 尚未生成。预计完整五运行与收口仍需约 8--12 小时。
