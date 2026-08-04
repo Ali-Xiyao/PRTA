@@ -610,6 +610,11 @@ def _write_detailed_markdown(path: Path, rows: Sequence[Mapping[str, Any]]) -> N
                     f"{_md(row.get('interval_days'))} days；"
                     f"{_md(row.get('interval_basis'))}\n"
                 )
+                handle.write(
+                    "- 患者内部顺序："
+                    f"`{_md(row.get('prior_study_id'))}` (PRIOR) → "
+                    f"`{_md(row.get('current_study_id'))}` (CURRENT)\n"
+                )
                 handle.write(f"- 入选原因：{_md(row.get('selection_reasons', []))}\n")
                 for seed in SEEDS:
                     prediction = _md(row.get(f"seed{seed}_prediction"))
@@ -861,6 +866,10 @@ def assemble_outputs(
     for row in flagged:
         details = original[str(row["sample_id"])] | dict(row)
         details["audit_claim"] = "high_risk_candidate_not_proven_error"
+        details["patient_internal_order"] = {
+            "prior": details.get("prior_study_id"),
+            "current": details.get("current_study_id"),
+        }
         case_rows.append(details)
     _write_jsonl(output / "case_details.jsonl", case_rows)
     _write_detailed_markdown(
