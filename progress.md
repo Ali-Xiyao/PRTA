@@ -13,6 +13,7 @@
 - Independent audit passed after rebuilding the target set from source artifacts. Dev and Internal-test are byte-identical to the previous active Sol version, physician Gold is unchanged, training remains false, and no replacement-version metric was computed.
 - The first full verification passed Ruff, all 139 pytest cases, compileall, and `git diff --check`; its final privacy grep returned nonzero only because the long-standing training manual documents the input schema names `patient_id, study_id, image_path`. This is a schema description, not row-level data. The privacy scan was narrowed to the newly added config/status surfaces and added diff content instead of weakening any artifact boundary.
 - Refined privacy scan passed with zero row-level fields in the new Git-safe config/status surfaces; current PRTA training process count is 0. Final runtime receipt and independent audit both PASS with Train 89,406, Dev 13,420, Train+Dev 102,826, Internal-test 13,588, and physician Gold 250.
+- Implementation, config, tests, and Git-safe documentation were committed as `f1ded683a05608a8552dbef90981a10a9036715c` and pushed only to local bare `main`; local worktree HEAD and local bare `main` matched exactly after the push. GitHub origin was not accessed or pushed.
 
 ## 2026-08-02 - Luna-primary full-run concurrency qualification
 
