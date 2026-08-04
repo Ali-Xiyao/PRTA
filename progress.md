@@ -1436,3 +1436,24 @@
   `last.pt`; Seed 29 reached 7,800/11,384 batches of the final adapter-minus
   pass for `best.pt`. All stderr logs remain empty, private progress receipts
   report `training_started=false`, and protected-outcome reads remain zero.
+- At 16:09 CST both initial GPU lanes remained healthy. Seed 17 and Seed 29
+  each completed all 91,065 rows for prediction and `best.pt`; their `last.pt`
+  lanes reached Adapter-plus 1,900/11,384 and exact last-layer 7,300/11,384,
+  respectively. Both GPUs were actively computing, all four audit stderr logs
+  remained empty, the keeper and both children were alive, and every live
+  receipt continued to report zero protected reads and no training.
+- At 16:47 CST Seed 17 and Seed 29 both completed their independent
+  `best.pt`/`last.pt` trajectories. Each final NPZ contains exactly 91,065 rows
+  for all ten arrays with no NaN/Inf; positive influence is nonnegative,
+  negative influence is nonpositive, Self-influence is nonnegative, and the
+  maximum `signed - (positive + negative)` error is 7.63e-6 (Seed 17) and
+  7.15e-6 (Seed 29). The keeper then launched only Seed 43 on GPU0; zero
+  protected reads and no-training receipts remain intact.
+- At 17:59 CST Seed 43 and the full private assembly completed. The final
+  receipt reports 91,065 Train, 16,666 Dev, 300 probes, and 17,200 complete
+  candidates (Tier A 3,866; Tier B 2,921; Tier C 10,413). Independent streaming
+  validation confirmed unique IDs, zero missing/duplicate/wrong-split rows,
+  finite numeric fields, 17,200 matching candidate/JSONL/Markdown records,
+  matching output hashes, immutable input hashes, zero protected reads, and no
+  training or optimizer step. Phases 42-44 are terminal complete; only the
+  final repository verification and local-bare handoff commit remain.

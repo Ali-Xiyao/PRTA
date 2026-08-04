@@ -573,3 +573,15 @@
   exactly afterward, and matched the direct selected-parameter gradient dot
   product on a synthetic fixture. Captum remains the primary exact
   last-layer result; the adapter lane is explicitly a stability confirmation.
+- The full read-only approximate-TracIn audit completed with exact coverage of
+  91,065 Train and 16,666 Dev rows. It listed all 17,200 non-Context candidates
+  without truncation: Tier A 3,866, Tier B 2,921, and Tier C 10,413; 9,847 are
+  Train and 7,353 are Dev.
+- Median last-layer versus head-plus-four-adapter Top-5 overlap was 0.639458,
+  0.712349, and 0.751785 for seeds 17, 29, and 43. All exceed the preregistered
+  0.60 global instability threshold, but the results remain high-risk
+  candidates rather than proven mislabeled or harmful data.
+- Independent final validation found no duplicate, missing, wrong-split, NaN,
+  or Inf row; the candidate CSV, 17,200-line case JSONL, and 17,200-record
+  Markdown agree exactly. All private-output hashes match the receipt, input
+  hashes are unchanged, and Internal-test/Gold read counts remain zero.

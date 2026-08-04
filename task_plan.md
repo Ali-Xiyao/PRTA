@@ -392,7 +392,7 @@ Status: complete
   cross-seed checkpoints as one training trajectory.
 
 ### Phase 42 - Full Train/Dev approximate-TracIn implementation
-Status: in progress
+Status: complete
 
 - Infer all 16,666 Dev rows with the three frozen best checkpoints and select
   the deterministic 300-row source-by-label probe roster.
@@ -402,7 +402,7 @@ Status: in progress
   flagged candidate set; label unstable evidence rather than forcing a claim.
 
 ### Phase 43 - Private audit package and independent validation
-Status: pending
+Status: complete
 
 - Write complete Train/Dev score tables, every Tier-A/B/C candidate, the
   private Markdown case document, full case JSONL, aggregate summary, and an
@@ -411,7 +411,7 @@ Status: pending
   synthetic fixtures, and zero protected-outcome reads.
 
 ### Phase 44 - Documentation, verification, and local-only handoff
-Status: pending
+Status: complete
 
 - Track only code, tests, aggregate non-identifying counts, output hashes, and
   the explicit approximate-TracIn limitations.
@@ -420,11 +420,12 @@ Status: pending
 
 ## Next Step
 
-Run the three frozen-best Dev inference lanes, freeze the exact 300-probe
-roster, and then execute each seed's two-checkpoint full-Train scoring lane.
-The authorized formal program remains terminal at
-`STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`; this independent audit must never
-open Internal-test or Gold.
+Terminal complete: the full Train/Dev-only approximate-TracIn audit completed
+with exact row conservation, all Tier-A/B/C candidates listed without Top-K
+truncation, zero protected-outcome reads, immutable inputs, and a verified
+private receipt. No relabeling, deletion, repartitioning, retraining, or
+Internal-test/Gold access is authorized by this audit. The formal program
+remains terminal at `STOP_FORMAL_PROGRAM_AT_DEVELOPMENT_GATE`.
 
 ## Terminal formal-program record - 2026-08-04
 
