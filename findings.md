@@ -840,3 +840,4 @@
 - 队列使用双 lane 串行接续：前两条 PRTA 完成后自动安排 seed 43 和 B402/B403，不改变数据、种子、方法或预算。最终门结论必须等待五条终态及统一 finalizer。
 - 首个正式终态为 Seed 17：best Dev Macro-F1 0.528364，高于单 seed 0.48 与三-seed均值目标 0.52 的单臂参照，但是否满足三-seed均值及相对最强 B402/B403 的 +0.03 增益仍未知，不能据单臂结果宣布 development GO。
 - B402 的首轮 best 已达 0.524021847，而 Seed-17 PRTA 正式 best 为 0.528363751，当前增益仅 +0.004341904。由于 baseline 的最终 best 不会低于其首轮 best，冻结的 `seed17_gain >= 0.03` 条件已不可逆地无法满足；即使三-seed均值随后通过，统一 development gate 也不能为 GO。仍需按授权跑完 Seed 43、B402、B403 并由 finalizer 正式闭合，不能据此提前停队列或改变阈值。
+- B403 在 epoch 2 将 best 提高到 0.526093960，超过已终态 B402 的 0.524021847，暂为最强 temporal baseline；相对 Seed-17 PRTA 0.528363751 的增益仅 +0.002269791。该变化强化而不改变已经不可逆的 baseline-gain 失败结论。
