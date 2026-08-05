@@ -800,3 +800,17 @@
   New 14,534 / Resolved 1,848；Dev 为 6,029 / 1,551 / 1,875 / 1,469 / 277。
   五类在 Train、Dev、Internal-test 和 Gold 中均仍有支持，缓存缺失键为 0，故
   风险过滤没有造成类别消失或需要重新划分。
+- Top-10% 排除诊断的 retained-Dev 最佳 Macro-F1 为 0.535971，较前一
+  Sol-authoritative seed-17 原 Dev 的 0.496082 高 0.039888；Accuracy 从
+  0.583830 表面升至 0.616552，balanced accuracy 从 0.488578 升至 0.547278，
+  min recall 从 0.389189 升至 0.466304，ODER 从 0.035917 降至 0.005357。
+  这些变化同时混合了 Train 删除 9,004 条和 Dev 删除 2,219 条的作用，不能归因
+  为单纯标签清洗或模型能力提升，也不能与原 Dev 作正式显著性比较。
+- retained Internal-test 的 Accuracy / Macro-F1 / min recall / ODER 为
+  0.580150 / 0.494916 / 0.437426 / 0.036917；retained physician Gold 为
+  0.531429 / 0.539749 / 0.451613 / 0.062857。Gold 仅剩 175 条且已按风险排序
+  删除 75 条，方差和选择偏倚都很大；这些数值只适合作为敏感性分析，不是新的
+  临床 Gold 主结果。
+- 终态回执和独立复算确认 Dev/Internal-test/Gold 预测行数分别为
+  11,201/13,219/175，checkpoint、准备回执、训练回执与三份预测文件的 SHA-256
+  全部一致。一次性评估守护器和 evaluator 均正常退出，未发生重复受保护推理。

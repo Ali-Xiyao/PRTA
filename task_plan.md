@@ -669,12 +669,10 @@ Status: complete
 
 ## Next Step
 
-Execute the newly authorized post-hoc Top-10%-risk exclusion diagnostic on
-GPU0. Preserve original split membership; mark the nested Top 3%, 3--5%, and
-5--10% bands as `SUSPICIOUS_PENDING_REVIEW`, exclude their union from this
-diagnostic version, train one PRTA seed-17 run, then evaluate the retained Dev,
-Internal-test, and Gold cohorts. Keep this outcome-adaptive diagnostic separate
-from the frozen formal gate and do not overwrite any prior artifact.
+The post-hoc Top-10%-risk exclusion diagnostic is terminally complete. Keep its
+artifacts as a selection-biased sensitivity analysis only; do not replace the
+frozen formal HOLD result, tune from the retained protected cohorts, or launch
+additional runs without a new explicit authorization.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -695,7 +693,7 @@ Status: complete
   overlap, immutable input hashes, and GPU0 readiness before launch.
 
 ### Phase 73 - Single diagnostic training and retained-cohort inference
-Status: in progress
+Status: complete
 
 - Train only the new retained Train split on GPU0 with Dev-only early stopping.
 - After the checkpoint is final, perform one read-only inference pass on the
@@ -703,12 +701,26 @@ Status: in progress
   prediction hashes outside Git.
 
 ### Phase 74 - Diagnostic comparison and local-only handoff
-Status: pending
+Status: complete
 
 - Compare retained-cohort metrics with the prior aggregate results while
   clearly labelling selection bias; do not claim a new unbiased test result.
 - Validate receipts, update planning files, and push only Git-safe code and
   aggregate summaries to the local bare remote.
+
+### Top-10%-risk exclusion terminal record - 2026-08-05
+
+- `RISKF10-PRTA-S17` completed 9 epochs with frozen early stopping; best retained
+  Dev Macro-F1 was 0.535971 at epoch 4.
+- The guarded one-time retained-cohort evaluation completed with exact row
+  counts Dev 11,201 / Internal-test 13,219 / Gold 175 and status
+  `PASS_POSTHOC_TOP10_EXCLUSION_DIAGNOSTIC`.
+- Ordinary Accuracy / Macro-F1 were 0.616552 / 0.535971 on retained Dev,
+  0.580150 / 0.494916 on retained Internal-test, and 0.531429 / 0.539749 on
+  retained Gold.
+- All checkpoint, preparation, training-receipt, and prediction hashes matched;
+  Ruff, 147 tests, and `git diff --check` passed. These metrics remain explicitly
+  outcome-adaptive and do not replace an unbiased formal result.
 
 ## Terminal formal-program record - 2026-08-04
 

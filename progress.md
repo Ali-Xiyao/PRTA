@@ -1764,3 +1764,17 @@
   owner 以相同 ID、数据、seed、方法和预算重新启动成功：训练 PID 42532，
   epoch 0 已完成 200/5,026 batches，GPU0 利用率 55%、显存 4,479 MiB、stderr 0。
   只读收口守护 PID 23588 将等待 PASS 训练回执后才评估保留三队列。
+- 2026-08-05 16:41 CST 训练终态 PASS：`RISKF10-PRTA-S17` 完成 9 epochs 后
+  early-stop，最佳 retained-Dev Macro-F1 为 0.535971（epoch 4），训练 stderr
+  为空，冻结 config 与全部输入哈希匹配。相对前一 Sol-authoritative seed-17
+  的原 Dev 0.496082，表面增加 0.039888；但当前 Dev 已按同一后验风险规则排除
+  2,219 条，因此该差值不是无偏、同分布的模型增益。
+- 16:51 CST 守护器完成且未重复启动评估：Dev 11,201、Internal-test 13,219、
+  Gold 175 条预测均一次性落盘，回执为
+  `PASS_POSTHOC_TOP10_EXCLUSION_DIAGNOSTIC`。Accuracy / Macro-F1 分别为
+  Dev 0.616552 / 0.535971、Internal-test 0.580150 / 0.494916、Gold
+  0.531429 / 0.539749；三队列 ODER 分别为 0.005357 / 0.036917 / 0.062857。
+- 终态验收通过：三份预测行数精确守恒，checkpoint、preparation receipt、
+  training receipt 与三份 prediction SHA-256 全部匹配，失败 argparse 日志仍原样
+  保留；Ruff、全量 pytest（147 passed）和 `git diff --check` 均通过。GPU0/GPU1
+  已释放，Phase 71--74 complete；该诊断不覆盖既有正式 HOLD 结论。
