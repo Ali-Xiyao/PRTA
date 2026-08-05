@@ -669,9 +669,10 @@ Status: complete
 
 ## Next Step
 
-Freeze and validate the physician-cleaned five-run Train/Dev queue with PRTA
-seeds 17/28/43 and equal-budget B402/B403 seed-17 baselines, commit the launch
-surface, then start the queue on both GPUs without opening Internal-test/Gold.
+Monitor the launched physician-cleaned five-run Train/Dev queue without tuning:
+PRTA seeds 17/28/43 and equal-budget B402/B403 seed-17 baselines. Finalize the
+unchanged development gate only after all five runs are terminal; keep
+Internal-test/Gold closed.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -763,7 +764,7 @@ Status: complete
   was verified equal to local bare `main`; no cloud push occurred.
 
 ### Phase 79 - Physician-cleaned formal development authority
-Status: in progress
+Status: complete
 
 - Bind the user's explicit launch authority to the frozen physician-cleaned
   Train 80,402 / Dev 11,201 manifests and freeze receipt.
@@ -774,21 +775,29 @@ Status: in progress
   is terminal.
 
 ### Phase 80 - Cleaned five-run preparation and independent preflight
-Status: pending
+Status: complete
 
 - Materialize new immutable configs and queue identities for PRTA seeds
   17/28/43 plus B402/B403 seed 17 under a new runtime root.
 - Validate exact cleaned-manifest path/hash, zero excluded-ID inclusion, cache
   coverage, five-label support, patient disjointness, frozen code/config hashes,
   both GPUs, disk, and no conflicting process before launch.
+- Preparation receipt passed with Train 80,402 / Dev 11,201, zero missing cache
+  keys, zero patient overlap, protected read count zero, and frozen PRTA seeds
+  17/28/43. Queue SHA-256 is
+  `7efeae134f72ed4a3b016232a74b2386ff97676c69263c54ad88dea3f900a712`.
 
 ### Phase 81 - Dual-GPU formal Train/Dev execution
-Status: pending
+Status: in progress
 
 - Run the five frozen jobs with the existing queue scheduler on cuda:0/cuda:1,
   preserving failed logs and identity-safe resume semantics.
 - Monitor queue, registry, progress receipts, checkpoints, stderr, GPUs, disk,
   and input hashes; never tune from intermediate Dev outcomes.
+- Scheduler PID 19536 launched `CLN1-PRTA-S17` on cuda:0 (PID 10500) and
+  `CLN1-PRTA-S28` on cuda:1 (PID 5448); both training progress receipts are
+  RUNNING with 5,026 steps/epoch and empty stderr. Seed 43 and both baselines
+  remain PLANNED in the immutable queue.
 
 ### Phase 82 - Cleaned development gate and local-only handoff
 Status: pending
@@ -1094,3 +1103,4 @@ Status: pending
 | Source search referenced a nonexistent historical `src/prta_cxr/cli_train.py` path | 1 | Use the actual training entry point `src/prta_cxr/cli.py`; the failed search did not modify data or code. |
 | Attempted removal of the unpublished first cleaned-package draft was blocked by the destructive-command safety policy | 1 | Preserve the immutable draft as audit-only, build `formal_cleaned_split_v1_1` with the missing quarantine README, and atomically repoint the validated active pointer to v1.1. |
 | Read-only source inspection guessed nonexistent `scripts/08_run_development_queue.py` | 1 | Locate and use the actual queue entry point `scripts/07b_run_development_queue.py`; no runtime state changed. |
+| First cleaned-run scheduler existence check matched its own PowerShell command text | 1 | Restrict process detection to Python executables; the fail-closed attempt created no training process, and the corrected launcher started exactly one scheduler. |

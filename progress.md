@@ -1807,3 +1807,12 @@
 - 运行范围固定为医生清洗后的 Train 80,402 / Dev 11,201；Internal-test 13,219 与 Gold 175 在开发门终态前不打开。
 - 计划运行五条：PRTA seeds 17/28/43、Siamese-Diff B402 seed 17、TILA B403 seed 17。门槛保持不变，不因为前一条 seed-17 诊断 0.535971 而调参。
 - 启动前资源检查：GPU0/GPU1 均为 RTX 3090、显存使用 0 MiB、空闲 24,326 MiB、利用率 0%；未发现冲突训练进程；H: 约 401.2 GiB、E: 约 244.5 GiB 可用。
+
+# 2026-08-05 医生清洗版五运行正式启动
+
+- 准备回执 `PASS_PHYSICIAN_CLEANED_RERUN_PREPARED`：Train 80,402、Dev 11,201、缓存缺失 0、患者交叉 0、受保护结果读取 0；清洗冻结回执 SHA-256=`aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069`。
+- 冻结队列共五条：`CLN1-PRTA-S17/S28/S43`、`CLN1-B402-S17`、`CLN1-B403-S17`；队列 SHA-256=`7efeae134f72ed4a3b016232a74b2386ff97676c69263c54ad88dea3f900a712`。
+- 18:43 CST 双 GPU 调度器 PID 19536 启动；PRTA seed 17（PID 10500）位于 GPU0、seed 28（PID 5448）位于 GPU1。两条均生成 RUNNING 训练进度回执，每 epoch 5,026 steps，stderr 为空；seed 43 与两条基线保持 PLANNED。
+- 私有收口守护器 PID 23488 已启动，只在调度器五条全部 PASS 后计算冻结 development gate；不会打开 Internal-test/Gold，也不会启动额外训练或调参。
+- 第一次“已有调度器”检查把自身 PowerShell 命令文本误判为调度器并在启动前安全退出；随后将匹配限定为 Python 进程，成功启动唯一调度器，队列/配置未发生变化。
+- 18:44 CST 首批运行证据：seed 17/28 均到 epoch 0 的 100/5,026 steps，显存各 4,479 MiB，GPU0/GPU1 利用率分别约 75%/82%，两份 stderr 仍为 0 字节。
