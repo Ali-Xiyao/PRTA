@@ -38,6 +38,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--steps", type=int, default=3)
     parser.add_argument("--config", type=Path)
     parser.add_argument("--split-manifest", type=Path)
+    parser.add_argument("--cleaned-split-freeze", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--weights", type=Path)
@@ -62,6 +63,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                         for value in (
                             args.config,
                             args.split_manifest,
+                            args.cleaned_split_freeze,
                             args.cache_root,
                             args.text_cache,
                             args.weights,
@@ -81,6 +83,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         required = {
             "config": args.config,
             "split_manifest": args.split_manifest,
+            "cleaned_split_freeze": args.cleaned_split_freeze,
             "cache_root": args.cache_root,
             "text_cache": args.text_cache,
             "weights": args.weights,
@@ -93,6 +96,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             parser.error("formal mode arguments missing: " + ", ".join(missing))
         from torch.utils.data import DataLoader
 
+        from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
         from prta_cxr.data.token_cache import Block8CacheIndex
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
         from prta_cxr.experiments import (
@@ -113,6 +117,11 @@ def train_main(argv: Sequence[str] | None = None) -> int:
 
         config = load_training_config(args.config)
         load_completed_human_silver_audit(args.label_quality_audit)
+        require_cleaned_manifest(
+            args.split_manifest,
+            receipt_path=args.cleaned_split_freeze,
+            role="train_dev",
+        )
         rows = read_jsonl(args.split_manifest)
         data_config = dict(config.get("data", {}))
         rows, fraction_audit = nested_train_fraction(
@@ -173,6 +182,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "weights": sha256_file(args.weights),
             "cache_manifest": sha256_file(args.cache_root / "cache_manifest.json"),
             "label_quality_audit": sha256_file(args.label_quality_audit),
+            "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
         }
         started = datetime.now(UTC).isoformat()
         git_commit = subprocess.run(

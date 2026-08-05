@@ -48,6 +48,7 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--split-manifest", type=Path)
+    parser.add_argument("--cleaned-split-freeze", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--weights", type=Path)
@@ -101,6 +102,7 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
     required = {
         "checkpoint": args.checkpoint,
         "split_manifest": args.split_manifest,
+        "cleaned_split_freeze": args.cleaned_split_freeze,
         "cache_root": args.cache_root,
         "text_cache": args.text_cache,
         "weights": args.weights,
@@ -108,11 +110,17 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
     missing = [name for name, value in required.items() if value is None]
     if missing:
         parser.error("formal evaluation arguments missing: " + ", ".join(missing))
+    from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
     from prta_cxr.data.token_cache import Block8CacheIndex
     from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
     from prta_cxr.training.engine import build_train_model
     from prta_cxr.vision.biomedclip import load_biomedclip_visual, tail_modules
 
+    cleaned = require_cleaned_manifest(
+        args.split_manifest,
+        receipt_path=args.cleaned_split_freeze,
+        role="internal_test",
+    )
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
     if checkpoint.get("schema") != "prta-cxr.checkpoint.v1":
         raise ValueError("unsupported checkpoint schema")
@@ -150,6 +158,7 @@ def evaluate_main(argv: Sequence[str] | None = None) -> int:
         "metrics": metrics,
         "checkpoint_sha256": sha256_file(args.checkpoint),
         "input_hashes": current,
+        "cleaned_split_freeze_sha256": cleaned["receipt_sha256"],
         "internal_test_opened": True,
         "protected_outcomes_opened": False,
     }

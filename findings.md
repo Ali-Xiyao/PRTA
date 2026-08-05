@@ -814,3 +814,15 @@
 - 终态回执和独立复算确认 Dev/Internal-test/Gold 预测行数分别为
   11,201/13,219/175，checkpoint、准备回执、训练回执与三份预测文件的 SHA-256
   全部一致。一次性评估守护器和 evaluator 均正常退出，未发生重复受保护推理。
+- 用户的新授权把“诊断性排除”提升为后续活动数据版本的清洗决策，但没有使模型
+  风险信号自动变成医学 Gold。正式记录应区分：医生确认这些候选具有复核/排除
+  合理性；Luna/Sol 冲突、Unclear、报告不足和历史影响分数只是筛选依据；所有
+  排除行继续保留在私有 quarantine 中，可追溯、可复核、不可静默删除。
+# 2026-08-05 医生确认清洗后数据权威
+
+- 医生复核范围是完整的 11,667 条全局 Top-10% 候选，不是抽样或集合级确认；最终状态必须写成 `PHYSICIAN_CONFIRMED_EXCLUDE`，不能继续写成 `SUSPICIOUS_PENDING_REVIEW`。
+- Top 3%、Top 5%、Top 10% 严格嵌套，因此无重复的最终排除总量就是 Top-10% 并集 11,667 条。分 split 为 Train 9,004、Dev 2,219、Internal-test 369、Gold 75。
+- 清洗后活动数据为 Train 80,402、Dev 11,201、Internal-test 13,219、Gold 175；活动指针只指向 `formal_cleaned_split_v1_1`。排除清单与 active manifest 的 ID 交集经独立重算为 0。
+- 将排除病例放入私有 `quarantine/` 比移动原始影像更安全：能保持原始数据集和既有哈希不变，同时通过唯一活动 manifest 与 CLI 哈希门禁保证这些病例不再被训练、验证或测试读取。
+- Luna、Sol、历史模型误判、高 NLL、方向相反错误和近似 TracIn 是候选发现信号，不是医学证明；医生对全部候选的逐条决定才是本版本的数据排除权威。
+- 候选发现使用过模型结果，因此清洗后 Internal-test/Gold 的指标存在 outcome-adaptive selection bias。它们适合报告医生确认清洗队列上的敏感性结果，不得冒充原始临床分布的无偏泛化性能，也不追溯性覆盖旧 `STOP_DEVELOPMENT_GATE`。

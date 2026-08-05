@@ -1778,3 +1778,25 @@
   training receipt 与三份 prediction SHA-256 全部匹配，失败 argparse 日志仍原样
   保留；Ruff、全量 pytest（147 passed）和 `git diff --check` 均通过。GPU0/GPU1
   已释放，Phase 71--74 complete；该诊断不覆盖既有正式 HOLD 结论。
+
+# 2026-08-05 清洗后正式数据版本授权
+
+- 用户确认医生认为全局 Top-10% 的 11,667 条候选均可疑，授权将其统一标记为
+  `SUSPICIOUS_PENDING_REVIEW` 并从后续活动数据中排除；Luna/Sol 存疑、无助或
+  冲突及历史模型风险继续作为排除 provenance。旧数据、旧标签和旧划分不得覆盖。
+- 新版本将冻结现有 retained membership，而不是重新随机划分：Train 80,402、
+  Dev 11,201、Internal-test 13,219、Gold 175。由于候选生成使用过历史模型错误、
+  NLL 和 TracIn，Internal-test/Gold 必须标注为清洗后选择偏倚评估集，不能反称为
+  原始临床分布的无偏测试集。
+- 首次聚合命令使用了当前 PowerShell 不支持的 `??` 空值合并语法，在解析阶段
+  退出；未读取完整数据、未写入或修改任何产物。后续改用显式键存在性判断。
+# 2026-08-05 医生确认排除与清洗后正式划分完成
+
+- 用户明确确认：医生已经逐条复核全部 11,667 条全局 Top-10% 风险候选，结论是这些样本都不应使用；正式状态不再是待复核，而是 `PHYSICIAN_CONFIRMED_EXCLUDE / DO_NOT_USE`。
+- 已在 Git 外生成活动包 `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_cleaned_split_v1_1`。清洗后固定数量为 Train 80,402、Dev 11,201、Internal-test 13,219、Gold 175，共 104,997 条。
+- 全量排除记录位于 `quarantine/physician_confirmed_exclusions_v1.jsonl` 与 CSV；`quarantine/README_CN.md` 明确禁止用于训练、Dev、Internal-test、Gold 或其他模型实验。原始影像未移动、未删除，历史 manifest 未改写。
+- 冻结回执状态为 `PASS_CLEANED_SPLIT_FROZEN`，SHA-256 为 `aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069`；活动指针 SHA-256 为 `770e119c6d415af2cf5c9e4b8ab67b4d4efcd0a1caecc99312d93cf5d4787da3`。
+- 独立审计重新读取三份 active manifest 和隔离清单：active 104,997、排除 11,667、排除 ID 在 active 中命中 0、四划分患者两两交集全为 0、每个划分均保留五类标签。
+- 正式训练、开发队列、program keeper、protocol freeze 与正式 Internal-test 入口新增 `--cleaned-split-freeze`；路径或哈希不等于活动回执时 fail closed，防止后续误用旧数据。
+- 首个 `formal_cleaned_split_v1` 草稿在隔离 README 纳入哈希前已经成功物化；删除命令被安全策略拒绝，因此原样保留为 audit-only。活动指针已原子更新到完整的 `formal_cleaned_split_v1_1`，后续只允许使用 v1.1。
+- 本轮未训练模型、未改变标签、未重新划分患者、未打开新的受保护结果。清洗后的 Internal-test/Gold 因候选发现使用过历史模型风险信号，继续标记为 outcome-adaptive curated evaluation sets。

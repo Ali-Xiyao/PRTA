@@ -20,6 +20,7 @@ def program_keeper_main(argv: Sequence[str] | None = None) -> int:
         "output",
         "initial-queue",
         "split-manifest",
+        "cleaned-split-freeze",
         "sealed-internal-test",
         "gold-manifest",
         "cache-root",

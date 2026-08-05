@@ -61,6 +61,8 @@ caching, training, and internal testing remain sequentially gated.
     [Train/Dev-only approximate-TracIn audit guide](docs/PRTA_CXR_TracIn只读数据审计说明_CN.md)
     for the post-STOP read-only data-quality audit; row-level outputs remain
     private and must never enter Git.
+12. The active data surface is now the physician-confirmed cleaned split. See
+    [physician exclusions and frozen cleaned split](docs/PRTA_CXR_医生确认排除与清洗后正式划分_CN.md).
 
 ## Local engineering validation
 

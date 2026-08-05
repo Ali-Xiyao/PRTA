@@ -669,10 +669,9 @@ Status: complete
 
 ## Next Step
 
-The post-hoc Top-10%-risk exclusion diagnostic is terminally complete. Keep its
-artifacts as a selection-biased sensitivity analysis only; do not replace the
-frozen formal HOLD result, tune from the retained protected cohorts, or launch
-additional runs without a new explicit authorization.
+Run final repository validation, commit the physician-confirmed cleaned-split
+gate and documentation, and push only Git-safe code/docs to the local bare
+remote. Do not launch training or open any additional protected outcomes.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -721,6 +720,44 @@ Status: complete
 - All checkpoint, preparation, training-receipt, and prediction hashes matched;
   Ruff, 147 tests, and `git diff --check` passed. These metrics remain explicitly
   outcome-adaptive and do not replace an unbiased formal result.
+
+### Phase 75 - Cleaned-data authority and provenance contract
+Status: complete
+
+- Record the user's explicit decision that physicians reviewed every one of the
+  11,667 global Top-10% candidates and decided none should be used; freeze them
+  as `PHYSICIAN_CONFIRMED_EXCLUDE / DO_NOT_USE`.
+- Retain Luna/Sol/model-risk reasons as candidate-discovery provenance; the
+  physician review is the final exclusion authority.
+- Preserve the original active manifests and the previous formal HOLD result.
+
+### Phase 76 - Immutable cleaned split materialization
+Status: complete
+
+- Materialize a versioned private split package for retained Train 80,402,
+  Dev 11,201, Internal-test 13,219, and Gold 175 without repartitioning patients.
+- Write split manifests, exclusion roster, active pointer, hashes, counts, and a
+  machine-readable freeze receipt outside Git.
+- Active package: `formal_cleaned_split_v1_1`; freeze receipt SHA-256
+  `aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069`.
+
+### Phase 77 - Independent data-quality audit
+Status: complete
+
+- Recompute uniqueness, exact source-minus-exclusion coverage, patient
+  disjointness, label support, source/finding distributions, and hash integrity.
+- Fail closed on any missing, duplicate, rewritten, or cross-split patient.
+- Independent recomputation passed: 104,997 active IDs, 11,667 physician
+  exclusions, zero excluded-ID hits in active manifests, zero pairwise patient
+  overlap, and all five labels retained in every split.
+
+### Phase 78 - Documentation and local-only handoff
+Status: in progress
+
+- Update the authority/manual and planning ledgers with the cleaned-version use
+  contract and selection-bias boundary; validate tests and privacy-safe Git diff.
+- Commit and push only Git-safe code/docs/aggregate hashes to the local bare
+  remote; keep row-level IDs, reports, dates, paths, and labels outside Git.
 
 ## Terminal formal-program record - 2026-08-04
 
@@ -1013,3 +1050,6 @@ Status: complete
 | The v5 20-row canary returned 20 unique rows but altered one 64-character sample hash, yielding one missing and one extra ID | 1 | Introduce short batch-local aliases, withhold the alias-to-original map from the model payload, validate exact aliases, and restore original IDs locally before atomic output; regenerate as v6. |
 | The v6 canary passed alias/ID gates, but one of 14 accepted rows used non-extractive current/comparison evidence | 1 | Preserve the Luna output, deterministically demote every non-extractive accept to Reject with an audit reason, and require Tier-A extractive evidence by construction rather than trusting prompt compliance. |
 | v6 batch 6 twice returned an accept/flag contradiction under the unchanged prompt | 1 | Stop stochastic retrying; separate structural output validation from deterministic label admission, preserve raw Luna rows, and demote accept+conflict/mismatch/non-extractive records to audited Rejects. |
+| First cleaned-roster aggregate command used PowerShell null-coalescing syntax unsupported by the active shell | 1 | Replace it with explicit `ContainsKey` branching; no data or artifact was modified. |
+| Source search referenced a nonexistent historical `src/prta_cxr/cli_train.py` path | 1 | Use the actual training entry point `src/prta_cxr/cli.py`; the failed search did not modify data or code. |
+| Attempted removal of the unpublished first cleaned-package draft was blocked by the destructive-command safety policy | 1 | Preserve the immutable draft as audit-only, build `formal_cleaned_split_v1_1` with the missing quarantine README, and atomically repoint the validated active pointer to v1.1. |

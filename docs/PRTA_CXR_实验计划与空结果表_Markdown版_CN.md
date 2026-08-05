@@ -7,6 +7,14 @@
 > **标签策略**：Luna 全量结构化打标/复核 + 确定性校验 + 临床医生分层抽检  
 > **重要术语**：Luna 自动生成或复核的标签统一称为 **verified silver / report-derived weak supervision**，不得直接称为人工 Gold。
 
+> **2026-08-05 数据版本更新**：医生已逐条复核全量 11,667 条全局 Top-10%
+> 风险候选，并确认全部不应使用；它们统一标记为
+> `PHYSICIAN_CONFIRMED_EXCLUDE / DO_NOT_USE` 并进入私有隔离区。后续唯一活动
+> 划分为 Train 80,402、Dev 11,201、Internal-test 13,219、Gold 175；训练、
+> 验证和测试均不得回退到旧 manifest。清洗后 Internal-test/Gold 因候选发现
+> 使用过历史模型风险信号，结果只能作为 outcome-adaptive curated evaluation，
+> 不得称为原始临床分布上的无偏结果。
+
 ---
 
 ## 0. 文档使用说明

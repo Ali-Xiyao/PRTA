@@ -13,6 +13,16 @@
 > 0.005959，未达到 +0.03；平均 ODER 0.042202 高于该 baseline 的
 > 0.037021。因此未生成 Protocol Freeze Receipt，未运行正式
 > Baseline/Ablation，Internal-test 与 Gold 从未解封，VLM 附加部署亦未启动。
+
+> **2026-08-05 清洗后数据权威更新**：医生已复核全部 11,667 条全局
+> Top-10% 风险候选，并确认这些样本不应使用。它们已冻结为
+> `PHYSICIAN_CONFIRMED_EXCLUDE / DO_NOT_USE`，放入私有 `quarantine/`；后续
+> Train 80,402、Dev 11,201、Internal-test 13,219、Gold 175 必须只从清洗后
+> 冻结 manifest 读取。正式命令缺少清洗回执或传入旧 manifest 时必须 fail
+> closed。详见《PRTA_CXR_医生确认排除与清洗后正式划分_CN.md》。该候选发现
+> 使用过历史模型风险信号，故清洗后的 Internal-test/Gold 属于 outcome-adaptive
+> curated evaluation sets，不替代原始分布上的无偏评价，也不改写历史
+> `STOP_DEVELOPMENT_GATE`。
 > 本 STOP 是本轮正式程序的终态，不允许以查看 protected outcome 或静默改动
 > 冻结配置的方式绕过。
 

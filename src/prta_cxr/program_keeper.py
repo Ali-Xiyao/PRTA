@@ -62,6 +62,7 @@ def _run_queue(
     *,
     queue: Path,
     split_manifest: Path,
+    cleaned_split_freeze: Path,
     cache_root: Path,
     weights: Path,
     quality_audit: Path,
@@ -73,6 +74,7 @@ def _run_queue(
     result = run_training_queue(
         queue_path=queue,
         split_manifest=split_manifest,
+        cleaned_split_freeze=cleaned_split_freeze,
         cache_root=cache_root,
         weights=weights,
         quality_audit=quality_audit,
@@ -114,6 +116,7 @@ def run_formal_program(
     output: Path,
     initial_queue: Path,
     split_manifest: Path,
+    cleaned_split_freeze: Path,
     sealed_internal_test: Path,
     gold_manifest: Path,
     cache_root: Path,
@@ -143,6 +146,7 @@ def run_formal_program(
     _wait_initial_queue(initial_queue, output, poll_seconds)
     queue_kwargs = {
         "split_manifest": split_manifest,
+        "cleaned_split_freeze": cleaned_split_freeze,
         "cache_root": cache_root,
         "weights": weights,
         "quality_audit": quality_audit,
@@ -231,6 +235,7 @@ def run_formal_program(
             train_dev_manifest=split_manifest,
             sealed_internal_test_manifest=sealed_internal_test,
             gold_manifest=gold_manifest,
+            cleaned_split_freeze=cleaned_split_freeze,
             main_cache_manifest=cache_root / "cache_manifest.json",
             gold_cache_manifest=gold_cache_root / "cache_manifest.json",
             weights=weights,

@@ -14,6 +14,7 @@ def run_development_queue_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--mode", choices=("preflight", "formal"), default="preflight")
     parser.add_argument("--queue", type=Path)
     parser.add_argument("--split-manifest", type=Path)
+    parser.add_argument("--cleaned-split-freeze", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--quality-audit", type=Path)
@@ -32,6 +33,7 @@ def run_development_queue_main(argv: Sequence[str] | None = None) -> int:
     required = {
         "queue": args.queue,
         "split_manifest": args.split_manifest,
+        "cleaned_split_freeze": args.cleaned_split_freeze,
         "cache_root": args.cache_root,
         "weights": args.weights,
         "quality_audit": args.quality_audit,
@@ -44,6 +46,7 @@ def run_development_queue_main(argv: Sequence[str] | None = None) -> int:
     result = run_training_queue(
         queue_path=args.queue,
         split_manifest=args.split_manifest,
+        cleaned_split_freeze=args.cleaned_split_freeze,
         cache_root=args.cache_root,
         weights=args.weights,
         quality_audit=args.quality_audit,

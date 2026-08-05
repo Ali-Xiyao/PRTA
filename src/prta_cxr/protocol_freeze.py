@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from prta_cxr.artifacts import write_json_atomic
+from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
 from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.run_registry import read_run_registry
 
@@ -64,6 +65,7 @@ def freeze_formal_protocol(
     train_dev_manifest: Path,
     sealed_internal_test_manifest: Path,
     gold_manifest: Path,
+    cleaned_split_freeze: Path,
     main_cache_manifest: Path,
     gold_cache_manifest: Path,
     weights: Path,
@@ -78,6 +80,21 @@ def freeze_formal_protocol(
     vlm_model_index: Path,
     output: Path,
 ) -> dict[str, Any]:
+    require_cleaned_manifest(
+        train_dev_manifest,
+        receipt_path=cleaned_split_freeze,
+        role="train_dev",
+    )
+    require_cleaned_manifest(
+        sealed_internal_test_manifest,
+        receipt_path=cleaned_split_freeze,
+        role="internal_test",
+    )
+    require_cleaned_manifest(
+        gold_manifest,
+        receipt_path=cleaned_split_freeze,
+        role="gold",
+    )
     gate = json.loads(gate_receipt.read_text(encoding="utf-8"))
     matrix = json.loads(formal_matrix_receipt.read_text(encoding="utf-8"))
     if gate.get("decision") != "GO":
@@ -149,6 +166,7 @@ def freeze_formal_protocol(
         "formal_matrix_receipt": formal_matrix_receipt,
         "formal_queue": formal_queue,
         "train_dev_manifest": train_dev_manifest,
+        "cleaned_split_freeze": cleaned_split_freeze,
         "main_cache_manifest": main_cache_manifest,
         "gold_cache_manifest": gold_cache_manifest,
         "weights": weights,
