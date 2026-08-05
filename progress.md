@@ -1816,3 +1816,5 @@
 - 私有收口守护器 PID 23488 已启动，只在调度器五条全部 PASS 后计算冻结 development gate；不会打开 Internal-test/Gold，也不会启动额外训练或调参。
 - 第一次“已有调度器”检查把自身 PowerShell 命令文本误判为调度器并在启动前安全退出；随后将匹配限定为 Python 进程，成功启动唯一调度器，队列/配置未发生变化。
 - 18:44 CST 首批运行证据：seed 17/28 均到 epoch 0 的 100/5,026 steps，显存各 4,479 MiB，GPU0/GPU1 利用率分别约 75%/82%，两份 stderr 仍为 0 字节。
+- 19:38 CST 首次自动巡检：队列为 0/5 terminal、2 RUNNING、3 PLANNED；seed 17/28 分别位于 epoch 1 的 4,100/3,800 steps，首轮暂存 Dev Macro-F1 为 0.515731/0.514442。两条 best/last checkpoint 均已生成且各 310,275,736 bytes，stderr 仍为 0 字节；GPU 显存各 4,479 MiB，调度器与 finalizer 守护器均存活。
+- 活动 manifest 与清洗 freeze 哈希仍精确匹配准备回执，受保护读取计数仍为 0；`run_queue.json` 因调度器写入 RUNNING/PID/device 等运行状态而产生预期哈希变化，五份冻结 config 身份未改变。按当前吞吐预计整个五运行队列尚需约 7--10 小时。
