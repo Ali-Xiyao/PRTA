@@ -1801,3 +1801,9 @@
 - 首个 `formal_cleaned_split_v1` 草稿在隔离 README 纳入哈希前已经成功物化；删除命令被安全策略拒绝，因此原样保留为 audit-only。活动指针已原子更新到完整的 `formal_cleaned_split_v1_1`，后续只允许使用 v1.1。
 - 本轮未训练模型、未改变标签、未重新划分患者、未打开新的受保护结果。清洗后的 Internal-test/Gold 因候选发现使用过历史模型风险信号，继续标记为 outcome-adaptive curated evaluation sets。
 - 全仓库 Ruff、151 tests 与 `git diff --check` 通过；实现提交 `0748adb1257dc4c33568e92e994ffc57baaa93d7` 已推送并验证等于本地 bare `main`。未向 `origin` 或其他云端远程推送。
+# 2026-08-05 医生清洗版正式五运行授权
+
+- 用户明确要求把三 PRTA 种子改为 17/28/43，并启动正式实验及同预算时序基线；Seed 28 是新运行身份，不复用旧 Seed 29 checkpoint。
+- 运行范围固定为医生清洗后的 Train 80,402 / Dev 11,201；Internal-test 13,219 与 Gold 175 在开发门终态前不打开。
+- 计划运行五条：PRTA seeds 17/28/43、Siamese-Diff B402 seed 17、TILA B403 seed 17。门槛保持不变，不因为前一条 seed-17 诊断 0.535971 而调参。
+- 启动前资源检查：GPU0/GPU1 均为 RTX 3090、显存使用 0 MiB、空闲 24,326 MiB、利用率 0%；未发现冲突训练进程；H: 约 401.2 GiB、E: 约 244.5 GiB 可用。

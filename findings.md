@@ -826,3 +826,9 @@
 - 将排除病例放入私有 `quarantine/` 比移动原始影像更安全：能保持原始数据集和既有哈希不变，同时通过唯一活动 manifest 与 CLI 哈希门禁保证这些病例不再被训练、验证或测试读取。
 - Luna、Sol、历史模型误判、高 NLL、方向相反错误和近似 TracIn 是候选发现信号，不是医学证明；医生对全部候选的逐条决定才是本版本的数据排除权威。
 - 候选发现使用过模型结果，因此清洗后 Internal-test/Gold 的指标存在 outcome-adaptive selection bias。它们适合报告医生确认清洗队列上的敏感性结果，不得冒充原始临床分布的无偏泛化性能，也不追溯性覆盖旧 `STOP_DEVELOPMENT_GATE`。
+# 2026-08-05 医生清洗版五运行启动边界
+
+- 用户选择的新三种子集合是 17/28/43；这是一项显式协议变更。Seed 28 必须从零训练并获得新 config/run/checkpoint/receipt，历史 Seed 29 只保留为旧版本证据。
+- 两张 RTX 3090 当前均完全空闲，存储充足，适合使用现有双 lane 队列；不能通过改变 batch size、epoch、early stopping 或模型结构来换取速度。
+- 清洗后 manifest 已由 freeze receipt 强制绑定；新的队列必须显式传入 `--cleaned-split-freeze`，否则训练 CLI fail closed。
+- 前一条 Top-10% seed-17 诊断的 Dev Macro-F1 0.535971 是配置选择的先验参考而非调参依据；新五运行仍按原 CBF PRTA、B402、B403 等预算配置从零完成统一门判定。

@@ -669,9 +669,9 @@ Status: complete
 
 ## Next Step
 
-Terminal handoff complete. Future training, validation, Internal-test, and Gold
-work must use the active physician-cleaned freeze receipt and its exact
-manifests. No training or additional protected-outcome opening was launched.
+Freeze and validate the physician-cleaned five-run Train/Dev queue with PRTA
+seeds 17/28/43 and equal-budget B402/B403 seed-17 baselines, commit the launch
+surface, then start the queue on both GPUs without opening Internal-test/Gold.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -761,6 +761,43 @@ Status: complete
 - Ruff, 151 tests, `git diff --check`, active-manifest gates, and an independent
   full-ID/patient audit passed. Implementation commit `0748adb1257dc4c33568e92e994ffc57baaa93d7`
   was verified equal to local bare `main`; no cloud push occurred.
+
+### Phase 79 - Physician-cleaned formal development authority
+Status: in progress
+
+- Bind the user's explicit launch authority to the frozen physician-cleaned
+  Train 80,402 / Dev 11,201 manifests and freeze receipt.
+- Replace only the planned middle PRTA seed from historical 29 to user-selected
+  28; do not reuse Seed-29 checkpoints or silently change any other method,
+  optimizer, epoch, early-stopping, loss, or baseline setting.
+- Keep Internal-test and Gold closed until the full five-run development gate
+  is terminal.
+
+### Phase 80 - Cleaned five-run preparation and independent preflight
+Status: pending
+
+- Materialize new immutable configs and queue identities for PRTA seeds
+  17/28/43 plus B402/B403 seed 17 under a new runtime root.
+- Validate exact cleaned-manifest path/hash, zero excluded-ID inclusion, cache
+  coverage, five-label support, patient disjointness, frozen code/config hashes,
+  both GPUs, disk, and no conflicting process before launch.
+
+### Phase 81 - Dual-GPU formal Train/Dev execution
+Status: pending
+
+- Run the five frozen jobs with the existing queue scheduler on cuda:0/cuda:1,
+  preserving failed logs and identity-safe resume semantics.
+- Monitor queue, registry, progress receipts, checkpoints, stderr, GPUs, disk,
+  and input hashes; never tune from intermediate Dev outcomes.
+
+### Phase 82 - Cleaned development gate and local-only handoff
+Status: pending
+
+- After all five runs PASS, compute the unchanged gate: every PRTA seed >=0.48,
+  mean >=0.52, seed-17 gain >=0.03 over the strongest temporal baseline, plus
+  minority recall, ODER, prior-gap, and seed-range checks.
+- Record GO/HOLD/STOP without opening protected cohorts; validate Git-safe
+  aggregates and push only to the local bare remote.
 
 ## Terminal formal-program record - 2026-08-04
 
@@ -1056,3 +1093,4 @@ Status: complete
 | First cleaned-roster aggregate command used PowerShell null-coalescing syntax unsupported by the active shell | 1 | Replace it with explicit `ContainsKey` branching; no data or artifact was modified. |
 | Source search referenced a nonexistent historical `src/prta_cxr/cli_train.py` path | 1 | Use the actual training entry point `src/prta_cxr/cli.py`; the failed search did not modify data or code. |
 | Attempted removal of the unpublished first cleaned-package draft was blocked by the destructive-command safety policy | 1 | Preserve the immutable draft as audit-only, build `formal_cleaned_split_v1_1` with the missing quarantine README, and atomically repoint the validated active pointer to v1.1. |
+| Read-only source inspection guessed nonexistent `scripts/08_run_development_queue.py` | 1 | Locate and use the actual queue entry point `scripts/07b_run_development_queue.py`; no runtime state changed. |
