@@ -1746,3 +1746,8 @@
   `HOLD` 决策与零 protected-outcome reads 全部一致；`ruff check`、全量
   `pytest`（144 passed）及 `git diff --check` 均通过。仅 Git-safe 的聚合结论与
   计划账本进入本地版本库，逐样本私有数据、路径和封存结果均未进入 Git。
+- 2026-08-05 用户新授权：将全局 Top 3%、3--5%、5--10% 三个严格嵌套风险带
+  全部标记为 `SUSPICIOUS_PENDING_REVIEW` 并在一次新诊断版本中停用；保留原
+  Train/Dev/Internal-test/Gold 归属，仅使用剩余 104,997 条，先在 GPU0 训练
+  PRTA seed 17，再评估保留的 Dev/Internal-test/Gold。该过滤依据含历史模型
+  错误、NLL 和 TracIn，故结果固定标注为后验/选择偏倚诊断，不覆盖原正式结果。

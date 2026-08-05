@@ -669,11 +669,46 @@ Status: complete
 
 ## Next Step
 
-Terminal `HOLD_DEVELOPMENT_GATE`: all five frozen Train/Dev runs and the final
-`development_gate.json` completed. Preserve every checkpoint, log, receipt,
-active-label version, and historical gate. Do not open Internal-test or Gold,
-do not tune around the failed thresholds, and await new user authority before
-any further scientific experiment.
+Execute the newly authorized post-hoc Top-10%-risk exclusion diagnostic on
+GPU0. Preserve original split membership; mark the nested Top 3%, 3--5%, and
+5--10% bands as `SUSPICIOUS_PENDING_REVIEW`, exclude their union from this
+diagnostic version, train one PRTA seed-17 run, then evaluate the retained Dev,
+Internal-test, and Gold cohorts. Keep this outcome-adaptive diagnostic separate
+from the frozen formal gate and do not overwrite any prior artifact.
+
+### Phase 71 - Nested risk-band exclusion contract
+Status: in progress
+
+- Validate the global Top 3% subset Top 5% subset Top 10% ID contract and the
+  exact 116,664-row active universe.
+- Materialize a versioned private exclusion roster with all 11,667 rows marked
+  `SUSPICIOUS_PENDING_REVIEW`; preserve Top 3%, 3--5%, and 5--10% bands.
+- Filter each original split in place without moving patients or changing any
+  retained label/field: Train 80,402; Dev 11,201; Internal-test 13,219; Gold 175.
+
+### Phase 72 - GPU0 diagnostic training preflight
+Status: pending
+
+- Reuse the frozen PRTA seed-17 architecture, optimizer, budget, cache, weights,
+  and text prototypes under a new diagnostic run ID and output root.
+- Prove retained Train/Dev cache coverage, all-five-label support, zero patient
+  overlap, immutable input hashes, and GPU0 readiness before launch.
+
+### Phase 73 - Single diagnostic training and retained-cohort inference
+Status: pending
+
+- Train only the new retained Train split on GPU0 with Dev-only early stopping.
+- After the checkpoint is final, perform one read-only inference pass on the
+  retained Dev, Internal-test, and physician Gold splits and save metrics plus
+  prediction hashes outside Git.
+
+### Phase 74 - Diagnostic comparison and local-only handoff
+Status: pending
+
+- Compare retained-cohort metrics with the prior aggregate results while
+  clearly labelling selection bias; do not claim a new unbiased test result.
+- Validate receipts, update planning files, and push only Git-safe code and
+  aggregate summaries to the local bare remote.
 
 ## Terminal formal-program record - 2026-08-04
 

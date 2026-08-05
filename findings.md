@@ -788,3 +788,11 @@
   仍低于 0.52；seed-17 PRTA 反而比最强 B402 低 0.003210，未达到 +0.03
   方法增益。其余稳定性、minority recall、ODER 与 prior-gap 检查通过，不足以
   抵消两个核心性能门槛失败。Internal-test 与 Gold 因此继续封存，不能进入推理。
+- 新风险排除任务的 Top 3%/5%/10% 是同一个 116,664-row active universe 上的
+  全局嵌套排序，因此“全部不用”的唯一无重复解释是排除 Top-10% 并集 11,667
+  条，而不是把 3,500+5,834+11,667 重复相加。按原 split 保留后的确定计数为
+  Train 80,402、Dev 11,201、Internal-test 13,219、Gold 175，总计 104,997。
+- 因候选分数使用了 Sol 冲突/Unclear、历史误判、高 NLL、方向错误和近似 TracIn，
+  在同一风险规则过滤后的 Internal-test/Gold 上得到的指标具有 outcome-adaptive
+  selection bias，只能回答“排除已知高风险病例后模型表现如何”，不能回答原始
+  临床分布上的无偏泛化性能。
