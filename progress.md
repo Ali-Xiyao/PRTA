@@ -1800,3 +1800,4 @@
 - 正式训练、开发队列、program keeper、protocol freeze 与正式 Internal-test 入口新增 `--cleaned-split-freeze`；路径或哈希不等于活动回执时 fail closed，防止后续误用旧数据。
 - 首个 `formal_cleaned_split_v1` 草稿在隔离 README 纳入哈希前已经成功物化；删除命令被安全策略拒绝，因此原样保留为 audit-only。活动指针已原子更新到完整的 `formal_cleaned_split_v1_1`，后续只允许使用 v1.1。
 - 本轮未训练模型、未改变标签、未重新划分患者、未打开新的受保护结果。清洗后的 Internal-test/Gold 因候选发现使用过历史模型风险信号，继续标记为 outcome-adaptive curated evaluation sets。
+- 全仓库 Ruff、151 tests 与 `git diff --check` 通过；实现提交 `0748adb1257dc4c33568e92e994ffc57baaa93d7` 已推送并验证等于本地 bare `main`。未向 `origin` 或其他云端远程推送。

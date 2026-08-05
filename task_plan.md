@@ -669,9 +669,9 @@ Status: complete
 
 ## Next Step
 
-Run final repository validation, commit the physician-confirmed cleaned-split
-gate and documentation, and push only Git-safe code/docs to the local bare
-remote. Do not launch training or open any additional protected outcomes.
+Terminal handoff complete. Future training, validation, Internal-test, and Gold
+work must use the active physician-cleaned freeze receipt and its exact
+manifests. No training or additional protected-outcome opening was launched.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -752,12 +752,15 @@ Status: complete
   overlap, and all five labels retained in every split.
 
 ### Phase 78 - Documentation and local-only handoff
-Status: in progress
+Status: complete
 
 - Update the authority/manual and planning ledgers with the cleaned-version use
   contract and selection-bias boundary; validate tests and privacy-safe Git diff.
 - Commit and push only Git-safe code/docs/aggregate hashes to the local bare
   remote; keep row-level IDs, reports, dates, paths, and labels outside Git.
+- Ruff, 151 tests, `git diff --check`, active-manifest gates, and an independent
+  full-ID/patient audit passed. Implementation commit `0748adb1257dc4c33568e92e994ffc57baaa93d7`
+  was verified equal to local bare `main`; no cloud push occurred.
 
 ## Terminal formal-program record - 2026-08-04
 
