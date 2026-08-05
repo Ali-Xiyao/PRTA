@@ -1818,3 +1818,4 @@
 - 18:44 CST 首批运行证据：seed 17/28 均到 epoch 0 的 100/5,026 steps，显存各 4,479 MiB，GPU0/GPU1 利用率分别约 75%/82%，两份 stderr 仍为 0 字节。
 - 19:38 CST 首次自动巡检：队列为 0/5 terminal、2 RUNNING、3 PLANNED；seed 17/28 分别位于 epoch 1 的 4,100/3,800 steps，首轮暂存 Dev Macro-F1 为 0.515731/0.514442。两条 best/last checkpoint 均已生成且各 310,275,736 bytes，stderr 仍为 0 字节；GPU 显存各 4,479 MiB，调度器与 finalizer 守护器均存活。
 - 活动 manifest 与清洗 freeze 哈希仍精确匹配准备回执，受保护读取计数仍为 0；`run_queue.json` 因调度器写入 RUNNING/PID/device 等运行状态而产生预期哈希变化，五份冻结 config 身份未改变。按当前吞吐预计整个五运行队列尚需约 7--10 小时。
+- 20:08 CST 自动巡检：seed 17/28 分别位于 epoch 2 的 3,800/3,500 steps，best Dev Macro-F1 仍为 0.515731/0.514442（epoch 0）；seed 17 最新完成的 epoch-1 Macro-F1 为 0.486352，属于正常逐 epoch 波动，不据此调参或提前停止。双卡显存各 4,479 MiB、利用率约 90%/83%，所有训练 stderr 为 0 字节，调度器/finalizer 存活，五份 config 哈希均匹配，H: 尚余约 400 GiB。
