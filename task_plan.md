@@ -669,10 +669,10 @@ Status: complete
 
 ## Next Step
 
-Monitor the launched physician-cleaned five-run Train/Dev queue without tuning:
-PRTA seeds 17/28/43 and equal-budget B402/B403 seed-17 baselines. Finalize the
-unchanged development gate only after all five runs are terminal; keep
-Internal-test/Gold closed.
+Terminal HOLD: preserve the physician-cleaned five-run Train/Dev evidence and
+keep Internal-test/Gold closed. The three-seed mean passed, but the frozen
+method-gain and ODER checks failed; no further protected inference or tuning is
+authorized under this route.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -788,7 +788,7 @@ Status: complete
   `7efeae134f72ed4a3b016232a74b2386ff97676c69263c54ad88dea3f900a712`.
 
 ### Phase 81 - Dual-GPU formal Train/Dev execution
-Status: in progress
+Status: complete
 
 - Run the five frozen jobs with the existing queue scheduler on cuda:0/cuda:1,
   preserving failed logs and identity-safe resume semantics.
@@ -798,15 +798,24 @@ Status: in progress
   `CLN1-PRTA-S28` on cuda:1 (PID 5448); both training progress receipts are
   RUNNING with 5,026 steps/epoch and empty stderr. Seed 43 and both baselines
   remain PLANNED in the immutable queue.
+- All five runs completed as `PASS_TRAINING_FINISHED` with exact frozen config
+  hashes and zero protected reads. Final Dev Macro-F1 values were PRTA
+  0.528364/0.530123/0.527886 and B402/B403 0.524022/0.526094; all stderr logs
+  remained empty and both GPUs were released.
 
 ### Phase 82 - Cleaned development gate and local-only handoff
-Status: pending
+Status: complete
 
 - After all five runs PASS, compute the unchanged gate: every PRTA seed >=0.48,
   mean >=0.52, seed-17 gain >=0.03 over the strongest temporal baseline, plus
   minority recall, ODER, prior-gap, and seed-range checks.
 - Record GO/HOLD/STOP without opening protected cohorts; validate Git-safe
   aggregates and push only to the local bare remote.
+- Final status is `HOLD_DEVELOPMENT_GATE`: PRTA mean Macro-F1 0.528791 passed
+  the 0.52 target, but Seed-17 gain over B403 was only +0.002270 versus +0.03,
+  and mean ODER 0.006130 exceeded B403's 0.005535. Gate SHA-256 is
+  `b952a88e8ae3ed3f2ab016222bf9c7344785abeecc8902911e1e56d1ef224230`;
+  Internal-test/Gold remained unopened.
 
 ## Terminal formal-program record - 2026-08-04
 
@@ -1106,3 +1115,4 @@ Status: pending
 | First cleaned-run scheduler existence check matched its own PowerShell command text | 1 | Restrict process detection to Python executables; the fail-closed attempt created no training process, and the corrected launcher started exactly one scheduler. |
 | Second heartbeat progress summary wrapped an already-complete `training_progress.json` path in an extra `Join-Path` call | 1 | Re-read the two known progress files by direct literal paths; the error was read-only, both training processes remained healthy, and no queue or artifact changed. |
 | Third heartbeat checkpoint summary directly piped a completed PowerShell `foreach` block | 1 | Collect checkpoint rows into an explicit array before piping; the parser failed before reading runtime state, and the corrected read-only audit completed without changing experiments. |
+| Runtime finalizer guard expected scheduler status `PASS`, while the queue emits `PASS_TRAINING_QUEUE_FINISHED` | 1 | The guard failed closed after all five receipts were complete. Run the existing finalizer once with the identical frozen registry, preparation receipt, and comparison gate; no training or protected data were opened. |
