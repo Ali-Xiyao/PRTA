@@ -796,3 +796,7 @@
   在同一风险规则过滤后的 Internal-test/Gold 上得到的指标具有 outcome-adaptive
   selection bias，只能回答“排除已知高风险病例后模型表现如何”，不能回答原始
   临床分布上的无偏泛化性能。
+- 过滤后的 Train 类别计数为 Stable 39,126 / Improved 11,010 / Worse 13,884 /
+  New 14,534 / Resolved 1,848；Dev 为 6,029 / 1,551 / 1,875 / 1,469 / 277。
+  五类在 Train、Dev、Internal-test 和 Gold 中均仍有支持，缓存缺失键为 0，故
+  风险过滤没有造成类别消失或需要重新划分。

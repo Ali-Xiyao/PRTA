@@ -1751,3 +1751,16 @@
   Train/Dev/Internal-test/Gold 归属，仅使用剩余 104,997 条，先在 GPU0 训练
   PRTA seed 17，再评估保留的 Dev/Internal-test/Gold。该过滤依据含历史模型
   错误、NLL 和 TracIn，故结果固定标注为后验/选择偏倚诊断，不覆盖原正式结果。
+- Top-10% 风险排除模块、准备/评估 CLI 和三项聚焦测试已实现；真实物化 PASS：
+  11,667 条均写入私有 `SUSPICIOUS_PENDING_REVIEW` roster，三风险带为 3,500 /
+  2,334 / 5,833 条，过滤后 Train/Dev/Internal-test/Gold 精确为 80,402 /
+  11,201 / 13,219 / 175。原 manifest、标签和划分未修改，保留行逐字节复制，
+  Train/Dev 患者重叠为 0，全部 104,997 条 ID 与缓存覆盖守恒。
+- 全仓 Ruff、147 项 pytest、真实缓存/五类标签/患者泄漏预检和 diff 检查均通过。
+  为使代码提交与回执绑定，首次 pre-commit v1 物化保留但不训练；正式 v2 回执
+  绑定 commit `ce30eb9b1acacdfd3e52c931327a4b3d23da9b14`。
+- GPU0 首次启动在 argparse 阶段因带空格的 owner 被拆词而退出，未创建训练目录、
+  未加载模型/数据；失败 stdout/stderr 已保留为 `failed_launch_01.*`。使用无空格
+  owner 以相同 ID、数据、seed、方法和预算重新启动成功：训练 PID 42532，
+  epoch 0 已完成 200/5,026 batches，GPU0 利用率 55%、显存 4,479 MiB、stderr 0。
+  只读收口守护 PID 23588 将等待 PASS 训练回执后才评估保留三队列。

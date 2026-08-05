@@ -677,7 +677,7 @@ Internal-test, and Gold cohorts. Keep this outcome-adaptive diagnostic separate
 from the frozen formal gate and do not overwrite any prior artifact.
 
 ### Phase 71 - Nested risk-band exclusion contract
-Status: in progress
+Status: complete
 
 - Validate the global Top 3% subset Top 5% subset Top 10% ID contract and the
   exact 116,664-row active universe.
@@ -687,7 +687,7 @@ Status: in progress
   retained label/field: Train 80,402; Dev 11,201; Internal-test 13,219; Gold 175.
 
 ### Phase 72 - GPU0 diagnostic training preflight
-Status: pending
+Status: complete
 
 - Reuse the frozen PRTA seed-17 architecture, optimizer, budget, cache, weights,
   and text prototypes under a new diagnostic run ID and output root.
@@ -695,7 +695,7 @@ Status: pending
   overlap, immutable input hashes, and GPU0 readiness before launch.
 
 ### Phase 73 - Single diagnostic training and retained-cohort inference
-Status: pending
+Status: in progress
 
 - Train only the new retained Train split on GPU0 with Dev-only early stopping.
 - After the checkpoint is final, perform one read-only inference pass on the
