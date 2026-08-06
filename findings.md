@@ -843,3 +843,14 @@
 - B403 在 epoch 2 将 best 提高到 0.526093960，超过已终态 B402 的 0.524021847，暂为最强 temporal baseline；相对 Seed-17 PRTA 0.528363751 的增益仅 +0.002269791。该变化强化而不改变已经不可逆的 baseline-gain 失败结论。
 - 清洗版最终三-seed均值为 0.528791110，较上一 Sol-label 版本 0.492736436 提高 +0.036054674；这说明医生清洗版在 outcome-adaptive Dev 上有明显改善，但不能抵消冻结方法门失败。最终 `seed17_gain=+0.002269791` 且 `mean_oder=0.006130405 > strongest_baseline_oder=0.005535220`，因此 HOLD 是唯一符合预注册条件的结论。
 - 清洗版 Dev 本身由历史错误、Sol/TracIn 风险和医生排除形成，属于 outcome-adaptive curated evaluation set；即使三-seed均值超过 0.52，也不能将其表述为原始临床分布上的无偏泛化证据。HOLD 后继续封存 Internal-test/Gold，避免从受保护结果反向调参。
+# 2026-08-06 Minimum-wave scope finding
+
+- The exact Seed-17 PRTA minus B403 Dev Macro-F1 difference is approximately
+  +0.002270 (+0.227 percentage points), but the existing aggregate receipts
+  cannot establish significance because they contain no row-level predictions.
+- A paired patient-bootstrap analysis therefore requires re-inference on the
+  already-open cleaned Dev cohort only; this remains a no-training read-only
+  diagnostic and does not authorize Internal-test/Gold access.
+- A508 is a single-factor loss ablation (`alignment=0`). A509 is explicitly a
+  multi-objective diagnostic control (`alignment=cmcp=inversion=state=0`) and
+  must not be described as a single-component ablation.

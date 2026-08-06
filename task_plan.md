@@ -669,10 +669,11 @@ Status: complete
 
 ## Next Step
 
-Terminal HOLD: preserve the physician-cleaned five-run Train/Dev evidence and
-keep Internal-test/Gold closed. The three-seed mean passed, but the frozen
-method-gain and ODER checks failed; no further protected inference or tuning is
-authorized under this route.
+Execute the user-authorized minimum contribution-diagnostic wave: first compare
+the frozen PRTA-S17 and B403-S17 checkpoints with paired, patient-bootstrap Dev
+analysis, then run A508-S17, A509-S17, B403-S28, and B403-S43 under unchanged
+cleaned Train/Dev data and equal budgets. Keep the prior HOLD immutable and keep
+Internal-test/Gold closed throughout.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -816,6 +817,53 @@ Status: complete
   and mean ODER 0.006130 exceeded B403's 0.005535. Gate SHA-256 is
   `b952a88e8ae3ed3f2ab016222bf9c7344785abeecc8902911e1e56d1ef224230`;
   Internal-test/Gold remained unopened.
+
+### Phase 83 - Minimum-wave authority and immutable scope
+Status: in progress
+
+- Bind the new authority only to paired cleaned-Dev analysis plus four frozen
+  Train/Dev runs: A508-S17, A509-S17, B403-S28, and B403-S43.
+- Preserve the previous `HOLD_DEVELOPMENT_GATE`; do not lower its thresholds,
+  delete more Dev rows, tune loss weights, or open Internal-test/Gold.
+- Use the existing physician-cleaned Train 80,402 / Dev 11,201 manifest, cache,
+  model family, optimizer, epoch/early-stopping budget, and GPU contract.
+
+### Phase 84 - Paired PRTA versus B403 Dev analysis
+Status: pending
+
+- Recompute deterministic row-level predictions from the frozen PRTA-S17 and
+  B403-S17 best checkpoints on Dev only because the prior receipts retained no
+  row-level prediction artifact.
+- Compute patient-level bootstrap confidence intervals, paired win/loss rows,
+  ODER direction pairs, and source/finding/class breakdowns.
+- Compare Wrong PRIOR, Null PRIOR, and Reversed Pair degradation without any
+  parameter update or protected-manifest access.
+
+### Phase 85 - Four-run configuration freeze and preflight
+Status: pending
+
+- Freeze A508 as `lambda_alignment=0` only and A509 as classification-only PRTA
+  with alignment/CMCP/inversion/state auxiliary weights all zero.
+- Clone B403-S17 exactly to seeds 28 and 43 except for seed/run identity.
+- Verify configuration diffs, cache coverage, hashes, both GPUs, disk, and zero
+  protected reads before launch.
+
+### Phase 86 - Dual-GPU minimum-wave execution
+Status: pending
+
+- Run the four immutable jobs on cuda:0/cuda:1 with the existing fail-closed
+  scheduler, preserving logs, receipts, checkpoints, and identity-safe resume.
+- Do not tune from intermediate Dev metrics or change any frozen input/budget.
+
+### Phase 87 - Contribution decision and local-only handoff
+Status: pending
+
+- Compare PRTA and B403 three-seed mean/SD plus A508/A509 diagnostics and paired
+  mechanism results, while leaving the prior HOLD unchanged.
+- Record whether the supported claim is performance advantage, comparable
+  performance with mechanism/trust advantage, or route stop.
+- Validate Git-safe aggregates and push only to the configured local bare
+  remote; keep row-level predictions and identifiers outside Git.
 
 ## Terminal formal-program record - 2026-08-04
 

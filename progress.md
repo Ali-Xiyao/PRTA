@@ -1834,3 +1834,17 @@
 - 02:30 CST 五运行全部完成：PRTA seeds 17/28/43 的 best Dev Macro-F1 为 0.528364/0.530123/0.527886，B402/B403 为 0.524022/0.526094；五份 queue/receipt/config 全部 PASS 且哈希一致，stderr 全空，两张 GPU 已释放，Internal-test/Gold opened=false。
 - finalizer 守护器因只接受 `PASS`、而 scheduler 合法终态为 `PASS_TRAINING_QUEUE_FINISHED` 而 fail-closed 退出；未损坏训练。随后使用同一冻结 registry、preparation receipt 与 comparison gate 单次执行既有 finalizer，生成 `development_gate.json`，SHA-256=`b952a88e8ae3ed3f2ab016222bf9c7344785abeecc8902911e1e56d1ef224230`。
 - 正式结论为 `HOLD_DEVELOPMENT_GATE`：三-seed均值 0.528791、单 seed 下限、少数类召回、prior-gap 与 seed-range 通过；Seed-17 相对最强 B403 增益仅 +0.002270（要求 +0.03），mean ODER 0.006130 高于 B403 的 0.005535。protected read count=0，故不打开 Internal-test/Gold、不继续调参。
+# 2026-08-06 Minimum contribution-diagnostic wave
+
+- User authorized the bounded next wave: paired cleaned-Dev PRTA-S17 versus
+  B403-S17 analysis, followed by exactly A508-S17, A509-S17, B403-S28, and
+  B403-S43.
+- Scope remains Train/Dev only. Internal-test/Gold, further Dev cleaning,
+  post-hoc threshold changes, and loss-weight tuning remain prohibited.
+- A508/A509 definitions were recovered from the current authority documents:
+  A508 disables only transition-text semantic alignment; A509 keeps the full
+  PRTA architecture and disables alignment, CMCP, inversion, and state losses.
+- Existing five-run artifacts retain best/last checkpoints and aggregate
+  receipts but no row-level Dev predictions. Phase 84 will therefore perform
+  deterministic, no-training Dev-only inference from the frozen best
+  checkpoints before the four-run launch.
