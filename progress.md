@@ -2316,3 +2316,22 @@
 - Phase 91 is terminal `PASS_SUES_HPC_ENGINEERING_READINESS`. Server training
   has not started and remains locked until a new Linux Train/Dev queue is
   frozen and explicitly authorized.
+
+# 2026-08-06 23:27 CST continuous server Dev-search authority
+
+- The user explicitly authorized continued lightweight hyperparameter search
+  on retained allocations 4161 and 3066 until told to stop, with both A800s
+  available and a 20-minute monitor requested after launch.
+- The scope is a new Train/Dev-only exploratory namespace. Internal-test and
+  Gold remain sealed; labels, patient sets, splits, cache, model family, native
+  H0 head, adapters, optimizer, batch size, epoch budget, and early stopping
+  remain fixed. Historical `HOLD_DEVELOPMENT_GATE` and
+  `STOP_CURRENT_PRTA_ROUTE` remain immutable.
+- The fixed target is the existing joint gate: Dev Macro-F1 >=
+  0.5290939600646948 and ODER <= 0.00553522006963664. The completed FG1 arm is
+  close at 0.535933/0.005892, so the first server wave will change only a small
+  opposite-direction margin weight and will be frozen before training.
+- Two read-only command errors were preserved: `squeue -s` rejected job-format
+  `%T`, and source inspection guessed missing `cli_training.py` before locating
+  the real `src/prta_cxr/cli.py`. Neither command changed code, data, jobs, or
+  runtime state.

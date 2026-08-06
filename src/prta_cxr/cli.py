@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,6 +11,7 @@ import torch
 from .authorization import require_formal_authorization
 from .contracts import sha256_file
 from .preflight import run_preflight
+from .provenance import resolve_source_commit
 from .training.smoke import run_synthetic_smoke
 
 
@@ -185,12 +185,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
         }
         started = datetime.now(UTC).isoformat()
-        git_commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
+        git_commit = resolve_source_commit(Path(__file__).resolve().parents[2])
         registry_row = {
             "experiment_id": experiment_id,
             "date": started[:10],

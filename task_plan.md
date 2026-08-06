@@ -984,6 +984,38 @@ Status: complete; PASS engineering readiness; no formal launch authorized
   Readiness receipt status is `PASS_SUES_HPC_ENGINEERING_READINESS`. A server
   training queue remains locked behind a new freeze and explicit authority.
 
+### Phase 92 - Continuous lightweight server Dev search
+Status: in progress under explicit 2026-08-06 user authority
+
+- Reuse only retained Slurm allocations `4161` and `3066` on `gpu01`; submit no
+  new Slurm allocation and never cancel either retained parent job.
+- Search only the physician-cleaned Train 80,402 / Dev 11,201 surface. Keep
+  Internal-test and Gold sealed, require protected-read count zero, and do not
+  modify labels, patients, splits, cache, or source data.
+- Preserve the immutable historical `HOLD_DEVELOPMENT_GATE` and
+  `STOP_CURRENT_PRTA_ROUTE`. This phase is a new exploratory namespace and may
+  not relabel those earlier decisions as GO.
+- Keep the main A509/H0 classification-only PRTA method fixed and prefer small,
+  interpretable one-axis changes informed by completed Dev evidence. The first
+  frozen wave starts from `TUNE-FG1-S17` and tests two low-weight
+  opposite-direction margin settings in parallel; it does not change the
+  optimizer, learning rate, epoch budget, early stopping, batch size, adapter,
+  head, seed, or focal-loss setting.
+- Use the fixed joint Dev target throughout the phase: Macro-F1 at least
+  `0.5290939600646948` and ODER at most `0.00553522006963664`. Do not lower or
+  reinterpret this target after observing results.
+- Never select from intermediate epochs. After each complete two-arm wave,
+  freeze the next small wave from terminal receipts only, retain every failed
+  or losing run, and keep at most one child step per allocation. Continue this
+  bounded lightweight search until the target is reached or the user says
+  stop. A passing Seed-17 setting must be frozen and confirmed at seeds 28/43
+  before any protected-cohort discussion.
+- Once the first pair is running and survives an SSH-disconnect check, create a
+  20-minute monitor that verifies both retained allocations, processes, logs,
+  progress, checkpoints, hashes, disk, receipts, zero protected reads, terminal
+  selection, and the next frozen pair. Git-safe code/planning may be pushed only
+  to the configured local bare remote.
+
 ## Terminal formal-program record - 2026-08-04
 
 - The bounded Train/Dev program and three diagnostic Dev baselines completed
@@ -1279,6 +1311,8 @@ Status: complete; PASS engineering readiness; no formal launch authorized
 | Source search referenced a nonexistent historical `src/prta_cxr/cli_train.py` path | 1 | Use the actual training entry point `src/prta_cxr/cli.py`; the failed search did not modify data or code. |
 | Attempted removal of the unpublished first cleaned-package draft was blocked by the destructive-command safety policy | 1 | Preserve the immutable draft as audit-only, build `formal_cleaned_split_v1_1` with the missing quarantine README, and atomically repoint the validated active pointer to v1.1. |
 | Read-only source inspection guessed nonexistent `scripts/08_run_development_queue.py` | 1 | Locate and use the actual queue entry point `scripts/07b_run_development_queue.py`; no runtime state changed. |
+| The first retained-step inventory used job-format `%T` with `squeue -s`, whose step formatter rejected that token | 1 | Use the default step view or step-valid `%t`; the command was read-only and no allocation or process changed. |
+| Follow-up training-source inspection guessed nonexistent `src/prta_cxr/cli_training.py`; the same search located `train_main` in `src/prta_cxr/cli.py` | 1 | Read and use the actual CLI module; no runtime or repository artifact changed. |
 | First cleaned-run scheduler existence check matched its own PowerShell command text | 1 | Restrict process detection to Python executables; the fail-closed attempt created no training process, and the corrected launcher started exactly one scheduler. |
 | Second heartbeat progress summary wrapped an already-complete `training_progress.json` path in an extra `Join-Path` call | 1 | Re-read the two known progress files by direct literal paths; the error was read-only, both training processes remained healthy, and no queue or artifact changed. |
 | Third heartbeat checkpoint summary directly piped a completed PowerShell `foreach` block | 1 | Collect checkpoint rows into an explicit array before piping; the parser failed before reading runtime state, and the corrected read-only audit completed without changing experiments. |

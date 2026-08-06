@@ -1013,3 +1013,21 @@
   server training queue exists, no protected cohort was opened, and the prior
   HOLD/STOP findings remain unchanged. The next legitimate action is to define
   and freeze a new Linux Train/Dev queue before seeking launch authority.
+
+# 2026-08-06 Continuous lightweight server-search hypothesis
+
+- FG1 already clears the fixed Macro-F1 target by 0.006839 but misses the B403
+  ODER ceiling by only 0.000357, approximately four Dev rows. Broad loss changes
+  (weighted CE and balanced softmax) damaged both objectives, so the next most
+  evidence-aligned change is a small directional constraint on the otherwise
+  unchanged FG1/A509-H0 path.
+- The first two server arms should therefore vary only the weight of the
+  already-implemented opposite-direction margin loss. This directly targets
+  Improved/Worse swaps while leaving the focal classification loss and main
+  architecture unchanged. Terminal receipts, not intermediate epochs, decide
+  whether to refine the margin, test the two predeclared learning rates, or
+  freeze a winner for seeds 28/43.
+- The continuous-search authority widens the number of sequential lightweight
+  waves, not the data surface or the scientific claim. It does not authorize
+  protected outcomes, retrospective threshold weakening, data cleaning, or a
+  large architectural rewrite.
