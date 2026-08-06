@@ -1064,3 +1064,13 @@
   0.534867 and ODER 0.005446. Thus DMW=0.02 has passed at two of two completed
   seeds, but the full confirmation remains incomplete until the frozen Seed-43
   receipt is terminal; no three-seed or protected-cohort claim is yet valid.
+- Seed 43 independently passes at Macro-F1 `0.533353` and ODER `0.004196`, so
+  DMW=0.02 passes the immutable joint target at all three frozen seeds. Its
+  three-seed mean Macro-F1 `0.534623` exceeds seed-matched B403 by `0.010057`,
+  while mean ODER `0.004732` is lower by `0.001547`; the direction is favorable
+  at each paired seed on both metrics.
+- This closes the exact-setting reproducibility question for the exploratory
+  Train/Dev namespace, but it is still outcome-adaptive Dev evidence. It does
+  not reopen protected cohorts or erase `HOLD_DEVELOPMENT_GATE` and
+  `STOP_CURRENT_PRTA_ROUTE`. The next legitimate lightweight question is the
+  predeclared learning-rate axis around the now-confirmed DMW=0.02 setting.

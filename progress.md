@@ -2553,3 +2553,35 @@
   match, with `/ipfs` at 2% use. Intermediate Dev evidence was monitoring-only.
   The current patience anchor is epoch 2, so terminal completion is expected
   in roughly 15--30 minutes if no later improvement extends the run.
+
+# 2026-08-07 03:35 CST three-seed confirmation and LR wave launch
+
+- Seed 43 completed seven epochs with terminal Dev Macro-F1 `0.533353` and
+  ODER `0.004196`. Together with Seeds 17/28, the exact DMW=0.02 setting is now
+  3/3 above the fixed Macro-F1 target and 3/3 below the fixed ODER ceiling;
+  every receipt reports zero protected reads.
+- DMW=0.02 three-seed mean +/- sample SD is `0.534623 +/- 0.001167` Macro-F1
+  and `0.004732 +/- 0.000644` ODER. Seed-matched B403 is
+  `0.524565 +/- 0.003460` and `0.006279 +/- 0.001690`, giving mean differences
+  of `+0.010057` Macro-F1 and `-0.001547` ODER. DMW=0.02 is better on both axes
+  for each of the three paired seeds. This is aggregate-only Train/Dev evidence.
+- Wrote immutable confirmation aggregate receipt SHA-256
+  `070df3ceb1e94b13675b8ca1d0522597280ad5da64078e6f6a2469ff17a0e2ee`.
+  Historical `HOLD_DEVELOPMENT_GATE` and `STOP_CURRENT_PRTA_ROUTE` remain
+  unchanged; Internal-test and Gold were not opened.
+- Froze `wave002_lr_v1` as the next one-axis wave: DMW=0.02 with learning rates
+  `5e-5` and `2e-4`, Seed 17, unchanged optimizer family/data/method/budget.
+  Because allocation 3066 is step-exhausted, both arms are assigned strictly
+  sequentially to allocation 4161. Frozen config hashes are
+  `e0fcb7acca0525a536f6ab9b82a40eba7b66636df46b812eb5c15fd407521ed5`
+  and `9d0ca38ae858d103742498fda544d5d1122fb066da5f65cc8e03276c3be8da76`.
+- Launched only `SVR-FG1-DMW020-LR050-S17` in detached Slurm step
+  `4161.27720`. It is healthy at epoch 0 step 400/5,026 with one active child,
+  exact six input hashes, a clean launcher log, and `/ipfs` at 2% use.
+  `SVR-FG1-DMW020-LR200-S17` remains frozen and unstarted.
+- The remote login node uses Python 3.9, so the first preparation script failed
+  before any artifact write on `datetime.UTC`, then again before any write on
+  `zip(strict=True)`. Replaced these with Python-3.9-compatible forms and the
+  unchanged preparation completed. The first launch guard also matched the
+  allocation's `.batch` step; narrowed it to non-batch child steps before the
+  one authorized training launch.

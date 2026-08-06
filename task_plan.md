@@ -669,13 +669,12 @@ Status: complete
 
 ## Next Step
 
-Complete the exact-setting Seed-28/43 confirmation of the terminally qualified
-`SVR-FG1-DMW020-S17` configuration. Seeds 17 and 28 have both passed the fixed
-joint target; Seed 43 is now running sequentially on retained allocation 4161
-with its unchanged frozen config because allocation 3066 exhausted its Slurm
-step capacity. After Seed 43 terminates, compute the symmetric three-seed
-comparison and freeze the next one-axis search wave. Keep protected cohorts
-sealed and preserve all failed launch logs.
+Monitor frozen learning-rate wave `wave002_lr_v1` sequentially on retained
+allocation 4161. `SVR-FG1-DMW020-LR050-S17` is active; launch unchanged
+`SVR-FG1-DMW020-LR200-S17` only after the first arm has a terminal receipt and
+the allocation has no child step. Select from terminal Dev evidence only,
+preserve every run/log, keep allocation 3066 unused because it is step-exhausted,
+and keep all protected cohorts sealed.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1028,8 +1027,19 @@ Status: in progress under explicit 2026-08-06 user authority
 - Allocation 3066 is now step-exhausted. Its Seed-43 launch failed before
   output creation and is preserved. Seed 28 completed after eight epochs at
   Macro-F1 `0.534867` and ODER `0.005446`, passing both fixed targets with zero
-  protected reads. Seed 43 now runs on allocation 4161 via a documented
-  allocation-only identity-preserving retry with the same frozen config.
+  protected reads. Seed 43 completed after seven epochs at Macro-F1 `0.533353`
+  and ODER `0.004196`, also passing both fixed targets with zero protected reads.
+- Exact DMW=0.02 confirmation is therefore 3/3 PASS. Across seeds 17/28/43 its
+  Dev Macro-F1 is `0.534623 +/- 0.001167` and ODER is
+  `0.004732 +/- 0.000644` (sample SD). Against seed-matched B403, mean deltas
+  are `+0.010057` Macro-F1 and `-0.001547` ODER; DMW=0.02 is better on both
+  axes at all three paired seeds. This remains outcome-adaptive exploratory
+  Train/Dev evidence and does not revise the historical HOLD/STOP decisions.
+- Frozen wave `wave002_lr_v1` varies only learning rate around DMW=0.02:
+  `5e-5` then `2e-4`, both Seed 17 and strictly sequential on allocation 4161.
+  The first arm is running in Slurm step `4161.27720`; the second remains
+  unstarted. Aggregate receipt SHA-256 is
+  `070df3ceb1e94b13675b8ca1d0522597280ad5da64078e6f6a2469ff17a0e2ee`.
 
 ## Terminal formal-program record - 2026-08-04
 
