@@ -1060,3 +1060,7 @@
   has reached its Slurm step limit. This is an execution-capacity limitation,
   not model evidence; remaining confirmation/search jobs must run sequentially
   on allocation 4161 unless the server state changes.
+- Seed 28 independently passes the same fixed joint target at Macro-F1
+  0.534867 and ODER 0.005446. Thus DMW=0.02 has passed at two of two completed
+  seeds, but the full confirmation remains incomplete until the frozen Seed-43
+  receipt is terminal; no three-seed or protected-cohort claim is yet valid.

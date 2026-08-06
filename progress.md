@@ -2508,3 +2508,20 @@
   With the patience window currently anchored at epoch 3, Seed 28 should reach
   a valid terminal receipt in roughly 8--20 minutes unless a later epoch
   improvement extends training.
+
+# 2026-08-07 02:25 CST Seed-28 terminal and Seed-43 launch
+
+- Seed 28 completed eight epochs with a valid `PASS_TRAINING_FINISHED` receipt.
+  Terminal Dev Macro-F1 is 0.534867 and ODER is 0.005446, so the exact DMW=0.02
+  setting passes both immutable targets at a second seed. Protected reads are
+  zero and all six input hashes match.
+- With Seed-28 step `4161.27567` gone, froze an allocation-only retry receipt
+  for the unchanged Seed-43 config. Its first allocation-3066 failure log and
+  absent-output evidence remain preserved; config, seed, data, method, and
+  budget did not change.
+- Seed 43 is now healthy in detached Slurm step `4161.27649` on allocation
+  4161. It reached epoch 0 step 200/5,026 with one 2,246 MiB training process,
+  a clean active log, exact frozen hashes, and no protected outcome access.
+- Updated the existing 20-minute automation in place to monitor Seed 43, then
+  perform the symmetric three-seed aggregate comparison before opening the
+  next frozen one-axis wave. No job was submitted or cancelled.

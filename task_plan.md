@@ -670,11 +670,12 @@ Status: complete
 ## Next Step
 
 Complete the exact-setting Seed-28/43 confirmation of the terminally qualified
-`SVR-FG1-DMW020-S17` configuration. Seed 28 is running on retained allocation
-4161; after it terminates, retry the unchanged Seed-43 configuration
-sequentially on 4161 because retained allocation 3066 has exhausted its Slurm
-step capacity. Keep protected cohorts sealed and preserve all failed launch
-logs before opening the next frozen one-axis search wave.
+`SVR-FG1-DMW020-S17` configuration. Seeds 17 and 28 have both passed the fixed
+joint target; Seed 43 is now running sequentially on retained allocation 4161
+with its unchanged frozen config because allocation 3066 exhausted its Slurm
+step capacity. After Seed 43 terminates, compute the symmetric three-seed
+comparison and freeze the next one-axis search wave. Keep protected cohorts
+sealed and preserve all failed launch logs.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1025,9 +1026,10 @@ Status: in progress under explicit 2026-08-06 user authority
   `ca188a4f30e13f58309f69dde52bcd2e5efd4381ded76123ac6b161f73f7677b`
   and `dfb9ef9a4a242eb8b06af00e32519ac08f13069e290a609a02314c597a244c14`.
 - Allocation 3066 is now step-exhausted. Its Seed-43 launch failed before
-  output creation and is preserved. Seed 28 is healthy on allocation 4161 via
-  detached identity-preserving attempt 2; Seed 43 will run sequentially on
-  4161 with the same frozen config after Seed 28 terminates.
+  output creation and is preserved. Seed 28 completed after eight epochs at
+  Macro-F1 `0.534867` and ODER `0.005446`, passing both fixed targets with zero
+  protected reads. Seed 43 now runs on allocation 4161 via a documented
+  allocation-only identity-preserving retry with the same frozen config.
 
 ## Terminal formal-program record - 2026-08-04
 
