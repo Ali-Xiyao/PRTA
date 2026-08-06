@@ -2647,3 +2647,15 @@
   progress receipt appeared and exited after the child had already started.
   A read-only check 15 seconds later confirmed the same detached child was
   healthy; no duplicate launch or scientific change was made.
+
+# 2026-08-07 05:05 CST LR200 monitor
+
+- LR200 remains healthy after 17 minutes in Slurm step `4161.27796`, at epoch
+  2 step 300/5,026. Its RUNNING registry row, active process, and fresh best/last
+  checkpoints agree; no terminal receipt exists.
+- Preparation, config, and launch-receipt hashes match their frozen values.
+  All six Train/Dev input hashes remain unchanged, the launcher log is clean,
+  `/ipfs` remains 2% used, and protected outcomes remain unopened.
+- Intermediate epoch metrics are monitoring-only and did not alter the queue.
+  At the observed roughly 7--8 minutes per epoch, the earliest valid early-stop
+  window is about 30--40 minutes away unless later improvement extends patience.
