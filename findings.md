@@ -854,3 +854,12 @@
 - A508 is a single-factor loss ablation (`alignment=0`). A509 is explicitly a
   multi-objective diagnostic control (`alignment=cmcp=inversion=state=0`) and
   must not be described as a single-component ablation.
+- Paired analysis supports only performance comparability at Seed 17, not a
+  PRTA classification advantage: the patient-bootstrap Macro-F1 interval spans
+  zero. PRTA had 943 exclusive correct rows versus 1,050 for B403 and lower
+  overall accuracy (0.617088 versus 0.626640).
+- PRTA's ODER was 0.007499 versus B403's 0.005535; the patient-bootstrap PRTA
+  minus B403 interval [0.000263, 0.003751] excludes zero in the harmful
+  direction. Its matched-wrong/null/reversed Macro-F1 drops were also all
+  larger than B403's, so current evidence does not support a mechanism/trust
+  advantage either. A508/A509 are now the decisive auxiliary-loss diagnostic.

@@ -819,7 +819,7 @@ Status: complete
   Internal-test/Gold remained unopened.
 
 ### Phase 83 - Minimum-wave authority and immutable scope
-Status: in progress
+Status: complete
 
 - Bind the new authority only to paired cleaned-Dev analysis plus four frozen
   Train/Dev runs: A508-S17, A509-S17, B403-S28, and B403-S43.
@@ -827,9 +827,12 @@ Status: in progress
   delete more Dev rows, tune loss weights, or open Internal-test/Gold.
 - Use the existing physician-cleaned Train 80,402 / Dev 11,201 manifest, cache,
   model family, optimizer, epoch/early-stopping budget, and GPU contract.
+- Preparation passed with queue IDs A508-S17, A509-S17, B403-S28, and
+  B403-S43; canonical queue SHA-256 is
+  `8480158fb05650ca717732908f1f1ccbf47a867ab95f276b149cfd3d6c0112ac`.
 
 ### Phase 84 - Paired PRTA versus B403 Dev analysis
-Status: pending
+Status: complete
 
 - Recompute deterministic row-level predictions from the frozen PRTA-S17 and
   B403-S17 best checkpoints on Dev only because the prior receipts retained no
@@ -838,22 +841,35 @@ Status: pending
   ODER direction pairs, and source/finding/class breakdowns.
 - Compare Wrong PRIOR, Null PRIOR, and Reversed Pair degradation without any
   parameter update or protected-manifest access.
+- The observed Macro-F1 delta was +0.002270, but the 10,000-replicate
+  patient-bootstrap 95% CI was [-0.008452, +0.013238], so it includes zero.
+  PRTA accuracy was lower by 0.009553 and its ODER was higher by 0.001964;
+  the corresponding bootstrap intervals excluded zero in the adverse direction.
+- PRTA also lost more Macro-F1 than B403 under matched-wrong, null, and reversed
+  PRIOR interventions. Analysis SHA-256 is
+  `aebb57ec886769570bfd8864733aae1d0dd0d5f7a9a239163ae80f5e1f9d5c8b`.
 
 ### Phase 85 - Four-run configuration freeze and preflight
-Status: pending
+Status: complete
 
 - Freeze A508 as `lambda_alignment=0` only and A509 as classification-only PRTA
   with alignment/CMCP/inversion/state auxiliary weights all zero.
 - Clone B403-S17 exactly to seeds 28 and 43 except for seed/run identity.
 - Verify configuration diffs, cache coverage, hashes, both GPUs, disk, and zero
   protected reads before launch.
+- Full repository validation passed: Ruff clean and 156 tests passed. Both GPUs
+  were idle before launch; preparation receipt SHA-256 is
+  `14d12b36072f8695dfc03e182fb287d5d1eeaa4f25cd870483aeab9e3e8abfeb`.
 
 ### Phase 86 - Dual-GPU minimum-wave execution
-Status: pending
+Status: in progress
 
 - Run the four immutable jobs on cuda:0/cuda:1 with the existing fail-closed
   scheduler, preserving logs, receipts, checkpoints, and identity-safe resume.
 - Do not tune from intermediate Dev metrics or change any frozen input/budget.
+- Scheduler PID 25632 launched A508-S17 on cuda:0 (PID 28708) and A509-S17 on
+  cuda:1 (PID 37716). Both reached epoch 0 training with empty stderr; B403-S28
+  and B403-S43 remain PLANNED and will start automatically as GPUs release.
 
 ### Phase 87 - Contribution decision and local-only handoff
 Status: pending

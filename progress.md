@@ -1848,3 +1848,11 @@
   receipts but no row-level Dev predictions. Phase 84 will therefore perform
   deterministic, no-training Dev-only inference from the frozen best
   checkpoints before the four-run launch.
+- Dual-GPU no-training Dev inference completed all four conditions for both
+  frozen checkpoints, exactly 11,201 rows per condition and zero protected
+  reads. Patient-bootstrap Macro-F1 delta was +0.002270 with 95% CI
+  [-0.008452, +0.013238], so the apparent +0.227 percentage-point gain is not
+  statistically distinguishable from zero.
+- The four-run queue was frozen and launched. Scheduler PID 25632 is healthy;
+  A508-S17 is active on cuda:0 and A509-S17 on cuda:1, while B403-S28/S43 are
+  queued. No Internal-test/Gold path was opened.
