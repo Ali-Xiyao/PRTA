@@ -2627,3 +2627,23 @@
 - The patience anchor advanced to epoch 4. If there is no later terminal
   improvement, early stopping is expected in approximately 15--30 minutes;
   any valid improvement may extend the frozen run toward its 20-epoch cap.
+
+# 2026-08-07 04:49 CST LR050 terminal and LR200 launch
+
+- LR050 completed nine epochs with `PASS_TRAINING_FINISHED`. Its terminal best
+  Dev Macro-F1 is `0.520378` and ODER is `0.006160`; it therefore misses both
+  immutable targets (`0.529094` / `0.005535`) and is preserved as a losing run.
+  The receipt reports zero protected reads and SHA-256
+  `561769f56bb230a3be64038b7f76f9616416206ae37f4491c622bc0b7b43fb8e`.
+- After Slurm step `4161.27720` disappeared, verified LR050 terminal identity,
+  exact LR200 config hash, absent LR200 output/log, and no active child. Then
+  launched the unchanged frozen LR200 arm sequentially in detached step
+  `4161.27796`; no parent job was submitted or cancelled.
+- LR200 is healthy at epoch 0 step 300/5,026 with a RUNNING registry row, clean
+  launcher log, unchanged six Train/Dev input hashes, and `/ipfs` at 2% use.
+  Its launch receipt SHA-256 is
+  `8799eda75117208f9a68116b68b3b76f4d575b5067714950f0dd14db46839303`.
+- The launch wrapper's 12-second post-launch assertion ran before the first
+  progress receipt appeared and exited after the child had already started.
+  A read-only check 15 seconds later confirmed the same detached child was
+  healthy; no duplicate launch or scientific change was made.

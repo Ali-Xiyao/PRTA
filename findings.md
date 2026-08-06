@@ -1074,3 +1074,8 @@
   not reopen protected cohorts or erase `HOLD_DEVELOPMENT_GATE` and
   `STOP_CURRENT_PRTA_ROUTE`. The next legitimate lightweight question is the
   predeclared learning-rate axis around the now-confirmed DMW=0.02 setting.
+- Lowering the learning rate from `1e-4` to `5e-5` at fixed DMW=0.02 materially
+  degrades the Seed-17 terminal result: Macro-F1 falls from `0.535648` to
+  `0.520378`, while ODER rises from `0.004553` to `0.006160`. LR050 misses both
+  fixed targets and provides no evidence for the lower-rate direction; the
+  independently frozen LR200 arm remains required before closing this axis.

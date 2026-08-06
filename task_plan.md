@@ -670,11 +670,11 @@ Status: complete
 ## Next Step
 
 Monitor frozen learning-rate wave `wave002_lr_v1` sequentially on retained
-allocation 4161. `SVR-FG1-DMW020-LR050-S17` is active; launch unchanged
-`SVR-FG1-DMW020-LR200-S17` only after the first arm has a terminal receipt and
-the allocation has no child step. Select from terminal Dev evidence only,
-preserve every run/log, keep allocation 3066 unused because it is step-exhausted,
-and keep all protected cohorts sealed.
+allocation 4161. LR050 is terminal below the fixed joint target; unchanged
+`SVR-FG1-DMW020-LR200-S17` is now active. After LR200 terminates, close the
+two-arm wave from terminal evidence only, preserve every run/log, keep
+allocation 3066 unused because it is step-exhausted, and freeze the next small
+one-axis wave without opening protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1037,8 +1037,9 @@ Status: in progress under explicit 2026-08-06 user authority
   Train/Dev evidence and does not revise the historical HOLD/STOP decisions.
 - Frozen wave `wave002_lr_v1` varies only learning rate around DMW=0.02:
   `5e-5` then `2e-4`, both Seed 17 and strictly sequential on allocation 4161.
-  The first arm is running in Slurm step `4161.27720`; the second remains
-  unstarted. Aggregate receipt SHA-256 is
+  LR050 completed nine epochs at Macro-F1 `0.520378` and ODER `0.006160`,
+  missing both fixed targets. LR200 now runs unchanged in Slurm step
+  `4161.27796`. Aggregate confirmation receipt SHA-256 is
   `070df3ceb1e94b13675b8ca1d0522597280ad5da64078e6f6a2469ff17a0e2ee`.
 
 ## Terminal formal-program record - 2026-08-04
