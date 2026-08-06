@@ -2539,3 +2539,17 @@
   and step-exhausted; `/ipfs` remains 2% used. Intermediate Dev evidence was
   not used for selection. At the current pace, terminal completion is expected
   in roughly 25--45 minutes unless later improvement extends patience.
+
+# 2026-08-07 03:05 CST Seed-43 confirmation monitor
+
+- Seed-43 attempt 2 remains healthy after 39 minutes in Slurm step
+  `4161.27649`, at epoch 4 step 4,100/5,026. Its registry remains RUNNING,
+  checkpoints are fresh, and no terminal receipt exists.
+- Allocation 4161 still contains exactly one 2,246 MiB training process; the
+  active log has no error. Seed-28 terminal artifacts and all failed launch
+  logs remain immutable, while allocation 3066 remains batch-only and
+  step-exhausted.
+- Config, retry receipt, launcher, and all Train/Dev input hashes continue to
+  match, with `/ipfs` at 2% use. Intermediate Dev evidence was monitoring-only.
+  The current patience anchor is epoch 2, so terminal completion is expected
+  in roughly 15--30 minutes if no later improvement extends the run.
