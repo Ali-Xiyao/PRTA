@@ -2659,3 +2659,15 @@
 - Intermediate epoch metrics are monitoring-only and did not alter the queue.
   At the observed roughly 7--8 minutes per epoch, the earliest valid early-stop
   window is about 30--40 minutes away unless later improvement extends patience.
+
+# 2026-08-07 05:25 CST LR200 monitor
+
+- LR200 remains healthy after 37 minutes in Slurm step `4161.27796`, at epoch
+  4 step 2,800/5,026. Its RUNNING registry/process state and fresh best/last
+  checkpoints agree, with no terminal receipt or launcher error.
+- Frozen hashes and all six Train/Dev input hashes remain unchanged; `/ipfs`
+  is 2% used and protected cohorts remain sealed. Intermediate Dev evidence was
+  not used for selection or mutation.
+- The patience anchor advanced to epoch 2. If no later terminal improvement
+  occurs, a valid terminal receipt is estimated in roughly 20--35 minutes;
+  later improvement may extend the unchanged run.
