@@ -2525,3 +2525,17 @@
 - Updated the existing 20-minute automation in place to monitor Seed 43, then
   perform the symmetric three-seed aggregate comparison before opening the
   next frozen one-axis wave. No job was submitted or cancelled.
+
+# 2026-08-07 02:45 CST Seed-43 confirmation monitor
+
+- Seed-43 identity-preserving attempt 2 remains healthy after 19 minutes in
+  Slurm step `4161.27649`, at epoch 2 step 1,600/5,026. Its registry row is
+  RUNNING, best/last checkpoints are fresh, and no terminal receipt exists.
+- Allocation 4161 contains exactly one 2,246 MiB training process. The active
+  Seed-43 log contains only `GpuFreq=control_disabled`; all prior failure logs
+  and terminal Seed-28 artifacts remain preserved and unchanged.
+- Seed-43 config and retry-receipt hashes, launcher hash, and all six Train/Dev
+  input hashes match their frozen values. Allocation 3066 remains batch-only
+  and step-exhausted; `/ipfs` remains 2% used. Intermediate Dev evidence was
+  not used for selection. At the current pace, terminal completion is expected
+  in roughly 25--45 minutes unless later improvement extends patience.
