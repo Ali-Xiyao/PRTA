@@ -2585,3 +2585,18 @@
   unchanged preparation completed. The first launch guard also matched the
   allocation's `.batch` step; narrowed it to non-batch child steps before the
   one authorized training launch.
+
+# 2026-08-07 03:45 CST LR050 monitor
+
+- `SVR-FG1-DMW020-LR050-S17` remains healthy in Slurm step `4161.27720`
+  after 12 minutes, at epoch 1 step 2,700/5,026. Its registry row is RUNNING,
+  `best.pt` and `last.pt` were written at the epoch-0 boundary, and no terminal
+  receipt exists yet.
+- The launcher log contains only `GpuFreq=control_disabled`; frozen preparation,
+  aggregate, and both config hashes match exactly. All six Train/Dev input
+  hashes remain unchanged, `/ipfs` is 2% used, and LR200 is still absent and
+  unstarted as required.
+- The observed epoch-0 Dev metrics are monitoring-only and did not change the
+  queue or method. At the current roughly 7--8 minutes per epoch, the earliest
+  valid early-stop window is approximately 30--40 minutes away unless later
+  terminal improvements extend patience.
