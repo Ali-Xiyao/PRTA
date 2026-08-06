@@ -2760,3 +2760,14 @@
   unopened. Intermediate Dev values did not change selection or stopping.
 - Patience is currently anchored at epoch 3. If no later improvement extends
   it, a valid terminal receipt is expected in roughly 20--35 minutes.
+
+# 2026-08-07 07:45 CST LR200 Seed-28 confirmation monitor
+
+- Seed 28 remains healthy in the sole child step `4161.27919`, at epoch 6
+  step 4,700/5,026 after about 56 minutes. Its progress/process state and
+  clean launcher log agree; no terminal receipt exists.
+- Frozen hashes remain exact, Seed 43 is still absent/unstarted, storage is
+  healthy, and protected outcomes remain sealed. No intermediate metric was
+  used to mutate the run or queue.
+- Patience is anchored at epoch 4. If it is not reset by a later valid
+  improvement, terminal completion is expected in roughly 10--25 minutes.
