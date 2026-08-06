@@ -2378,3 +2378,21 @@
   from terminal receipts, freezes each next pair before launch, confirms a
   passing Seed-17 setting at seeds 28/43, and continues lightweight search
   until the user explicitly says stop.
+
+# 2026-08-07 00:05 CST server Dev-search monitor
+
+- Wave 001 remains healthy after 23 minutes. Slurm steps `4161.27473` and
+  `3066.39932` are both RUNNING near the end of epoch 2 at step 4,600/5,026;
+  neither training receipt exists yet, so no terminal selection is allowed.
+- Both launcher PIDs remain registered, both run-registry rows are RUNNING at
+  source commit `e8deec111d5da3b8b81f013007017190d0612b76`, and each A800 has one
+  2,246 MiB training process. Attempt-2 logs contain only the scheduler GPU
+  frequency notice and no error.
+- Best/last checkpoints exist for both arms and have fresh epoch-boundary
+  timestamps. All frozen config and six input hashes match the preparation and
+  readiness pins; protected outcome reads remain zero. `/ipfs` has about 1.2 PB
+  available, so storage is not a blocker.
+- Intermediate best values are monitoring-only and were not used to alter the
+  queue. At the observed approximately 7--8 minutes per epoch, the earliest
+  valid early-stop window is roughly 25--35 minutes away; a later improvement
+  may extend either run toward the 20-epoch maximum.
