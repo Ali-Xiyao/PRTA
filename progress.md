@@ -2358,3 +2358,23 @@
   byte-for-byte, map only its requested Train/Dev output path to the remote
   cleaned root, verify that one manifest against the original SHA, and do not
   open or hash Internal-test, Gold, or lineage files during training admission.
+
+# 2026-08-06 23:45 CST wave-001 attempt-2 running
+
+- The role-scoped portable admission fix passed the full repository gate:
+  Ruff clean, 171/171 tests, compile, and `git diff --check`. Git-safe commit
+  `e8deec111d5da3b8b81f013007017190d0612b76` was pushed only to the local bare
+  remote; the two user-modified paper documents remain unstaged.
+- The exact source archive, launcher, configs, Train/Silver quality receipt,
+  and frozen inputs passed remote hashes. Linux `bash -n`, focused Ruff/tests,
+  and `PASS_ROLE_SCOPED_PORTABLE_TRAIN_DEV_ADMISSION` all passed without
+  opening protected files.
+- Identity-preserving attempt 2 is running as Slurm steps `4161.27473` and
+  `3066.39932`. After SSH disconnect, both srun launchers remained alive and
+  both runs reached epoch 0 step 400/5,026. Each A800 held a training process;
+  the 4161 probe observed 2,246 MiB and both launcher logs contained no error.
+- Created active 20-minute heartbeat automation
+  `prta-cxr-server-dev-search-monitor`. It monitors both runs, advances only
+  from terminal receipts, freezes each next pair before launch, confirms a
+  passing Seed-17 setting at seeds 28/43, and continues lightweight search
+  until the user explicitly says stop.

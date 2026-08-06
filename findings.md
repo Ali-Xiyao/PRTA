@@ -1038,3 +1038,7 @@
   role only; otherwise even a Train/Dev run unnecessarily touches protected
   files. The role-scoped projection both fixes Linux path portability and makes
   the zero-protected-read contract explicit.
+- After the role-scoped correction, both identical scientific arms survived
+  SSH disconnect and entered training on separate A800 allocations. This
+  confirms the initial failure was purely a path-admission defect; it produced
+  no result and does not consume a new hyperparameter observation.

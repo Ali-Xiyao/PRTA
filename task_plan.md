@@ -1007,9 +1007,9 @@ Status: in progress under explicit 2026-08-06 user authority
 - Never select from intermediate epochs. After each complete two-arm wave,
   freeze the next small wave from terminal receipts only, retain every failed
   or losing run, and keep at most one child step per allocation. Continue this
-  bounded lightweight search until the target is reached or the user says
-  stop. A passing Seed-17 setting must be frozen and confirmed at seeds 28/43
-  before any protected-cohort discussion.
+  bounded lightweight search until the user says stop. Reaching the target
+  triggers a frozen seeds-28/43 confirmation but does not silently open a
+  protected cohort or erase the explicitly authorized continuing search.
 - Once the first pair is running and survives an SSH-disconnect check, create a
   20-minute monitor that verifies both retained allocations, processes, logs,
   progress, checkpoints, hashes, disk, receipts, zero protected reads, terminal
@@ -1315,6 +1315,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | Follow-up training-source inspection guessed nonexistent `src/prta_cxr/cli_training.py`; the same search located `train_main` in `src/prta_cxr/cli.py` | 1 | Read and use the actual CLI module; no runtime or repository artifact changed. |
 | Local `bash -n` attempted to use an unavailable WSL `/bin/bash`; later PowerShell commands masked it with an overall zero status | 1 | Do not treat that compound result as shell validation; run `bash -n` inside retained allocation 4161 after deploying the exact launcher, while keeping Python tests/Ruff as separate passing evidence. |
 | Both wave-001 launchers failed before output creation because the immutable freeze receipt contains Windows absolute paths and the Linux validator tried to open them | 1 | Preserve both launcher logs and configs; add a role-scoped portable-root projection that verifies the unchanged receipt plus only the requested Train/Dev manifest hash, prove missing protected files are never opened, and relaunch with identical config/seed/budget. |
+| First 20-minute automation creation used lowercase `active`, while the app requires uppercase `ACTIVE`/`PAUSED` | 1 | Retry the same heartbeat definition with `status=ACTIVE`; no duplicate automation was created. |
 | First cleaned-run scheduler existence check matched its own PowerShell command text | 1 | Restrict process detection to Python executables; the fail-closed attempt created no training process, and the corrected launcher started exactly one scheduler. |
 | Second heartbeat progress summary wrapped an already-complete `training_progress.json` path in an extra `Join-Path` call | 1 | Re-read the two known progress files by direct literal paths; the error was read-only, both training processes remained healthy, and no queue or artifact changed. |
 | Third heartbeat checkpoint summary directly piped a completed PowerShell `foreach` block | 1 | Collect checkpoint rows into an explicit array before piping; the parser failed before reading runtime state, and the corrected read-only audit completed without changing experiments. |
