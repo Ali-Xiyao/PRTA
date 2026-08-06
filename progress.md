@@ -2041,3 +2041,9 @@
   bound to cuda:0 and `TUNE-WCE-S17` PID 41444 to cuda:1; balanced-softmax and
   ordinary-CE remain immutable PLANNED for the two released lanes. Initial
   scheduler and child stderr logs are empty.
+- Created the 30-minute heartbeat monitor
+  `prta-cxr-exploratory-method-monitor` for the bounded loss/LR/state-anchor
+  decision tree. The first two creation calls failed validation on lowercase
+  status and missing thread destination; corrected to `ACTIVE` with
+  `destination=thread`. The final automation was created successfully and no
+  experiment process was affected by the validation failures.
