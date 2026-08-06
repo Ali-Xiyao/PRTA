@@ -2461,3 +2461,19 @@
   confirmation path and the subsequent frozen lightweight waves. The first
   update call omitted the required target thread ID; reading the existing
   automation record and retrying with that ID succeeded without duplication.
+
+# 2026-08-07 01:25 CST Seed-28 confirmation monitor
+
+- Identity-preserving Seed-28 attempt 2 remains healthy in Slurm step
+  `4161.27567` after 16 minutes. It is at the epoch-1 completion/evaluation
+  boundary (5,026/5,026 steps), has fresh best/last checkpoints, a RUNNING
+  registry row, and no terminal receipt yet.
+- Allocation 4161 contains exactly one 2,246 MiB training process. The detached
+  launcher log contains only `GpuFreq=control_disabled`; the preserved failed
+  attempt-1 logs are unchanged. Allocation 3066 remains batch-only and
+  step-exhausted, and Seed 43 remains absent/unstarted as required.
+- Both confirmation config hashes, the preparation receipt, queue, launcher,
+  and all six Train/Dev input hashes match their frozen values. `/ipfs` remains
+  2% used. The current Dev value is monitoring-only and did not change any
+  decision; a valid terminal Seed-28 receipt is estimated in roughly 25--40
+  minutes, depending on later epoch improvements.
