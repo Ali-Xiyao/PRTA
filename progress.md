@@ -2344,3 +2344,17 @@
 - Local WSL lacks `/bin/bash`, so its attempted `bash -n` check is invalid even
   though the subsequent focused Python checks passed. Exact launcher syntax
   validation is therefore moved to the Linux server before either arm starts.
+
+# 2026-08-06 23:38 CST wave-001 fail-closed launch diagnosis
+
+- Both retained-allocation launchers exited before creating any run output,
+  checkpoint, registry row, or Dev result. The preserved logs show the same
+  infrastructure error: the immutable cleaned-freeze receipt carries Windows
+  absolute output paths, which cannot resolve on Linux.
+- Allocations 4161/3066 returned to batch-only state. Configs, seeds, methods,
+  data, and budgets remain unchanged, so an identity-preserving retry is
+  available after a path-only platform projection is validated.
+- The correction is fail-closed and role-scoped: retain the original receipt
+  byte-for-byte, map only its requested Train/Dev output path to the remote
+  cleaned root, verify that one manifest against the original SHA, and do not
+  open or hash Internal-test, Gold, or lineage files during training admission.

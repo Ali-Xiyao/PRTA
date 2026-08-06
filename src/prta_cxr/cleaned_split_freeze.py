@@ -9,7 +9,7 @@ import shutil
 from collections import Counter
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from prta_cxr.artifacts import (
@@ -585,7 +585,9 @@ def freeze_cleaned_split(
     return validate_cleaned_split_freeze(final_receipt)
 
 
-def validate_cleaned_split_freeze(receipt_path: Path) -> dict[str, Any]:
+def _validate_cleaned_split_freeze_metadata(
+    receipt_path: Path,
+) -> dict[str, Any]:
     receipt_path = Path(receipt_path).resolve()
     value = json.loads(receipt_path.read_text(encoding="utf-8"))
     if value.get("schema") != FREEZE_SCHEMA or value.get("status") != FREEZE_STATUS:
@@ -598,10 +600,15 @@ def validate_cleaned_split_freeze(receipt_path: Path) -> dict[str, Any]:
         raise CleanedSplitContractError("physician exclusion total differs")
     if value.get("retained_counts") != RETAINED_COUNTS:
         raise CleanedSplitContractError("cleaned retained counts differ")
-    _verified_hashes(value["output_paths"], value["output_sha256"], kind="cleaned")
-    _verified_hashes(value["lineage_paths"], value["lineage_sha256"], kind="lineage")
     value["receipt_path"] = str(receipt_path)
     value["receipt_sha256"] = sha256_file(receipt_path)
+    return value
+
+
+def validate_cleaned_split_freeze(receipt_path: Path) -> dict[str, Any]:
+    value = _validate_cleaned_split_freeze_metadata(receipt_path)
+    _verified_hashes(value["output_paths"], value["output_sha256"], kind="cleaned")
+    _verified_hashes(value["lineage_paths"], value["lineage_sha256"], kind="lineage")
     return value
 
 
@@ -610,12 +617,25 @@ def require_cleaned_manifest(
     *,
     receipt_path: Path,
     role: str,
+    portable_root: Path | None = None,
 ) -> dict[str, Any]:
     if role not in {"train_dev", "internal_test", "gold"}:
         raise CleanedSplitContractError(f"unsupported cleaned split role: {role}")
-    receipt = validate_cleaned_split_freeze(receipt_path)
+    receipt = _validate_cleaned_split_freeze_metadata(receipt_path)
     actual = Path(manifest_path).resolve()
-    expected = Path(receipt["output_paths"][role]).resolve()
+    if portable_root is None:
+        expected = Path(receipt["output_paths"][role]).resolve()
+    else:
+        output_paths = receipt["output_paths"]
+        frozen_root = PureWindowsPath(output_paths["aggregate_summary"]).parent
+        frozen_role = PureWindowsPath(output_paths[role])
+        try:
+            relative = frozen_role.relative_to(frozen_root)
+        except ValueError as exc:
+            raise CleanedSplitContractError(
+                f"formal {role} path is outside the frozen output root"
+            ) from exc
+        expected = (Path(portable_root).resolve() / Path(*relative.parts)).resolve()
     if actual != expected:
         raise CleanedSplitContractError(
             f"formal {role} must use active frozen path: {expected}"

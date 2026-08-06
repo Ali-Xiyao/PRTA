@@ -1031,3 +1031,10 @@
   waves, not the data surface or the scientific claim. It does not authorize
   protected outcomes, retrospective threshold weakening, data cleaning, or a
   large architectural rewrite.
+- The first Linux launch exposed a portability bug in the admission validator:
+  `require_cleaned_manifest(role="train_dev")` delegated to a full-freeze
+  validator that hashed every split and lineage path before checking the role.
+  A server-safe implementation must validate freeze metadata and the requested
+  role only; otherwise even a Train/Dev run unnecessarily touches protected
+  files. The role-scoped projection both fixes Linux path portability and makes
+  the zero-protected-read contract explicit.

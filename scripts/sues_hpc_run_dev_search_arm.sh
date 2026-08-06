@@ -66,6 +66,7 @@ python scripts/07_train.py \
   --config "${CONFIG}" \
   --split-manifest "${SPLIT_MANIFEST}" \
   --cleaned-split-freeze "${CLEANED_SPLIT_FREEZE}" \
+  --cleaned-split-platform-root "${RUNTIME_ROOT}/formal_cleaned_split_v1_1" \
   --cache-root "${CACHE_ROOT}" \
   --text-cache "${CACHE_ROOT}/text_cache.pt" \
   --weights "${WEIGHTS}" \

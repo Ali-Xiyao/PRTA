@@ -39,6 +39,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--config", type=Path)
     parser.add_argument("--split-manifest", type=Path)
     parser.add_argument("--cleaned-split-freeze", type=Path)
+    parser.add_argument("--cleaned-split-platform-root", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--weights", type=Path)
@@ -121,6 +122,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             args.split_manifest,
             receipt_path=args.cleaned_split_freeze,
             role="train_dev",
+            portable_root=args.cleaned_split_platform_root,
         )
         rows = read_jsonl(args.split_manifest)
         data_config = dict(config.get("data", {}))
