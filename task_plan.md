@@ -669,11 +669,12 @@ Status: complete
 
 ## Next Step
 
-Execute the user-authorized minimum contribution-diagnostic wave: first compare
-the frozen PRTA-S17 and B403-S17 checkpoints with paired, patient-bootstrap Dev
-analysis, then run A508-S17, A509-S17, B403-S28, and B403-S43 under unchanged
-cleaned Train/Dev data and equal budgets. Keep the prior HOLD immutable and keep
-Internal-test/Gold closed throughout.
+Complete the exact-setting Seed-28/43 confirmation of the terminally qualified
+`SVR-FG1-DMW020-S17` configuration. Seed 28 is running on retained allocation
+4161; after it terminates, retry the unchanged Seed-43 configuration
+sequentially on 4161 because retained allocation 3066 has exhausted its Slurm
+step capacity. Keep protected cohorts sealed and preserve all failed launch
+logs before opening the next frozen one-axis search wave.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1015,6 +1016,18 @@ Status: in progress under explicit 2026-08-06 user authority
   progress, checkpoints, hashes, disk, receipts, zero protected reads, terminal
   selection, and the next frozen pair. Git-safe code/planning may be pushed only
   to the configured local bare remote.
+- Wave 001 is terminal. `SVR-FG1-DMW020-S17` passed the joint target at Dev
+  Macro-F1 `0.535648` and ODER `0.004553`; `SVR-FG1-DMW050-S17` reached
+  Macro-F1 `0.525488` and ODER `0.005000`, so it failed only the fixed F1
+  threshold. Both receipts report zero protected reads.
+- Exact confirmation namespace `confirmation_dmw020_v1` is frozen at the
+  unchanged DMW=0.02 setting for seeds 28/43. Config file hashes are
+  `ca188a4f30e13f58309f69dde52bcd2e5efd4381ded76123ac6b161f73f7677b`
+  and `dfb9ef9a4a242eb8b06af00e32519ac08f13069e290a609a02314c597a244c14`.
+- Allocation 3066 is now step-exhausted. Its Seed-43 launch failed before
+  output creation and is preserved. Seed 28 is healthy on allocation 4161 via
+  detached identity-preserving attempt 2; Seed 43 will run sequentially on
+  4161 with the same frozen config after Seed 28 terminates.
 
 ## Terminal formal-program record - 2026-08-04
 
@@ -1320,6 +1333,9 @@ Status: in progress under explicit 2026-08-06 user authority
 | Second heartbeat progress summary wrapped an already-complete `training_progress.json` path in an extra `Join-Path` call | 1 | Re-read the two known progress files by direct literal paths; the error was read-only, both training processes remained healthy, and no queue or artifact changed. |
 | Third heartbeat checkpoint summary directly piped a completed PowerShell `foreach` block | 1 | Collect checkpoint rows into an explicit array before piping; the parser failed before reading runtime state, and the corrected read-only audit completed without changing experiments. |
 | Runtime finalizer guard expected scheduler status `PASS`, while the queue emits `PASS_TRAINING_QUEUE_FINISHED` | 1 | The guard failed closed after all five receipts were complete. Run the existing finalizer once with the identical frozen registry, preparation receipt, and comparison gate; no training or protected data were opened. |
+| Confirmation preparation inventory guessed nonexistent tracked path `configs/exploratory/tune_fg1_s17.json` | 1 | Use the immutable terminal server config from wave 001 as the exact confirmation parent; the failed read did not change any artifact. |
+| First confirmation launch used background `nohup` under a closing SSH PTY; allocation 4161 cancelled its new step before output, while allocation 3066 rejected its step because the retained job has reached its Slurm step limit | 1 | Preserve both logs and the absent-output evidence, relaunch unchanged Seed 28 through a detached `setsid` wrapper, and schedule unchanged Seed 43 sequentially on 4161 after Seed 28 finishes. No scientific identity or budget changed. |
+| First heartbeat automation update omitted the existing target thread ID | 1 | Read the automation's local TOML for its exact target thread, then update the same automation in place; no duplicate monitor was created. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

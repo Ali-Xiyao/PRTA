@@ -2436,3 +2436,28 @@
   `/ipfs` remains 2% used with about 1.2 PB available. Intermediate Dev values
   remain monitoring-only and did not alter the queue; if neither arm improves
   again, valid terminal receipts are expected in roughly 10--20 minutes.
+
+# 2026-08-07 01:05 CST wave-001 terminal and confirmation launch
+
+- Both wave-001 attempt-2 arms completed after nine epochs with valid
+  `PASS_TRAINING_FINISHED` receipts. DMW=0.02 reached terminal Dev Macro-F1
+  0.535648 and ODER 0.004553, clearing both immutable targets; DMW=0.05 reached
+  0.525488 / 0.005000 and therefore missed the fixed F1 target.
+- Frozen exact-setting confirmation `confirmation_dmw020_v1` contains only
+  Seed 28 and Seed 43 copies of the qualified DMW=0.02 configuration. A
+  byte-level parent comparison proved that only `experiment_id` and `seed`
+  changed. Preparation and launch receipts report zero protected reads and no
+  new Slurm job submission.
+- Initial confirmation launch logs were preserved. Allocation 3066 rejected
+  Seed 43 before output creation because the long-lived job reached its Slurm
+  step limit. The first Seed-28 step on 4161 was cancelled when its SSH PTY
+  closed, also before output creation.
+- Identity-preserving Seed-28 attempt 2 now runs in detached Slurm step
+  `4161.27567` with the original config, data, seed, method, and budget. It is
+  healthy at epoch 0 step 1,200/5,026 with one 2,246 MiB training process and
+  exact frozen input hashes. Seed 43 remains unstarted and will be retried
+  sequentially on 4161 only after Seed 28 reaches a terminal receipt.
+- Updated the existing 20-minute automation in place to monitor this sequential
+  confirmation path and the subsequent frozen lightweight waves. The first
+  update call omitted the required target thread ID; reading the existing
+  automation record and retrying with that ID succeeded without duplication.

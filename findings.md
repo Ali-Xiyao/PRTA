@@ -1042,3 +1042,21 @@
   SSH disconnect and entered training on separate A800 allocations. This
   confirms the initial failure was purely a path-admission defect; it produced
   no result and does not consume a new hyperparameter observation.
+
+# 2026-08-07 Direction-margin terminal result and confirmation boundary
+
+- A small opposite-direction margin weight of 0.02 resolves the Seed-17 joint
+  constraint that blocked local FG1: terminal Dev Macro-F1 is 0.535648 and
+  ODER is 0.004553, respectively +0.006554 above the fixed F1 target and
+  0.000982 below the B403-S17 ODER ceiling.
+- Increasing the same one-axis weight to 0.05 lowers ODER to 0.005000 but also
+  lowers Macro-F1 to 0.525488, below the fixed 0.529094 target. The current
+  evidence therefore supports 0.02, not a monotonic claim that stronger
+  directional regularization is better.
+- This is still an outcome-adaptive Seed-17 Dev result. It cannot replace the
+  historical HOLD/STOP decisions or support a protected-cohort claim until the
+  exact DMW=0.02 setting completes seeds 28/43 and is compared symmetrically.
+- Retained allocation 3066 is no longer usable for new `srun` steps because it
+  has reached its Slurm step limit. This is an execution-capacity limitation,
+  not model evidence; remaining confirmation/search jobs must run sequentially
+  on allocation 4161 unless the server state changes.
