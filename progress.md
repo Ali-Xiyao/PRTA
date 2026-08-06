@@ -2600,3 +2600,18 @@
   queue or method. At the current roughly 7--8 minutes per epoch, the earliest
   valid early-stop window is approximately 30--40 minutes away unless later
   terminal improvements extend patience.
+
+# 2026-08-07 04:05 CST LR050 monitor
+
+- LR050 remains healthy after 32 minutes in Slurm step `4161.27720`, at the
+  epoch-3 completion boundary (5,026/5,026). Its registry/process state is
+  consistent, best/last checkpoints were refreshed at epoch 2, and no terminal
+  receipt exists.
+- Frozen preparation and config hashes, all six Train/Dev input hashes, and the
+  clean launcher log remain unchanged. LR200 is still absent/unstarted and
+  `/ipfs` remains 2% used; no duplicate child or protected-cohort access was
+  introduced.
+- Epoch-2 Dev values are monitoring-only and did not alter the frozen queue.
+  With patience currently anchored at epoch 2 and the minimum-epoch rule still
+  active, a valid terminal receipt is estimated in roughly 20--35 minutes if
+  no later improvement extends the run.
