@@ -2396,3 +2396,21 @@
   queue. At the observed approximately 7--8 minutes per epoch, the earliest
   valid early-stop window is roughly 25--35 minutes away; a later improvement
   may extend either run toward the 20-epoch maximum.
+
+# 2026-08-07 00:25 CST server Dev-search monitor
+
+- Both wave-001 arms remain healthy after 43 minutes. Steps `4161.27473` and
+  `3066.39932` are RUNNING in epoch 5 at 1,500/5,026 and 1,600/5,026;
+  neither terminal receipt exists, so the frozen queue remains unchanged.
+- Each A800 still contains exactly one 2,246 MiB training process. Both
+  run-registry rows remain RUNNING at source commit `e8deec1`; launcher logs
+  contain no error, and fresh best/last checkpoints were written at the end of
+  epoch 4.
+- Config file hashes remain exactly
+  `522a4d87769065b3bc4b538f0fb00ea5aba6e0b9e32cf2b2c91b27b40268678a`
+  and `e5865476b57ef00176639525fe9f36d4b2169e96916109ee7992e3de528fc239`.
+  Protected outcomes remain unopened and `/ipfs` storage remains non-blocking.
+- The recorded intermediate best values are monitoring-only; they did not
+  influence configuration or stopping. Both arms improved at epoch 4, so their
+  frozen patience windows reset and terminal completion is now estimated in
+  roughly 30--45 minutes if no later improvement occurs.
