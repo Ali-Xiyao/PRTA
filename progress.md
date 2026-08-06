@@ -2615,3 +2615,15 @@
   With patience currently anchored at epoch 2 and the minimum-epoch rule still
   active, a valid terminal receipt is estimated in roughly 20--35 minutes if
   no later improvement extends the run.
+
+# 2026-08-07 04:25 CST LR050 monitor
+
+- LR050 remains healthy after 52 minutes in Slurm step `4161.27720`, now at
+  epoch 6 step 2,300/5,026. Best and last checkpoints are fresh, the active log
+  is clean, and no terminal receipt exists.
+- Its frozen config/input identity remains unchanged; LR200 is still absent and
+  unstarted, `/ipfs` remains 2% used, and no protected cohort was touched.
+  Intermediate Dev values were not used to alter the queue or stopping rule.
+- The patience anchor advanced to epoch 4. If there is no later terminal
+  improvement, early stopping is expected in approximately 15--30 minutes;
+  any valid improvement may extend the frozen run toward its 20-epoch cap.
