@@ -2737,3 +2737,15 @@
   budget. Future monitoring will use the existing training state and avoid
   concurrent diagnostic steps. Protected outcomes remain sealed and all six
   Train/Dev hashes are exact.
+
+# 2026-08-07 07:05 CST LR200 Seed-28 confirmation monitor
+
+- Seed 28 remains healthy in the sole child step `4161.27919`, at epoch 1
+  step 5,000/5,026 after about 16 minutes. Progress, registry, process, and the
+  clean launcher log agree; no terminal receipt exists.
+- Config, preparation, and launch-receipt hashes remain exact, Seed 43 is
+  absent/unstarted, `/ipfs` remains 2% used, and protected cohorts remain
+  sealed. Intermediate Dev evidence was not used to alter the frozen run.
+- With roughly eight minutes per epoch, the earliest valid unchanged
+  early-stop window is approximately 35--50 minutes away unless a later
+  improvement extends patience.
