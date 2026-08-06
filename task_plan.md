@@ -669,12 +669,12 @@ Status: complete
 
 ## Next Step
 
-Monitor frozen learning-rate wave `wave002_lr_v1` sequentially on retained
-allocation 4161. LR050 is terminal below the fixed joint target; unchanged
-`SVR-FG1-DMW020-LR200-S17` is now active. After LR200 terminates, close the
-two-arm wave from terminal evidence only, preserve every run/log, keep
-allocation 3066 unused because it is step-exhausted, and freeze the next small
-one-axis wave without opening protected cohorts.
+Monitor exact-setting confirmation `confirmation_dmw020_lr200_v1`
+sequentially on retained allocation 4161. LR200 Seed 17 is the terminal
+learning-rate winner and unchanged Seed 28 is active; Seed 43 remains frozen
+and unstarted until Seed 28 has a valid terminal PASS receipt and the
+allocation has no child step. Preserve every run/log, keep allocation 3066
+unused because it is step-exhausted, and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1035,12 +1035,21 @@ Status: in progress under explicit 2026-08-06 user authority
   are `+0.010057` Macro-F1 and `-0.001547` ODER; DMW=0.02 is better on both
   axes at all three paired seeds. This remains outcome-adaptive exploratory
   Train/Dev evidence and does not revise the historical HOLD/STOP decisions.
-- Frozen wave `wave002_lr_v1` varies only learning rate around DMW=0.02:
-  `5e-5` then `2e-4`, both Seed 17 and strictly sequential on allocation 4161.
-  LR050 completed nine epochs at Macro-F1 `0.520378` and ODER `0.006160`,
-  missing both fixed targets. LR200 now runs unchanged in Slurm step
-  `4161.27796`. Aggregate confirmation receipt SHA-256 is
-  `070df3ceb1e94b13675b8ca1d0522597280ad5da64078e6f6a2469ff17a0e2ee`.
+- Frozen wave `wave002_lr_v1` is terminal. LR050 completed nine epochs at
+  Macro-F1 `0.520378` and ODER `0.006160`, missing both fixed targets. LR200
+  completed 14 epochs at Macro-F1 `0.537901` and ODER `0.003303`, passing the
+  immutable joint target and improving over confirmed LR=1e-4 Seed 17 by
+  `+0.002253` Macro-F1 and `-0.001250` ODER. The immutable wave aggregate
+  receipt SHA-256 is
+  `644994729ce34991bd5331aef5e3890f4575aa1f8b00a9c3734d85d34517035d`.
+- Exact LR=2e-4 confirmation namespace `confirmation_dmw020_lr200_v1` is
+  frozen for seeds 28/43 with preparation SHA-256
+  `e6f7ae16fcae923a32ed3509c3f83c2de535ed6c0e84d3103494af81c8fef137`.
+  Seed-28 config SHA-256 is
+  `8864bccab797d2532dfcc32bef9389005dbcff877059664f7599cea0353141cb`;
+  it is healthy in step `4161.27919`. Seed-43 config SHA-256 is
+  `d3a02bca316186ee6f5ed4562fb3d2e5c4ba3ca86688b898bfbb0d1009888085`
+  and remains unstarted. Protected-read count remains zero.
 
 ## Terminal formal-program record - 2026-08-04
 

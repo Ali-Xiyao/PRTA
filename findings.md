@@ -1079,3 +1079,11 @@
   `0.520378`, while ODER rises from `0.004553` to `0.006160`. LR050 misses both
   fixed targets and provides no evidence for the lower-rate direction; the
   independently frozen LR200 arm remains required before closing this axis.
+- Raising the learning rate from `1e-4` to `2e-4` at fixed DMW=0.02 improves
+  Seed-17 terminal Macro-F1 from `0.535648` to `0.537901` and lowers ODER from
+  `0.004553` to `0.003303`. This is the strongest jointly qualified Seed-17
+  result in the current lightweight search, so the exact LR=2e-4 setting is
+  now frozen for seeds 28/43.
+- The LR=2e-4 result remains outcome-adaptive single-seed Dev evidence until
+  both frozen confirmation seeds finish. It does not revise the historical
+  HOLD/STOP decisions and cannot authorize Internal-test or Gold access.

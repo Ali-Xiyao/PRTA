@@ -2708,3 +2708,32 @@
 - Patience is anchored at epoch 9. If no later terminal improvement occurs,
   completion is estimated in roughly 15--30 minutes; only the final receipt
   may determine whether LR200 qualifies.
+
+# 2026-08-07 06:50 CST LR200 terminal and exact confirmation launch
+
+- `SVR-FG1-DMW020-LR200-S17` completed 14 epochs with
+  `PASS_TRAINING_FINISHED`. Its terminal best Dev Macro-F1 is `0.537901` and
+  best-epoch ODER is `0.003303`, so it clears the unchanged joint target and
+  improves over confirmed LR=1e-4 Seed 17 on both constrained axes. Its
+  training receipt SHA-256 is
+  `a06a4c3e41b10cd0b714c863b28c0a135df62bed44f7d841c07292cbac59c707`.
+- Closed `wave002_lr_v1` from terminal evidence only. LR050 remains preserved
+  as a losing arm; LR200 is the selected Seed-17 winner. The immutable
+  aggregate receipt SHA-256 is
+  `644994729ce34991bd5331aef5e3890f4575aa1f8b00a9c3734d85d34517035d`.
+- Froze exact LR=2e-4 confirmation for seeds 28/43. Preparation SHA-256 is
+  `e6f7ae16fcae923a32ed3509c3f83c2de535ed6c0e84d3103494af81c8fef137`;
+  Seed-28/43 config hashes are respectively
+  `8864bccab797d2532dfcc32bef9389005dbcff877059664f7599cea0353141cb`
+  and `d3a02bca316186ee6f5ed4562fb3d2e5c4ba3ca86688b898bfbb0d1009888085`.
+- The first Seed-28 control-script attempt failed before launch because remote
+  Python 3.9 does not accept `Path.write_text(newline=...)`. The failure record
+  was preserved, the unsupported control-only argument was removed, and the
+  unchanged scientific config launched in step `4161.27919`. It is healthy at
+  epoch 0 step 1,100/5,026; Seed 43 remains absent and unstarted.
+- A subsequent GPU-status check briefly created a separate overlapping
+  `nvidia-smi` Slurm probe while the training step was active. It completed
+  immediately, read no dataset or outcome, and changed no config, process, or
+  budget. Future monitoring will use the existing training state and avoid
+  concurrent diagnostic steps. Protected outcomes remain sealed and all six
+  Train/Dev hashes are exact.
