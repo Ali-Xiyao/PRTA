@@ -2335,3 +2335,12 @@
   `%T`, and source inspection guessed missing `cli_training.py` before locating
   the real `src/prta_cxr/cli.py`. Neither command changed code, data, jobs, or
   runtime state.
+- Wave 001 is frozen to `SVR-FG1-DMW020-S17` on allocation 4161 and
+  `SVR-FG1-DMW050-S17` on allocation 3066. Config SHA-256 values are
+  `522a4d87769065b3bc4b538f0fb00ea5aba6e0b9e32cf2b2c91b27b40268678a`
+  and `e5865476b57ef00176639525fe9f36d4b2169e96916109ee7992e3de528fc239`.
+  The remote launcher rejects protected path markers, allocation/config/source
+  identity drift, missing Train/Silver audit input, and existing output paths.
+- Local WSL lacks `/bin/bash`, so its attempted `bash -n` check is invalid even
+  though the subsequent focused Python checks passed. Exact launcher syntax
+  validation is therefore moved to the Linux server before either arm starts.
