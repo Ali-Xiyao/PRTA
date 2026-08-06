@@ -2493,3 +2493,18 @@
   Dev value is monitoring-only and did not alter the method or queue. Because
   the best epoch advanced to epoch 3, terminal Seed-28 completion is now
   estimated in roughly 25--40 minutes if no later improvement resets patience.
+
+# 2026-08-07 02:05 CST Seed-28 confirmation monitor
+
+- Seed-28 attempt 2 remains healthy after 56 minutes in Slurm step
+  `4161.27567`, at epoch 6 step 4,900/5,026. Its RUNNING registry row, active
+  process, checkpoint timestamps, and input hashes are consistent; no terminal
+  receipt exists yet.
+- Allocation 4161 still hosts exactly one 2,246 MiB training process, with no
+  active-log error. Seed 43 remains absent and allocation 3066 remains
+  batch-only/step-exhausted. Failed launch logs remain preserved and unchanged.
+- Config, preparation, queue, launcher, and all Train/Dev hashes still match;
+  `/ipfs` remains 2% used. Intermediate Dev evidence was not used for a choice.
+  With the patience window currently anchored at epoch 3, Seed 28 should reach
+  a valid terminal receipt in roughly 8--20 minutes unless a later epoch
+  improvement extends training.
