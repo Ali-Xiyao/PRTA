@@ -1,0 +1,10 @@
+name: prta-cxr311
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+
+# Install the project after activating this environment from the repository
+# root. GPU-capable PyTorch is installed separately from the PyTorch CUDA 12.6
+# index; see docs/operations/2026-08-06_SUES_HPC_DEPLOYMENT.md.

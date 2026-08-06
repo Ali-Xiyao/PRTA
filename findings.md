@@ -925,3 +925,91 @@
   `SA-PRTA-C0` uses bounded state-anchor mixture logits with classification
   loss only; `SA-PRTA-DM` adds one fixed opposite-direction margin term. This
   avoids a post-hoc hyperparameter sweep.
+# 2026-08-06 Exploratory loss-screen evidence
+
+- Weighted cross-entropy is terminally disqualified under the predeclared
+  constraint: `TUNE-WCE-S17` reached best Dev Macro-F1 0.507527 with ODER
+  0.017766, versus B403-S17 0.526094 / 0.005535. The remaining frozen arms must
+  still finish before choosing the loss-screen branch.
+
+# 2026-08-06 SUES HPC readiness findings
+
+- The remote clean project and project-specific Python 3.11 environment have
+  already been provisioned, and repository engineering preflight passes on the
+  login node. This proves code/import readiness only, not GPU training readiness.
+- Current blocking gaps are the missing shared BiomedCLIP weight, unverified
+  Train/Dev data/cache completeness and hashes, missing optional/runtime packages
+  (`scikit-learn`, `accelerate`, `openpyxl`), and no successful A800 Slurm probe
+  for this environment yet.
+- Two retained one-GPU allocations (4161 and 3066) exist on gpu01, but they must
+  be checked for active steps before reuse; login-node `torch.cuda=False` is
+  expected and is not evidence that the CUDA environment is broken.
+
+# 2026-08-06 SUES HPC deployment evidence
+
+- The server root is
+  `/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT`, a
+  sibling of `036_IndexMemory`. It contains only legacy `incoming/` and
+  `releases/` top-level directories, and does not yet contain `PRTA-CXR`.
+- The server's shared `dl310` environment is Python 3.10, incompatible with
+  this project's declared Python >=3.11 requirement. Deployment must therefore
+  use a dedicated Python 3.11 environment.
+- The remote queue has unrelated retained jobs `4161` and `3066`; deployment
+  must not alter either allocation.
+- A source archive containing 323 deployed files is byte-verified on the
+  server: 3,770,233 bytes and SHA-256
+  `2169fccb5a46e698ac5b3217dd35b6b72d44407a23b83f9fd0647a2cc0f334f4`.
+  It was extracted to `050_VisualVIT/PRTA-CXR` without `.git`, test/lint
+  caches, or Python bytecode.
+- Environment verification passed on the login node: Python 3.11.15,
+  PyTorch 2.6.0+cu126, torchvision 0.21.0+cu126, project/dependency imports,
+  `pip check`, and `PASS_PRTA_CXR_ENGINEERING_PREFLIGHT`. CUDA is expected to
+  be unavailable on the login node; the project contains a separate
+  engineering-only GPU Slurm probe and no formal lock was set.
+- OpenSSH SFTP recursive uploads require all remote child directories to exist
+  and use `put -R` for an initial copy; `reput -R` is only suitable after a
+  remote file exists. The 329,180,041-byte cleaned-split package then passed
+  this transfer smoke check. A 200 Mbit/s-limited static transfer is running
+  for the remaining non-active runtime artifacts and BiomedCLIP weight.
+
+# 2026-08-06 SUES HPC readiness correction
+
+- The later live audit supersedes the earlier provisional blocker list. A
+  file-backed probe passed inside retained allocation 4161 on `gpu01` with an
+  A800 80GB, torch 2.6.0+cu126, CUDA available, clean `pip check`, and project
+  engineering preflight PASS. The environment/GPU combination is ready.
+- `scikit-learn`, `accelerate`, and `openpyxl` are not imported by current
+  source, scripts, or tests and are not prerequisites for the frozen PRTA
+  training entry point; their absence is not a formal runtime blocker.
+- The exact physician-cleaned Train/Dev manifest and its receipts are already
+  present remotely and match local hashes. Protected manifests were not read.
+- The broad static SFTP batch was stopped after its scope was found to include
+  audit/label directories beyond the minimum runtime surface. Partial remote
+  files were preserved. Future upload is restricted to the weight and minimal
+  consolidated Train/Dev cache.
+- Server launch remains blocked only until the BiomedCLIP weight, the 44.2 GB
+  consolidated feature store, its index/text cache/receipts, and the final
+  post-BS source snapshot pass remote SHA-256/path validation. Readiness does
+  not authorize a formal run.
+
+# 2026-08-06 Narrowed loss-screen terminal evidence
+
+- Focal gamma 1 is the strongest completed narrowed arm at Macro-F1 0.535933,
+  but its ODER 0.005892 is slightly worse than the predeclared B403-S17 ceiling
+  0.005535. It therefore does not satisfy the frozen joint advancement rule.
+- Balanced softmax is inferior on both constrained axes: Macro-F1 0.508886 and
+  ODER 0.012945. It does not justify a learning-rate or structural follow-up.
+- These terminal results close local tuning exactly as requested. They do not
+  revise the immutable HOLD/STOP decisions and do not authorize a server
+  experiment; server work is limited to engineering readiness until a new
+  queue is explicitly frozen.
+
+# 2026-08-06 SUES engineering readiness terminal finding
+
+- The university server is now technically ready for the frozen cached
+  Train/Dev workload: source/environment/GPU/weight/manifest/cache hashes and a
+  real consolidated-feature read all pass on an A800 allocation.
+- This is an engineering readiness result, not a scientific GO. No formal
+  server training queue exists, no protected cohort was opened, and the prior
+  HOLD/STOP findings remain unchanged. The next legitimate action is to define
+  and freeze a new Linux Train/Dev queue before seeking launch authority.

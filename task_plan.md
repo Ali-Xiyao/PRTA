@@ -925,7 +925,7 @@ Status: complete
   the hyperparameter-first screen closes.
 
 ### Phase 89A - Bounded hyperparameter-first screen
-Status: in progress
+Status: complete under the user-narrowed local scope
 
 - Before real-data testing of the structural redesign, keep the classification-
   only PRTA structure fixed and screen exactly four predeclared loss settings
@@ -937,9 +937,18 @@ Status: in progress
   bounded two-point learning-rate follow-up (5e-5 / 2e-4) be opened.
 - If no loss passes, close tuning and proceed to the already-qualified bounded
   state-anchor candidates. Do not combine post-hoc changes from losing arms.
+- 2026-08-06 user narrowing supersedes the remaining local queue: allow only
+  the two currently in-flight arms `TUNE-FG1-S17` and `TUNE-BS-S17` to finish.
+  Preserve terminal `TUNE-WCE-S17`, leave `TUNE-CE-S17` unstarted, and do not
+  open the LR follow-up or structural screen locally. Stop the local scheduler
+  while preserving its queue, logs, checkpoints, and receipts.
+- Terminal narrowed results: FG1 PASS at best Macro-F1/ODER
+  0.535933/0.005892 (epoch 4); BS PASS at 0.508886/0.012945 (epoch 7).
+  Both stopped early, protected reads remained zero, and no further local arm
+  was launched. The requested local exploratory work is closed.
 
 ### Phase 90 - Train/Dev-only exploratory selection wave
-Status: pending
+Status: deferred to server; no further local launch authorized
 
 - Complete the bounded tuning screen first, then freeze any structural Seed-17
   hypothesis screen from the case-study result; do not repeatedly tune weights
@@ -951,6 +960,29 @@ Status: pending
   exploratory route and preserve all failed runs.
 - Never infer on Internal-test/Gold during this wave. A new formal method freeze
   and protected-cohort authorization would require a separate user decision.
+
+### Phase 91 - SUES HPC readiness and migration preflight
+Status: complete; PASS engineering readiness; no formal launch authorized
+
+- Treat `/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR`
+  as the remote clean-project root; keep the legacy VisualVIT tree out of the
+  active deployment surface.
+- Prove login, permissions, disk, Slurm allocation/GPU, exact source hashes,
+  Python/CUDA dependencies, BiomedCLIP weights, authorized Train/Dev data and
+  cache completeness, Linux path mapping, and a minimal GPU preflight before
+  calling the server runnable.
+- Do not submit formal training, read Internal-test/Gold, or transfer protected
+  outcomes during readiness work. A later server experiment requires a new
+  frozen queue and explicit launch authority.
+- Completed: authenticated remote root/permissions; Python 3.11 environment;
+  A800 80GB CUDA probe in retained allocation 4161; project engineering
+  preflight; exact Train/Dev manifest and receipt hashes; BiomedCLIP weight
+  upload and hash; Linux path template; fail-closed Train/Dev asset probe code.
+- Completed: the minimal consolidated cache and receipts transferred with exact
+  byte/hash matches. The retained-allocation asset probe passed with Train
+  80,402 / Dev 11,201, cache 146,110, protected reads zero, and no formal run.
+  Readiness receipt status is `PASS_SUES_HPC_ENGINEERING_READINESS`. A server
+  training queue remains locked behind a new freeze and explicit authority.
 
 ## Terminal formal-program record - 2026-08-04
 
@@ -1251,3 +1283,18 @@ Status: pending
 | Second heartbeat progress summary wrapped an already-complete `training_progress.json` path in an extra `Join-Path` call | 1 | Re-read the two known progress files by direct literal paths; the error was read-only, both training processes remained healthy, and no queue or artifact changed. |
 | Third heartbeat checkpoint summary directly piped a completed PowerShell `foreach` block | 1 | Collect checkpoint rows into an explicit array before piping; the parser failed before reading runtime state, and the corrected read-only audit completed without changing experiments. |
 | Runtime finalizer guard expected scheduler status `PASS`, while the queue emits `PASS_TRAINING_QUEUE_FINISHED` | 1 | The guard failed closed after all five receipts were complete. Run the existing finalizer once with the identical frozen registry, preparation receipt, and comparison gate; no training or protected data were opened. |
+
+## 2026-08-06: SUES HPC deployment (in progress)
+
+- [x] Identify the clean `PRTA-CXR` checkout as the deployment package.
+- [x] Confirm the remote sibling root is `050_VisualVIT`, next to
+  `036_IndexMemory`, and that `050_VisualVIT/PRTA-CXR` is absent.
+- [x] Transfer the current checkout without VCS internals or local tool caches.
+- [x] Create a Python 3.11 project environment and install dependencies.
+- [x] Run only synthetic installation/preflight checks; do not start a formal
+  run or access protected outcomes.
+- [ ] Complete the resumable static runtime-data transfer (in progress at a
+  200 Mbit/s cap).
+- [ ] After the live local run ends, copy the static 97.9 GB cache and then
+  snapshot the 10.2 GB active-results directory; do not transfer either while
+  it is being read or written.

@@ -2047,3 +2047,272 @@
   status and missing thread destination; corrected to `ACTIVE` with
   `destination=thread`. The final automation was created successfully and no
   experiment process was affected by the validation failures.
+
+# 2026-08-06 16:46 CST exploratory loss-screen monitor
+
+- Scheduler PID 5020 and both children remain healthy with empty stderr logs.
+  `TUNE-FG1-S17` and `TUNE-WCE-S17` each completed epoch 0 and are training
+  epoch 1/20; the other two frozen arms remain PLANNED until a lane releases.
+- All four config hashes still match the preparation receipt. GPU0/GPU1 hold
+  2,053 MiB each, H: has 424.8 GB free, and no protected cohort was opened.
+  Intermediate Dev values were recorded only as runtime health evidence and
+  were not used to change the queue or select parameters.
+
+# 2026-08-06 17:16 CST exploratory loss-screen monitor
+
+- Both active arms completed epoch 2 and remain healthy under scheduler PID
+  5020. `TUNE-FG1-S17` running best Macro-F1 is 0.513309 and
+  `TUNE-WCE-S17` is 0.507527; these non-terminal values did not alter the
+  frozen queue or selection rule.
+- Both stderr logs remain empty, config hashes match, GPU0/GPU1 are active with
+  about 2,055/2,053 MiB allocated, and H: has 415.1 GB free. The two remaining
+  arms remain PLANNED and protected cohorts remain sealed.
+# 2026-08-06 17:46 CST exploratory loss-screen monitor
+
+- Both active arms remain healthy in epoch 4/20: `TUNE-FG1-S17` is at
+  step 1,600/5,026 with running best Macro-F1 0.513309, while
+  `TUNE-WCE-S17` is at step 1,500/5,026 with running best 0.507527.
+  Intermediate values did not alter the frozen queue or selection rule.
+- Scheduler/children are alive, stderr logs remain empty, all config hashes
+  match, both GPUs are active, and H: has 406.8 GB free. The balanced-softmax
+  and ordinary-CE arms remain PLANNED; protected cohorts remain sealed.
+# 2026-08-06 18:16 CST exploratory loss-screen monitor
+
+- The two active loss arms remain healthy in epoch 5/20 at step 3,400/5,026.
+  `TUNE-FG1-S17` has a running best Dev Macro-F1 of 0.535933 at epoch 4
+  (ODER 0.005892), while `TUNE-WCE-S17` retains 0.507527 at epoch 2; these
+  intermediate values did not change the frozen queue or predeclared rule.
+- Scheduler PID 5020 and both children remain alive, all stdout/stderr logs are
+  empty, current best/last checkpoints are present, and every immutable config
+  file hash matches the preparation receipt. GPU0/GPU1 are active and H: has
+  406.0 GB free. `TUNE-BS-S17` and `TUNE-CE-S17` remain PLANNED, and protected
+  Internal-test/Gold cohorts remain sealed.
+# 2026-08-06 18:46 CST exploratory loss-screen monitor
+
+- Both active arms remain healthy near the end of epoch 6/20 at step
+  4,500/5,026. `TUNE-FG1-S17` retains its running best Macro-F1 0.535933
+  (epoch-4 ODER 0.005892), while `TUNE-WCE-S17` retains 0.507527; no
+  intermediate value changed the immutable queue or selection rule.
+- Scheduler PID 5020 and both children are alive, stderr/stdout remain empty,
+  best/last checkpoints are present, and all four config hashes still match
+  the preparation receipt. Both GPUs remain allocated, H: has 405.0 GB free,
+  the remaining two arms are PLANNED, and protected cohorts remain sealed.
+# 2026-08-06 19:16 CST exploratory loss-screen monitor
+
+- `TUNE-WCE-S17` is the first terminal arm: PASS after seven completed epochs,
+  best Dev Macro-F1 0.507527 at epoch 2 and corresponding ODER 0.017766. It is
+  below B403-S17 and violates the frozen ODER constraint, so it is not eligible
+  for the conditional learning-rate branch.
+- The scheduler immediately started immutable `TUNE-BS-S17` on cuda:1; it is
+  healthy in epoch 0 at step 4,200/5,026. `TUNE-FG1-S17` remains healthy near
+  the end of epoch 7 at step 4,800/5,026 with its running best unchanged at
+  0.535933. `TUNE-CE-S17` remains PLANNED.
+- Scheduler and children are alive; active stderr logs are empty, receipts and
+  checkpoints are present, all four config hashes match the preparation
+  receipt, both GPUs are active, and H: has 404.9 GB free. Protected cohorts
+  remain sealed and no adaptive queue change was made.
+# 2026-08-06 19:46 CST exploratory loss-screen monitor
+
+- `TUNE-FG1-S17` remains healthy at the completed step boundary of epoch 8,
+  with running best Macro-F1 0.535933 from epoch 4. `TUNE-BS-S17` has reached
+  the completed step boundary of epoch 1 with a provisional best 0.465618.
+  Both are in their normal Dev-evaluation/checkpoint interval; no receipt or
+  branch decision is yet available.
+- Scheduler PID 5020 and both children remain alive, active stderr logs are
+  empty, checkpoints are present, and all config hashes match the preparation
+  receipt. Both GPUs remain allocated and H: has 404.1 GB free. WCE remains
+  terminal PASS, CE remains PLANNED, and protected cohorts remain sealed.
+
+## 2026-08-06 — SUES HPC deployment
+
+- Confirmed the requested remote placement is the sibling project root
+  `~/projects/xiyaowang/050_VisualVIT`, not a child of `036_IndexMemory`.
+- Authenticated using the existing `sues-hpc` SSH profile. The target
+  `050_VisualVIT/PRTA-CXR` is absent; no remote file was created or modified.
+- Recorded the deployment contract in
+  `docs/operations/2026-08-06_SUES_HPC_DEPLOYMENT.md`. The current local
+  scheduler/children are live, so package consistency must be reconciled before
+  transfer. No scheduler, Slurm job, training process, or protected artifact
+  was changed.
+- Created the dedicated remote `prta-cxr311` environment and installed the
+  project plus dev/vision/data/audit dependencies. Its first foreground
+  installation exceeded the session timeout after the CUDA wheels completed;
+  checked the partial state, then finished the remaining install through a
+  logged `nohup` script. The environment import gate and engineering preflight
+  both passed.
+- Uploaded/extracted the source archive and verified the same SHA-256 on both
+  hosts. It contains the current clean project, documents, results, outputs,
+  and HPC environment/probe files, excluding VCS and disposable caches.
+- Verified the resumable SFTP directory contract with the 329 MB cleaned split.
+  The first recursive attempts failed before copying files because remote
+  directories were absent and then because `reput` cannot create initial
+  remote files. Pre-created the exact directory tree and used `put -R`; the
+  final smoke transfer passed. Started local SFTP PID 39148 at 200 Mbit/s for
+  non-active runtime artifacts only. The live local scheduler/PIDs and Slurm
+  allocations were not changed.
+# 2026-08-06 local-stop/server-migration authority
+
+- User explicitly narrowed the active local work to the two currently running
+  arms only: `TUNE-FG1-S17` and `TUNE-BS-S17`. `TUNE-CE-S17`, conditional LR
+  follow-ups, and the structural screen must not start locally.
+- The correct identity-preserving control is to stop only the queue scheduler
+  and leave both training children alive, rather than editing the immutable
+  queue or killing/restarting either run. The remaining local monitor will
+  close after both in-flight receipts are terminal.
+- Server readiness must be proved separately by login, allocation/GPU, remote
+  paths/permissions, environment, data/cache authorization, transfer hashes,
+  and a minimal validation. No remote experiment is authorized by readiness
+  inspection alone.
+- FG1 completed while the stop boundary was being recorded, and the old
+  scheduler auto-started CE before it could be stopped. Identity checks then
+  stopped scheduler PID 5020 and CE PID 39316; partial CE best/last checkpoints,
+  progress, and empty stderr were preserved. BS PID 33140 remained alive and is
+  now the only authorized local child.
+- The heartbeat automation was narrowed to monitor BS only and explicitly
+  forbids restarting the scheduler, CE, LR follow-ups, or structural runs.
+
+# 2026-08-06 SUES HPC live readiness start
+
+- Forced-TTY SSH through `sues-hpc` passed on login node `mu01` as `dqxy11`.
+  Remote root `.../050_VisualVIT/PRTA-CXR` exists and is 2.9 GB; Conda env
+  `prta-cxr311` exists with Python 3.11.15 and torch/torchvision 2.6.0/0.21.0
+  CUDA 12.6 builds. Login-node engineering preflight passed without real-data
+  or protected-outcome access.
+- Slurm allocations 4161 and 3066 are RUNNING on gpu01, one A800 each. The
+  expected shared BiomedCLIP weight is missing, remote data is only partially
+  inventoried, and GPU-job CUDA validation is still pending. The environment
+  also lacks sklearn, accelerate, and openpyxl, so the server is not yet ready
+  for formal PRTA training.
+- The first read-only `srun --jobid=4161 --overlap` GPU probe reached the
+  allocation but failed before Python execution because nested SSH/Bash quoting
+  corrupted the inline `python -c` expression. No project artifact, Slurm
+  allocation, environment, data, or process was changed. The retry method is a
+  versioned file-backed probe script on the shared project filesystem.
+- The file-backed retry passed inside retained allocation 4161 on `gpu01`:
+  NVIDIA A800 80GB PCIe, driver 590.48.01, torch 2.6.0+cu126, CUDA available,
+  `pip check` clean, and `PASS_PRTA_CXR_ENGINEERING_PREFLIGHT`. No new Slurm
+  job or formal experiment was submitted.
+- A previously started broad SFTP batch was found to include audit/label
+  directories beyond the minimum Train/Dev runtime surface. PID 39148 was
+  identity-checked and stopped; existing remote partial files were preserved
+  and nothing was deleted. Future transfer is restricted to the frozen
+  Train/Dev manifest/receipts, BiomedCLIP weight, and minimal consolidated
+  feature/text cache only.
+- Remote Train/Dev manifest and all three cleaned-split receipts already match
+  local SHA-256 exactly, including manifest
+  `45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89`.
+- A fresh full SHA-256 pass over the 44.2 GB local consolidated feature store
+  exceeded the 300-second interactive limit after validating its metadata and
+  small cache files. The immutable training-store receipt already records hash
+  `050a4837dbff14f39cab75e9438c3bf7b86776583a06d12b68b1308fca44e540`;
+  final server acceptance will compute and compare the remote file hash after
+  transfer. No transfer of this active-read cache will begin before BS exits.
+- BiomedCLIP weight upload completed and the remote 783,705,670-byte file
+  matches local SHA-256
+  `52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be`.
+- Added and remotely byte-verified a fail-closed Train/Dev asset probe plus a
+  Linux path template. Local and remote Ruff/compile checks pass. The probe
+  refuses protected path markers, validates the exact frozen hashes/counts,
+  exercises the consolidated feature store, and starts no formal experiment.
+- Prepared a resumable SFTP batch containing only the consolidated feature
+  store, cache manifest/inventory, text cache, and two receipts. The 30-minute
+  automation now waits for BS to become terminal, then transfers and validates
+  only this minimal cache before closing server engineering readiness.
+
+# 2026-08-06 20:43 CST narrowed local/server monitor
+
+- `TUNE-BS-S17` remains healthy as the only authorized local child at epoch 5,
+  step 1,700/5,026. Its best Dev Macro-F1 remains 0.488853 at epoch 3; this is
+  monitoring evidence only and does not change the frozen run or stop rule.
+- PID 33140 is alive on GPU1 (60% utilization, 2.1 GB memory); scheduler PID
+  5020 and partial CE PID 39316 remain absent. No active error log was created,
+  H: has 375.3 GB free, and all recorded immutable input hashes are unchanged.
+- The minimal cache upload remains intentionally unopened while BS reads the
+  same feature store. At the recent epoch rate, terminal early-stop evaluation
+  is expected in roughly 1--2 hours; the post-terminal resumable transfer and
+  server asset probe remain next.
+
+# 2026-08-06 21:13 CST narrowed local/server monitor
+
+- `TUNE-BS-S17` remains healthy near the end of epoch 7 at step 4,400/5,026.
+  Its best Dev Macro-F1 is still 0.488853 from epoch 3; epoch-6 Macro-F1 was
+  0.487350 with ODER 0.020087. These values remain monitoring-only.
+- PID 33140 is alive on GPU1 (62% utilization, 2.1 GB memory); scheduler PID
+  5020 and CE PID 39316 remain absent, no error log exists, and H: still has
+  375.3 GB free. No minimal-cache SFTP process has started.
+- With four completed non-improving Dev evaluations after the best epoch, the
+  frozen early-stop decision is expected shortly. The next action remains to
+  wait for the terminal receipt, then start exactly one minimal-cache upload.
+
+# 2026-08-06 21:43 CST narrowed local/server monitor
+
+- `TUNE-BS-S17` improved under its frozen training path and therefore remains
+  active at epoch 10, step 200/5,026. The progress file records best Macro-F1
+  0.508886 at epoch 7; the latest epoch-9 report is Macro-F1 0.509438 with ODER
+  0.012677. No selection or tuning decision is made from these intermediate
+  values.
+- PID 33140 is healthy on GPU1 (52% utilization, 2.1 GB memory). Scheduler PID
+  5020 and CE PID 39316 remain absent, best/last checkpoints and the progress
+  file are fresh, H: has 375.3 GB free, and the cache transfer is still closed.
+- Because the frozen early-stop patience reset at the epoch-7 improvement, BS
+  is likely to require several more epochs. The bounded local-only authority
+  remains unchanged; server upload waits for the terminal receipt.
+
+# 2026-08-06 22:20 CST user status check
+
+- `TUNE-BS-S17` remains the sole active local process after completing epoch
+  10. Best Macro-F1 remains 0.508886 at epoch 7; epoch-10 Macro-F1/ODER are
+  0.491185/0.021337. These values remain below the B403 reference and do not
+  trigger any new run or tuning branch.
+- PID 33140 is healthy on GPU1 (63% utilization, 2.1 GB memory). Scheduler PID
+  5020 and CE PID 39316 remain absent. H: has 370.8 GB free.
+- Server allocations 4161/3066 remain RUNNING. Weight, GPU environment, and
+  frozen Train/Dev hashes are ready; the consolidated cache is still 0 bytes
+  remotely by design and its SFTP process has not started while BS reads it.
+- Expected remaining local time is roughly 30--60 minutes if the frozen
+  early-stop patience is reached without another improvement; cache transfer
+  and final server probe then require approximately 35--60 additional minutes.
+
+# 2026-08-06 22:14 CST BS terminal and server transfer start
+
+- `TUNE-BS-S17` reached `PASS_TRAINING_FINISHED` after 12 epochs with frozen
+  early stopping. Best epoch 7 Macro-F1/ODER were 0.508886/0.012945. FG1 had
+  already passed at 0.535933/0.005892 (epoch 4). Both receipts report
+  Internal-test/protected outcomes unopened.
+- All local exploratory processes are now absent: BS PID 33140, scheduler PID
+  5020, and partial CE PID 39316. No CE/LR/structural arm was launched after
+  the user narrowing; partial CE artifacts remain preserved.
+- The protected-marker guard passed on the minimal-cache SFTP batch. Exactly
+  one hidden resumable SFTP process started as PID 39508 with the 200 Mbit/s
+  cap. Initial remote consolidated-store progress was 390,860,800 of
+  44,211,717,120 bytes (0.88%); stdout/stderr logs are timestamped under
+  `E:\Xiyaowang\050_VisualVIT\.tmp` and currently empty.
+- The next heartbeat will monitor byte progress only. After transfer, remote
+  hash validation and the retained-allocation Train/Dev asset probe remain;
+  no server training job is authorized or started.
+
+# 2026-08-06 22:43 CST server cache-transfer monitor
+
+- Minimal-cache SFTP PID 39508 remains healthy with empty stdout/stderr logs.
+  The remote consolidated store reached approximately 31.234/44.212 GB
+  (70.6%); the small metadata/text-cache files follow after the store.
+- All local training/scheduler/CE PIDs remain absent. Retained allocation 4161
+  is RUNNING on gpu01 and no new Slurm job was submitted.
+- At the observed transfer rate, the large store should finish in roughly
+  10--15 minutes. Full remote SHA-256 and the aggregate-only Train/Dev asset
+  probe must still pass before server readiness can close.
+
+# 2026-08-06 23:14 CST SUES engineering readiness terminal PASS
+
+- Minimal-cache SFTP completed cleanly: PID 39508 exited, stderr stayed empty,
+  and all six intended files are present. The consolidated store is exactly
+  44,211,717,120 bytes; no audit/label/Internal-test/Gold directory was in the
+  replacement batch.
+- Reused retained allocation 4161 on gpu01 for the aggregate-only asset probe;
+  no new Slurm job was submitted and `PRTA_CXR_ALLOW_FORMAL` remained unset.
+- `PASS_SUES_TRAIN_DEV_ASSET_PROBE`: Train 80,402, Dev 11,201, cache 146,110,
+  feature probe `[8,197,768]`, protected paths opened 0, formal experiment
+  started false. All six frozen input hashes match exactly.
+- Phase 91 is terminal `PASS_SUES_HPC_ENGINEERING_READINESS`. Server training
+  has not started and remains locked until a new Linux Train/Dev queue is
+  frozen and explicitly authorized.
