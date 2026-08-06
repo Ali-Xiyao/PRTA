@@ -2414,3 +2414,25 @@
   influence configuration or stopping. Both arms improved at epoch 4, so their
   frozen patience windows reset and terminal completion is now estimated in
   roughly 30--45 minutes if no later improvement occurs.
+
+# 2026-08-07 00:45 CST server Dev-search monitor
+
+- Both frozen wave-001 arms remain healthy after 63 minutes. Slurm steps
+  `4161.27473` and `3066.39932` are RUNNING in epoch 7 at 4,400/5,026; neither
+  terminal receipt exists, so no arm has been selected and no next wave has
+  been opened.
+- Both run-registry rows remain RUNNING at source commit `e8deec1`. Best/last
+  checkpoints exist and the last checkpoints were refreshed at the end of
+  epoch 6. Attempt-2 launcher logs still contain only
+  `GpuFreq=control_disabled` and no training error.
+- The allocation-4161 probe observed 90% GPU utilization and one 2,246 MiB
+  training process. Allocation 3066 rejected an additional overlapping probe
+  because its Slurm step limit was reached; its existing training step remains
+  RUNNING and its progress/checkpoint evidence is fresh, so this is a probe
+  limitation rather than a run failure.
+- Frozen config file hashes still match
+  `522a4d87769065b3bc4b538f0fb00ea5aba6e0b9e32cf2b2c91b27b40268678a`
+  and `e5865476b57ef00176639525fe9f36d4b2169e96916109ee7992e3de528fc239`.
+  `/ipfs` remains 2% used with about 1.2 PB available. Intermediate Dev values
+  remain monitoring-only and did not alter the queue; if neither arm improves
+  again, valid terminal receipts are expected in roughly 10--20 minutes.
