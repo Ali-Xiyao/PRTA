@@ -2037,3 +2037,7 @@
   engineering preflight, and a three-step synthetic smoke. Prepared the four
   immutable Seed-17 loss-screen configs and queue with hashes; no real training
   had started at preparation time and protected reads remained zero.
+- Loss screen launched under scheduler PID 5020. `TUNE-FG1-S17` PID 42876 is
+  bound to cuda:0 and `TUNE-WCE-S17` PID 41444 to cuda:1; balanced-softmax and
+  ordinary-CE remain immutable PLANNED for the two released lanes. Initial
+  scheduler and child stderr logs are empty.
