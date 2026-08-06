@@ -2749,3 +2749,14 @@
 - With roughly eight minutes per epoch, the earliest valid unchanged
   early-stop window is approximately 35--50 minutes away unless a later
   improvement extends patience.
+
+# 2026-08-07 07:25 CST LR200 Seed-28 confirmation monitor
+
+- Seed 28 remains healthy in the sole child step `4161.27919`, at epoch 4
+  step 2,100/5,026 after about 36 minutes. Progress, process, registry, and the
+  clean launcher log remain consistent; no terminal receipt exists.
+- Frozen config/preparation/launch hashes remain exact, Seed 43 remains
+  absent and unstarted, storage is healthy, and protected outcomes remain
+  unopened. Intermediate Dev values did not change selection or stopping.
+- Patience is currently anchored at epoch 3. If no later improvement extends
+  it, a valid terminal receipt is expected in roughly 20--35 minutes.
