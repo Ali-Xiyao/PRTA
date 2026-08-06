@@ -1997,3 +1997,43 @@
 - Phase 87 is terminally complete. Only the Git-safe finalizer, tests, and
   planning records are included in the local-only handoff; the two pre-existing
   user-modified paper documents remain unstaged and unchanged by this closure.
+
+# 2026-08-06 exploratory method-revision start
+
+- User explicitly authorized a new case-study-driven method modification and
+  exploratory attempt to exceed existing methods. This is a new Train/Dev-only
+  namespace; it does not rewrite the prior HOLD or route-stop decision.
+- Recovered the completed paired Dev artifacts (11,201 rows / 2,427 patients)
+  and confirmed the active cleaned manifest contains only Train/Dev. No
+  Internal-test or Gold artifact was opened.
+- Initial aggregate failure signal: PRTA gains on Improved/Worse but loses on
+  Stable/New/Resolved, has more harmful directional errors, and degrades more
+  under matched-wrong/null/reversed PRIOR. Code inspection shows frozen H0 uses
+  only pooled transition tokens, motivating a state-anchored gated residual.
+- First focused case-study lint stopped before execution on the new script
+  bootstrap import and three long lines. Reused the repository's `_bootstrap`
+  dispatch pattern and wrapped the expressions; no data or model was opened by
+  the failed lint pass.
+- The first synthetic case-study test exposed that the intervention audit was
+  incorrectly requiring a `true` row to declare the changed intervention.
+  Split cross-system condition validation from within-system observation
+  identity validation; this preserves fail-closed alignment without conflating
+  two deliberately different conditions.
+- The corrected case-study builder passed focused Ruff/tests and completed the
+  real cleaned-Dev analysis at 11,201 rows / 2,427 patients. It selected 48
+  representative cases and wrote summary/cases/Markdown/receipt under the
+  private `exploratory_state_anchored_v1/case_study` runtime directory. All
+  hashes were recorded; protected reads remained zero.
+- User requested trying hyperparameter repair before structural real-data
+  training. Frozen a four-arm loss-only screen on the A509 classification-only
+  structure, with an explicit conditional two-point learning-rate follow-up and
+  no other adaptive search. The state-anchor implementation remains synthetic-
+  only until this screen closes.
+- Implemented and qualified the optional bounded state-anchor H3 head and
+  opposite-direction margin loss. Identical PRIOR/CURRENT features force the
+  temporal mixture gate to exactly zero; random changed pairs remain in [0,1]
+  and backpropagate through the gate.
+- Full repository qualification passed: Ruff clean, 165/165 tests, compileall,
+  engineering preflight, and a three-step synthetic smoke. Prepared the four
+  immutable Seed-17 loss-screen configs and queue with hashes; no real training
+  had started at preparation time and protected reads remained zero.

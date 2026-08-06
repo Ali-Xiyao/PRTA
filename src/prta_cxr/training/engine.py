@@ -18,12 +18,18 @@ from torch.utils.data import DataLoader
 from prta_cxr.artifacts import replace_json_atomic, write_json_atomic
 from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256
 from prta_cxr.evaluation.progression import classification_metrics
-from prta_cxr.models.heads import NativeH0Head, NativeH1Head, NativeH2Head
+from prta_cxr.models.heads import (
+    NativeH0Head,
+    NativeH1Head,
+    NativeH2Head,
+    NativeH3StateAnchoredHead,
+)
 from prta_cxr.models.prta import (
     FrozenTailWithAdapters,
     PRTATemporalAdapter,
     PRTATrainingHeads,
     cmcp_margin_loss,
+    opposite_direction_margin_loss,
     state_preservation_loss,
     temporal_inversion_loss,
     transition_alignment_loss,
@@ -68,6 +74,9 @@ class PRTATrainModel(nn.Module):
             cross_time_alignment=bool(
                 components.get("cross_time_alignment", True)
             ),
+            bounded_state_anchor=bool(
+                components.get("bounded_state_anchor", False)
+            ),
             adapter_indices=_adapter_indices(model),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
@@ -82,8 +91,12 @@ class PRTATrainModel(nn.Module):
             self.native_head = NativeH2Head(
                 width, dropout=float(model.get("dropout", 0.0))
             )
+        elif head_name == "H3":
+            self.native_head = NativeH3StateAnchoredHead(
+                width, dropout=float(model.get("dropout", 0.0))
+            )
         else:
-            raise ValueError("native_head must be H0, H1, or H2")
+            raise ValueError("native_head must be H0, H1, H2, or H3")
 
     def forward(
         self, prior: torch.Tensor, current: torch.Tensor, finding_text: torch.Tensor
@@ -257,6 +270,14 @@ def _loss(
     total = float(weights.get("classification", 1.0)) * progression_classification_loss(
         logits, target, model.config.get("classification_loss")
     )
+    direction_weight = float(weights.get("direction_margin", 0.0))
+    if direction_weight:
+        direction_spec = dict(model.config.get("direction_margin", {}))
+        total = total + direction_weight * opposite_direction_margin_loss(
+            logits,
+            target,
+            margin=float(direction_spec.get("margin", 0.2)),
+        )
     auxiliary_requested = any(
         float(weights.get(name, 0.0))
         for name in ("alignment", "state", "inversion", "cmcp")

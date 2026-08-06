@@ -889,6 +889,69 @@ Status: complete
   and `git diff --check`); the Git-safe implementation and planning evidence
   were handed off only to the configured local bare remote.
 
+### Phase 88 - Exploratory case study and failure taxonomy
+Status: complete
+
+- Start a new exploratory namespace without changing or superseding the frozen
+  `HOLD_DEVELOPMENT_GATE` / `STOP_CURRENT_PRTA_ROUTE` records.
+- Use only the already-open physician-cleaned Dev predictions and Train/Dev
+  manifest; keep Internal-test and Gold sealed with protected-read count zero.
+- Produce a reproducible PRTA-vs-B403 case study covering exclusive wins,
+  exclusive losses, opposite-direction errors, confidence, interval, view,
+  source, finding, and PRIOR-intervention failure patterns.
+- Store report text, image paths, patient hashes, and row-level predictions only
+  in the private runtime tree; Git may contain code, tests, aggregate counts,
+  and hashes only.
+- Completed 11,201/11,201 rows and 2,427/2,427 patients with 48 private
+  representative cases. Receipt status is `PASS_EXPLORATORY_DEV_CASE_STUDY`;
+  Internal-test/Gold remained unopened and protected reads stayed zero.
+
+### Phase 89 - Case-driven method redesign and synthetic qualification
+Status: complete
+
+- Implement a bounded state-anchored temporal residual method that retains
+  current-image evidence while learning a gated directional residual from the
+  true PRIOR, instead of relying only on transition-token H0 logits.
+- Add unit tests for shapes, gradients, gate bounds, null/current PRIOR
+  identity, and configuration fail-closed behavior.
+- Run Ruff, focused tests, full tests, compile/preflight, and synthetic smoke
+  before any real-data exploratory training.
+- Freeze exactly two Seed-17 candidates before real-data execution: bounded
+  state-anchor classification-only, and the same architecture with a fixed
+  opposite-direction margin. No adaptive weight search is permitted.
+- Implemented optional H3 bounded state-anchor mixture without changing legacy
+  H0 checkpoint parameterization, plus a directional margin loss. Focused and
+  full validation passed; structural candidates remain real-data locked until
+  the hyperparameter-first screen closes.
+
+### Phase 89A - Bounded hyperparameter-first screen
+Status: in progress
+
+- Before real-data testing of the structural redesign, keep the classification-
+  only PRTA structure fixed and screen exactly four predeclared loss settings
+  at Seed 17: focal gamma 1, weighted CE, balanced softmax, and ordinary CE.
+- Preserve optimizer, learning rate, epoch budget, early stopping, batch size,
+  data, seed, adapters, head, and all other settings from A509-S17.
+- Select by Macro-F1 subject to ODER no worse than B403-S17. Only if a loss
+  improves Macro-F1 by at least 0.003 over B403 with non-worse ODER may one
+  bounded two-point learning-rate follow-up (5e-5 / 2e-4) be opened.
+- If no loss passes, close tuning and proceed to the already-qualified bounded
+  state-anchor candidates. Do not combine post-hoc changes from losing arms.
+
+### Phase 90 - Train/Dev-only exploratory selection wave
+Status: pending
+
+- Complete the bounded tuning screen first, then freeze any structural Seed-17
+  hypothesis screen from the case-study result; do not repeatedly tune weights
+  from intermediate Dev outcomes.
+- Compare each candidate with the immutable B403-S17 and PRTA-S17 references
+  on Macro-F1, accuracy, ODER, minimum recall, and PRIOR interventions.
+- Advance only one predeclared candidate to seeds 28/43 if it beats B403-S17
+  with non-worse ODER and a meaningful improvement margin; otherwise stop the
+  exploratory route and preserve all failed runs.
+- Never infer on Internal-test/Gold during this wave. A new formal method freeze
+  and protected-cohort authorization would require a separate user decision.
+
 ## Terminal formal-program record - 2026-08-04
 
 - The bounded Train/Dev program and three diagnostic Dev baselines completed

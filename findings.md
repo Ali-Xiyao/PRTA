@@ -896,3 +896,32 @@
   not erase the prior `HOLD_DEVELOPMENT_GATE`; it closes the proposed current
   PRTA contribution route without opening Internal-test/Gold or starting the
   nine-baseline matrix.
+
+# 2026-08-06 Exploratory case-study hypothesis
+
+- PRTA-S17 versus B403-S17 class accuracy deltas are strongly asymmetric:
+  Improved +0.1167 and Worse +0.0549, but Stable -0.0541, New -0.0347, and
+  Resolved -0.0505. The problem is therefore not simply insufficient temporal
+  sensitivity; PRTA appears over-sensitive to change while weakening the
+  current-state anchor.
+- The architectural path supports this hypothesis. Native H0 classifies only
+  the mean transition tokens. The separately learned state branch and finding
+  query do not enter its logits directly, while an unrestricted relation MLP
+  is added to current tokens before transition resampling.
+- A suitable case-driven redesign should preserve a direct current-state logit
+  path and add a bounded, query-conditioned temporal residual. A gate that is
+  exactly zero for identical/null PRIOR features gives a structural safeguard
+  against arbitrary prior corruption; the residual can then focus on true
+  Improved/Worse/New/Resolved evidence without erasing Stable evidence.
+- The full case-study confusion delta quantifies the over-sensitivity: PRTA
+  produces 326 fewer correct Stable predictions and 234 more Stable->Improved
+  errors than B403. It gains 181 Improved and 103 Worse correct predictions,
+  but loses 51 New and 14 Resolved correct predictions.
+- Under matched-wrong PRIOR, PRTA changes 50.47% of predictions versus B403
+  42.86%; under null PRIOR the rates are 79.46% versus 66.02%; under reversal
+  they are 51.58% versus 45.59%. These are architectural robustness failures,
+  not merely aggregate classification noise.
+- The exploratory screen is frozen to two candidates before training:
+  `SA-PRTA-C0` uses bounded state-anchor mixture logits with classification
+  loss only; `SA-PRTA-DM` adds one fixed opposite-direction margin term. This
+  avoids a post-hoc hyperparameter sweep.

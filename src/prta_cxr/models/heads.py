@@ -78,3 +78,40 @@ class NativeH2Head(nn.Module):
         )
         features = torch.cat((state, transition, state * transition, query), dim=-1)
         return self.head(features)
+
+
+class NativeH3StateAnchoredHead(nn.Module):
+    """Bounded mixture of a current-state anchor and temporal residual expert."""
+
+    def __init__(
+        self, width: int = 768, *, hidden_width: int | None = None, dropout: float = 0.0
+    ) -> None:
+        super().__init__()
+        hidden = width if hidden_width is None else hidden_width
+        self.state_head = nn.Sequential(
+            nn.LayerNorm(width * 2),
+            nn.Linear(width * 2, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, len(PROGRESSION_LABELS)),
+        )
+        self.temporal_head = nn.Sequential(
+            nn.LayerNorm(width * 5),
+            nn.Linear(width * 5, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, output: PRTAOutput, query: torch.Tensor) -> torch.Tensor:
+        if output.change_gate is None:
+            raise ValueError("H3 requires bounded_state_anchor=true")
+        state = output.state_tokens.mean(dim=1)
+        transition = output.transition_tokens.mean(dim=1)
+        state_logits = self.state_head(torch.cat((state, query), dim=-1))
+        temporal_features = torch.cat(
+            (state, transition, transition - state, state * transition, query),
+            dim=-1,
+        )
+        temporal_logits = self.temporal_head(temporal_features)
+        return state_logits + output.change_gate * (temporal_logits - state_logits)

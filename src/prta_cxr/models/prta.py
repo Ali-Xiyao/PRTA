@@ -204,6 +204,7 @@ class PRTAOutput:
     transition_embedding: torch.Tensor
     aligned_prior_tokens: torch.Tensor
     frozen_current_embedding: torch.Tensor
+    change_gate: torch.Tensor | None = None
 
 
 class PRTATemporalAdapter(nn.Module):
@@ -219,6 +220,7 @@ class PRTATemporalAdapter(nn.Module):
         dropout: float = 0.0,
         frozen_final_norm: nn.Module | None = None,
         cross_time_alignment: bool = True,
+        bounded_state_anchor: bool = False,
         adapter_indices: Sequence[int] | None = None,
     ) -> None:
         super().__init__()
@@ -233,6 +235,7 @@ class PRTATemporalAdapter(nn.Module):
             adapter_indices=adapter_indices,
         )
         self.cross_time_alignment = bool(cross_time_alignment)
+        self.bounded_state_anchor = bool(bounded_state_anchor)
         self.query_projection = nn.Sequential(
             nn.LayerNorm(width),
             nn.Linear(width, width),
@@ -264,6 +267,16 @@ class PRTATemporalAdapter(nn.Module):
         )
         self.state_norm = nn.LayerNorm(width)
         self.transition_norm = nn.LayerNorm(width)
+        self.change_gate_projection = (
+            nn.Sequential(
+                nn.LayerNorm(width * 2),
+                nn.Linear(width * 2, width),
+                nn.GELU(),
+                nn.Linear(width, 1),
+            )
+            if self.bounded_state_anchor
+            else None
+        )
 
     def forward(
         self,
@@ -319,6 +332,16 @@ class PRTATemporalAdapter(nn.Module):
         frozen_current_embedding = F.normalize(
             self.tail.forward_frozen(current_block8).mean(dim=1), dim=-1
         )
+        change_gate = None
+        if self.change_gate_projection is not None:
+            difference = current - prior
+            change_energy = difference.square().mean(dim=(1, 2), keepdim=False)
+            change_signal = 1 - torch.exp(-change_energy)
+            gate_context = torch.cat(
+                (difference.abs().mean(dim=1), query_condition), dim=-1
+            )
+            learned_gate = torch.sigmoid(self.change_gate_projection(gate_context))
+            change_gate = change_signal.unsqueeze(-1) * learned_gate
         return PRTAOutput(
             state_tokens=state_tokens,
             transition_tokens=transition_tokens,
@@ -326,6 +349,7 @@ class PRTATemporalAdapter(nn.Module):
             transition_embedding=transition_embedding,
             aligned_prior_tokens=aligned_prior,
             frozen_current_embedding=frozen_current_embedding,
+            change_gate=change_gate,
         )
 
 
@@ -433,6 +457,28 @@ def temporal_inversion_loss(
         target,
         reduction="batchmean",
     )
+
+
+def opposite_direction_margin_loss(
+    logits: torch.Tensor,
+    target: torch.Tensor,
+    *,
+    margin: float = 0.2,
+) -> torch.Tensor:
+    if logits.ndim != 2 or logits.shape[-1] != len(PROGRESSION_LABELS):
+        raise ValueError("direction-margin logits must have shape [B, 5]")
+    if target.shape != (logits.shape[0],):
+        raise ValueError("direction-margin target must have shape [B]")
+    if margin < 0:
+        raise ValueError("direction-margin margin must be non-negative")
+    inversion = INVERSION_INDEX.to(device=target.device)
+    directional = target != 0
+    if not bool(directional.any()):
+        return logits.sum() * 0
+    row = torch.arange(target.shape[0], device=target.device)
+    target_logits = logits[row, target]
+    opposite_logits = logits[row, inversion[target]]
+    return F.relu(margin - target_logits + opposite_logits)[directional].mean()
 
 
 def state_preservation_loss(
