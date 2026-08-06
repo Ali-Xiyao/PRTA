@@ -863,3 +863,36 @@
   direction. Its matched-wrong/null/reversed Macro-F1 drops were also all
   larger than B403's, so current evidence does not support a mechanism/trust
   advantage either. A508/A509 are now the decisive auxiliary-loss diagnostic.
+- A509-S17 (classification-only PRTA) finished at Dev Macro-F1 0.526869. This
+  is only 0.001495 below full PRTA-S17 and 0.000775 above B403-S17, so the
+  auxiliary objectives currently show little single-seed classification gain.
+  This is provisional until A508-S17 and B403-S28/S43 finish and the frozen
+  multiseed finalizer closes the minimum wave.
+- B403-S28 has already reached a running best Dev Macro-F1 of 0.526998 by
+  epoch 3, close to B403-S17 (0.526094) and full PRTA-S17 (0.528364). This is
+  non-terminal evidence only, but it further motivates waiting for the exact
+  three-seed B403 comparison rather than attributing the small Seed-17 gap to
+  method superiority.
+- B403-S28 is now terminal at 0.526998. The two completed B403 seeds 17/28
+  average 0.526546, versus the already frozen three-seed PRTA mean 0.528791;
+  this provisional difference is only +0.002245 for PRTA. B403-S43 is still
+  required before the symmetric multiseed conclusion can be finalized.
+- A508-S17 (alignment loss removed) is terminal at Macro-F1 0.524551 and ODER
+  0.006071, respectively 0.003813 lower and 0.001428 better than full
+  PRTA-S17. Together with classification-only A509-S17 (0.526869, ODER
+  0.006160), the single-seed evidence does not show a compelling classification
+  benefit from the full auxiliary-objective stack; the final route decision
+  still waits for B403-S43 and the fail-closed aggregate comparison.
+- Symmetric three-seed comparison is now terminal: PRTA Macro-F1 is
+  0.528791 +/- 0.001178 versus B403 0.524565 +/- 0.003460, a small +0.004226
+  mean difference. This does not establish superiority because the paired
+  Seed-17 patient-bootstrap interval [-0.008452, +0.013238] includes zero.
+- PRTA lacks a compensating trust/mechanism advantage: its paired ODER delta
+  CI [0.000263, 0.003751] is significantly adverse, and its Macro-F1 drops are
+  larger under matched-wrong, null, and reversed PRIOR. A509 remains within
+  0.001495 Macro-F1 of full PRTA while improving ODER by 0.001339, reinforcing
+  that the auxiliary stack is not justified by this minimum wave.
+- The only supported route decision is `STOP_CURRENT_PRTA_ROUTE`. This does
+  not erase the prior `HOLD_DEVELOPMENT_GATE`; it closes the proposed current
+  PRTA contribution route without opening Internal-test/Gold or starting the
+  nine-baseline matrix.

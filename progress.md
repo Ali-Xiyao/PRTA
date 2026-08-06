@@ -1856,3 +1856,144 @@
 - The four-run queue was frozen and launched. Scheduler PID 25632 is healthy;
   A508-S17 is active on cuda:0 and A509-S17 on cuda:1, while B403-S28/S43 are
   queued. No Internal-test/Gold path was opened.
+# 2026-08-06 11:47 CST minimum-wave monitor
+
+- Scheduler PID 25632 and both children remain healthy with empty stderr.
+  A508-S17 is training epoch 1 at 4,400/5,026 (best Dev Macro-F1 0.502288,
+  epoch 0); A509-S17 is training epoch 3 at 1,700/5,026 (best 0.515225,
+  epoch 2). B403-S28/S43 remain immutable PLANNED entries.
+- GPU0/GPU1 utilization is 65%/54% with 4,479/2,053 MiB used. Preparation,
+  paired-analysis, and audit-receipt hashes still match; protected read count
+  remains zero and Internal-test/Gold remain unopened. Current throughput gives
+  an estimated 3--4 hours to finish the queue plus final aggregation.
+# 2026-08-06 12:17 CST minimum-wave monitor
+
+- Scheduler and both training children remain healthy with zero-byte stderr.
+  A508-S17 is at epoch 2, 4,800/5,026 with best Dev Macro-F1 0.502288
+  (epoch 0). A509-S17 is at epoch 5, 4,200/5,026 and improved its best to
+  0.526869 (epoch 4). B403-S28/S43 remain unchanged PLANNED entries.
+- GPU0/GPU1 utilization is 95%/56% with 4,479/2,053 MiB used; H: retains
+  426.9 GB free. Preparation and paired-analysis hashes match, protected reads
+  remain zero, and Internal-test/Gold remain unopened. Estimated queue plus
+  aggregation time is now about 2.5--4 hours.
+# 2026-08-06 12:47 CST minimum-wave monitor
+
+- Scheduler and both children remain healthy with empty stderr. A508-S17 has
+  completed epoch 3 and improved its best Dev Macro-F1 to 0.523156 (epoch 2).
+  A509-S17 is at epoch 8, 800/5,026 with best 0.526869 (epoch 4).
+  B403-S28/S43 remain frozen PLANNED and will start as lanes release.
+- GPU0/GPU1 utilization is 73%/67%, checkpoints are present, H: has 426.9 GB
+  free, preparation/analysis hashes remain stable, and protected reads remain
+  zero. Estimated remaining queue and aggregation time is 2.5--3.5 hours.
+# 2026-08-06 13:17 CST minimum-wave monitor
+
+- A509-S17 completed with `PASS_TRAINING_FINISHED` after 9 epochs. Its frozen
+  best Dev Macro-F1 is 0.526869 at epoch 4, with accuracy 0.613160, ODER
+  0.006160, minimum recall 0.443159, NLL 0.955344, and true-minus-wrong-prior
+  gap 0.161945. Receipt SHA-256 is `805b13cc34bb37c32ccb1b099dcc4447c58b63b9e54a9cc167683d5dd229b453`;
+  best-checkpoint SHA-256 is `6254ce54bca357e817e7e438efeb7c648a27f609610397d0dcb18b09df2e437a`.
+- The scheduler automatically started B403-S28 on the released GPU1 lane; it
+  is at epoch 1, step 4,600/5,026 with best Dev Macro-F1 0.514865. A508-S17 is
+  at epoch 5, step 100/5,026 with best 0.524551 (epoch 4), and B403-S43 remains
+  immutable PLANNED. Both active stderr logs are empty.
+- Scheduler PID 25632 remains healthy; GPU0/GPU1 utilization is 84%/60%, H:
+  has 426.5 GB free, all frozen hashes remain stable, protected reads remain
+  zero, and Internal-test/Gold remain unopened. Estimated remaining queue plus
+  fail-closed aggregation time is approximately 1.5--3 hours.
+# 2026-08-06 13:47 CST minimum-wave monitor
+
+- A508-S17 remains healthy at epoch 6, step 500/5,026; its frozen running best
+  remains Dev Macro-F1 0.524551 at epoch 4. B403-S28 completed epoch 4 and
+  improved its running best to 0.526998 at epoch 3. A509-S17 remains terminal
+  PASS and B403-S43 remains immutable PLANNED until a GPU lane releases.
+- Scheduler PID 25632 and both active children are alive, all three stderr
+  logs remain empty, GPU0/GPU1 utilization is 95%/47% with 4,479/1,601 MiB
+  allocated, and H: has 426.5 GB free. All four config SHA-256 values still
+  match the frozen queue; preparation and paired-analysis receipts remain PASS
+  with protected read count zero and Internal-test/Gold unopened.
+- No aggregate finalizer has started because only 1/4 runs is terminal. The
+  estimated remaining training plus fail-closed aggregation time remains
+  approximately 1.5--3 hours.
+# 2026-08-06 14:17 CST minimum-wave monitor
+
+- A508-S17 is healthy at epoch 7, step 800/5,026 with running best Dev
+  Macro-F1 0.524551 (epoch 4). B403-S28 completed the epoch-7 Dev pass with
+  running best 0.526998 (epoch 3) and is finishing its frozen early-stop/prior
+  audit path; A509-S17 remains PASS and B403-S43 remains PLANNED.
+- Scheduler PID 25632 and both children remain alive with empty stderr. GPU0
+  and GPU1 are active at 85%/37% utilization with 4,479/1,601 MiB allocated;
+  H: has 426.5 GB free. Preparation and paired-analysis receipts remain PASS,
+  their protected-read counts remain zero, and the paired-analysis output hash
+  still matches. Internal-test/Gold remain unopened.
+- Only 1/4 runs is terminal, so the aggregate finalizer correctly remains
+  closed. Estimated remaining queue plus aggregation time remains about
+  1.5--3 hours.
+# 2026-08-06 14:47 CST minimum-wave monitor
+
+- B403-S28 completed with `PASS_TRAINING_FINISHED` after 8 epochs. Its frozen
+  best Dev Macro-F1 is 0.526998 at epoch 3, with accuracy 0.620034, balanced
+  accuracy 0.551245, ODER 0.008214, minimum recall 0.448098, NLL 0.972258, and
+  true-minus-wrong-prior gap 0.169621. Receipt SHA-256 is
+  `27730c39350bc35d9275e9f0c31a6db2be160cf16021d12e7a8d2263c94edee1`;
+  best-checkpoint SHA-256 is
+  `19ba005d633f1e721cfdb670fe6ba1b759c9234c9421fa06f4dd47993bdd134d`.
+- The scheduler started B403-S43 on the released GPU1 lane; it has completed
+  epoch 2 with running best Dev Macro-F1 0.512814 (epoch 1). A508-S17 is at
+  epoch 8, step 1,000/5,026 with running best 0.524551, while A509-S17 remains
+  terminal PASS. The queue is now 2/4 terminal.
+- Scheduler PID 25632 and both active children are healthy; all stderr logs
+  remain empty. GPU0/GPU1 memory is 4,479/1,601 MiB, H: has 426.1 GB free,
+  all four config hashes match, preparation and paired-analysis receipts remain
+  PASS with protected-read count zero, and Internal-test/Gold remain unopened.
+  Estimated remaining training plus aggregation time is about 1--2 hours.
+# 2026-08-06 15:17 CST minimum-wave monitor
+
+- A508-S17 completed with `PASS_TRAINING_FINISHED` after 9 epochs. Its frozen
+  best Dev Macro-F1 is 0.524551 at epoch 4, with accuracy 0.613427, balanced
+  accuracy 0.533139, ODER 0.006071, minimum recall 0.452689, NLL 0.972698, and
+  true-minus-wrong-prior gap 0.182209. Receipt SHA-256 is
+  `65e048b9fc597413fcb281e074e2fbe36a84b1bf9fbc9add39d02c82ec0597f2`;
+  best-checkpoint SHA-256 is
+  `de9e9e26cef5b2ba7227d1caff776ed2839b18dd083d725dc44fb4b4027bfe0c`.
+- The queue is now 3/4 terminal. B403-S43 is the sole remaining child at
+  epoch 5, step 4,700/5,026 with running best Dev Macro-F1 0.520605 (epoch 2).
+  Scheduler PID 25632 and child PID 38804 are healthy; all stderr logs remain
+  empty. GPU0 is released and GPU1 is active with 1,601 MiB allocated; H: has
+  426.2 GB free.
+- Preparation and paired-analysis receipts remain PASS, their protected-read
+  counts remain zero, the paired-analysis output hash matches, and
+  Internal-test/Gold remain unopened. The aggregate finalizer remains closed
+  until B403-S43 passes; estimated remaining training plus aggregation time is
+  approximately 30--75 minutes.
+# 2026-08-06 15:46 CST minimum-wave training and aggregation closure
+
+- B403-S43 completed with `PASS_TRAINING_FINISHED` after 7 epochs and frozen
+  best Dev Macro-F1 0.520605 at epoch 2. The scheduler closed 4/4 jobs as
+  `PASS_TRAINING_QUEUE_FINISHED`; both GPUs are released and all four stderr
+  logs are empty.
+- Added and tested a fail-closed minimum-wave finalizer. It requires exact
+  four-run and parent registries, the immutable previous HOLD hash, scheduler
+  receipt, paired Dev analysis/receipt, all PASS training receipts, and zero
+  protected reads before writing any decision. Focused Ruff and 5 minimum-wave
+  tests passed.
+- Final aggregate: PRTA three-seed Macro-F1 0.528791 +/- 0.001178; B403
+  0.524565 +/- 0.003460; mean delta +0.004226. The Seed-17 paired Macro-F1
+  95% CI [-0.008452, +0.013238] includes zero, while the PRTA-minus-B403 ODER
+  CI [0.000263, 0.003751] is adverse and every tested PRIOR intervention loses
+  more Macro-F1 for PRTA. The result is `STOP_CURRENT_PRTA_ROUTE`, not a PRTA
+  advantage or a mechanism/trust advantage. The prior HOLD is unchanged.
+- Private decision and finalization receipt were written outside Git as
+  `minimum_wave_decision.json` and `finalization_receipt.json`; both report
+  Internal-test/Gold unopened and protected-outcome read count zero. Full
+  repository validation and local-only Git handoff remain.
+
+# 2026-08-06 16:02 CST minimum-wave terminal validation
+
+- Full repository validation passed: Ruff reported no findings, all 158 tests
+  passed, and `git diff --check` was clean.
+- The private finalization receipt conserves the cleaned Dev cohort at 11,201
+  rows / 2,427 patients, binds four PASS run receipts, and records zero reads
+  of Internal-test/Gold. The decision artifact hash matches its receipt.
+- Phase 87 is terminally complete. Only the Git-safe finalizer, tests, and
+  planning records are included in the local-only handoff; the two pre-existing
+  user-modified paper documents remain unstaged and unchanged by this closure.

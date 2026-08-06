@@ -24,7 +24,7 @@ from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
 from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256, sha256_file
 from prta_cxr.data.token_cache import Block8CacheIndex
 from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
-from prta_cxr.development_selection import _write_queue
+from prta_cxr.development_selection import _completed_runs, _write_queue
 from prta_cxr.evaluation.inference import predict_loader
 from prta_cxr.evaluation.progression import classification_metrics
 from prta_cxr.sol_rerun import validate_rerun_manifest
@@ -45,6 +45,12 @@ OPPOSITE_PAIRS = (
     ("New", "Resolved"),
     ("Resolved", "New"),
 )
+PARENT_PRTA_IDS = (
+    "CLN1-PRTA-S17",
+    "CLN1-PRTA-S28",
+    "CLN1-PRTA-S43",
+)
+PARENT_B403_ID = "CLN1-B403-S17"
 
 
 def _git_commit(repo_root: Path) -> str:
@@ -663,4 +669,321 @@ def analyze_minimum_wave_dev_main(argv: Sequence[str] | None = None) -> int:
     }
     write_json_atomic(output_root / "audit_receipt.json", receipt)
     print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
+def _best_history_metrics(receipt: Mapping[str, Any]) -> dict[str, float]:
+    best_epoch = int(receipt["best_epoch"])
+    matches = [
+        row for row in receipt["history"] if int(row["epoch"]) == best_epoch
+    ]
+    if len(matches) != 1:
+        raise AuditContractError("training receipt best epoch is not unique")
+    row = matches[0]
+    result = {
+        "macro_f1": float(row["macro_f1"]),
+        "accuracy": float(row["accuracy"]),
+        "balanced_accuracy": float(row["balanced_accuracy"]),
+        "min_class_recall": float(row["min_class_recall"]),
+        "opposite_direction_error_rate": float(
+            row["opposite_direction_error_rate"]
+        ),
+        "nll": float(row["nll"]),
+        "true_minus_wrong_prior_gap": float(
+            receipt["dev_prior_audit"]["true_minus_wrong_prior_gap"]
+        ),
+    }
+    if not np.isfinite(list(result.values())).all():
+        raise AuditContractError("training receipt contains non-finite metrics")
+    if not np.isclose(result["macro_f1"], receipt["best_dev_macro_f1"]):
+        raise AuditContractError("training receipt best metric is inconsistent")
+    return result
+
+
+def _validate_training_receipts(
+    receipts: Mapping[str, Mapping[str, Any]], expected_ids: Sequence[str]
+) -> None:
+    if set(receipts) != set(expected_ids):
+        raise AuditContractError("minimum-wave receipt identity mismatch")
+    for experiment_id in expected_ids:
+        receipt = receipts[experiment_id]
+        if receipt.get("status") != "PASS_TRAINING_FINISHED":
+            raise AuditContractError(f"incomplete receipt: {experiment_id}")
+        if receipt.get("protected_outcomes_opened") is not False:
+            raise AuditContractError(f"protected outcome opened: {experiment_id}")
+        if receipt.get("internal_test_opened") is not False:
+            raise AuditContractError(f"Internal-test opened: {experiment_id}")
+        _best_history_metrics(receipt)
+
+
+def build_minimum_wave_decision(
+    *,
+    previous_gate: Mapping[str, Any],
+    parent_receipts: Mapping[str, Mapping[str, Any]],
+    wave_receipts: Mapping[str, Mapping[str, Any]],
+    paired_analysis: Mapping[str, Any],
+) -> dict[str, Any]:
+    if previous_gate.get("status") != "HOLD_DEVELOPMENT_GATE":
+        raise AuditContractError("previous development gate is not immutable HOLD")
+    expected_parent = (*PARENT_PRTA_IDS, PARENT_B403_ID)
+    expected_wave = tuple(spec[0] for spec in RUN_SPECS)
+    _validate_training_receipts(parent_receipts, expected_parent)
+    _validate_training_receipts(wave_receipts, expected_wave)
+    if paired_analysis.get("status") != "PASS_MINIMUM_WAVE_PAIRED_DEV_ANALYSIS":
+        raise AuditContractError("paired Dev analysis is not PASS")
+    if paired_analysis.get("protected_outcome_read_count") != 0:
+        raise AuditContractError("paired analysis read a protected outcome")
+    if paired_analysis.get("internal_test_opened") is not False:
+        raise AuditContractError("paired analysis opened Internal-test")
+    if paired_analysis.get("gold_opened") is not False:
+        raise AuditContractError("paired analysis opened Gold")
+
+    prta_metrics = {
+        experiment_id: _best_history_metrics(parent_receipts[experiment_id])
+        for experiment_id in PARENT_PRTA_IDS
+    }
+    b403_receipts = {
+        PARENT_B403_ID: parent_receipts[PARENT_B403_ID],
+        "B403-S28": wave_receipts["B403-S28"],
+        "B403-S43": wave_receipts["B403-S43"],
+    }
+    b403_metrics = {
+        experiment_id: _best_history_metrics(receipt)
+        for experiment_id, receipt in b403_receipts.items()
+    }
+    prta_values = [row["macro_f1"] for row in prta_metrics.values()]
+    b403_values = [row["macro_f1"] for row in b403_metrics.values()]
+    if not np.allclose(prta_values, previous_gate["seed_macro_f1"]):
+        raise AuditContractError("previous PRTA seed metrics changed")
+
+    bootstrap = paired_analysis["patient_bootstrap"]
+    macro_ci = bootstrap["macro_f1"]
+    oder_ci = bootstrap["opposite_direction_error_rate"]
+    interventions = paired_analysis["prior_interventions"]
+    intervention_names = ("matched_wrong", "null", "reversed")
+    mechanism_drop_advantage = all(
+        float(interventions[name]["prta"]["macro_f1_drop_from_true"])
+        < float(interventions[name]["b403"]["macro_f1_drop_from_true"])
+        for name in intervention_names
+    )
+    paired_performance_advantage = float(macro_ci["ci95_low"]) > 0.0
+    paired_oder_not_worse = float(oder_ci["ci95_high"]) <= 0.0
+    performance_advantage = (
+        paired_performance_advantage
+        and paired_oder_not_worse
+        and float(np.mean(prta_values)) > float(np.mean(b403_values))
+    )
+    mechanism_trust_advantage = (
+        mechanism_drop_advantage and paired_oder_not_worse
+    )
+    comparable_performance = (
+        float(macro_ci["ci95_low"]) <= 0.0 <= float(macro_ci["ci95_high"])
+    )
+    if performance_advantage:
+        decision = "PRTA_ADVANTAGE"
+        supported_claim = "PRTA classification advantage with non-worse ODER"
+    elif comparable_performance and mechanism_trust_advantage:
+        decision = "COMPARABLE_WITH_MECHANISM_TRUST_ADVANTAGE"
+        supported_claim = "Comparable classification with mechanism/trust advantage"
+    else:
+        decision = "STOP_CURRENT_PRTA_ROUTE"
+        supported_claim = (
+            "No independent PRTA performance or mechanism/trust advantage"
+        )
+
+    ablations = {
+        experiment_id: _best_history_metrics(wave_receipts[experiment_id])
+        for experiment_id in ("A508-S17", "A509-S17")
+    }
+    full_seed17 = prta_metrics["CLN1-PRTA-S17"]
+    for metrics in ablations.values():
+        metrics["macro_f1_delta_vs_full_prta_s17"] = (
+            metrics["macro_f1"] - full_seed17["macro_f1"]
+        )
+        metrics["oder_delta_vs_full_prta_s17"] = (
+            metrics["opposite_direction_error_rate"]
+            - full_seed17["opposite_direction_error_rate"]
+        )
+    return {
+        "schema": "prta-cxr.minimum-contribution-wave-decision.v1",
+        "status": "PASS_MINIMUM_CONTRIBUTION_WAVE_FINALIZED",
+        "decision": decision,
+        "supported_claim": supported_claim,
+        "previous_development_gate_status": previous_gate["status"],
+        "previous_hold_unchanged": True,
+        "prta_three_seed": {
+            "experiment_ids": list(PARENT_PRTA_IDS),
+            "macro_f1": prta_values,
+            "mean": float(np.mean(prta_values)),
+            "sample_sd": float(np.std(prta_values, ddof=1)),
+            "mean_oder": float(
+                np.mean(
+                    [
+                        row["opposite_direction_error_rate"]
+                        for row in prta_metrics.values()
+                    ]
+                )
+            ),
+        },
+        "b403_three_seed": {
+            "experiment_ids": list(b403_metrics),
+            "macro_f1": b403_values,
+            "mean": float(np.mean(b403_values)),
+            "sample_sd": float(np.std(b403_values, ddof=1)),
+            "mean_oder": float(
+                np.mean(
+                    [
+                        row["opposite_direction_error_rate"]
+                        for row in b403_metrics.values()
+                    ]
+                )
+            ),
+        },
+        "prta_minus_b403_mean_macro_f1": float(
+            np.mean(prta_values) - np.mean(b403_values)
+        ),
+        "paired_seed17": {
+            "macro_f1_delta": paired_analysis["true_condition"][
+                "macro_f1_delta"
+            ],
+            "macro_f1_ci95": [
+                macro_ci["ci95_low"],
+                macro_ci["ci95_high"],
+            ],
+            "oder_delta_ci95": [
+                oder_ci["ci95_low"],
+                oder_ci["ci95_high"],
+            ],
+            "comparable_performance": comparable_performance,
+            "paired_performance_advantage": paired_performance_advantage,
+            "paired_oder_not_worse": paired_oder_not_worse,
+        },
+        "mechanism": {
+            "prta_has_smaller_drop_for_all_interventions": (
+                mechanism_drop_advantage
+            ),
+            "mechanism_trust_advantage": mechanism_trust_advantage,
+            "prior_interventions": interventions,
+        },
+        "ablations_seed17": ablations,
+        "checks": {
+            "performance_advantage": performance_advantage,
+            "comparable_performance": comparable_performance,
+            "mechanism_trust_advantage": mechanism_trust_advantage,
+            "all_training_receipts_pass": True,
+            "previous_hold_preserved": True,
+            "protected_outcome_read_count_zero": True,
+        },
+        "protected_outcome_read_count": 0,
+        "internal_test_opened": False,
+        "gold_opened": False,
+        "training_started_by_finalizer": False,
+    }
+
+
+def finalize_minimum_wave_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Finalize the PRTA minimum contribution wave"
+    )
+    parser.add_argument("--run-registry", type=Path, required=True)
+    parser.add_argument("--parent-run-registry", type=Path, required=True)
+    parser.add_argument("--preparation-receipt", type=Path, required=True)
+    parser.add_argument("--scheduler-receipt", type=Path, required=True)
+    parser.add_argument("--previous-gate", type=Path, required=True)
+    parser.add_argument("--paired-analysis", type=Path, required=True)
+    parser.add_argument("--paired-receipt", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    repo_root = Path(__file__).resolve().parents[2]
+    paths = {
+        role: audit_path(path, role=role)
+        for role, path in {
+            "run_registry": args.run_registry,
+            "parent_run_registry": args.parent_run_registry,
+            "preparation_receipt": args.preparation_receipt,
+            "scheduler_receipt": args.scheduler_receipt,
+            "previous_gate": args.previous_gate,
+            "paired_analysis": args.paired_analysis,
+            "paired_receipt": args.paired_receipt,
+            "output": args.output,
+        }.items()
+    }
+    assert_private_output(paths["output"].parent, repo_root)
+    if paths["output"].exists():
+        raise FileExistsError(f"refusing existing decision: {paths['output']}")
+    preparation = json.loads(
+        paths["preparation_receipt"].read_text(encoding="utf-8")
+    )
+    scheduler = json.loads(paths["scheduler_receipt"].read_text(encoding="utf-8"))
+    previous_gate = json.loads(paths["previous_gate"].read_text(encoding="utf-8"))
+    paired_analysis = json.loads(
+        paths["paired_analysis"].read_text(encoding="utf-8")
+    )
+    paired_receipt = json.loads(
+        paths["paired_receipt"].read_text(encoding="utf-8")
+    )
+    expected_wave = [spec[0] for spec in RUN_SPECS]
+    if preparation.get("status") != "PASS_MINIMUM_CONTRIBUTION_WAVE_PREPARED":
+        raise AuditContractError("minimum-wave preparation is not PASS")
+    if preparation.get("run_ids") != expected_wave:
+        raise AuditContractError("minimum-wave preparation IDs changed")
+    if preparation.get("previous_gate_immutable") is not True:
+        raise AuditContractError("previous development gate was not frozen")
+    if sha256_file(paths["previous_gate"]) != preparation["input_sha256"][
+        "previous_gate"
+    ]:
+        raise AuditContractError("previous development gate hash changed")
+    if scheduler.get("status") != "PASS_TRAINING_QUEUE_FINISHED":
+        raise AuditContractError("minimum-wave scheduler is not PASS")
+    if scheduler.get("total") != 4 or scheduler.get("completed") != 4:
+        raise AuditContractError("minimum-wave scheduler row count mismatch")
+    if scheduler.get("internal_test_opened") is not False:
+        raise AuditContractError("scheduler opened Internal-test")
+    if scheduler.get("gold_opened") is not False:
+        raise AuditContractError("scheduler opened Gold")
+    if paired_receipt.get("status") != "PASS_MINIMUM_WAVE_PAIRED_DEV_ANALYSIS":
+        raise AuditContractError("paired-analysis receipt is not PASS")
+    if paired_receipt.get("protected_outcome_read_count") != 0:
+        raise AuditContractError("paired-analysis receipt has protected reads")
+    if sha256_file(paths["paired_analysis"]) != paired_receipt["output_sha256"][
+        "paired_analysis.json"
+    ]:
+        raise AuditContractError("paired-analysis output hash changed")
+
+    wave_receipts, _ = _completed_runs(paths["run_registry"])
+    parent_all, _ = _completed_runs(paths["parent_run_registry"])
+    parent_receipts = {
+        experiment_id: parent_all[experiment_id]
+        for experiment_id in (*PARENT_PRTA_IDS, PARENT_B403_ID)
+    }
+    decision = build_minimum_wave_decision(
+        previous_gate=previous_gate,
+        parent_receipts=parent_receipts,
+        wave_receipts=wave_receipts,
+        paired_analysis=paired_analysis,
+    )
+    decision["created_at"] = datetime.now(UTC).isoformat()
+    decision["git_commit"] = _git_commit(repo_root)
+    decision["input_sha256"] = {
+        role: sha256_file(path)
+        for role, path in paths.items()
+        if role != "output"
+    }
+    write_json_atomic(paths["output"], decision)
+    receipt = {
+        "schema": "prta-cxr.minimum-contribution-wave-finalization-receipt.v1",
+        "status": decision["status"],
+        "decision": decision["decision"],
+        "decision_sha256": sha256_file(paths["output"]),
+        "input_sha256": decision["input_sha256"],
+        "run_count": 4,
+        "dev_rows": int(paired_analysis["rows"]),
+        "dev_patients": int(paired_analysis["patients"]),
+        "protected_outcome_read_count": 0,
+        "internal_test_opened": False,
+        "gold_opened": False,
+    }
+    receipt_path = paths["output"].with_name("finalization_receipt.json")
+    write_json_atomic(receipt_path, receipt)
+    print(json.dumps(decision, indent=2, sort_keys=True))
     return 0

@@ -862,17 +862,18 @@ Status: complete
   `14d12b36072f8695dfc03e182fb287d5d1eeaa4f25cd870483aeab9e3e8abfeb`.
 
 ### Phase 86 - Dual-GPU minimum-wave execution
-Status: in progress
+Status: complete
 
 - Run the four immutable jobs on cuda:0/cuda:1 with the existing fail-closed
   scheduler, preserving logs, receipts, checkpoints, and identity-safe resume.
 - Do not tune from intermediate Dev metrics or change any frozen input/budget.
-- Scheduler PID 25632 launched A508-S17 on cuda:0 (PID 28708) and A509-S17 on
-  cuda:1 (PID 37716). Both reached epoch 0 training with empty stderr; B403-S28
-  and B403-S43 remain PLANNED and will start automatically as GPUs release.
+- All four immutable runs completed as `PASS_TRAINING_FINISHED`. Final Dev
+  Macro-F1 values were A508-S17 0.524551, A509-S17 0.526869, B403-S28
+  0.526998, and B403-S43 0.520605. All stderr logs remained empty, both GPUs
+  were released, and Internal-test/Gold remained unopened.
 
 ### Phase 87 - Contribution decision and local-only handoff
-Status: pending
+Status: complete
 
 - Compare PRTA and B403 three-seed mean/SD plus A508/A509 diagnostics and paired
   mechanism results, while leaving the prior HOLD unchanged.
@@ -880,6 +881,13 @@ Status: pending
   performance with mechanism/trust advantage, or route stop.
 - Validate Git-safe aggregates and push only to the configured local bare
   remote; keep row-level predictions and identifiers outside Git.
+- The fail-closed aggregate decision is `STOP_CURRENT_PRTA_ROUTE`: PRTA and
+  B403 three-seed Macro-F1 were 0.528791 +/- 0.001178 and 0.524565 +/-
+  0.003460, but the paired Seed-17 95% CI includes zero and PRTA has adverse
+  ODER/intervention evidence. The previous `HOLD_DEVELOPMENT_GATE` remains
+  immutable. Full repository validation passed (Ruff clean, 158/158 tests,
+  and `git diff --check`); the Git-safe implementation and planning evidence
+  were handed off only to the configured local bare remote.
 
 ## Terminal formal-program record - 2026-08-04
 
