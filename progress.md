@@ -2695,3 +2695,16 @@
 - Patience is now anchored at epoch 7. If no later terminal improvement occurs,
   completion is estimated in roughly 15--30 minutes; a valid later improvement
   may extend the same frozen run.
+
+# 2026-08-07 06:25 CST LR200 monitor
+
+- LR200 remains healthy after 97 minutes in Slurm step `4161.27796`, at the
+  epoch-11 completion boundary. The best checkpoint advanced at epoch 9;
+  process, registry, checkpoint, log, and input-hash evidence remain consistent,
+  with no terminal receipt yet.
+- `/ipfs` remains 2% used and protected cohorts remain sealed. The observed
+  improvement is explicitly monitoring-only: it did not trigger selection,
+  confirmation, config changes, or an altered stopping rule.
+- Patience is anchored at epoch 9. If no later terminal improvement occurs,
+  completion is estimated in roughly 15--30 minutes; only the final receipt
+  may determine whether LR200 qualifies.
