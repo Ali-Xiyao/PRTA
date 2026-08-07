@@ -2871,3 +2871,14 @@
   300/5,026. Its launch receipt SHA-256 is
   `f5d9d2f4ec829114c30da035873507733ba1a921ee52ea46a8bd051ce82117c2`;
   DMW030 remains absent/unstarted, with protected cohorts still sealed.
+
+# 2026-08-07 10:45 CST wave003 DMW010 monitor
+
+- DMW010 remains healthy in the sole child step `4161.28142`, at the epoch-1
+  completion boundary after about 16 minutes. Progress/process state and the
+  clean launcher log agree; no terminal receipt exists.
+- Config, preparation, and launch hashes remain exact, DMW030 remains
+  absent/unstarted, storage is healthy, and protected outcomes remain sealed.
+- Intermediate Dev evidence was not used to mutate the run. At roughly eight
+  minutes per epoch, the earliest unchanged terminal window is approximately
+  35--50 minutes away unless later valid improvement extends patience.
