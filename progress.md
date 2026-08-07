@@ -3957,3 +3957,9 @@
 - Both frozen tight gamma-bracket arms remain healthy and non-terminal. Gamma0.9375 is at epoch 4 with best epoch 2 in `9929.14`; gamma1.125 is at epoch 2 with best epoch 0 in `3066.13`. Best/last checkpoints remain intact at about 310 MB; neither terminal receipt exists.
 - Wave016 preparation/config/launch hashes remain exact; each retained allocation has one scientific child plus its preserved telemetry/batch steps. Launcher logs contain no fatal markers, and the server filesystem has about 1.2 PB free.
 - Internal-test and Gold remain sealed with zero protected reads. No selection, cancellation, or new-wave launch was performed.
+
+## 2026-08-08 07:35 CST Wave016 parallel monitor
+
+- Both tight gamma-bracket arms remain healthy and non-terminal. Gamma0.9375 is at epoch 7 with best epoch 4 in `9929.14`; gamma1.125 is at epoch 5 with best epoch 4 in `3066.13`. Their progress files are fresh, best/last checkpoints remain intact at about 310 MB, and neither terminal receipt exists.
+- Wave016 preparation/config/launch-receipt hashes still match exactly. Each retained allocation has one independent scientific child plus preserved telemetry/batch, launcher logs contain no fatal markers, and shared storage remains about 1.2 PB free.
+- Internal-test and Gold remain sealed with zero protected reads. No intermediate selection, cancellation, or new-wave launch was performed.
