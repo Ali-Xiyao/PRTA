@@ -2946,3 +2946,26 @@
   receipt SHA-256 is
   `41f8069621900a291c2bb9125c6a4eb9ceb2e0d12b482e04edbb9647c24be5f9`.
   It is healthy at epoch 0 step 800/5,026; no protected cohort was opened.
+
+# 2026-08-07 12:05 CST wave003 DMW030 monitor
+
+- DMW030 remains healthy in the sole child step `4161.28187`, at epoch 2
+  step 1,100/5,026 after about 18 minutes. Progress/process state and the clean
+  launcher log agree; no terminal receipt exists.
+- Frozen input identity remains exact and protected outcomes remain sealed.
+  Intermediate Dev evidence was observed only as part of the registered
+  progress receipt and did not alter the run, queue, or stopping rule.
+- Preparation/config/launch hashes remain exactly
+  `366058dd...` / `3837e43f...` / `41f80696...`; registry status is `RUNNING`,
+  the shared filesystem has about 1.2 PB available, and no terminal receipt
+  exists. A supplemental resource probe used an unsupported `sstat State`
+  field and direct compute-node SSH is not authenticated from the login node;
+  both failures were read-only, so subsequent checks will use step-valid
+  Slurm control fields without opening a concurrent diagnostic step.
+- A corrected Slurm control probe confirms step `4161.28187` is `RUNNING` on
+  `gpu01` with one GPU and four CPUs; `sstat` reports about 37.5 GB average
+  RSS and 38.2 GB maximum RSS. No second child step was opened.
+- A fixed remote status script confirms progress advanced to epoch 2 step
+  2,200/5,026, both `best.pt` and `last.pt` exist at about 310 MB, progress and
+  checkpoint timestamps continue advancing, and the launcher log contains no
+  error/traceback/OOM signature. The run remains healthy and unchanged.
