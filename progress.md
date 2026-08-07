@@ -3809,3 +3809,16 @@
 - Shared storage remains about 1.25 PB free. Internal-test and Gold remain
   closed, protected-outcome access remains zero, and no terminal-race or
   downstream selection action is permitted.
+
+# 2026-08-08 04:34 CST Wave013/014 parallel monitor
+
+- Both midpoint arms remain healthy and non-terminal. DMW0075 is at epoch 6
+  step 4,500/5,026 in `3066.11`, with best epoch 4 and intact 310 MB
+  checkpoints. DMW0125 is at epoch 4 step 2,100/5,026 in `9929.12`, with best
+  epoch 2 and intact 310 MB checkpoints.
+- All frozen preparation/config/launch-receipt hashes still match. Each
+  retained allocation contains exactly one independent scientific child plus
+  telemetry/batch steps, and both launcher logs remain free of fatal markers.
+- Shared storage remains about 1.25 PB free. No terminal receipt exists,
+  Internal-test/Gold remain sealed, and no selection or cancellation action is
+  permitted from the running state.
