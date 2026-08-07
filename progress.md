@@ -3177,3 +3177,15 @@
 - Logs contain no traceback/error/OOM/non-finite marker, telemetry remains
   untouched, and protected cohorts remain sealed. The earliest likely terminal
   window under unchanged patience is roughly another 20--40 minutes.
+
+# 2026-08-07 16:14 CST beta-axis monitor
+
+- Both frozen beta arms remain healthy near the end of epoch 4: beta 0.999 in
+  `9929.4` is at step 4,500/5,026 with best epoch 1, and beta 0.99999 in
+  `3066.4` is at step 4,600/5,026 with best epoch 2. Both retain intact 310 MB
+  best/last checkpoints and have no terminal receipt.
+- Parent jobs and the two scientific steps remain RUNNING, immutable
+  preparation/config/launch hashes are exact, launch receipts still record
+  zero protected reads with Internal-test/Gold closed, and logs contain no
+  traceback/error/OOM/non-finite marker. Under unchanged early stopping, the
+  likely terminal window is about another 10--25 minutes.
