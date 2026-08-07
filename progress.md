@@ -3137,3 +3137,12 @@
 - Allocation 3066 remains intentionally idle except for telemetry. If no later
   epoch improves on epoch 2, unchanged patience permits termination after
   epoch 6 evaluation, likely in another 10--25 minutes.
+
+# 2026-08-07 15:14 CST focal gamma 1.5 monitor
+
+- Gamma 1.5 remains healthy in `9929.3`, at epoch 7 step 1,000/5,026. Its
+  best epoch advanced from 2 to 4, so the frozen early-stopping window also
+  extended; no terminal receipt, error marker, or identity drift exists.
+- Allocation 3066 remains intentionally idle except for telemetry, and no
+  protected cohort was opened. If epoch 4 remains best, terminal evaluation is
+  expected after epoch 8, approximately another 10--25 minutes.
