@@ -2907,3 +2907,14 @@
 - Fixed seeds 17/28/43 remain the scientific comparison. The selected top
   three cannot be reported as an unbiased three-seed mean or erase failed
   seeds; no Internal-test/Gold access is authorized.
+
+# 2026-08-07 11:05 CST wave003 DMW010 monitor
+
+- DMW010 remains healthy in the sole child step `4161.28142`, at epoch 4
+  step 2,200/5,026 after about 36 minutes. Progress/process state and the clean
+  launcher log agree; no terminal receipt exists.
+- Frozen hashes remain exact, DMW030 remains absent/unstarted, storage is
+  healthy, and protected outcomes remain sealed. Intermediate evidence did
+  not change the run or queue.
+- Patience is anchored at epoch 2. If no later valid improvement extends it,
+  terminal completion is expected in roughly 20--35 minutes.
