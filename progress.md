@@ -3848,3 +3848,24 @@
   and unstarted until an allocation is scientifically free. Both allocations
   again have exactly one independent scientific child plus telemetry/batch;
   Internal-test/Gold remain sealed and protected-outcome access remains zero.
+
+# 2026-08-08 05:18 CST DMW0125 terminal and gamma0.75 launch
+
+- Wave014 `SVR-FG1-DMW0125-S17` is terminal
+  `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1 `0.534913` / ODER
+  `0.005982`; terminal receipt SHA-256 is
+  `c4cce14988ee0da2c7e52a5135a9200a2923e4a9587dd967ab261e3b41af4566`.
+  It misses the ODER ceiling and aspirational target, so no terminal-race stop
+  or confirmation is opened.
+- Closed Wave014 fail-closed with aggregate receipt SHA-256
+  `487c61ca880ddbc8add6ffee4bd250ac100e46305d4e9165fc27df41be8dada4`;
+  DMW010 remains globally retained.
+- Launched the already-frozen Wave015 gamma0.75 arm unchanged in `9929.13`.
+  Launcher SHA-256 is
+  `ac7a67afcd4edb1f54bba48a541b5460c667dcdaa2b401091feae31593b7f099`;
+  launch receipt SHA-256 is
+  `bff17bc0c2ed128efdf364d2d9d7fb6e120e22b0ab1426209cf44984527b77c5`.
+  It entered `RUNNING` with no fatal launcher marker while gamma0.875 continues
+  independently in `3066.12`. Each retained allocation again contains exactly
+  one scientific child plus telemetry/batch; all frozen hashes match and
+  Internal-test/Gold remain sealed.

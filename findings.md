@@ -1287,3 +1287,10 @@
   launches first because it is the closer midpoint to the retained gamma1.0
   parent; gamma0.75 remains frozen, so neither value can be chosen from the
   other arm's intermediate trajectory.
+- Terminal DMW0125 reaches Macro-F1 `0.534913`, but ODER `0.005982` exceeds
+  the immutable ceiling. The upper midpoint therefore cannot replace DMW010,
+  and the complete local DMW refinement leaves DMW010 as the retained parent.
+- Because gamma0.75 was frozen together with gamma0.875 before either focal
+  midpoint produced a terminal result, launching it on the freed 9929 lane
+  preserves the one-axis comparison and uses both allocations without
+  adapting to gamma0.875 intermediate epochs.

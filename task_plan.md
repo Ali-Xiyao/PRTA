@@ -680,9 +680,14 @@ terminal receipt SHA-256
 `c76fc8cd22c4a4c1b5a7e12c0a3aecb4f8267f26e4838c075bebaa3d3fde978b`.
 Wave013 is closed fail-closed with aggregate SHA-256
 `9deaad53f76104e50d6e53656e9503e05eb7b77d3dacee83141329c1baf13aa9`
-and globally retains DMW010. Wave014 DMW0125 continues unchanged in `9929.12`;
-do not use its intermediate epochs for selection. Using only completed
-terminal evidence, Wave015 predeclared focal-gamma midpoints `0.875/0.75`
+and globally retains DMW010. Wave014 DMW0125 is now terminal after nine epochs
+at Macro-F1 `0.534913` / ODER `0.005982`; it fails the original ODER ceiling
+and misses the aspirational target. Preserve terminal receipt SHA-256
+`c4cce14988ee0da2c7e52a5135a9200a2923e4a9587dd967ab261e3b41af4566`.
+Wave014 is closed fail-closed with aggregate SHA-256
+`487c61ca880ddbc8add6ffee4bd250ac100e46305d4e9165fc27df41be8dada4`.
+Using only completed terminal evidence, Wave015 predeclared focal-gamma
+midpoints `0.875/0.75`
 around the DMW010/gamma1 parent. Preparation SHA-256 is
 `a725840da0840790769348a183101a6f536da66e857167f18a16db00f1520184`;
 config SHA-256 values are
@@ -690,14 +695,15 @@ config SHA-256 values are
 and `0a87fe2ac9ef7b8299518e5ac0b79cd9f552664d0c982fcd193b560ca69333c0`.
 Gamma0.875 is healthy in `3066.12`, with launch receipt SHA-256
 `b2e69357ee9c5911da204e666ad8a390a7ba3f73f0849b0e5fb309f41ec9f6a5`;
-gamma0.75 remains frozen and unstarted until an allocation becomes
-scientifically free. Monitor both active children without selecting from
+gamma0.75 is now healthy in `9929.13`, with launch receipt SHA-256
+`bff17bc0c2ed128efdf364d2d9d7fb6e120e22b0ab1426209cf44984527b77c5`.
+Monitor both active children without selecting from
 intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
 28/43 confirmation of the winner. Otherwise let each active run terminate,
-launch the already-frozen gamma0.75 arm on the first free allocation, and keep
-continuing small pre-frozen Train/Dev waves until the user explicitly stops.
+close Wave015 only after both terminal receipts exist, and keep continuing
+small pre-frozen Train/Dev waves until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.
