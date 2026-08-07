@@ -3075,3 +3075,14 @@
   frozen wave/config hashes remain exact, and shared storage has about 1.2 PB
   free. With minimum epoch 6 and unchanged early stopping, the earliest likely
   terminal window is roughly another 25--50 minutes.
+
+# 2026-08-07 13:34 CST dual-allocation monitor
+
+- Both independent runs remain healthy and aligned at epoch 5 step
+  1,500/5,026. DMW030 attempt 2 stays in `9929.2`; focal gamma 0.5 stays in
+  `3066.3`. Both have valid 310 MB best/last checkpoints with best epoch 4,
+  RUNNING registry rows, and no terminal receipt.
+- No launcher error/OOM/non-finite marker is present, telemetry steps remain
+  untouched, and protected cohorts remain sealed. If best epoch 4 is not
+  extended, unchanged patience makes the earliest terminal point epoch 8,
+  approximately another 20--40 minutes.
