@@ -670,41 +670,37 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave011 is
-terminal and closed: LR8.75e-5 reaches Macro-F1 `0.530434` / ODER `0.005714`,
-and LR1.125e-4 reaches `0.527963` / `0.006517`; neither passes the original
-joint gate or approaches the aspirational target. Wave011 aggregate SHA-256 is
-`e5998fd4023d5047d20766e439baa79d8bc6e5566a75050286694e5047bfd6ac`.
-Wave012 DMW005 is terminal `PASS_TRAINING_FINISHED` at Macro-F1 `0.530308` /
-ODER `0.005267`: it passes the original joint gate but misses the aspirational
-target and trails the retained DMW010 parent. Preserve terminal receipt SHA-256
-`3d6bc8ab5dc2f641c5ab8a743a7b5240e9350e84b5ee9bc0c89c2e6145c6fb10`.
-Wave012 DMW015 is also terminal at Macro-F1 `0.526628` / ODER `0.006071`,
-failing the original joint gate and aspirational target; receipt SHA-256 is
-`d56cdee061aef2d5a0ea947edbeef0ba3f5282d51b9ceff047674933132a53b5`.
-Wave012 is closed with aggregate SHA-256
-`acba6a1b3a242a21431e20b133e40a028b3a5c00a268d333a37eb7a5cd7e1d3c`
-and globally retains DMW010. Wave013 froze the lower midpoint DMW0075 with preparation SHA-256
-`52bc249980429399c2299627e753ec079260be73b04b2f2ec6e3f8ec7a345e2f` and
-config SHA-256 `c2feeb9d0d5d676f4a9dadef4e005b2712cfa70982adddf447a5611edd9e8357`;
-it runs independently in `3066.11`. Using only terminal DMW015 plus prior
-evidence while DMW0075 remained blinded, Wave014 froze upper midpoint DMW0125
-with preparation/config SHA-256 values
-`29be95a724c15dd2ec92e74dfb869c1fa03ab7bcf5dd87dda510f45cde0b94f7` /
-`cf3b11ad40391623a93d91e5a0378eaa085f9b118075048269ccdc6d7777040e`;
-it now runs independently in `9929.12`. Monitor both active children without
-selecting from intermediate epochs. If either reaches terminal Macro-F1
-`>= 0.546094` with ODER `<= 0.005535`, stop only the other scientific child,
-preserve its partial artifacts, keep both allocations and telemetry alive, and
-freeze exact seeds 28/43 confirmation of the winner. If one terminates without
-target, let the other continue and freeze a new small evidence-guided arm using
-completed terminal evidence only; launch it on the free allocation without
-using the still-running arm's intermediate state. Close Wave013 only after
-DMW0075 terminates and Wave014 only after DMW0125 terminates. Continue small
-pre-frozen Train/Dev waves until the user explicitly stops. Do not cancel
-telemetry, overwrite outputs, read protected cohorts, or change data, labels,
-patients, splits, method family, optimizer family, batch size, epoch budget,
-or early stopping.
+run per allocation; never use retired allocation `4161` again. Wave012 remains
+terminal and closed with aggregate SHA-256
+`acba6a1b3a242a21431e20b133e40a028b3a5c00a268d333a37eb7a5cd7e1d3c`.
+Wave013 DMW0075 is now terminal `PASS_TRAINING_FINISHED` after nine epochs at
+Macro-F1 `0.529707` / ODER `0.005267`. It passes the original joint gate but
+misses the aspirational target and trails the retained DMW010 parent; preserve
+terminal receipt SHA-256
+`c76fc8cd22c4a4c1b5a7e12c0a3aecb4f8267f26e4838c075bebaa3d3fde978b`.
+Wave013 is closed fail-closed with aggregate SHA-256
+`9deaad53f76104e50d6e53656e9503e05eb7b77d3dacee83141329c1baf13aa9`
+and globally retains DMW010. Wave014 DMW0125 continues unchanged in `9929.12`;
+do not use its intermediate epochs for selection. Using only completed
+terminal evidence, Wave015 predeclared focal-gamma midpoints `0.875/0.75`
+around the DMW010/gamma1 parent. Preparation SHA-256 is
+`a725840da0840790769348a183101a6f536da66e857167f18a16db00f1520184`;
+config SHA-256 values are
+`45ed1494d139111032fa4b721f6cf0cd1a653b7b9caa6c3f9d023cb175a75235`
+and `0a87fe2ac9ef7b8299518e5ac0b79cd9f552664d0c982fcd193b560ca69333c0`.
+Gamma0.875 is healthy in `3066.12`, with launch receipt SHA-256
+`b2e69357ee9c5911da204e666ad8a390a7ba3f73f0849b0e5fb309f41ec9f6a5`;
+gamma0.75 remains frozen and unstarted until an allocation becomes
+scientifically free. Monitor both active children without selecting from
+intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
+ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
+artifacts, keep both allocations and telemetry alive, and freeze exact seeds
+28/43 confirmation of the winner. Otherwise let each active run terminate,
+launch the already-frozen gamma0.75 arm on the first free allocation, and keep
+continuing small pre-frozen Train/Dev waves until the user explicitly stops.
+Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
+data, labels, patients, splits, method family, optimizer family, batch size,
+epoch budget, or early stopping.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1500,6 +1496,9 @@ Status: in progress under explicit 2026-08-06 user authority
 | Wave013's detached launch-control wrapper required progress within 12 seconds and exited nonzero before initialization finished | 1 | Preserve control-failure SHA-256 `4f584456de8df8b06173caa8d804f91dd54b10c9ac986e54aae441dfe58fbbb9`; the unchanged child remained active and produced progress after about 36 seconds, so no retry was performed. |
 | The fresh V8 orchestration isolate did not expose `TextEncoder` or `btoa` for monitor-script encoding | 2 | Use the local ASCII base64 encoder in the orchestration script; both failures occurred before SSH and changed no runtime state. |
 | A direct remote `grep` pattern containing pipes was reparsed by PowerShell/SSH and hung instead of scanning the terminal launcher log | 1 | Terminate the read-only command and use the byte-safe Python log scanner, which confirmed no fatal marker. No allocation, step, or file changed. |
+| The first current-heartbeat base64 monitor invocation and a minimal quote test lost their nested Python quotes across PowerShell/SSH | 2 | Pipe the fixed Python monitor through SSH standard input; both failed commands stopped before any remote mutation. |
+| The first Wave015 preparation attempt interpolated a Bash `${PROJECT}` token in the local V8 template, and the next read-only precheck assumed the deployed runtime tree contained `.git` | 2 | Use absolute launcher paths and the already frozen source-commit pin; both attempts failed before creating the aggregate or wave namespace. |
+| The first post-launch step view reused unsupported step-format `%t` | 1 | Use `%i|%j` or the default step view. The same read-only check still confirmed `3066.12` and healthy progress; no run state changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

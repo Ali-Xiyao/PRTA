@@ -3822,3 +3822,29 @@
 - Shared storage remains about 1.25 PB free. No terminal receipt exists,
   Internal-test/Gold remain sealed, and no selection or cancellation action is
   permitted from the running state.
+
+# 2026-08-08 05:02 CST DMW0075 terminal and Wave015 gamma bracket launch
+
+- Wave013 `SVR-FG1-DMW0075-S17` is terminal
+  `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1 `0.529707` / ODER
+  `0.005267`; terminal receipt SHA-256 is
+  `c76fc8cd22c4a4c1b5a7e12c0a3aecb4f8267f26e4838c075bebaa3d3fde978b`.
+  It passes the original joint gate but misses the aspirational target and
+  trails retained DMW010 by `0.008955` Macro-F1.
+- Closed Wave013 fail-closed with aggregate receipt SHA-256
+  `9deaad53f76104e50d6e53656e9503e05eb7b77d3dacee83141329c1baf13aa9`;
+  DMW010 remains the globally retained Seed-17 parent. DMW0125 continues
+  unchanged in `9929.12` and remained blinded for this selection.
+- Froze `wave015_focal_gamma_local_bracket_v1` from completed terminal evidence
+  only, predeclaring gamma `0.875/0.75` at unchanged DMW010. Preparation
+  SHA-256 is
+  `a725840da0840790769348a183101a6f536da66e857167f18a16db00f1520184`;
+  config SHA-256 values are
+  `45ed1494d139111032fa4b721f6cf0cd1a653b7b9caa6c3f9d023cb175a75235`
+  and `0a87fe2ac9ef7b8299518e5ac0b79cd9f552664d0c982fcd193b560ca69333c0`.
+- Launched unchanged gamma0.875 in `3066.12`; launch receipt SHA-256 is
+  `b2e69357ee9c5911da204e666ad8a390a7ba3f73f0849b0e5fb309f41ec9f6a5`.
+  It entered `RUNNING` with no fatal launcher marker. Gamma0.75 remains frozen
+  and unstarted until an allocation is scientifically free. Both allocations
+  again have exactly one independent scientific child plus telemetry/batch;
+  Internal-test/Gold remain sealed and protected-outcome access remains zero.

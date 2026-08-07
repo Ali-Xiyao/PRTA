@@ -1277,3 +1277,13 @@
   only from DMW015 and prior terminal evidence while DMW0075 remains blinded.
   DMW0125 and DMW0075 now occupy the two allocations as independent one-GPU
   experiments; neither may influence selection until its terminal receipt.
+- Terminal DMW0075 jointly qualifies at Macro-F1 `0.529707` / ODER `0.005267`,
+  but it remains `0.008955` below retained DMW010 on Macro-F1 and misses the
+  aspirational target. Wave013 therefore closes without promotion and retains
+  DMW010 globally.
+- The completed DMW lower-side refinement provides no gain over DMW010. Using
+  only terminal DMW0075, DMW010, and the completed DMW010+gamma0.5 evidence,
+  the next one-axis bracket predeclares focal gamma `0.875/0.75`. Gamma0.875
+  launches first because it is the closer midpoint to the retained gamma1.0
+  parent; gamma0.75 remains frozen, so neither value can be chosen from the
+  other arm's intermediate trajectory.
