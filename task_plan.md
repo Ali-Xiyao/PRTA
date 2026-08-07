@@ -670,24 +670,26 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave010
-LR1.25e-4 is terminal at Macro-F1 `0.529980` / ODER `0.004285`: it passes the
-original joint gate but misses the aspirational target and remains below the
-global DMW010 parent on Macro-F1. LR1.5e-4 continues unchanged in `9929.9`.
-Using only the terminal LR1e-4 parent and LR1.25e-4 evidence, Wave011 froze a
-two-arm LR bracket around 1e-4: LR8.75e-5 now runs as
-`SVR-FG1-DMW010-LR0875-S17` in `3066.9`, while LR1.125e-4 remains frozen and
-unstarted. Monitor the two active children without selecting from intermediate
-epochs. If either reaches terminal Macro-F1 `>= 0.546094` with ODER
-`<= 0.005535`, stop only the other scientific child, preserve its partial
+run per allocation; never use retired allocation `4161` again. Wave010 is
+terminal and closed: LR1.25e-4 reaches Macro-F1 `0.529980` / ODER `0.004285`,
+and LR1.5e-4 reaches `0.534177` / `0.003660`; both pass the original joint
+gate but miss the aspirational target and remain below the global DMW010 parent
+on Macro-F1. Wave010 aggregate receipt SHA-256 is
+`49f2b483096c9a8a5280d407711260267503f4a3ac462943ab8391ab98c81e8d`.
+Wave011 now runs both previously frozen LR bracket arms: LR8.75e-5 is
+`SVR-FG1-DMW010-LR0875-S17` in `3066.9`, and LR1.125e-4 is
+`SVR-FG1-DMW010-LR1125-S17` in `9929.10`. Monitor both without selecting from
+intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
+ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. If an active arm terminates without target,
-launch the already-frozen LR1.125e-4 arm on the first scientifically free
-allocation; close Wave010 once LR1.5e-4 is terminal and close Wave011 only when
-both bracket arms are terminal. Continue small pre-frozen Train/Dev waves until
-the user explicitly stops. Do not cancel telemetry, overwrite outputs, read
-protected cohorts, or change data, labels, patients, splits, method family,
-optimizer family, batch size, epoch budget, or early stopping.
+28/43 confirmation of the winner. If one arm terminates without target, let
+the other continue and freeze a new small evidence-guided arm using completed
+terminal evidence only; launch it on the free allocation without using the
+still-running arm's intermediate state. Close Wave011 only when both bracket
+arms are terminal. Continue small pre-frozen Train/Dev waves until the user
+explicitly stops. Do not cancel telemetry, overwrite outputs, read protected
+cohorts, or change data, labels, patients, splits, method family, optimizer
+family, batch size, epoch budget, or early stopping.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete

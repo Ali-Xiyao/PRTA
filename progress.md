@@ -3628,3 +3628,28 @@
 - Each allocation again has exactly one independent scientific child plus its
   telemetry/batch steps. All new hashes verify exactly, no output was
   overwritten, and Internal-test/Gold remain closed with zero protected reads.
+
+# 2026-08-08 01:14 CST Wave010 closed and LR1.125e-4 launched
+
+- Wave010 `SVR-FG1-DMW010-LR150-S17` is terminal
+  `PASS_TRAINING_FINISHED` after 14 epochs at Dev Macro-F1
+  `0.5341771317851062` / ODER `0.0036603874654048746`; terminal receipt
+  SHA-256 is
+  `31abeefcf4d1a9b170163ddf6ccd4130499ec81f665076a15089fc214efaeabd`.
+  It passes the original joint gate but misses the aspirational target and
+  remains below the global DMW010 parent on Macro-F1.
+- Wave010 closed fail-closed with aggregate receipt SHA-256
+  `49f2b483096c9a8a5280d407711260267503f4a3ac462943ab8391ab98c81e8d`.
+  LR1.5e-4 is the higher-F1 qualified arm within the wave, but the prior DMW010
+  LR1e-4 parent remains globally preferred.
+- Allocation 9929 became scientifically free, so the already-frozen unchanged
+  Wave011 arm `SVR-FG1-DMW010-LR1125-S17` launched in `9929.10`. Its launch
+  receipt SHA-256 is
+  `6349b9d5503ca7aac30629f84f171eaa190685c2655ba7b2dd3203b16d1f23eb`
+  and launcher SHA-256 is
+  `2d9a4d63ee53887263dbfd4d5693e29edfd77a6f84e3d796d35ce9202306fe96`.
+- LR1.125e-4 is healthy at epoch 0 step 100/5,026, while LR8.75e-5 continues
+  at epoch 2 step 2,300/5,026 in `3066.9`. Each allocation again has exactly
+  one independent scientific child plus telemetry/batch steps; hashes are
+  exact, no output was overwritten, and Internal-test/Gold remain closed with
+  zero protected reads.

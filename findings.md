@@ -1241,3 +1241,9 @@
   LR1e-4, using no information from the still-running LR1.5e-4 arm. LR8.75e-5
   occupies the freed allocation; LR1.125e-4 remains frozen for the next free
   lane.
+- Terminal LR1.5e-4 improves on LR1.25e-4 to `0.534177` / `0.003660`, but it
+  still trails DMW010 LR1e-4 by `0.004484` Macro-F1 and misses the aspirational
+  target. Wave010 therefore closes with LR1.5e-4 as its within-wave winner but
+  retains LR1e-4 globally. The now-free allocation launches the already-frozen
+  LR1.125e-4 arm; together with LR8.75e-5, this completes the symmetric local
+  bracket without any choice from intermediate epochs.
