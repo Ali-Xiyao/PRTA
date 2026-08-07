@@ -3378,3 +3378,15 @@
   shared storage has approximately 1.2 PB available.
 - Protected reads remain zero with Internal-test/Gold closed; no combination
   or final-setting choice was made from intermediate evidence.
+
+# 2026-08-07 20:53 CST margin-magnitude monitor
+
+- MARGIN010 and MARGIN030 remain healthy and synchronized at epoch 4 step
+  3,600/5,026 in `9929.7` and `3066.7`; both most recently improved at epoch 2
+  and retain intact 310 MB best/last checkpoints.
+- Both parent allocations, telemetry steps, and exactly one scientific child
+  per allocation remain RUNNING. Frozen hashes remain exact and launcher logs
+  show no error marker.
+- Terminal receipts remain pending, protected reads remain zero, and
+  Internal-test/Gold stay closed. No combination was chosen from intermediate
+  evidence.
