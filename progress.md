@@ -3167,3 +3167,13 @@
   is RUNNING in `3066.4`; launch receipt SHA-256 is
   `5956776f2ef248553db18a28c25891cd60b069c9b721397e81bae40686245f22`.
   Both are healthy at epoch 0 step 200/5,026 with zero protected reads.
+
+# 2026-08-07 15:54 CST beta-axis monitor
+
+- Both frozen beta arms remain healthy and aligned at epoch 2 step
+  1,300/5,026. Beta 0.999 in `9929.4` has best epoch 1; beta 0.99999 in
+  `3066.4` has best epoch 0. Each has intact 310 MB best/last checkpoints,
+  one scientific child per allocation, and no terminal receipt.
+- Logs contain no traceback/error/OOM/non-finite marker, telemetry remains
+  untouched, and protected cohorts remain sealed. The earliest likely terminal
+  window under unchanged patience is roughly another 20--40 minutes.
