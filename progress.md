@@ -2929,3 +2929,20 @@
   not alter the run or queue.
 - Patience is anchored at epoch 4. If no later valid improvement resets it,
   terminal completion is expected in roughly 15--30 minutes.
+
+# 2026-08-07 11:45 CST DMW010 terminal and DMW030 launch
+
+- `SVR-FG1-DMW010-S17` completed 9 epochs with
+  `PASS_TRAINING_FINISHED`: terminal best Dev Macro-F1 `0.538661`, ODER
+  `0.005178`, best epoch 4, and terminal receipt SHA-256
+  `c4061a87039738a8a28a35f80d48cb185f6b930393832c41ed95c0d7625c072d`.
+  All frozen input/config hashes match and protected-read count remains zero.
+- DMW010 passes the immutable joint gate and improves Seed-17 Macro-F1 over
+  confirmed DMW=0.02 by `+0.003013`, but ODER is `+0.000625` higher and it
+  does not reach the aspirational `0.546094` Seed-17 target.
+- After verifying the exact DMW010 receipt, wave preparation/config hashes,
+  absence of another child, and absence of prior DMW030 output, launched the
+  unchanged `SVR-FG1-DMW030-S17` sequentially in step `4161.28187`. Launch
+  receipt SHA-256 is
+  `41f8069621900a291c2bb9125c6a4eb9ceb2e0d12b482e04edbb9647c24be5f9`.
+  It is healthy at epoch 0 step 800/5,026; no protected cohort was opened.

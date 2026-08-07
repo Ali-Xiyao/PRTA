@@ -670,9 +670,9 @@ Status: complete
 ## Next Step
 
 Monitor frozen direction-margin refinement `wave003_dmw_refine_v1`
-sequentially on retained allocation 4161. DMW=0.01 Seed 17 is the sole active
-child; DMW=0.03 remains frozen and unstarted until the first arm is terminal
-and the allocation has no child. After wave003, continue the expanded
+sequentially on retained allocation 4161. DMW=0.01 Seed 17 is terminal and
+jointly qualified; DMW=0.03 is now the sole active child. After wave003,
+close the axis from terminal evidence only, then continue the expanded
 lightweight search toward the new exploratory +2 percentage-point target,
 one frozen axis at a time. Preserve every run/log, keep allocation 3066 unused
 because it is step-exhausted, and do not open protected cohorts.
@@ -1068,9 +1068,14 @@ Status: in progress under explicit 2026-08-06 user authority
   `366058dd88e5cfd26a9d4e68651d927b3ae8af9f5b93eb90fcb9f9df2c2d56fc`.
   DMW010 config SHA-256
   `314e16e8e2345ad1d9ca0f7e58d1d48fa61773bc3f35caa807ea358b82cda47d`
-  is active in step `4161.28142`; DMW030 config SHA-256
+  completed 9 epochs at Macro-F1 `0.538661` and ODER `0.005178`, passing the
+  original joint gate but not the aspirational `0.546094` Seed-17 target. Its
+  terminal receipt SHA-256 is
+  `c4061a87039738a8a28a35f80d48cb185f6b930393832c41ed95c0d7625c072d`.
+  DMW030 config SHA-256
   `3837e43fd244c0f775b1f047ab875729f6ce9f3cbfe4e51167319a7a23816dca`
-  remains unstarted.
+  is now active in step `4161.28187`; launch receipt SHA-256 is
+  `41f8069621900a291c2bb9125c6a4eb9ceb2e0d12b482e04edbb9647c24be5f9`.
 - The user expanded the exploratory objective on 2026-08-07: seek at least a
   +2 percentage-point three-seed Macro-F1 gain over B403, with +3 points as a
   stretch target, without materially changing the PRTA method. This adds an

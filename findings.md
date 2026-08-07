@@ -1114,3 +1114,9 @@
   selecting deployment checkpoints, but reporting only those three would
   upward-bias performance. The audit-safe compromise is a predeclared pool,
   full result disclosure, and separate fixed-seed versus best-three tables.
+- DMW=0.01 at fixed LR=1e-4 improves Seed-17 Macro-F1 from the confirmed
+  DMW=0.02 value `0.535648` to `0.538661` (`+0.003013`), while increasing ODER
+  from `0.004553` to `0.005178` (`+0.000625`). It remains inside the immutable
+  ODER ceiling and therefore jointly qualifies, but misses the aspirational
+  `0.546094` Seed-17 target. DMW=0.03 must finish before this axis can be
+  closed or a confirmation/search-parent decision can be made.
