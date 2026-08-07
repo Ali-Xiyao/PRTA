@@ -670,14 +670,13 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave003 and
-wave004 are terminal. Gamma 1.5 failed the joint gate; gamma 0.5 won the focal
-axis but missed the aspirational target. The next predeclared class-balance
-beta wave is frozen around the globally highest-F1 jointly qualified Seed-17
-setting, DMW=0.01: beta 0.999 runs on `9929`, beta 0.99999 on `3066`. After
-both terminate, close wave005 before freezing the weight-decay axis. Do not
-cancel telemetry, overwrite outputs, read protected cohorts, or change data,
-seed, method, optimizer, batch size, or budget.
+run per allocation; never use retired allocation `4161` again. Wave005 is
+terminal without reaching the aspirational target. The frozen weight-decay
+wave now runs WD=0.005 in `9929.5` and WD=0.02 in `3066.5`, both around the
+unchanged global DMW010 parent. Wait for both terminal receipts before any
+selection or next-axis freeze. Do not cancel telemetry, overwrite outputs,
+read protected cohorts, or change data, seed, method, optimizer family, batch
+size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -991,8 +990,9 @@ Status: complete; PASS engineering readiness; no formal launch authorized
 ### Phase 92 - Continuous lightweight server Dev search
 Status: in progress under explicit 2026-08-06 user authority
 
-- Reuse only retained Slurm allocations `4161` and `3066` on `gpu01`; submit no
-  new Slurm allocation and never cancel either retained parent job.
+- Reuse only retained Slurm allocations `9929` and `3066` on `gpu01`; retired
+  allocation `4161` must never be reused. Submit no new Slurm allocation and
+  never cancel either retained parent job or its telemetry step.
 - Search only the physician-cleaned Train 80,402 / Dev 11,201 surface. Keep
   Internal-test and Gold sealed, require protected-read count zero, and do not
   modify labels, patients, splits, cache, or source data.
@@ -1124,6 +1124,16 @@ Status: in progress under explicit 2026-08-06 user authority
   may not replace fixed seeds 17/28/43, the all-seed summary, confidence
   intervals, or any claim of seed robustness. Seed-sweep outcomes must not be
   fed back into parameter selection.
+- Wave005 is terminal. Beta 0.999 passes the original joint gate at Macro-F1
+  `0.533685` / ODER `0.003839`; beta 0.99999 fails at `0.526265` / `0.011338`.
+  Neither reaches the aspirational Seed-17 target, and neither exceeds global
+  parent DMW010 on Macro-F1. Wave005 aggregate SHA-256 is
+  `732dba264824485ebd8d9463def281c7f2a42c923996ad4f44c6a6b744393983`.
+- Wave006 is frozen around unchanged global parent DMW010 and varies only
+  weight decay `0.005/0.02`, one independent arm per retained allocation.
+  Preparation SHA-256 is
+  `e2625368d19ac4c413e727e898e0f7b663088bc161eadac373a350b1a087208b`.
+  WD005 runs in `9929.5`; WD020 runs in `3066.5`. No protected cohort is open.
 
 ## Terminal formal-program record - 2026-08-04
 

@@ -1170,3 +1170,12 @@
   lower-F1 focal winner: DMW010 remains the globally highest-F1 completed
   jointly qualified Seed-17 setting. Both beta values were frozen before
   launch and now run independently on 9929/3066.
+- Class-balance beta does not improve the global Seed-17 reference. Beta 0.999
+  is jointly qualified at Macro-F1 `0.533685` and ODER `0.003839`, trading
+  lower ODER for `0.004976` less Macro-F1 than DMW010. Beta 0.99999 degrades
+  both objectives to `0.526265` / `0.011338`. The global parent therefore
+  remains DMW010; neither beta arm merits multiseed confirmation.
+- The next frozen weight-decay axis keeps DMW010, LR=1e-4, focal gamma 1,
+  beta 0.9999, seed 17, architecture, data, and budget unchanged while testing
+  only weight decay 0.005/0.02. Both arms launched independently with zero
+  protected reads; terminal evidence alone will select or reject this axis.

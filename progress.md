@@ -3215,3 +3215,27 @@
   registry state, storage, and the zero-protected-read boundary remain valid.
   If epoch 10 does not improve on best epoch 6, unchanged patience should end
   the run in approximately another 5--15 minutes.
+
+# 2026-08-07 17:14 CST wave005 closure and weight-decay launch
+
+- Beta 0.999 completed 11 epochs with `PASS_TRAINING_FINISHED` at terminal best
+  Dev Macro-F1 `0.533685` and ODER `0.003839`; receipt SHA-256 is
+  `4645a22977c9d0f9366d9dd5e2588946950a88e57f28d6eaeb28aab7cca3ad0b`.
+  It passes the original joint gate but trails global DMW010 on Macro-F1.
+  Together with the failing beta 0.99999 arm, wave005 closed with aggregate
+  SHA-256 `732dba264824485ebd8d9463def281c7f2a42c923996ad4f44c6a6b744393983`.
+- Neither beta arm reached the aspirational Seed-17 target, so no multiseed
+  confirmation was opened. The unchanged globally highest-F1 qualified DMW010
+  setting remains the parent for the next predeclared one-axis comparison.
+- Froze `wave006_weight_decay_v1` at weight decay 0.005/0.02 with preparation
+  SHA-256 `e2625368d19ac4c413e727e898e0f7b663088bc161eadac373a350b1a087208b`.
+  WD005 config/launch SHAs are
+  `85c8f87e48ce09406e9329c0cb10fbd7dd3ead147e479c07193c50020357c61f` /
+  `00e760996a3bc156ad8b7cf5eb50080f50edd3b311619ddb4ea38ab31d1530db`;
+  WD020 config/launch SHAs are
+  `ac75eee43a415d6cc449e34acc2122c66b90c005144d43e96cef0a18e4e8c45c` /
+  `7c7646a8888a341e4c5e42b8e93757983c5b19804e54ca22417d75671443aaf0`.
+- The two independent arms are healthy at epoch 0 step 300/5,026 in `9929.5`
+  and `3066.5`. Each allocation has exactly one scientific child plus its
+  untouched telemetry step; launch receipts record protected reads zero and
+  Internal-test/Gold closed.
