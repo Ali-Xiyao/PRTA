@@ -2994,3 +2994,12 @@
 - DMW030 remains healthy and unchanged on allocation 4161 at epoch 4 step
   2,700/5,026 after about 37 minutes. Allocation 3066 is now idle and ready;
   no second scientific arm is launched before the wave003 terminal decision.
+
+# 2026-08-07 12:27 CST wave003 dual-allocation monitor
+
+- DMW030 remains healthy in the sole scientific child step `4161.28187`, at
+  epoch 4 step 4,100/5,026 after about 39 minutes. Checkpoints and progress
+  continue updating, and the launcher log has no error/traceback/OOM signature.
+- Allocation 3066 has only its batch step and remains qualified/idle for the
+  next terminally selected parallel arm. No intermediate metric changed the
+  frozen run or opened another scientific child; protected cohorts stay sealed.
