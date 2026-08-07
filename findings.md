@@ -1153,3 +1153,12 @@
 - Focal gamma 0.5 and 1.5 were frozen together before launching gamma 0.5, so
   the second value cannot be chosen from gamma 0.5 intermediate evidence.
   Gamma 1.5 remains queued for the first allocation that becomes free.
+- DMW=0.03 does not improve the confirmed region: its unchanged fresh attempt
+  ends below the F1 gate (`0.526203`) and above the ODER ceiling (`0.006607`).
+  Wave003 therefore selects DMW=0.01 as its qualified Seed-17 result, while
+  withholding multiseed confirmation because `0.538661` remains below the
+  predeclared aspirational target.
+- Focal gamma 0.5 is jointly qualified at Macro-F1 `0.537393` and ODER
+  `0.004464`, but it is slightly below the DMW010 Seed-17 F1 and also misses
+  the aspirational target. Gamma 1.5 remains necessary to close the focal axis;
+  the idle second allocation is not used for a new axis before that comparison.

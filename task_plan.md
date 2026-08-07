@@ -670,16 +670,14 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Preserve the
-externally cancelled partial DMW=0.03 output from `4161.28187`. Because the
-existing checkpoint omits data-loader/RNG state, do not call a mid-run resume
-strictly identity preserving: restart the unchanged frozen DMW=0.03 Seed-17
-configuration in a new attempt namespace on `9929` after a Train/Dev-only
-readiness probe. In parallel, freeze both focal-gamma 0.5/1.5 configurations
-around the already confirmed LR=1e-4, DMW=0.02 parent and launch gamma 0.5 on
-`3066`; gamma 1.5 starts on the first free allocation after a terminal arm.
-Do not cancel the user-owned telemetry steps, overwrite outputs, read protected
-cohorts, or change data, seed, method, optimizer, batch size, or budget.
+run per allocation; never use retired allocation `4161` again. Wave003 is
+terminal: DMW=0.03 failed the joint gate and DMW=0.01 is the qualified
+Seed-17 axis winner, but it missed the aspirational target, so no confirmation
+was opened. Focal gamma 0.5 is terminal and jointly qualified; unchanged focal
+gamma 1.5 is now the sole scientific child on `9929`. After it terminates,
+close wave004 from terminal evidence before freezing the next class-balance
+axis. Do not cancel telemetry, overwrite outputs, read protected cohorts, or
+change data, seed, method, optimizer, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete

@@ -3097,3 +3097,24 @@
   stop both runs after the next epoch evaluation, likely within about
   8--20 minutes. No queue or parameter decision has been made from the
   intermediate metrics.
+
+# 2026-08-07 14:14 CST wave003 closure and focal gamma 1.5 launch
+
+- Both earlier children completed nine epochs with
+  `PASS_TRAINING_FINISHED`, unchanged early stopping, exact input hashes, and
+  zero protected reads. DMW030 attempt 2 ended at Macro-F1 `0.526203` and
+  ODER `0.006607`, failing both original joint thresholds; receipt SHA-256 is
+  `025192b10814af245b9602f8184d7ea51de6e5da62d1095c0957a0d57ae157bc`.
+- Wave003 closed with aggregate SHA-256
+  `ead625a62d5117cd9a9264795d6ead58da69bf900d11dd0378ca06481ce1b0dd`.
+  DMW010 remains the highest-F1 qualified Seed-17 arm (`0.538661` /
+  `0.005178`), but it did not reach the aspirational target, so seeds 28/43
+  confirmation was not opened.
+- Focal gamma 0.5 ended at Macro-F1 `0.537393` and ODER `0.004464`, passing
+  the original joint gate but missing the aspirational target; receipt SHA-256
+  is `01747bf3843c4999e1120e5fb6f54b18f78444d840cb41568082edab926b2c5a`.
+- Launched the already-frozen gamma 1.5 arm unchanged on allocation 9929 as
+  step `9929.3`; launch receipt SHA-256 is
+  `8f49e712690c3f5e1138342c40a66f889af714ff3c845ee08750201b2dd56a71`.
+  It is RUNNING at epoch 0 step 100/5,026. Allocation 3066 is intentionally
+  idle until wave004 closes; its telemetry remains untouched.
