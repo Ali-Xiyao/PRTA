@@ -2782,3 +2782,19 @@
   were not used for selection or mutation.
 - Patience is anchored at epoch 6. If no later valid improvement resets it,
   the unchanged run should finish in roughly 10--20 minutes.
+
+# 2026-08-07 08:25 CST LR200 Seed-28 terminal and Seed-43 launch
+
+- Seed 28 completed 11 epochs with `PASS_TRAINING_FINISHED`. Terminal best Dev
+  Macro-F1 is `0.528899` and best-epoch ODER is `0.006964`; it misses both
+  immutable joint targets and is preserved unchanged as a non-qualifying
+  confirmation seed. Receipt SHA-256 is
+  `64f66ef2735baff4439b5aea160587b54871f66c62ae4c88201d1bd2aad79387`.
+- After step `4161.27919` disappeared, verified the exact receipt/config/input
+  identity and absence of any child step or Seed-43 output. Then launched the
+  unchanged frozen Seed-43 config sequentially in step `4161.28017`; no parent
+  job was submitted or cancelled.
+- Seed 43 is healthy at epoch 0 step 300/5,026. Its launch receipt SHA-256 is
+  `409c522e54ea170d11c4669e097c5a5ef732bcfab23b1035ef762a68204abeb8`;
+  launcher log is clean, protected outcomes remain sealed, and all six
+  Train/Dev hashes remain exact.

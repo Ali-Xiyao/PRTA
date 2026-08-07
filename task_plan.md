@@ -670,11 +670,11 @@ Status: complete
 ## Next Step
 
 Monitor exact-setting confirmation `confirmation_dmw020_lr200_v1`
-sequentially on retained allocation 4161. LR200 Seed 17 is the terminal
-learning-rate winner and unchanged Seed 28 is active; Seed 43 remains frozen
-and unstarted until Seed 28 has a valid terminal PASS receipt and the
-allocation has no child step. Preserve every run/log, keep allocation 3066
-unused because it is step-exhausted, and do not open protected cohorts.
+sequentially on retained allocation 4161. LR200 Seed 28 is terminal below the
+fixed joint target and preserved unchanged; Seed 43 is now the sole active
+child. After Seed 43 terminates, close the three-seed confirmation from terminal
+evidence only, preserve every run/log, keep allocation 3066 unused because it
+is step-exhausted, and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1047,9 +1047,14 @@ Status: in progress under explicit 2026-08-06 user authority
   `e6f7ae16fcae923a32ed3509c3f83c2de535ed6c0e84d3103494af81c8fef137`.
   Seed-28 config SHA-256 is
   `8864bccab797d2532dfcc32bef9389005dbcff877059664f7599cea0353141cb`;
-  it is healthy in step `4161.27919`. Seed-43 config SHA-256 is
+  it completed 11 epochs at Macro-F1 `0.528899` and ODER `0.006964`, missing
+  both fixed targets. Its terminal receipt SHA-256 is
+  `64f66ef2735baff4439b5aea160587b54871f66c62ae4c88201d1bd2aad79387`.
+  Seed-43 config SHA-256 is
   `d3a02bca316186ee6f5ed4562fb3d2e5c4ba3ca86688b898bfbb0d1009888085`
-  and remains unstarted. Protected-read count remains zero.
+  and now runs unchanged in step `4161.28017`; its launch receipt SHA-256 is
+  `409c522e54ea170d11c4669e097c5a5ef732bcfab23b1035ef762a68204abeb8`.
+  Protected-read count remains zero.
 
 ## Terminal formal-program record - 2026-08-04
 

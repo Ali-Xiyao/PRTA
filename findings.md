@@ -1087,3 +1087,8 @@
 - The LR=2e-4 result remains outcome-adaptive single-seed Dev evidence until
   both frozen confirmation seeds finish. It does not revise the historical
   HOLD/STOP decisions and cannot authorize Internal-test or Gold access.
+- LR=2e-4 does not reproduce the Seed-17 joint pass at Seed 28: terminal
+  Macro-F1 `0.528899` is just below the fixed `0.529094` floor, while ODER
+  `0.006964` exceeds the `0.005535` ceiling. This seed is preserved as a real
+  non-qualifying result; Seed 43 must finish before any symmetric aggregate
+  comparison or next-wave decision.
