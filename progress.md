@@ -3895,3 +3895,16 @@
   child plus telemetry/batch. Shared storage remains about 1.2 PB free.
 - Internal-test/Gold remain sealed and protected-outcome access remains zero;
   no intermediate result is used for selection or mutation.
+
+# 2026-08-08 06:15 CST Wave015 parallel monitor
+
+- Both gamma-midpoint arms remain healthy and non-terminal. Gamma0.875 is at
+  epoch 9 with best epoch 7 in `3066.12`; gamma0.75 is at epoch 7 with best
+  epoch 4 in `9929.13`. Best/last checkpoints remain intact at about 310 MB,
+  and neither terminal receipt exists.
+- All Wave015 preparation/config/launch-receipt hashes still match. Each
+  allocation contains exactly one independent scientific child plus
+  telemetry/batch, both launcher logs remain free of fatal markers, and shared
+  storage remains about 1.2 PB free.
+- Protected-outcome access remains zero and Internal-test/Gold stay sealed;
+  no terminal-race or downstream selection action is authorized yet.
