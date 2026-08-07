@@ -3204,3 +3204,14 @@
 - Frozen hashes, registry state, 310 MB checkpoints, logs, storage, telemetry,
   and the zero-protected-read boundary remain valid. No Internal-test or Gold
   outcome was opened.
+
+# 2026-08-07 16:54 CST beta 0.999 monitor
+
+- Beta 0.999 remains healthy as the sole scientific child in `9929.4`, now at
+  epoch 9 step 3,400/5,026 with best epoch 6 and intact 310 MB best/last
+  checkpoints. Beta 0.99999 remains terminal and preserved; allocation 3066
+  remains scientifically idle except for user telemetry.
+- No terminal receipt or error marker exists for beta 0.999. Immutable hashes,
+  registry state, storage, and the zero-protected-read boundary remain valid.
+  If epoch 10 does not improve on best epoch 6, unchanged patience should end
+  the run in approximately another 5--15 minutes.
