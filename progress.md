@@ -3189,3 +3189,18 @@
   zero protected reads with Internal-test/Gold closed, and logs contain no
   traceback/error/OOM/non-finite marker. Under unchanged early stopping, the
   likely terminal window is about another 10--25 minutes.
+
+# 2026-08-07 16:34 CST beta 0.99999 terminal; beta 0.999 continues
+
+- Beta 0.99999 completed seven epochs with `PASS_TRAINING_FINISHED`, exact
+  frozen inputs, and protected outcomes closed. Its terminal best Dev
+  Macro-F1 is `0.526265` and ODER is `0.011338`; receipt SHA-256 is
+  `62ec30e608294a306515358ec4ae5ac1c2b5f54e313974b5ee2f46bcf79a9141`.
+  It fails both original joint thresholds and is preserved unchanged.
+- Beta 0.999 remains healthy in `9929.4` at epoch 7 step 1,000/5,026. Its best
+  epoch advanced to 6, so unchanged patience extends its likely terminal
+  window by roughly another 15--30 minutes. Allocation 3066 is now
+  scientifically idle; no next axis is launched before wave005 closes.
+- Frozen hashes, registry state, 310 MB checkpoints, logs, storage, telemetry,
+  and the zero-protected-read boundary remain valid. No Internal-test or Gold
+  outcome was opened.
