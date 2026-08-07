@@ -3086,3 +3086,14 @@
   untouched, and protected cohorts remain sealed. If best epoch 4 is not
   extended, unchanged patience makes the earliest terminal point epoch 8,
   approximately another 20--40 minutes.
+
+# 2026-08-07 13:54 CST dual-allocation monitor
+
+- Both independent children remain healthy at epoch 7 step 4,100/5,026 with
+  best epoch 4, one scientific step per allocation, intact checkpoints, and no
+  terminal receipt or launcher error. Telemetry and protected-data boundaries
+  remain unchanged.
+- If epoch 8 does not improve on best epoch 4, the frozen patience rule should
+  stop both runs after the next epoch evaluation, likely within about
+  8--20 minutes. No queue or parameter decision has been made from the
+  intermediate metrics.
