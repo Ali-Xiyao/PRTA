@@ -3908,3 +3908,27 @@
   storage remains about 1.2 PB free.
 - Protected-outcome access remains zero and Internal-test/Gold stay sealed;
   no terminal-race or downstream selection action is authorized yet.
+
+# 2026-08-08 06:38 CST gamma0.75 terminal and Wave016 launch
+
+- Wave015 gamma0.75 is terminal `PASS_TRAINING_FINISHED` after nine epochs at
+  Dev Macro-F1 `0.534812` / ODER `0.00553522006963664`; terminal receipt
+  SHA-256 is
+  `69160ae5c89f442bd10765a8314652c658e26cf13d90fca81cc9d2f816894de6`.
+  It passes the original gate exactly at the ODER ceiling but misses the
+  aspirational target and trails retained DMW010 by `0.003849` Macro-F1.
+  Gamma0.875 continues unchanged in `3066.12`, so Wave015 remains open.
+- Using completed gamma0.75 and prior terminal evidence only while gamma0.875
+  stayed blinded, froze `wave016_focal_gamma_tight_bracket_v1` at gamma
+  `0.9375/1.125`. Preparation SHA-256 is
+  `11c00d8cafdd27a9b3aacfb63f93762e9be21eb84e9e23909693488edec1fad1`;
+  config SHA-256 values are
+  `82dc7242d55abbaf24ed2dd65e7afe0f8090276d13ddb8378d743d8d2d8ce0b4`
+  and `69a7b403a864a79b59b0931cfc545482407620b494c78c6f2b6683f0acc1569e`.
+- Launched unchanged gamma0.9375 in `9929.14`; launcher SHA-256 is
+  `1c5614e323f57a016746d6b39df4552aac2a46a317781c8f64891cab8a0e9bba`
+  and launch receipt SHA-256 is
+  `d16cc721ddcebd1f40d6f9135075e28452156ac7910cb2edad5ea9640cb19b20`.
+  It entered `RUNNING` with no fatal marker. Gamma1.125 remains frozen and
+  unstarted; both retained allocations again host exactly one scientific child
+  plus telemetry/batch, and Internal-test/Gold remain sealed.

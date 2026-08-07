@@ -1294,3 +1294,12 @@
   midpoint produced a terminal result, launching it on the freed 9929 lane
   preserves the one-axis comparison and uses both allocations without
   adapting to gamma0.875 intermediate epochs.
+- Terminal gamma0.75 lands exactly on the immutable ODER ceiling at
+  `0.00553522006963664` with Macro-F1 `0.534812`. It jointly qualifies but
+  remains `0.003849` below the retained gamma1/DMW010 parent and misses the
+  aspirational target, so it is not promoted.
+- The next focal bracket was frozen without observing gamma0.875 terminal
+  evidence: gamma0.9375 is the tight lower midpoint between completed gamma0.75
+  and gamma1.0, while gamma1.125 is the predeclared upper midpoint toward the
+  already completed gamma1.5 direction. This preserves interpretability and
+  prevents adaptation from the still-running gamma0.875 arm.
