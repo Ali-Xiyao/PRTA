@@ -3367,3 +3367,14 @@
 - Both independent arms entered RUNNING state at epoch 0 step 100/5,026 in
   `9929.7` and `3066.7`; telemetry and parent jobs were preserved, and launch
   receipts record zero protected reads with Internal-test/Gold closed.
+
+# 2026-08-07 20:33 CST margin-magnitude monitor
+
+- MARGIN010 and MARGIN030 remain healthy and synchronized at epoch 2 step
+  1,000/5,026 in `9929.7` and `3066.7`, with best epoch 0 and intact 310 MB
+  best/last checkpoints. Neither run has a terminal receipt or log error.
+- Parent allocations, telemetry, and exactly one scientific child per
+  allocation remain RUNNING. Preparation/config/launch hashes are exact and
+  shared storage has approximately 1.2 PB available.
+- Protected reads remain zero with Internal-test/Gold closed; no combination
+  or final-setting choice was made from intermediate evidence.
