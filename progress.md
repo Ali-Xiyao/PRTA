@@ -3511,3 +3511,17 @@
   target, stop only the other scientific child, preserve its partial artifacts,
   keep both allocations/telemetry, and immediately freeze seeds 28/43 for the
   winning exact setting.
+
+# 2026-08-07 22:54 CST parallel terminal-race monitor
+
+- Both frozen scientific children remain healthy and non-terminal. Wave009
+  `SVR-FG050-DMW010-S17` is at epoch 7 step 1,100/5,026 in `9929.8`, with
+  best epoch 4 and intact 310 MB best/last checkpoints. Wave010
+  `SVR-FG1-DMW010-LR125-S17` is at epoch 0 step 3,100/5,026 in `3066.8`.
+- Neither launcher log contains an error marker and neither run has emitted a
+  terminal receipt, so the frozen LR1.5e-4 arm remains unstarted and no
+  terminal-race stop or confirmation action is permitted yet.
+- Both allocations have exactly one independent scientific child plus their
+  preserved telemetry/batch steps. All Wave009/Wave010 preparation and config
+  hashes remain exact, shared storage has about 1.25 PB available, and the
+  protected-cohort boundary remains unchanged with Internal-test/Gold closed.
