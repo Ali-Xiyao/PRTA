@@ -3330,3 +3330,17 @@
 - Terminal receipts remain pending. Protected reads stay zero with
   Internal-test/Gold closed, and no next-wave choice was made from intermediate
   evidence.
+
+# 2026-08-07 19:53 CST first dropout terminal
+
+- DO050 is terminal `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1
+  `0.530996` / ODER `0.006696`, receipt SHA-256
+  `95fc03650760c946333c6902666b3cda69c091ffdf79e493b0b21d29df9df556`.
+  It passes the F1 floor but fails the original joint gate on ODER and misses
+  the aspirational Seed-17 target.
+- DO150 remains healthy at epoch 9 step 3,300/5,026 in `3066.6`, with best
+  epoch 7, intact checkpoints, no log error, and no terminal receipt. Allocation
+  9929 is scientifically idle with its telemetry step preserved.
+- Frozen hashes remain exact and protected outcomes remain unopened. No wave
+  selection, confirmation, or next-axis launch will occur before DO150 reaches
+  a terminal receipt.
