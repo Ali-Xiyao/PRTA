@@ -3574,3 +3574,16 @@
   permitted from the intermediate state.
 - Shared storage remains about 1.25 PB available and Internal-test/Gold stay
   closed with the protected-cohort boundary unchanged.
+
+# 2026-08-08 00:14 CST Wave010 parallel monitor
+
+- Both frozen LR refinement arms remain healthy and non-terminal. LR1.25e-4 is
+  at epoch 10 step 1,800/5,026 in `3066.8`, with best epoch 8 and intact 310 MB
+  best/last checkpoints. LR1.5e-4 is at epoch 7 step 600/5,026 in `9929.9`,
+  with best epoch 4 and intact 310 MB best/last checkpoints.
+- Both allocations retain exactly one independent scientific child plus their
+  telemetry/batch steps. Launcher logs remain error-free, no terminal receipt
+  exists, and no selection, stop, or new-wave freeze is permitted from these
+  intermediate states.
+- Shared storage remains about 1.25 PB available; Internal-test/Gold remain
+  closed and the protected-cohort boundary is unchanged.
