@@ -3260,3 +3260,16 @@
   Internal-test/Gold closure, telemetry, and storage remain unchanged. If best
   epoch 2 is not extended, frozen patience should stop both after epoch 6
   evaluation, likely in another 10--25 minutes.
+
+# 2026-08-07 18:13 CST weight-decay monitor
+
+- Wave006 remains healthy on both retained allocations: WD005 is at epoch 7
+  step 1,100/5,026 on `9929.5`, and WD020 is at epoch 7 step 1,200/5,026 on
+  `3066.5`.
+- Both runs most recently improved at epoch 4, retain complete last/best
+  checkpoints, report no error marker, and remain at zero protected reads with
+  Internal-test/Gold unopened.
+- Frozen preparation/config/launch hashes still match; both parent jobs and
+  telemetry steps are healthy, and shared storage has approximately 1.2 PB
+  available. No next-wave decision was made from intermediate epochs; both
+  terminal receipts remain pending.
