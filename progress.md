@@ -3128,3 +3128,12 @@
 - Frozen identity and protected-data boundaries remain exact; shared storage
   has about 1.2 PB free. Under the unchanged minimum-epoch/patience rules, the
   earliest likely terminal window is roughly another 20--40 minutes.
+
+# 2026-08-07 14:54 CST focal gamma 1.5 monitor
+
+- Gamma 1.5 remains healthy in `9929.3`, at epoch 4 step 3,900/5,026 with
+  best epoch 2 and intact 310 MB best/last checkpoints. No terminal receipt,
+  launcher error, extra scientific child, or protected-cohort access exists.
+- Allocation 3066 remains intentionally idle except for telemetry. If no later
+  epoch improves on epoch 2, unchanged patience permits termination after
+  epoch 6 evaluation, likely in another 10--25 minutes.
