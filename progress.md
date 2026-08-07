@@ -3951,3 +3951,9 @@
   It entered `RUNNING` without a fatal marker while gamma0.9375 continues in
   `9929.14`. Both allocations again carry one scientific child plus
   telemetry/batch; all protected cohorts remain sealed.
+
+## 2026-08-08 07:15 CST Wave016 parallel monitor
+
+- Both frozen tight gamma-bracket arms remain healthy and non-terminal. Gamma0.9375 is at epoch 4 with best epoch 2 in `9929.14`; gamma1.125 is at epoch 2 with best epoch 0 in `3066.13`. Best/last checkpoints remain intact at about 310 MB; neither terminal receipt exists.
+- Wave016 preparation/config/launch hashes remain exact; each retained allocation has one scientific child plus its preserved telemetry/batch steps. Launcher logs contain no fatal markers, and the server filesystem has about 1.2 PB free.
+- Internal-test and Gold remain sealed with zero protected reads. No selection, cancellation, or new-wave launch was performed.
