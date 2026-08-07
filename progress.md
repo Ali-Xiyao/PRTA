@@ -3452,3 +3452,15 @@
   It has no error marker and records zero protected reads with Internal-test
   and Gold closed. Allocation 3066 remains scientifically idle with telemetry
   preserved until the combination is terminal.
+
+# 2026-08-07 22:13 CST best-axes combination monitor
+
+- `SVR-FG050-DMW010-S17` remains healthy at the end of epoch 1 in `9929.8`,
+  with best epoch 0, intact 310 MB best/last checkpoints, no launcher error,
+  and no terminal receipt.
+- Wave009 preparation/config/launch hashes remain exact. Allocation 3066 stays
+  scientifically idle with its telemetry step preserved; allocation 9929 has
+  exactly one independent scientific child.
+- Shared storage has about 1.25 PB available, protected reads remain zero, and
+  Internal-test/Gold stay closed. No seed confirmation or sweep decision was
+  made from intermediate evidence.
