@@ -1209,7 +1209,21 @@
   only from its terminal Seed-17 receipt.
 - That single combination is now frozen as `SVR-FG050-DMW010-S17`: focal gamma
   0.5, direction-margin loss weight 0.01, margin magnitude 0.2, LR 1e-4, and all
-  remaining method/data/budget fields inherited unchanged from DMW010. It is
-  the final parameter-search experiment before either exact multiseed
-  confirmation or final-setting seed sweep, not permission to inspect protected
-  cohorts.
+  remaining method/data/budget fields inherited unchanged from DMW010.
+- The user subsequently widened the search authority beyond the former single
+  combination cap. This does not permit tuning from Wave009 intermediate
+  epochs: the next independent wave must be frozen only from already terminal
+  evidence. The most informative unresolved region is learning rate between
+  1e-4 and the unstable 2e-4 Seed-17 spike, so 1.25e-4 and 1.5e-4 are the next
+  small, interpretable values around the completed DMW010 parent.
+- This widened authority is now implemented as arm-level parallelism, not a
+  two-GPU distributed run: the existing DMW010+gamma0.5 combination remains
+  unchanged on 9929, while LR1.25e-4 at the completed DMW010 parent runs on
+  3066. LR1.5e-4 was frozen at the same time and cannot be altered from either
+  active run's intermediate metrics.
+- The efficiency policy is now asymmetric terminal racing: two independent
+  explorations may run concurrently, but an arm can win only by a terminal
+  aspirational pass. At that point the losing in-flight child may be stopped
+  without deleting its evidence, freeing both retained allocations for exact
+  confirmation. Original-gate-only or intermediate improvements do not trigger
+  cancellation.

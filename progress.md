@@ -3476,3 +3476,38 @@
 - Shared storage remains about 1.25 PB free, protected reads remain zero, and
   Internal-test/Gold stay closed. No downstream decision was made from
   intermediate evidence.
+
+# 2026-08-07 user-expanded continuation authority
+
+- The user explicitly removed the former one-combination stopping rule and
+  authorized continued lightweight parameter search until a good Train/Dev
+  result is found or they explicitly stop it.
+- Preserve the running Wave009 combination unchanged and do not use its
+  intermediate epochs. To use both retained cards without adaptive leakage,
+  the next two-arm LR refinement is frozen solely from completed DMW010 and
+  prior LR evidence: LR 1.25e-4 and 1.5e-4, with DMW weight 0.01, gamma 1.0,
+  seed 17, and every other field fixed.
+- Allocation 3066 may launch the first frozen LR arm immediately; the paired
+  arm must stay frozen and unstarted until an allocation has no scientific
+  child. All historical HOLD/STOP and protected-cohort boundaries remain.
+- Froze `wave010_lr_refine_dmw010_v1` with preparation SHA-256
+  `78e449d98dfd27b116a89e2d2272969c273a873e7d2c065a3420c760be20e6b6`.
+  LR1.25e-4 / LR1.5e-4 config SHAs are
+  `e2fa229adfcd5bcd72e22c2c3ef055cfb8d88888da238a1b89f5462930146c20` /
+  `e4db85aa7930704ace23c1aa3774ba2c3ee4388d3f37cde5b5a9caf6b619bff3`.
+- Launched `SVR-FG1-DMW010-LR125-S17` independently in `3066.8`; launch
+  receipt SHA-256 is
+  `29201b8a8211782f51dec8e868631e9dcf6460aa83df35e8c0c8293d4c94a2d4`.
+  It is healthy at epoch 0 step 200/5,026 with no error marker. The unchanged
+  LR1.5e-4 arm remains frozen and unstarted.
+- Both retained cards are now scientifically occupied: Wave009 combination in
+  `9929.8` is healthy at epoch 6 step 3,700/5,026, while Wave010 LR1.25e-4 runs
+  in `3066.8`. Each allocation has exactly one independent scientific child;
+  protected reads remain zero and Internal-test/Gold stay closed.
+- The user further authorized a first-terminal-winner policy for parallel
+  exploration. A run counts as "good" only from its complete terminal receipt
+  when Macro-F1 is at least `0.546094` and ODER is at most `0.005535`; no
+  intermediate epoch can trigger stopping. If either active run reaches that
+  target, stop only the other scientific child, preserve its partial artifacts,
+  keep both allocations/telemetry, and immediately freeze seeds 28/43 for the
+  winning exact setting.

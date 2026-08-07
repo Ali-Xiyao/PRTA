@@ -679,11 +679,20 @@ direction-margin magnitude wave is terminal with margin 0.1 at Macro-F1
 `0.530479` / ODER `0.007499` and margin 0.3 at `0.523014` / `0.006785`; both
 fail the joint gate. Wave008 is closed, and the sole allowed combination of
 DMW weight 0.01 plus focal gamma 0.5 now runs as `SVR-FG050-DMW010-S17` in
-`9929.8`. Keep allocation 3066 scientifically idle until this terminal receipt
-selects either exact seeds 28/43 confirmation (aspirational pass) or the final
-parameter setting and seed sweep (miss). Do not cancel telemetry, overwrite
-outputs, read protected cohorts, or change data, seed, method, optimizer
-family, batch size, or budget.
+`9929.8`. The user has now removed the former one-combination search limit and
+authorized continued lightweight Train/Dev search until a good result is found
+or they explicitly stop it. Wave010 is frozen without using Wave009
+intermediate metrics: LR 1.25e-4 now runs in `3066.8`, while the paired LR
+1.5e-4 config remains frozen and unstarted. Monitor both active children; when
+either allocation becomes free, launch the unchanged paired LR arm unless one
+active run first reaches the aspirational target in a complete terminal
+receipt. On such a terminal pass, stop only the other scientific child step,
+preserve its partial output/log/checkpoints, keep both parent allocations and
+telemetry alive, and repurpose the two cards for exact seeds 28/43 confirmation.
+Continue one child per allocation and freeze every later wave before launch.
+Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
+data, labels, patients, splits, method family, optimizer family, batch size,
+epoch budget, or early stopping.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1418,6 +1427,10 @@ Status: in progress under explicit 2026-08-06 user authority
   the second identity-preserving engineering attempt froze Wave009 and launched
   its unchanged scientific run successfully without consuming an extra
   hyperparameter observation.
+- 2026-08-07: the first planning patch for the terminal-race policy used a
+  stale multiline context and made no change. Re-read the exact active sections
+  and applied smaller scoped patches; no runtime, config, or scientific output
+  was affected.
 
 | Error | Attempt | Resolution |
 |---|---:|---|
