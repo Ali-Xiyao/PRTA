@@ -2895,3 +2895,15 @@
   axes are focal gamma, class-balance beta, weight decay, dropout, and margin
   magnitude, tested in frozen two-arm waves. No protected cohort, data change,
   large architecture change, or silent multi-axis mutation is authorized.
+
+# 2026-08-07 exploratory best-seed extension
+
+- The user authorized finding three favorable seeds. Added a predeclared
+  12-seed Dev sweep, but only after one parameter setting is frozen; this
+  prevents simultaneous parameter-and-seed cherry-picking.
+- The fixed pool is `3/7/11/17/23/28/31/37/43/47/53/59`. Select the top three
+  by terminal Macro-F1 only among seeds satisfying ODER <= `0.005535`, retain
+  all outcomes, and label the result `EXPLORATORY_BEST3_OF_12`.
+- Fixed seeds 17/28/43 remain the scientific comparison. The selected top
+  three cannot be reported as an unbiased three-seed mean or erase failed
+  seeds; no Internal-test/Gold access is authorized.

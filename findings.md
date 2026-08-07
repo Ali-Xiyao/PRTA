@@ -1109,3 +1109,8 @@
   imbalance axes rather than a main-method rewrite. Any future +2/+3-point
   statement requires exact three-seed confirmation and remains exploratory
   until a new development protocol is separately frozen.
+- Choosing the three best seeds after observing Dev scores estimates a
+  best-of-N upper envelope, not ordinary seed robustness. It can be useful for
+  selecting deployment checkpoints, but reporting only those three would
+  upward-bias performance. The audit-safe compromise is a predeclared pool,
+  full result disclosure, and separate fixed-seed versus best-three tables.

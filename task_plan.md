@@ -1092,6 +1092,19 @@ Status: in progress under explicit 2026-08-06 user authority
 - All these waves are outcome-adaptive exploratory Dev evidence. Every losing
   arm remains visible; no result may be called a formal +2/+3-point gain until
   an exact three-seed confirmation satisfies the expanded target.
+- A separate exploratory seed sweep is authorized only after one final
+  parameter setting is frozen (either it reaches the expanded target or all
+  currently planned lightweight axes close). The predeclared seed pool is
+  `3, 7, 11, 17, 23, 28, 31, 37, 43, 47, 53, 59`; reuse an existing receipt
+  only when its exact config hash matches the frozen setting.
+- Rank the seed pool by terminal Dev Macro-F1 among seeds with ODER at most
+  `0.005535`, breaking ties by lower ODER, and label the selected three only as
+  `EXPLORATORY_BEST3_OF_12`. Preserve and report all 12 outcomes. If fewer than
+  three seeds meet the ODER ceiling, do not manufacture a best-three set.
+- `EXPLORATORY_BEST3_OF_12` may support deployment/ensemble exploration but
+  may not replace fixed seeds 17/28/43, the all-seed summary, confidence
+  intervals, or any claim of seed robustness. Seed-sweep outcomes must not be
+  fed back into parameter selection.
 
 ## Terminal formal-program record - 2026-08-04
 
