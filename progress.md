@@ -3736,3 +3736,8 @@
   exists, and no terminal-race or downstream selection action is permitted.
 - Shared storage remains about 1.25 PB available; Internal-test/Gold remain
   closed and the protected-cohort boundary is unchanged.
+# 2026-08-08 03:14 CST Wave012 parallel monitor
+
+- Both frozen Wave012 DMW bracket arms remain healthy and non-terminal. DMW005 is at epoch 7 step 1,300/5,026 in `3066.10`, with best epoch 4 and intact 310 MB checkpoints. DMW015 is at epoch 4 step 4,300/5,026 in `9929.11`, with best epoch 2 and intact 310 MB checkpoints.
+- Each allocation retains exactly one independent scientific child plus telemetry/batch steps. Launcher logs are error-free; there is no terminal receipt, terminal-race winner, or downstream selection.
+- Storage remains about 1.25 PB free. Internal-test and Gold remain closed, and the protected boundary is unchanged.
