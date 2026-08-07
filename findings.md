@@ -1179,3 +1179,11 @@
   beta 0.9999, seed 17, architecture, data, and budget unchanged while testing
   only weight decay 0.005/0.02. Both arms launched independently with zero
   protected reads; terminal evidence alone will select or reject this axis.
+- Neither weight-decay alternative is viable: WD=0.005 reaches Macro-F1
+  `0.525530` / ODER `0.006696`, and WD=0.02 reaches `0.527095` / `0.007321`.
+  Both fail the original joint gate, so Wave006 retains DMW010 rather than
+  promoting an inferior weight-decay setting.
+- The next predeclared one-axis dropout comparison therefore varies only
+  `model.dropout` between 0.05 and 0.15 around the unchanged DMW010 parent.
+  Both configs were frozen before launch and run as separate single-GPU jobs;
+  terminal evidence alone will determine whether either value advances.

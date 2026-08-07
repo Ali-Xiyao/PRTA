@@ -3273,3 +3273,27 @@
   telemetry steps are healthy, and shared storage has approximately 1.2 PB
   available. No next-wave decision was made from intermediate epochs; both
   terminal receipts remain pending.
+
+# 2026-08-07 18:33 CST weight-decay closure and dropout launch
+
+- Wave006 is terminal after nine completed epochs. WD005 ends at Dev Macro-F1
+  `0.525530` / ODER `0.006696` with receipt SHA-256
+  `0bf5f5f48dfddf73d9d4e5135779b10183589919ddecd36132e3442cef92e723`;
+  WD020 ends at `0.527095` / `0.007321` with receipt SHA-256
+  `97901807dc0221c52820abda744776d110c2951088a4062729535acdfbe6cbdd`.
+  Both fail the original joint gate and miss the aspirational target.
+- Closed Wave006 without selecting either arm. Aggregate receipt SHA-256 is
+  `10b610dfa821188efabe66b303e33a8ce0ba7a3e339ddc4917a323d871591165`;
+  the prior global DMW010 parent is retained unchanged.
+- Froze `wave007_dropout_v1` at dropout 0.05/0.15 with preparation SHA-256
+  `bd8db091c37ff3458678ff2e1ce68d815722d8cbf68f85011c8157fe9e7efbd0`.
+  DO050 config/launch SHAs are
+  `38b32b71c0daf435b5ccaacc4be4720af38f808bd038c7ce4271990f6d892e60` /
+  `e556a9e8a71c7484bb88bc4836b0b3615b9bb06e0713f9c74d96605c43b9ea1c`;
+  DO150 config/launch SHAs are
+  `41304d54095e1261aa3872f5154bc92fb133292adeb48d1cc72665b0701f3875` /
+  `40ab3fea918c20eb31240cbc74106a611b598d7fbbabcdd7bc86eea97cb1ec69`.
+- Both independent dropout arms entered RUNNING state in `9929.6` and
+  `3066.6`; telemetry was preserved, no parent job was submitted/cancelled,
+  and launch receipts record zero protected reads with Internal-test/Gold
+  closed.

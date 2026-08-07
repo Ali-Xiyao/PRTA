@@ -670,13 +670,13 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave005 is
-terminal without reaching the aspirational target. The frozen weight-decay
-wave now runs WD=0.005 in `9929.5` and WD=0.02 in `3066.5`, both around the
-unchanged global DMW010 parent. Wait for both terminal receipts before any
-selection or next-axis freeze. Do not cancel telemetry, overwrite outputs,
-read protected cohorts, or change data, seed, method, optimizer family, batch
-size, or budget.
+run per allocation; never use retired allocation `4161` again. Wave006 is
+terminal with neither weight-decay arm passing the original joint gate, so the
+global DMW010 parent remains unchanged. The frozen dropout wave now runs
+dropout 0.05 in `9929.6` and dropout 0.15 in `3066.6`. Wait for both terminal
+receipts before any selection or next-axis freeze. Do not cancel telemetry,
+overwrite outputs, read protected cohorts, or change data, seed, method,
+optimizer family, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
