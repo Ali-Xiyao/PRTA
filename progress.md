@@ -3003,3 +3003,14 @@
 - Allocation 3066 has only its batch step and remains qualified/idle for the
   next terminally selected parallel arm. No intermediate metric changed the
   frozen run or opened another scientific child; protected cohorts stay sealed.
+
+# 2026-08-07 12:32 CST allocation topology correction
+
+- Fresh Slurm evidence shows allocations 3066 and 4161 are both on physical
+  node `gpu01`; each independently owns one GPU and four CPUs. They are not two
+  different compute nodes, although they still support two independent
+  single-GPU training runs.
+- Allocation 3066 currently has user-owned telemetry step `3066.2`
+  (`hpc-gpu-telemetry`) requesting its one GPU. It was not started by this
+  workflow and will not be cancelled or overlapped. DMW030 remains unchanged
+  on 4161; the second training arm waits until `3066.2` exits.

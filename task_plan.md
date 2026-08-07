@@ -675,9 +675,11 @@ jointly qualified; DMW=0.03 is now the sole active child. After wave003,
 close the axis from terminal evidence only, then continue the expanded
 lightweight search toward the new exploratory +2 percentage-point target,
 one frozen axis at a time. The user has made a freshly restarted allocation
-3066 available and its Train/Dev-only engineering probe passed; launch the
-next frozen two-arm wave one arm per allocation in parallel. Preserve every
-run/log and do not open protected cohorts.
+3066 available and its Train/Dev-only engineering probe passed. Live Slurm
+state places both one-GPU allocations on physical node `gpu01`, not on two
+different nodes. Use them as two independent single-GPU runs only after the
+current user-owned telemetry step `3066.2` exits; never cancel or overlap that
+step. Preserve every run/log and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete

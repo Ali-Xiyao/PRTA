@@ -1131,3 +1131,8 @@
   hashes, zero protected reads, and no formal experiment. Future two-arm
   parameter waves or two-seed confirmations can therefore run concurrently
   without mixing configurations or changing per-run budgets.
+- Live topology resolves the ambiguity: 3066 and 4161 are two separate
+  one-GPU Slurm allocations on the same physical host `gpu01`, not two hosts.
+  Independent runs are still valid because Slurm assigns one GPU to each, but
+  the workflow must wait for the unrelated `3066.2` GPU telemetry step to
+  release allocation 3066 rather than forcing overlap.
