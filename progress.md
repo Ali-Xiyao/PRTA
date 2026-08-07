@@ -3599,3 +3599,32 @@
   terminal-race stopping, selection, and any subsequent freeze remain locked.
 - Shared storage remains about 1.25 PB available; Internal-test/Gold remain
   closed and the protected-cohort boundary is unchanged.
+
+# 2026-08-08 00:54 CST LR1.25e-4 terminal and Wave011 launch
+
+- Wave010 `SVR-FG1-DMW010-LR125-S17` is terminal
+  `PASS_TRAINING_FINISHED` after 13 epochs at Dev Macro-F1
+  `0.5299799428313788` / ODER `0.004285331666815463`; terminal receipt
+  SHA-256 is
+  `b1baa560437ebf62e51cc8124b8149cac26801164596b39e051fe8300915d897`.
+  It passes the original joint gate but misses the aspirational target and is
+  below the terminal DMW010 parent on Macro-F1, so no terminal-race stop or
+  confirmation is opened.
+- Wave010 LR1.5e-4 continues unchanged at epoch 12 step 1,600/5,026 in
+  `9929.9`, with best epoch 9, intact checkpoints, and no launcher error.
+- Using only completed LR1e-4 and LR1.25e-4 terminal evidence, froze
+  `wave011_lr_bracket_dmw010_v1` with preparation SHA-256
+  `7b321c77fcf9338153438e8bf2938313dd85ac227d6811ac28eb7fc579c8cf45`.
+  Its exact LR8.75e-5 / LR1.125e-4 config SHAs are
+  `58901ed64dde4bf65837915bfbe8279e650d21af124beb2088899d78dafcd336` /
+  `4bccc9b82275d280146918e53704f77fefebd6360372269fc581d8330d61c78e`.
+- Launched the first frozen bracket arm `SVR-FG1-DMW010-LR0875-S17`
+  independently in `3066.9`; launch receipt SHA-256 is
+  `0989e15f3999b241a864b0d7596cd18f3aa9b6600fbfaf18da079b0c9241187f`
+  and launcher SHA-256 is
+  `3cfbd8a2a4f4b900e4986b9a69f36d67ca0d1650de2d2627e5d40cfac3fb7e43`.
+  It is healthy at epoch 0 step 200/5,026. LR1.125e-4 remains frozen and
+  unstarted until an allocation is scientifically free.
+- Each allocation again has exactly one independent scientific child plus its
+  telemetry/batch steps. All new hashes verify exactly, no output was
+  overwritten, and Internal-test/Gold remain closed with zero protected reads.

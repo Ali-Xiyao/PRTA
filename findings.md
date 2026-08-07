@@ -1234,3 +1234,10 @@
   parent. Because this was a non-winning terminal, the pre-frozen LR1.5e-4 arm
   launches on the freed allocation while LR1.25e-4 continues independently;
   no value was chosen from either arm's intermediate epochs.
+- Terminal LR1.25e-4 trades away too much Macro-F1 for its lower ODER: it is
+  jointly qualified at `0.529980` / `0.004285`, but remains `0.008681` below
+  the DMW010 LR1e-4 parent on Macro-F1 and misses the aspirational target. The
+  next frozen bracket therefore tests 8.75e-5 and 1.125e-4 symmetrically around
+  LR1e-4, using no information from the still-running LR1.5e-4 arm. LR8.75e-5
+  occupies the freed allocation; LR1.125e-4 remains frozen for the next free
+  lane.

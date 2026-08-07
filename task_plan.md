@@ -670,24 +670,24 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave009 is now
-terminal at Macro-F1 `0.535237` / ODER `0.006249`: the DMW010+gamma0.5
-combination fails the original joint gate on ODER and misses the aspirational
-target. Its aggregate receipt SHA-256 is
-`51ec2854e70a6371a37924b7d678d6b7c8a78070528b542b6f3245d8bd1f38f8`,
-so the globally preferred terminal parent remains DMW010. Wave010 is fully
-active from its previously frozen pair: LR 1.25e-4 continues in `3066.8`, and
-the unchanged LR 1.5e-4 arm launched on the newly free allocation as `9929.9`.
-Monitor both terminal receipts without selecting from intermediate epochs. If
-either arm reaches terminal Macro-F1 `>= 0.546094` with ODER `<= 0.005535`,
-stop only the other scientific child, preserve its partial artifacts, keep both
-allocations and telemetry alive, and freeze exact seeds 28/43 confirmation of
-the winner. If neither reaches the target, close Wave010 from both terminal
-receipts and continue another small pre-frozen one-axis or at-most-two-axis
-Train/Dev wave around the best jointly qualified terminal setting. Do not
-cancel telemetry, overwrite outputs, read protected cohorts, or change data,
-labels, patients, splits, method family, optimizer family, batch size, epoch
-budget, or early stopping.
+run per allocation; never use retired allocation `4161` again. Wave010
+LR1.25e-4 is terminal at Macro-F1 `0.529980` / ODER `0.004285`: it passes the
+original joint gate but misses the aspirational target and remains below the
+global DMW010 parent on Macro-F1. LR1.5e-4 continues unchanged in `9929.9`.
+Using only the terminal LR1e-4 parent and LR1.25e-4 evidence, Wave011 froze a
+two-arm LR bracket around 1e-4: LR8.75e-5 now runs as
+`SVR-FG1-DMW010-LR0875-S17` in `3066.9`, while LR1.125e-4 remains frozen and
+unstarted. Monitor the two active children without selecting from intermediate
+epochs. If either reaches terminal Macro-F1 `>= 0.546094` with ODER
+`<= 0.005535`, stop only the other scientific child, preserve its partial
+artifacts, keep both allocations and telemetry alive, and freeze exact seeds
+28/43 confirmation of the winner. If an active arm terminates without target,
+launch the already-frozen LR1.125e-4 arm on the first scientifically free
+allocation; close Wave010 once LR1.5e-4 is terminal and close Wave011 only when
+both bracket arms are terminal. Continue small pre-frozen Train/Dev waves until
+the user explicitly stops. Do not cancel telemetry, overwrite outputs, read
+protected cohorts, or change data, labels, patients, splits, method family,
+optimizer family, batch size, epoch budget, or early stopping.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
