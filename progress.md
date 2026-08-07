@@ -3883,3 +3883,15 @@
 - Internal-test/Gold remain sealed and protected-outcome access remains zero.
   No selection, cancellation, or new-wave action is permitted from these
   intermediate states.
+
+# 2026-08-08 05:55 CST Wave015 parallel monitor
+
+- Both frozen gamma-midpoint arms remain healthy and non-terminal. Gamma0.875
+  is at epoch 6 with best epoch 5 in `3066.12`; gamma0.75 is at epoch 4 with
+  best epoch 2 in `9929.13`. Their best/last checkpoints remain intact at about
+  310 MB, and neither terminal receipt exists.
+- Preparation/config/launch-receipt hashes still match exactly, both launcher
+  logs have no fatal marker, and each allocation has exactly one scientific
+  child plus telemetry/batch. Shared storage remains about 1.2 PB free.
+- Internal-test/Gold remain sealed and protected-outcome access remains zero;
+  no intermediate result is used for selection or mutation.
