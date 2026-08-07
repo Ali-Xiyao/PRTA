@@ -2918,3 +2918,14 @@
   not change the run or queue.
 - Patience is anchored at epoch 2. If no later valid improvement extends it,
   terminal completion is expected in roughly 20--35 minutes.
+
+# 2026-08-07 11:25 CST wave003 DMW010 monitor
+
+- DMW010 remains healthy in the sole child step `4161.28142`, at epoch 6
+  step 4,800/5,026 after about 56 minutes. Process/progress state and the clean
+  launcher log agree; no terminal receipt exists.
+- Frozen hashes remain exact, DMW030 remains absent/unstarted, storage is
+  healthy, and protected outcomes remain sealed. Intermediate Dev values did
+  not alter the run or queue.
+- Patience is anchored at epoch 4. If no later valid improvement resets it,
+  terminal completion is expected in roughly 15--30 minutes.
