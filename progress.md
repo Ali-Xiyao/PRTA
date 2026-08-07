@@ -3795,3 +3795,17 @@
   exactly one scientific child plus telemetry/batch steps, launcher logs have
   no fatal markers, storage remains about 1.25 PB free, and Internal-test/Gold
   remain closed.
+
+# 2026-08-08 04:14 CST Wave013/014 parallel monitor
+
+- Both frozen midpoint arms remain healthy and non-terminal. DMW0075 is at
+  epoch 4 step 1,900/5,026 in `3066.11`, with best epoch 2 and intact 310 MB
+  checkpoints. DMW0125 is at epoch 1 step 5,000/5,026 in `9929.12`, with best
+  epoch 0 and intact 310 MB checkpoints.
+- Preparation/config/launch-receipt hashes for both waves still match exactly.
+  Each allocation retains exactly one independent scientific child plus its
+  telemetry/batch steps; launcher logs contain no fatal markers and neither
+  terminal receipt exists.
+- Shared storage remains about 1.25 PB free. Internal-test and Gold remain
+  closed, protected-outcome access remains zero, and no terminal-race or
+  downstream selection action is permitted.
