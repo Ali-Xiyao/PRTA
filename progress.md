@@ -3525,3 +3525,26 @@
   preserved telemetry/batch steps. All Wave009/Wave010 preparation and config
   hashes remain exact, shared storage has about 1.25 PB available, and the
   protected-cohort boundary remains unchanged with Internal-test/Gold closed.
+
+# 2026-08-07 23:14 CST Wave009 terminal and LR1.5e-4 launch
+
+- `SVR-FG050-DMW010-S17` is terminal `PASS_TRAINING_FINISHED` after nine
+  epochs at Dev Macro-F1 `0.5352369134664762` / ODER
+  `0.006249442014105883`; training receipt SHA-256 is
+  `4825a2bb0199ee56f3155c23d06e047053925c1da88d600156f8813ffbbe34f2`.
+  It clears the F1 floor but violates the ODER ceiling and misses the
+  aspirational target, so it does not trigger the terminal-race stop policy.
+- Wave009 closed fail-closed with aggregate receipt SHA-256
+  `51ec2854e70a6371a37924b7d678d6b7c8a78070528b542b6f3245d8bd1f38f8`;
+  the prior DMW010 terminal parent remains globally preferred.
+- Allocation 9929 became scientifically free, so the already-frozen unchanged
+  `SVR-FG1-DMW010-LR150-S17` arm launched independently in `9929.9`. Its
+  launch receipt SHA-256 is
+  `ca8d47cf5cb0192771bb9db7fad22416fe85f5951b2e48621d1b22479f6bd97c`
+  and launcher SHA-256 is
+  `96a4a3020aa0f0fdde92f1032f4d1def178c2ccd0f1963fa556947f583037bb1`.
+- The LR1.5e-4 arm is healthy at epoch 0 step 200/5,026, while the unchanged
+  LR1.25e-4 arm continues at epoch 3 step 1,400/5,026 in `3066.8`. Each
+  allocation again has exactly one independent scientific child plus preserved
+  telemetry/batch steps, no launcher error is present, hashes remain exact,
+  and Internal-test/Gold remain closed with zero protected reads.

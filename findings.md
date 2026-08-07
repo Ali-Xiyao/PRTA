@@ -1227,3 +1227,10 @@
   without deleting its evidence, freeing both retained allocations for exact
   confirmation. Original-gate-only or intermediate improvements do not trigger
   cancellation.
+- The DMW010+gamma0.5 combination does not preserve the benefits of its two
+  component axes: its terminal Seed-17 result is Macro-F1 `0.535237` / ODER
+  `0.006249`, below the original ODER ceiling and below the aspirational target.
+  Wave009 therefore closes without promotion and retains the uncombined DMW010
+  parent. Because this was a non-winning terminal, the pre-frozen LR1.5e-4 arm
+  launches on the freed allocation while LR1.25e-4 continues independently;
+  no value was chosen from either arm's intermediate epochs.
