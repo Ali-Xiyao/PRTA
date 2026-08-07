@@ -1136,3 +1136,20 @@
   Independent runs are still valid because Slurm assigns one GPU to each, but
   the workflow must wait for the unrelated `3066.2` GPU telemetry step to
   release allocation 3066 rather than forcing overlap.
+- Allocation 4161 subsequently ended and cancelled DMW030 mid-epoch. Although
+  the training API accepts `--resume`, its checkpoint does not retain the
+  data-loader generator or global RNG states, so replay from `last.pt` would
+  change the post-checkpoint minibatch trajectory. For auditable evidence, the
+  partial attempt must remain preserved and the identical frozen configuration
+  must restart in a new attempt namespace on replacement allocation 9929.
+- The active compute authority is now only 9929 plus 3066. They are used as two
+  independent one-GPU workers, not as a distributed two-GPU model; the second
+  lane is the next predeclared focal-gamma arm anchored to the confirmed
+  DMW=0.02 parent, not to DMW030 intermediate evidence.
+- Both replacement lanes passed their runtime boundary and are now active as
+  separate one-GPU runs: unchanged DMW030 attempt 2 on 9929 and focal gamma
+  0.5 on 3066. This is arm-level parallelism only; no gradient, batch, model,
+  or checkpoint is shared between the two experiments.
+- Focal gamma 0.5 and 1.5 were frozen together before launching gamma 0.5, so
+  the second value cannot be chosen from gamma 0.5 intermediate evidence.
+  Gamma 1.5 remains queued for the first allocation that becomes free.

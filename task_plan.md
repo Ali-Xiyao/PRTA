@@ -669,17 +669,17 @@ Status: complete
 
 ## Next Step
 
-Monitor frozen direction-margin refinement `wave003_dmw_refine_v1`
-sequentially on retained allocation 4161. DMW=0.01 Seed 17 is terminal and
-jointly qualified; DMW=0.03 is now the sole active child. After wave003,
-close the axis from terminal evidence only, then continue the expanded
-lightweight search toward the new exploratory +2 percentage-point target,
-one frozen axis at a time. The user has made a freshly restarted allocation
-3066 available and its Train/Dev-only engineering probe passed. Live Slurm
-state places both one-GPU allocations on physical node `gpu01`, not on two
-different nodes. Use them as two independent single-GPU runs only after the
-current user-owned telemetry step `3066.2` exits; never cancel or overlap that
-step. Preserve every run/log and do not open protected cohorts.
+Use only retained allocations `9929` and `3066`, one independent single-GPU
+run per allocation; never use retired allocation `4161` again. Preserve the
+externally cancelled partial DMW=0.03 output from `4161.28187`. Because the
+existing checkpoint omits data-loader/RNG state, do not call a mid-run resume
+strictly identity preserving: restart the unchanged frozen DMW=0.03 Seed-17
+configuration in a new attempt namespace on `9929` after a Train/Dev-only
+readiness probe. In parallel, freeze both focal-gamma 0.5/1.5 configurations
+around the already confirmed LR=1e-4, DMW=0.02 parent and launch gamma 0.5 on
+`3066`; gamma 1.5 starts on the first free allocation after a terminal arm.
+Do not cancel the user-owned telemetry steps, overwrite outputs, read protected
+cohorts, or change data, seed, method, optimizer, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1437,6 +1437,10 @@ Status: in progress under explicit 2026-08-06 user authority
 | DMW030 resource probe requested unsupported `sstat State` and direct SSH from the login node to `gpu01`, which lacks a usable authentication path | 1 | Keep the successful Slurm step/progress/hash/disk evidence, stop direct compute-node SSH attempts, and use step-valid `sstat` fields or `scontrol show step` on later monitors; no experiment state changed. |
 | An inline PowerShell-to-SSH artifact check escaped remote `$W`/`$RUN` variables incorrectly, so the remote shell received literal paths and the check produced no file evidence | 1 | Stop composing this check inline; use a transferred fixed Bash status script for checkpoint/log inspection. The failed command was read-only and did not affect training. |
 | The first allocation-3066 probe monitor again used an inline remote `$W` path; PowerShell preserved it literally and only the Slurm state check succeeded | 1 | Keep the confirmed live `3066.1` step, stop inline variable composition, and use a fixed transferred status script for the remaining probe checks. No probe or training state changed. |
+| Read-only focal-parent inventory and DMW030 receipt checks interpolated remote `$ROOT`/`$W` variables in the local PowerShell layer | 1 | Re-run with exact remote paths or transferred fixed scripts; neither failed read modified a run or artifact. |
+| Resume-source inspection first guessed nonexistent `src/prta_cxr/training.py` | 1 | Use the actual `src/prta_cxr/training/engine.py`; it proves config/input/optimizer restoration but not data-loader/RNG restoration, so the cancelled mid-epoch run will be restarted unchanged in a new attempt namespace instead of being called an exact resume. |
+| First inline 9929 probe-status command mixed local PowerShell and remote Bash quoting and ended with an unmatched quote | 1 | Replace it with a transferred fixed Bash status script; the failed command was read-only and the probe continued unchanged. |
+| First dual-run `sstat` summary requested unsupported `Elapsed` | 1 | Keep the valid Slurm/progress/log evidence from the same read-only status script and omit that field on later monitors; both training steps remained healthy. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

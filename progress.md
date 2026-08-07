@@ -3014,3 +3014,43 @@
   (`hpc-gpu-telemetry`) requesting its one GPU. It was not started by this
   workflow and will not be cancelled or overlapped. DMW030 remains unchanged
   on 4161; the second training arm waits until `3066.2` exits.
+
+# 2026-08-07 13:00 CST allocation migration authority
+
+- The user replaced retired allocation 4161 with retained allocation 9929 and
+  authorized 9929 plus 3066 as two independent single-GPU workers. Allocation
+  4161 is absent; no future command may target it.
+- DMW030 was externally cancelled with step 4161.28187 at 12:34:15 CST. Its
+  partial output, checkpoints, and launcher log are preserved, and no terminal
+  receipt exists. The checkpoint stores model/optimizer/config/input/history,
+  but not data-loader/RNG state; therefore a mid-epoch continuation cannot be
+  described as exact trajectory preservation.
+- The safe migration is an unchanged fresh DMW030 attempt on 9929 in a new
+  output namespace, plus the pre-frozen focal-gamma 0.5 arm on 3066. Both keep
+  the same Train 80,402 / Dev 11,201 boundary and zero protected reads. The
+  unrelated telemetry steps remain untouched.
+
+# 2026-08-07 13:12 CST 9929/3066 independent launches
+
+- Allocation 9929 passed the same fail-closed Train/Dev readiness probe as
+  3066: A800 runtime, Train 80,402 / Dev 11,201, exact six inputs, protected
+  reads zero, and no formal experiment. Probe output SHA-256 is
+  `39517d8ba68f05de1e3d6903ded636c13ecaa1ae2bdb64d93bb52a7752d05bb1`;
+  launch receipt SHA-256 is
+  `1a5b8057cfb023c7965fcad08c13573eeba69f8d85d7fcbc9aa15ad6bce3787d`.
+- Preserved the externally cancelled DMW030 partial checkpoint at SHA-256
+  `712bc5b1f5ac550a7df3b3a2642161bd03776e9e540545cd860f26c71f3c3f7a`
+  and launched an unchanged fresh attempt in a new directory on allocation
+  9929. It is running in step `9929.2` at epoch 0 step 300/5,026.
+- Froze `wave004_focal_gamma_v1` before either focal arm ran. Gamma 0.5 config
+  SHA-256 is `9df910cb258cc2f73a99e9f2f760c5d9ab9b5a04a71292e0faedddc83380ad1d`;
+  gamma 1.5 config SHA-256 is
+  `f7f6b1ec8e7cf51751582884ce4ea9da20692bebe7a5e5b8a09c43d6c9e2437e`;
+  preparation SHA-256 is
+  `ac39e8878b7899b0b3300d7d08ab0315486b84fa0311cb9872d3ab985592de9b`.
+  Gamma 0.5 is running independently in step `3066.3` at epoch 0 step
+  300/5,026; gamma 1.5 remains frozen and unstarted.
+- Dual independent launch receipt SHA-256 is
+  `5a2f305eccf16c10abb878480bef6e1d3e8e8d6e8b870e78a1f52aa16090142b`.
+  Both user telemetry steps remain present, no parent job was submitted or
+  cancelled, and Internal-test/Gold remain unopened.
