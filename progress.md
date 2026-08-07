@@ -3769,3 +3769,29 @@
   has exactly one scientific child plus telemetry/batch steps, launcher logs
   are error-free, storage remains about 1.25 PB free, and Internal-test/Gold
   remain closed.
+
+# 2026-08-08 03:54 CST DMW015 terminal and Wave014 launch
+
+- Wave012 `SVR-FG1-DMW015-S17` is terminal `PASS_TRAINING_FINISHED` after nine
+  epochs at Dev Macro-F1 `0.526627739328098` / ODER
+  `0.006070886527988572`; receipt SHA-256 is
+  `d56cdee061aef2d5a0ea947edbeef0ba3f5282d51b9ceff047674933132a53b5`.
+  It fails the original joint gate and aspirational target.
+- Closed Wave012 fail-closed with aggregate receipt SHA-256
+  `acba6a1b3a242a21431e20b133e40a028b3a5c00a268d333a37eb7a5cd7e1d3c`.
+  DMW005 is the within-wave qualified arm, but DMW010 remains the higher-F1
+  global parent.
+- Using only DMW015 and prior terminal evidence while DMW0075 stayed blinded,
+  froze `wave014_dmw_upper_midpoint_v1` at DMW0125. Preparation/config/launcher
+  SHA-256 values are
+  `29be95a724c15dd2ec92e74dfb869c1fa03ab7bcf5dd87dda510f45cde0b94f7`,
+  `cf3b11ad40391623a93d91e5a0378eaa085f9b118075048269ccdc6d7777040e`,
+  and `4b5b92877e942068c24f9145d508bc5d635f10bba563923b6bbc7b56bd7553b8`.
+- Launched unchanged `SVR-FG1-DMW0125-S17` in `9929.12`; launch receipt
+  SHA-256 is
+  `cd391cabd23231ca2765cc4451d0d55f4f62275f37b167a2c6429af757af7ed3`.
+  It is healthy at epoch 0 step 500/5,026. DMW0075 continues in `3066.11` at
+  epoch 2 step 2,900/5,026 with intact checkpoints. Each allocation again has
+  exactly one scientific child plus telemetry/batch steps, launcher logs have
+  no fatal markers, storage remains about 1.25 PB free, and Internal-test/Gold
+  remain closed.

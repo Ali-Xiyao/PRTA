@@ -679,23 +679,32 @@ Wave012 DMW005 is terminal `PASS_TRAINING_FINISHED` at Macro-F1 `0.530308` /
 ODER `0.005267`: it passes the original joint gate but misses the aspirational
 target and trails the retained DMW010 parent. Preserve terminal receipt SHA-256
 `3d6bc8ab5dc2f641c5ab8a743a7b5240e9350e84b5ee9bc0c89c2e6145c6fb10`.
-Wave012 DMW015 continues unchanged in `9929.11`. Using DMW005 terminal evidence
-only, Wave013 froze the lower midpoint DMW0075 with preparation SHA-256
+Wave012 DMW015 is also terminal at Macro-F1 `0.526628` / ODER `0.006071`,
+failing the original joint gate and aspirational target; receipt SHA-256 is
+`d56cdee061aef2d5a0ea947edbeef0ba3f5282d51b9ceff047674933132a53b5`.
+Wave012 is closed with aggregate SHA-256
+`acba6a1b3a242a21431e20b133e40a028b3a5c00a268d333a37eb7a5cd7e1d3c`
+and globally retains DMW010. Wave013 froze the lower midpoint DMW0075 with preparation SHA-256
 `52bc249980429399c2299627e753ec079260be73b04b2f2ec6e3f8ec7a345e2f` and
 config SHA-256 `c2feeb9d0d5d676f4a9dadef4e005b2712cfa70982adddf447a5611edd9e8357`;
-it now runs independently in `3066.11`. Monitor both active children without
+it runs independently in `3066.11`. Using only terminal DMW015 plus prior
+evidence while DMW0075 remained blinded, Wave014 froze upper midpoint DMW0125
+with preparation/config SHA-256 values
+`29be95a724c15dd2ec92e74dfb869c1fa03ab7bcf5dd87dda510f45cde0b94f7` /
+`cf3b11ad40391623a93d91e5a0378eaa085f9b118075048269ccdc6d7777040e`;
+it now runs independently in `9929.12`. Monitor both active children without
 selecting from intermediate epochs. If either reaches terminal Macro-F1
 `>= 0.546094` with ODER `<= 0.005535`, stop only the other scientific child,
 preserve its partial artifacts, keep both allocations and telemetry alive, and
 freeze exact seeds 28/43 confirmation of the winner. If one terminates without
 target, let the other continue and freeze a new small evidence-guided arm using
 completed terminal evidence only; launch it on the free allocation without
-using the still-running arm's intermediate state. Close Wave012 only after
-DMW015 terminates and close Wave013 only after DMW0075 terminates. Continue
-small pre-frozen Train/Dev waves until the user explicitly stops. Do not cancel
+using the still-running arm's intermediate state. Close Wave013 only after
+DMW0075 terminates and Wave014 only after DMW0125 terminates. Continue small
+pre-frozen Train/Dev waves until the user explicitly stops. Do not cancel
 telemetry, overwrite outputs, read protected cohorts, or change data, labels,
-patients, splits, method family, optimizer family, batch size, epoch budget, or
-early stopping.
+patients, splits, method family, optimizer family, batch size, epoch budget,
+or early stopping.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1489,6 +1498,8 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first file-backed Wave012 monitor used invalid step-format `%t` and arrived with a trailing CR | 1 | Use the default `squeue -s` step view and LF-safe base64 script transfer. The remaining read-only file inventory still exposed DMW005 terminal completion; no process changed. |
 | Two LF-normalized scripts piped through PowerShell's native-command stream still acquired a trailing CR | 2 | Transfer subsequent remote scripts as base64-decoded bytes. Both scripts completed their substantive read-only checks before the final CR error and changed no scientific state. |
 | Wave013's detached launch-control wrapper required progress within 12 seconds and exited nonzero before initialization finished | 1 | Preserve control-failure SHA-256 `4f584456de8df8b06173caa8d804f91dd54b10c9ac986e54aae441dfe58fbbb9`; the unchanged child remained active and produced progress after about 36 seconds, so no retry was performed. |
+| The fresh V8 orchestration isolate did not expose `TextEncoder` or `btoa` for monitor-script encoding | 2 | Use the local ASCII base64 encoder in the orchestration script; both failures occurred before SSH and changed no runtime state. |
+| A direct remote `grep` pattern containing pipes was reparsed by PowerShell/SSH and hung instead of scanning the terminal launcher log | 1 | Terminate the read-only command and use the byte-safe Python log scanner, which confirmed no fatal marker. No allocation, step, or file changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

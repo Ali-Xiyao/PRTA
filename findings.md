@@ -1269,3 +1269,11 @@
   postcheck timed out before initialization, but the exact unchanged child
   became healthy without retry; that false-negative control record remains
   preserved separately from the scientific result.
+- Terminal DMW015 is not an admissible upper-side setting: Macro-F1 `0.526628`
+  and ODER `0.006071` both miss the original gate. Wave012 therefore closes
+  with DMW005 as its within-wave qualified arm but still retains DMW010 as the
+  higher-F1 global parent.
+- The completed upper interval is refined symmetrically at DMW0125, frozen
+  only from DMW015 and prior terminal evidence while DMW0075 remains blinded.
+  DMW0125 and DMW0075 now occupy the two allocations as independent one-GPU
+  experiments; neither may influence selection until its terminal receipt.
