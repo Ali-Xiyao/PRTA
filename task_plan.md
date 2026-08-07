@@ -669,12 +669,11 @@ Status: complete
 
 ## Next Step
 
-Monitor exact-setting confirmation `confirmation_dmw020_lr200_v1`
-sequentially on retained allocation 4161. LR200 Seed 28 is terminal below the
-fixed joint target and preserved unchanged; Seed 43 is now the sole active
-child. After Seed 43 terminates, close the three-seed confirmation from terminal
-evidence only, preserve every run/log, keep allocation 3066 unused because it
-is step-exhausted, and do not open protected cohorts.
+Monitor frozen direction-margin refinement `wave003_dmw_refine_v1`
+sequentially on retained allocation 4161. DMW=0.01 Seed 17 is the sole active
+child; DMW=0.03 remains frozen and unstarted until the first arm is terminal
+and the allocation has no child. Preserve every run/log, keep allocation 3066
+unused because it is step-exhausted, and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1055,6 +1054,21 @@ Status: in progress under explicit 2026-08-06 user authority
   and now runs unchanged in step `4161.28017`; its launch receipt SHA-256 is
   `409c522e54ea170d11c4669e097c5a5ef732bcfab23b1035ef762a68204abeb8`.
   Protected-read count remains zero.
+- Seed 43 completed 13 epochs at Macro-F1 `0.531940` and ODER `0.006785`,
+  passing the F1 floor but missing the ODER ceiling. LR=2e-4 therefore passes
+  the joint target at only 1/3 seeds. Its aggregate mean Macro-F1/ODER are
+  `0.532913` / `0.005684`, respectively `-0.001710` / `+0.000952` versus the
+  confirmed LR=1e-4 setting, so LR=1e-4 DMW=0.02 remains selected. Aggregate
+  receipt SHA-256 is
+  `bcc6624e6931059f30e316d3f3913c8e81e4b5eb57f0724017ef3cf3768855f3`.
+- Frozen `wave003_dmw_refine_v1` now tests DMW=0.01 then 0.03 at fixed LR=1e-4
+  and Seed 17, strictly sequential on allocation 4161. Preparation SHA-256 is
+  `366058dd88e5cfd26a9d4e68651d927b3ae8af9f5b93eb90fcb9f9df2c2d56fc`.
+  DMW010 config SHA-256
+  `314e16e8e2345ad1d9ca0f7e58d1d48fa61773bc3f35caa807ea358b82cda47d`
+  is active in step `4161.28142`; DMW030 config SHA-256
+  `3837e43fd244c0f775b1f047ab875729f6ce9f3cbfe4e51167319a7a23816dca`
+  remains unstarted.
 
 ## Terminal formal-program record - 2026-08-04
 

@@ -1092,3 +1092,11 @@
   `0.006964` exceeds the `0.005535` ceiling. This seed is preserved as a real
   non-qualifying result; Seed 43 must finish before any symmetric aggregate
   comparison or next-wave decision.
+- Seed 43 reaches Macro-F1 `0.531940` but ODER `0.006785`, so LR=2e-4 passes
+  the fixed joint target at only 1/3 seeds. Its mean Macro-F1 is `0.001710`
+  lower and mean ODER `0.000952` higher than confirmed LR=1e-4 DMW=0.02;
+  therefore the higher learning rate is rejected as a reproducible setting.
+- The next bounded refinement keeps LR=1e-4 and every other method/training
+  field fixed while testing DMW 0.01 and 0.03 around the confirmed 0.02 value.
+  This remains outcome-adaptive Dev search, not a revision of historical
+  HOLD/STOP or permission to open protected cohorts.

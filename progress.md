@@ -2850,3 +2850,24 @@
   unopened. Intermediate Dev evidence did not alter the run or queue.
 - Patience remains anchored at epoch 8. If no valid improvement appears in the
   current epoch, terminal completion is expected in roughly 5--15 minutes.
+
+# 2026-08-07 10:25 CST LR200 confirmation closure and wave003 launch
+
+- Seed 43 completed 13 epochs with `PASS_TRAINING_FINISHED`: terminal best
+  Dev Macro-F1 `0.531940`, ODER `0.006785`, receipt SHA-256
+  `5a54332112301641804cd14235fab51b2210d313dc1a49dedee8888886b1c176`.
+  It passes the F1 floor but misses the ODER ceiling; protected reads remain
+  zero and all frozen input/config hashes match.
+- Closed LR=2e-4 confirmation from all three terminal seeds. Only Seed 17
+  passes the fixed joint target; the three-seed mean Macro-F1/ODER are
+  `0.532913` / `0.005684`, worse than confirmed LR=1e-4 DMW=0.02 by
+  `-0.001710` / `+0.000952`. The fail-closed aggregate receipt SHA-256 is
+  `bcc6624e6931059f30e316d3f3913c8e81e4b5eb57f0724017ef3cf3768855f3`.
+- Retained confirmed LR=1e-4 DMW=0.02 and froze the next small one-axis wave:
+  DMW=0.01 then 0.03, both Seed 17, unchanged elsewhere and sequential on
+  allocation 4161. Preparation SHA-256 is
+  `366058dd88e5cfd26a9d4e68651d927b3ae8af9f5b93eb90fcb9f9df2c2d56fc`.
+- DMW010 launched in step `4161.28142` and is healthy at epoch 0 step
+  300/5,026. Its launch receipt SHA-256 is
+  `f5d9d2f4ec829114c30da035873507733ba1a921ee52ea46a8bd051ce82117c2`;
+  DMW030 remains absent/unstarted, with protected cohorts still sealed.
