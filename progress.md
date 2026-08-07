@@ -3297,3 +3297,13 @@
   `3066.6`; telemetry was preserved, no parent job was submitted/cancelled,
   and launch receipts record zero protected reads with Internal-test/Gold
   closed.
+
+# 2026-08-07 18:53 CST dropout monitor
+
+- DO050 and DO150 remain healthy and synchronized at epoch 2 step
+  1,200/5,026 in `9929.6` and `3066.6`, with best epoch 0 and intact 310 MB
+  best/last checkpoints. Neither run has a terminal receipt or log error.
+- Both parent allocations, telemetry steps, and exactly one scientific child
+  per allocation remain RUNNING. Preparation/config/launch hashes still match;
+  protected reads remain zero and Internal-test/Gold stay closed.
+- No selection or next-axis mutation was made from intermediate evidence.
