@@ -3318,3 +3318,15 @@
   shared storage has approximately 1.2 PB available.
 - Terminal receipts remain pending. Protected reads stay zero with
   Internal-test/Gold closed, and no decision was made from intermediate data.
+
+# 2026-08-07 19:33 CST dropout monitor
+
+- DO050 and DO150 remain healthy and synchronized at epoch 7 step 700/5,026
+  in `9929.6` and `3066.6`; both most recently improved at epoch 4 and retain
+  intact 310 MB best/last checkpoints.
+- Parent allocations, telemetry, and exactly one scientific child per
+  allocation are RUNNING. Frozen hashes remain exact, logs remain error-free,
+  and shared storage still has approximately 1.2 PB available.
+- Terminal receipts remain pending. Protected reads stay zero with
+  Internal-test/Gold closed, and no next-wave choice was made from intermediate
+  evidence.
