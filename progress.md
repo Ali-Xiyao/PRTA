@@ -3239,3 +3239,13 @@
   and `3066.5`. Each allocation has exactly one scientific child plus its
   untouched telemetry step; launch receipts record protected reads zero and
   Internal-test/Gold closed.
+
+# 2026-08-07 17:34 CST weight-decay monitor
+
+- WD005 and WD020 remain healthy and aligned at epoch 2 step 1,200/5,026 in
+  `9929.5` and `3066.5`, with best epoch 0, intact 310 MB best/last
+  checkpoints, RUNNING registry rows, and no terminal receipt or error marker.
+- Both parent jobs and exactly one scientific child per allocation are
+  RUNNING. Preparation/config/launch hashes remain exact, protected reads stay
+  zero with Internal-test/Gold closed, and shared storage has about 1.2 PB
+  free. The earliest likely terminal window is roughly another 20--40 minutes.
