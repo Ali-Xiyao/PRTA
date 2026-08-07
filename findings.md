@@ -1162,3 +1162,11 @@
   `0.004464`, but it is slightly below the DMW010 Seed-17 F1 and also misses
   the aspirational target. Gamma 1.5 remains necessary to close the focal axis;
   the idle second allocation is not used for a new axis before that comparison.
+- Focal gamma 1.5 materially degrades both objectives to Macro-F1 `0.525474`
+  and ODER `0.007321`, so wave004 selects gamma 0.5 but still does not reach
+  the aspirational Seed-17 target. No focal setting is promoted to multiseed
+  confirmation.
+- For the next one-axis beta comparison, the parent is DMW010 rather than the
+  lower-F1 focal winner: DMW010 remains the globally highest-F1 completed
+  jointly qualified Seed-17 setting. Both beta values were frozen before
+  launch and now run independently on 9929/3066.

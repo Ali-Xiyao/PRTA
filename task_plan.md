@@ -670,14 +670,14 @@ Status: complete
 ## Next Step
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
-run per allocation; never use retired allocation `4161` again. Wave003 is
-terminal: DMW=0.03 failed the joint gate and DMW=0.01 is the qualified
-Seed-17 axis winner, but it missed the aspirational target, so no confirmation
-was opened. Focal gamma 0.5 is terminal and jointly qualified; unchanged focal
-gamma 1.5 is now the sole scientific child on `9929`. After it terminates,
-close wave004 from terminal evidence before freezing the next class-balance
-axis. Do not cancel telemetry, overwrite outputs, read protected cohorts, or
-change data, seed, method, optimizer, batch size, or budget.
+run per allocation; never use retired allocation `4161` again. Wave003 and
+wave004 are terminal. Gamma 1.5 failed the joint gate; gamma 0.5 won the focal
+axis but missed the aspirational target. The next predeclared class-balance
+beta wave is frozen around the globally highest-F1 jointly qualified Seed-17
+setting, DMW=0.01: beta 0.999 runs on `9929`, beta 0.99999 on `3066`. After
+both terminate, close wave005 before freezing the weight-decay axis. Do not
+cancel telemetry, overwrite outputs, read protected cohorts, or change data,
+seed, method, optimizer, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete

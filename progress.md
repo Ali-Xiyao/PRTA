@@ -3146,3 +3146,24 @@
 - Allocation 3066 remains intentionally idle except for telemetry, and no
   protected cohort was opened. If epoch 4 remains best, terminal evaluation is
   expected after epoch 8, approximately another 10--25 minutes.
+
+# 2026-08-07 15:34 CST wave004 closure and beta-axis launch
+
+- Gamma 1.5 completed nine epochs with `PASS_TRAINING_FINISHED` but failed the
+  joint gate: Macro-F1 `0.525474`, ODER `0.007321`; receipt SHA-256 is
+  `ec7aaca5fc6644f6246525efaaa26abd4a5dab5d927c46d04f751e631effde9c`.
+  Wave004 therefore selects qualified gamma 0.5 and closes with aggregate
+  SHA-256 `5a681932586e2fdc3ce3b15d323f2cb2d85c6966e099ec8e61e2fc4bd20aac85`.
+  Neither focal arm reaches the aspirational target.
+- Froze `wave005_class_balance_beta_v1` around DMW010, the globally
+  highest-F1 completed jointly qualified Seed-17 setting. Preparation SHA-256
+  is `ee3bc66a8db5bc96e7245ea402bee93b7883d7e2d02b682b09a16c07fb749d91`.
+- Beta 0.999 config SHA-256
+  `e272f9556ab1dd3c3d448fa6dd6813a9e33b33c815e508b7bbb23264a117a7a2`
+  is RUNNING in `9929.4`; launch receipt SHA-256 is
+  `fbaca88828828ecffbe717390e765a5321356f0c9b53719dbca78b23c46b8d30`.
+  Beta 0.99999 config SHA-256
+  `62ba635ed56f8b2f3978f28b3b99981d600c8f8d1c33ca60039a36cd6cb4fcd3`
+  is RUNNING in `3066.4`; launch receipt SHA-256 is
+  `5956776f2ef248553db18a28c25891cd60b069c9b721397e81bae40686245f22`.
+  Both are healthy at epoch 0 step 200/5,026 with zero protected reads.
