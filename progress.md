@@ -3390,3 +3390,15 @@
 - Terminal receipts remain pending, protected reads remain zero, and
   Internal-test/Gold stay closed. No combination was chosen from intermediate
   evidence.
+
+# 2026-08-07 21:13 CST margin-magnitude monitor
+
+- MARGIN010 and MARGIN030 remain healthy at epoch 7 steps 1,400/5,026 and
+  1,500/5,026 in `9929.7` and `3066.7`; both currently retain epoch 4 as the
+  best checkpoint, with intact 310 MB best/last checkpoints.
+- Both parent allocations, telemetry steps, and exactly one independent
+  scientific child per allocation remain RUNNING. Preparation, config, and
+  launch hashes remain exact, and neither launcher log has an error marker.
+- Terminal receipts remain pending, protected reads remain zero, and
+  Internal-test/Gold stay closed. No combination or final-setting decision was
+  made from intermediate evidence.
