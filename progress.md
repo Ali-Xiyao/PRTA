@@ -2969,3 +2969,28 @@
   2,200/5,026, both `best.pt` and `last.pt` exist at about 310 MB, progress and
   checkpoint timestamps continue advancing, and the launcher log contains no
   error/traceback/OOM signature. The run remains healthy and unchanged.
+
+# 2026-08-07 12:22 CST dual-allocation throughput authority
+
+- The user made both server GPUs available. Live Slurm state now differs from
+  the earlier step-exhausted snapshot: allocation 3066 was freshly restarted
+  at 12:18 CST with one GPU and only `3066.batch`; allocation 4161 still has
+  the sole DMW030 child `4161.28187`.
+- DMW030 remains the unchanged single-GPU arm; attaching a second GPU would
+  alter its execution identity and is not allowed. The safe speedup is to
+  qualify 3066 for the same shared Train/Dev environment now, then run the next
+  already-planned two-arm wave concurrently, one frozen arm per allocation,
+  after wave003 closes from terminal evidence.
+- Launched the engineering-only allocation-3066 Train/Dev asset/GPU probe as
+  step `3066.1`; launch receipt SHA-256 is
+  `e1b9d6218143a5526e7cc2302aacf3ade9ede9a43d6d4f7a4c9075b68e0ca2bc`.
+  It explicitly unsets formal-run authority, starts no experiment, and binds
+  protected-read count zero. The probe is still running its hash checks.
+- The probe is terminal `PASS_SUES_TRAIN_DEV_ASSET_PROBE`: one NVIDIA A800
+  80GB is visible, Train/Dev counts are exactly 80,402/11,201, cache probe is
+  8x197x768, all six expected hashes match, protected paths opened are zero,
+  and no formal experiment started. Output SHA-256 is
+  `39517d8ba68f05de1e3d6903ded636c13ecaa1ae2bdb64d93bb52a7752d05bb1`.
+- DMW030 remains healthy and unchanged on allocation 4161 at epoch 4 step
+  2,700/5,026 after about 37 minutes. Allocation 3066 is now idle and ready;
+  no second scientific arm is launched before the wave003 terminal decision.

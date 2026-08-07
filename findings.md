@@ -1120,3 +1120,14 @@
   ODER ceiling and therefore jointly qualifies, but misses the aspirational
   `0.546094` Seed-17 target. DMW=0.03 must finish before this axis can be
   closed or a confirmation/search-parent decision can be made.
+- The previously exhausted 3066 allocation was restarted by the server/user
+  and now has a fresh batch step plus one A800. This removes the sequential
+  capacity constraint for future independent arms, but not for the already
+  running DMW030 arm: changing it to two GPUs would alter its frozen execution.
+  The valid acceleration is parallel arm-level search after both configs and
+  the selected parent are frozen from terminal wave003 evidence.
+- Allocation 3066 independently passes the same shared runtime boundary as
+  4161: A800 80GB, exact cleaned Train/Dev rows, exact cache/model/manifest
+  hashes, zero protected reads, and no formal experiment. Future two-arm
+  parameter waves or two-seed confirmations can therefore run concurrently
+  without mixing configurations or changing per-run budgets.

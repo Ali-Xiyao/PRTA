@@ -674,8 +674,10 @@ sequentially on retained allocation 4161. DMW=0.01 Seed 17 is terminal and
 jointly qualified; DMW=0.03 is now the sole active child. After wave003,
 close the axis from terminal evidence only, then continue the expanded
 lightweight search toward the new exploratory +2 percentage-point target,
-one frozen axis at a time. Preserve every run/log, keep allocation 3066 unused
-because it is step-exhausted, and do not open protected cohorts.
+one frozen axis at a time. The user has made a freshly restarted allocation
+3066 available and its Train/Dev-only engineering probe passed; launch the
+next frozen two-arm wave one arm per allocation in parallel. Preserve every
+run/log and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1094,6 +1096,18 @@ Status: in progress under explicit 2026-08-06 user authority
   family, native H0 head, adapter scope, batch size, epoch budget, early
   stopping, data, labels, and split fixed. Only after individual axes close
   may one frozen combination of the two best terminal axes be evaluated.
+- On 2026-08-07 the user authorized both retained A800 allocations for higher
+  throughput. Live Slurm state shows 3066 was freshly restarted at 12:18 CST
+  with one GPU and only its batch step, while 4161 continues DMW030. This does
+  not authorize changing the current arm to multi-GPU; after 3066 passes an
+  engineering-only Train/Dev probe, later two-arm waves may run one frozen arm
+  per allocation concurrently and still be selected only from terminal data.
+- Allocation 3066 passed the engineering-only GPU/Train/Dev asset probe:
+  NVIDIA A800 80GB, exact Train 80,402 / Dev 11,201, all six runtime hashes
+  exact, protected paths opened 0, and `formal_experiment_started=false`.
+  Probe output SHA-256 is
+  `39517d8ba68f05de1e3d6903ded636c13ecaa1ae2bdb64d93bb52a7752d05bb1`.
+  It is therefore qualified for the second arm of later frozen waves.
 - All these waves are outcome-adaptive exploratory Dev evidence. Every losing
   arm remains visible; no result may be called a formal +2/+3-point gain until
   an exact three-seed confirmation satisfies the expanded target.
@@ -1420,6 +1434,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | First heartbeat automation update omitted the existing target thread ID | 1 | Read the automation's local TOML for its exact target thread, then update the same automation in place; no duplicate monitor was created. |
 | DMW030 resource probe requested unsupported `sstat State` and direct SSH from the login node to `gpu01`, which lacks a usable authentication path | 1 | Keep the successful Slurm step/progress/hash/disk evidence, stop direct compute-node SSH attempts, and use step-valid `sstat` fields or `scontrol show step` on later monitors; no experiment state changed. |
 | An inline PowerShell-to-SSH artifact check escaped remote `$W`/`$RUN` variables incorrectly, so the remote shell received literal paths and the check produced no file evidence | 1 | Stop composing this check inline; use a transferred fixed Bash status script for checkpoint/log inspection. The failed command was read-only and did not affect training. |
+| The first allocation-3066 probe monitor again used an inline remote `$W` path; PowerShell preserved it literally and only the Slurm state check succeeded | 1 | Keep the confirmed live `3066.1` step, stop inline variable composition, and use a fixed transferred status script for the remaining probe checks. No probe or training state changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
