@@ -1195,3 +1195,8 @@
   magnitude from its parent value 0.2 to 0.1/0.3 while keeping the direction
   loss weight at 0.01 and all other fields fixed. Both configs were frozen
   before launch; no combination will be chosen until both are terminal.
+- Increasing direction-margin magnitude to 0.3 is terminally harmful at the
+  fixed DMW010 parent: Seed-17 Dev Macro-F1 is `0.523014` and ODER is
+  `0.006785`, failing both parts of the original joint gate. Margin 0.1 remains
+  blinded for selection until its own terminal receipt; protected cohorts were
+  not opened.

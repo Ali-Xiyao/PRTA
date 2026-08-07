@@ -675,10 +675,12 @@ terminal with neither weight-decay arm passing the original joint gate, so the
 global DMW010 parent remains unchanged. The frozen dropout wave now runs
 dropout 0.05 in `9929.6` and dropout 0.15 in `3066.6`; both are now terminal
 and fail the joint gate on ODER, so DMW010 remains the parent. The frozen
-direction-margin magnitude wave now runs margin 0.1 in `9929.7` and margin 0.3
-in `3066.7`. Wait for both terminal receipts before selection or combination
-freeze. Do not cancel telemetry, overwrite outputs, read protected cohorts, or
-change data, seed, method, optimizer family, batch size, or budget.
+direction-margin magnitude wave has margin 0.3 terminally failing the joint
+gate at Macro-F1 `0.523014` / ODER `0.006785`; margin 0.1 remains active in
+`9929.7`. Keep allocation 3066 scientifically idle and wait for the margin 0.1
+terminal receipt before Wave008 selection or combination freeze. Do not cancel
+telemetry, overwrite outputs, read protected cohorts, or change data, seed,
+method, optimizer family, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete

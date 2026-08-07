@@ -3402,3 +3402,17 @@
 - Terminal receipts remain pending, protected reads remain zero, and
   Internal-test/Gold stay closed. No combination or final-setting decision was
   made from intermediate evidence.
+
+# 2026-08-07 21:33 CST first margin-magnitude terminal
+
+- MARGIN030 is terminal `PASS_TRAINING_FINISHED` after nine epochs with Dev
+  Macro-F1 `0.523014` / ODER `0.006785`; terminal receipt SHA-256 is
+  `5b65e74754a5a8a03ceaa492fc0302498a19b8db88eb89a5caef115cec56d1f6`.
+  It fails both parts of the original joint gate and the aspirational target;
+  the receipt confirms Internal-test and protected outcomes were not opened.
+- MARGIN010 remains healthy at epoch 9 step 3,500/5,026 in `9929.7`, with best
+  epoch 7, intact 310 MB checkpoints, no launcher error, and no terminal
+  receipt. Allocation 3066 is scientifically idle with telemetry preserved.
+- Preparation/config/launch hashes remain exact, shared storage has about
+  1.25 PB available, and protected cohorts remain closed. Wave008 will not
+  close and no combination will launch before MARGIN010 is terminal.
