@@ -3932,3 +3932,22 @@
   It entered `RUNNING` with no fatal marker. Gamma1.125 remains frozen and
   unstarted; both retained allocations again host exactly one scientific child
   plus telemetry/batch, and Internal-test/Gold remain sealed.
+
+# 2026-08-08 06:58 CST gamma0.875 terminal and gamma1.125 launch
+
+- Wave015 gamma0.875 is terminal `PASS_TRAINING_FINISHED` after 12 epochs at
+  Dev Macro-F1 `0.527707` / ODER `0.008660`; terminal receipt SHA-256 is
+  `6effab09151500d1d089bcf07f76e85d730004d21e544ae24d80dd75f13da26d`.
+  It fails both parts of the original gate and misses the aspirational target.
+- Closed Wave015 fail-closed with aggregate receipt SHA-256
+  `c4d14c881232070000e83bd9ccb647f02dc6033b419c3397b6cfeeb9c09b90a9`.
+  Gamma0.75 is the only jointly qualified arm within the wave, but retained
+  gamma1/DMW010 remains higher on Macro-F1.
+- Launched the already-frozen Wave016 gamma1.125 arm unchanged in `3066.13`.
+  Launcher SHA-256 is
+  `dc755340404207c5c63325694f9a226973abd7ad112156814659cac7850b55fc`;
+  launch receipt SHA-256 is
+  `e3a256457df0e411e5cc894556654238d8faba8bbb89377ddf852a5c7ee86832`.
+  It entered `RUNNING` without a fatal marker while gamma0.9375 continues in
+  `9929.14`. Both allocations again carry one scientific child plus
+  telemetry/batch; all protected cohorts remain sealed.

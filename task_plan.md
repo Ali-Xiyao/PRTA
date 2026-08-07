@@ -693,14 +693,19 @@ around the DMW010/gamma1 parent. Preparation SHA-256 is
 config SHA-256 values are
 `45ed1494d139111032fa4b721f6cf0cd1a653b7b9caa6c3f9d023cb175a75235`
 and `0a87fe2ac9ef7b8299518e5ac0b79cd9f552664d0c982fcd193b560ca69333c0`.
-Gamma0.875 remains healthy in `3066.12`, with launch receipt SHA-256
-`b2e69357ee9c5911da204e666ad8a390a7ba3f73f0849b0e5fb309f41ec9f6a5`;
+Gamma0.875 is terminal after 12 epochs at Macro-F1 `0.527707` / ODER
+`0.008660`, failing both original gate dimensions and the aspirational target;
+preserve terminal receipt SHA-256
+`6effab09151500d1d089bcf07f76e85d730004d21e544ae24d80dd75f13da26d`.
 gamma0.75 is terminal after nine epochs at Macro-F1 `0.534812` / ODER
 `0.00553522006963664`, exactly the original ceiling. It jointly qualifies but
 misses the aspirational target and trails DMW010; preserve terminal receipt
 SHA-256 `69160ae5c89f442bd10765a8314652c658e26cf13d90fca81cc9d2f816894de6`.
-Wave015 remains open until gamma0.875 terminates. Using gamma0.75 plus earlier
-terminal evidence only while gamma0.875 remained blinded, Wave016 predeclared
+Wave015 is closed fail-closed with aggregate SHA-256
+`c4d14c881232070000e83bd9ccb647f02dc6033b419c3397b6cfeeb9c09b90a9`;
+gamma0.75 is the within-wave qualified arm, but DMW010 remains globally
+retained. Using gamma0.75 plus earlier terminal evidence only while gamma0.875
+remained blinded, Wave016 predeclared
 gamma `0.9375/1.125` with preparation SHA-256
 `11c00d8cafdd27a9b3aacfb63f93762e9be21eb84e9e23909693488edec1fad1`.
 Config SHA-256 values are
@@ -708,14 +713,15 @@ Config SHA-256 values are
 and `69a7b403a864a79b59b0931cfc545482407620b494c78c6f2b6683f0acc1569e`.
 Gamma0.9375 is healthy in `9929.14`, with launch receipt SHA-256
 `d16cc721ddcebd1f40d6f9135075e28452156ac7910cb2edad5ea9640cb19b20`;
-gamma1.125 remains frozen and unstarted until one allocation is free. Monitor
+gamma1.125 is healthy in `3066.13`, with launch receipt SHA-256
+`e3a256457df0e411e5cc894556654238d8faba8bbb89377ddf852a5c7ee86832`.
+Monitor
 both active children without selecting from
 intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise let each active run terminate,
-launch the already-frozen gamma1.125 arm on the first free allocation, close
-each wave only after all of its terminal receipts exist, and keep continuing
+28/43 confirmation of the winner. Otherwise let both active runs terminate,
+close Wave016 only after both terminal receipts exist, and keep continuing
 small pre-frozen Train/Dev waves until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,

@@ -1303,3 +1303,10 @@
   and gamma1.0, while gamma1.125 is the predeclared upper midpoint toward the
   already completed gamma1.5 direction. This preserves interpretability and
   prevents adaptation from the still-running gamma0.875 arm.
+- Gamma0.875 is terminally unstable despite lying closer to gamma1.0 than
+  gamma0.75: Macro-F1 falls to `0.527707` and ODER rises to `0.008660`, failing
+  both parts of the original gate. Wave015 therefore selects gamma0.75 only
+  within the wave and retains gamma1/DMW010 globally.
+- Gamma1.125 was frozen before gamma0.875 finished. Launching it on the freed
+  3066 lane completes the tight two-sided gamma bracket without allowing the
+  gamma0.875 failure to alter its value or configuration.
