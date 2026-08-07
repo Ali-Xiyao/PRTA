@@ -3249,3 +3249,14 @@
   RUNNING. Preparation/config/launch hashes remain exact, protected reads stay
   zero with Internal-test/Gold closed, and shared storage has about 1.2 PB
   free. The earliest likely terminal window is roughly another 20--40 minutes.
+
+# 2026-08-07 17:54 CST weight-decay monitor
+
+- WD005 and WD020 remain healthy and synchronized at epoch 4 step
+  3,600/5,026, each with best epoch 2 and intact 310 MB best/last checkpoints.
+  Parent jobs, scientific steps, and registry rows remain RUNNING with no
+  terminal receipt or error marker.
+- Immutable preparation/config/launch hashes, zero protected reads,
+  Internal-test/Gold closure, telemetry, and storage remain unchanged. If best
+  epoch 2 is not extended, frozen patience should stop both after epoch 6
+  evaluation, likely in another 10--25 minutes.
