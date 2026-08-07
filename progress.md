@@ -3118,3 +3118,13 @@
   `8f49e712690c3f5e1138342c40a66f889af714ff3c845ee08750201b2dd56a71`.
   It is RUNNING at epoch 0 step 100/5,026. Allocation 3066 is intentionally
   idle until wave004 closes; its telemetry remains untouched.
+
+# 2026-08-07 14:34 CST focal gamma 1.5 monitor
+
+- Gamma 1.5 remains healthy in the sole scientific step `9929.3`, at epoch 2
+  step 2,100/5,026 with a valid best epoch 0 and 310 MB best/last checkpoints.
+  The registry is RUNNING, no terminal receipt or launcher error exists, and
+  allocation 3066 remains intentionally idle except for telemetry.
+- Frozen identity and protected-data boundaries remain exact; shared storage
+  has about 1.2 PB free. Under the unchanged minimum-epoch/patience rules, the
+  earliest likely terminal window is roughly another 20--40 minutes.
