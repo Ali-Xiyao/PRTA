@@ -3307,3 +3307,14 @@
   per allocation remain RUNNING. Preparation/config/launch hashes still match;
   protected reads remain zero and Internal-test/Gold stay closed.
 - No selection or next-axis mutation was made from intermediate evidence.
+
+# 2026-08-07 19:13 CST dropout monitor
+
+- DO050 and DO150 remain healthy and synchronized at epoch 4 step
+  3,500/5,026 in `9929.6` and `3066.6`; both most recently improved at epoch 2
+  and retain intact 310 MB best/last checkpoints.
+- Parent allocations, telemetry, and one scientific child per allocation are
+  RUNNING. Frozen hashes remain exact, launcher logs show no error marker, and
+  shared storage has approximately 1.2 PB available.
+- Terminal receipts remain pending. Protected reads stay zero with
+  Internal-test/Gold closed, and no decision was made from intermediate data.
