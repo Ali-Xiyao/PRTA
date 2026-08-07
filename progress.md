@@ -2771,3 +2771,14 @@
   used to mutate the run or queue.
 - Patience is anchored at epoch 4. If it is not reset by a later valid
   improvement, terminal completion is expected in roughly 10--25 minutes.
+
+# 2026-08-07 08:05 CST LR200 Seed-28 confirmation monitor
+
+- Seed 28 remains healthy in the sole child step `4161.27919`, at epoch 9
+  step 1,900/5,026 after about 76 minutes. Process, progress, registry, and the
+  clean launcher log agree; no terminal receipt exists.
+- Frozen identity remains exact, Seed 43 is absent/unstarted, storage remains
+  healthy, and protected outcomes remain unopened. Intermediate Dev values
+  were not used for selection or mutation.
+- Patience is anchored at epoch 6. If no later valid improvement resets it,
+  the unchanged run should finish in roughly 10--20 minutes.
