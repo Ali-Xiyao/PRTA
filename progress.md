@@ -3869,3 +3869,17 @@
   independently in `3066.12`. Each retained allocation again contains exactly
   one scientific child plus telemetry/batch; all frozen hashes match and
   Internal-test/Gold remain sealed.
+
+# 2026-08-08 05:35 CST Wave015 parallel monitor
+
+- Both predeclared focal-gamma midpoint arms remain healthy and non-terminal.
+  Gamma0.875 is at epoch 4 with best epoch 2 in `3066.12`; gamma0.75 is at
+  epoch 2 with best epoch 0 in `9929.13`. Both retain intact 310 MB best/last
+  checkpoints and have no terminal receipt.
+- Wave015 preparation, both config hashes, and both launch-receipt hashes still
+  match exactly. Each retained allocation contains exactly one independent
+  scientific child plus telemetry/batch, both launcher logs remain free of
+  fatal markers, and shared storage has about 1.2 PB available.
+- Internal-test/Gold remain sealed and protected-outcome access remains zero.
+  No selection, cancellation, or new-wave action is permitted from these
+  intermediate states.
