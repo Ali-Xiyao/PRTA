@@ -1187,3 +1187,11 @@
   `model.dropout` between 0.05 and 0.15 around the unchanged DMW010 parent.
   Both configs were frozen before launch and run as separate single-GPU jobs;
   terminal evidence alone will determine whether either value advances.
+- Dropout 0.05 (`0.530996` / `0.006696`) and dropout 0.15 (`0.529138` /
+  `0.007321`) both retain just enough Macro-F1 to clear the floor but violate
+  the ODER ceiling. Neither is an admissible improvement, so the original
+  DMW010 parent remains globally preferred.
+- The final predeclared individual axis varies only the direction-margin
+  magnitude from its parent value 0.2 to 0.1/0.3 while keeping the direction
+  loss weight at 0.01 and all other fields fixed. Both configs were frozen
+  before launch; no combination will be chosen until both are terminal.

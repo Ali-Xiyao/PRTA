@@ -3344,3 +3344,26 @@
 - Frozen hashes remain exact and protected outcomes remain unopened. No wave
   selection, confirmation, or next-axis launch will occur before DO150 reaches
   a terminal receipt.
+
+# 2026-08-07 20:13 CST dropout closure and margin-magnitude launch
+
+- DO150 is terminal `PASS_TRAINING_FINISHED` after 12 epochs at Dev Macro-F1
+  `0.529138` / ODER `0.007321`, receipt SHA-256
+  `4f1db264cc4eb4af2a53700db26ed587c94dc962d748b30279037e00d4ac670a`.
+  Together with DO050 (`0.530996` / `0.006696`), both dropout arms fail the
+  original joint gate on ODER and miss the aspirational target.
+- Closed Wave007 without selecting either arm. Aggregate receipt SHA-256 is
+  `d2762f1c9f876f254ff5716ad1dd6929898a62356047f5bd49e74e6be1408f7e`;
+  the prior global DMW010 parent remains unchanged.
+- Froze `wave008_direction_margin_magnitude_v1` at margin 0.1/0.3 with
+  preparation SHA-256
+  `31fdce7d9e342de1fcd5919bb2d8368cab0354bb14986d2215358f7884cae914`.
+  MARGIN010 config/launch SHAs are
+  `73eaa6a3e5e3e779f763e8b0df30124adfefb466447262e8caa7d44fab4573b7` /
+  `8ad13045d4fdf9d0bab3c264be78ce662f92365351f11ca589dedfd5bbe4df19`;
+  MARGIN030 config/launch SHAs are
+  `c4cf39019c81e566305de4d6d119920a1eba17c5901f57e577b6fbc964e9f6cc` /
+  `f0c2c5382a50a08dcbc25f54a081f42b5bc4230d1690aee3db40dfe844e15417`.
+- Both independent arms entered RUNNING state at epoch 0 step 100/5,026 in
+  `9929.7` and `3066.7`; telemetry and parent jobs were preserved, and launch
+  receipts record zero protected reads with Internal-test/Gold closed.

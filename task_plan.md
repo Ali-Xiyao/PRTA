@@ -673,12 +673,12 @@ Use only retained allocations `9929` and `3066`, one independent single-GPU
 run per allocation; never use retired allocation `4161` again. Wave006 is
 terminal with neither weight-decay arm passing the original joint gate, so the
 global DMW010 parent remains unchanged. The frozen dropout wave now runs
-dropout 0.05 in `9929.6` and dropout 0.15 in `3066.6`. DO050 is terminal but
-fails the joint gate on ODER; DO150 remains active. Keep allocation 9929
-scientifically idle until DO150 is terminal, then close the wave before any
-selection or next-axis freeze. Do not cancel telemetry, overwrite outputs,
-read protected cohorts, or change data, seed, method, optimizer family, batch
-size, or budget.
+dropout 0.05 in `9929.6` and dropout 0.15 in `3066.6`; both are now terminal
+and fail the joint gate on ODER, so DMW010 remains the parent. The frozen
+direction-margin magnitude wave now runs margin 0.1 in `9929.7` and margin 0.3
+in `3066.7`. Wait for both terminal receipts before selection or combination
+freeze. Do not cancel telemetry, overwrite outputs, read protected cohorts, or
+change data, seed, method, optimizer family, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
