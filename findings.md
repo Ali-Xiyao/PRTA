@@ -1253,3 +1253,9 @@
   lane returns to the strongest scientific axis and locally brackets DMW010
   with DMW005/DMW015. This wave was frozen from completed evidence only while
   LR1.125e-4 remained blinded for selection.
+- Terminal LR1.125e-4 is also inferior at `0.527963` / `0.006517`, failing
+  both gate dimensions. Wave011 therefore closes with neither bracket arm
+  admissible and reinforces LR1e-4 as the locally preferred learning rate.
+  The freed allocation launches the previously frozen DMW015 arm, so the
+  DMW005/DMW015 local bracket is now fully active without any intermediate
+  selection.

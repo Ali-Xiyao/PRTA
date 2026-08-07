@@ -3703,3 +3703,24 @@
 - Both retained allocations again host exactly one independent scientific
   child plus telemetry/batch steps. Hashes verify, no output was overwritten,
   and Internal-test/Gold remain closed with zero protected reads.
+
+# 2026-08-08 02:34 CST Wave011 closed and DMW015 launched
+
+- Wave011 `SVR-FG1-DMW010-LR1125-S17` is terminal
+  `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1
+  `0.5279630195665763` / ODER `0.00651727524328185`; receipt SHA-256 is
+  `49bf30af6790e78ba1c5df2051972793da5a2257fc6dc0a7cbaa0a1c0e83efec`.
+  It fails both the original joint gate and aspirational target.
+- Wave011 closed fail-closed with aggregate receipt SHA-256
+  `e5998fd4023d5047d20766e439baa79d8bc6e5566a75050286694e5047bfd6ac`;
+  neither LR bracket arm qualifies, so DMW010 LR1e-4 remains globally retained.
+- Allocation 9929 became scientifically free, so the already-frozen unchanged
+  Wave012 `SVR-FG1-DMW015-S17` arm launched in `9929.11`; launch receipt
+  SHA-256 is
+  `695e0472be389d3d85c83c2e93f5202ed0395df9eb4665a7eb0c99f054f65ad8`
+  and launcher SHA-256 is
+  `1f6ca751579063e1568565a92114c7ad9c6cba1f18e842e68c4fdd70e266d75d`.
+- DMW015 is healthy at epoch 0 step 100/5,026 while DMW005 continues at epoch
+  2 step 2,600/5,026 in `3066.10`. Each allocation again has exactly one
+  independent scientific child plus telemetry/batch steps; hashes verify, no
+  output was overwritten, and Internal-test/Gold remain closed.
