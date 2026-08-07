@@ -3561,3 +3561,16 @@
   receipt exists, so no terminal-race stop or downstream selection is allowed.
 - Shared storage has about 1.25 PB available; the protected-cohort boundary is
   unchanged and Internal-test/Gold remain closed.
+
+# 2026-08-07 23:54 CST Wave010 parallel monitor
+
+- Both frozen LR refinement arms remain healthy and non-terminal. LR1.25e-4 is
+  at epoch 7 step 4,700/5,026 in `3066.8`, with best epoch 4 and intact 310 MB
+  best/last checkpoints. LR1.5e-4 is at epoch 4 step 3,400/5,026 in `9929.9`,
+  with best epoch 2 and intact 310 MB best/last checkpoints.
+- Each allocation still has exactly one independent scientific child plus its
+  telemetry/batch steps. No launcher error or terminal receipt is present;
+  preparation/config hashes remain exact and no terminal-race action is
+  permitted from the intermediate state.
+- Shared storage remains about 1.25 PB available and Internal-test/Gold stay
+  closed with the protected-cohort boundary unchanged.
