@@ -2810,3 +2810,13 @@
 - At the observed roughly eight minutes per epoch, the earliest unchanged
   early-stop window is approximately 30--45 minutes away unless a later valid
   improvement extends patience.
+
+# 2026-08-07 09:05 CST LR200 Seed-43 confirmation monitor
+
+- Seed 43 remains healthy in the sole child step `4161.28017`, at epoch 4
+  step 4,500/5,026 after about 39 minutes. Progress/process state and the clean
+  launcher log remain consistent; no terminal receipt exists.
+- Frozen hashes remain exact, storage is healthy, and protected outcomes stay
+  sealed. Intermediate Dev evidence was not used to alter the run or queue.
+- Patience is currently anchored at epoch 2. If no later valid improvement
+  extends it, terminal completion is expected in roughly 20--35 minutes.
