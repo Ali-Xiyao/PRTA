@@ -672,8 +672,10 @@ Status: complete
 Monitor frozen direction-margin refinement `wave003_dmw_refine_v1`
 sequentially on retained allocation 4161. DMW=0.01 Seed 17 is the sole active
 child; DMW=0.03 remains frozen and unstarted until the first arm is terminal
-and the allocation has no child. Preserve every run/log, keep allocation 3066
-unused because it is step-exhausted, and do not open protected cohorts.
+and the allocation has no child. After wave003, continue the expanded
+lightweight search toward the new exploratory +2 percentage-point target,
+one frozen axis at a time. Preserve every run/log, keep allocation 3066 unused
+because it is step-exhausted, and do not open protected cohorts.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1069,6 +1071,27 @@ Status: in progress under explicit 2026-08-06 user authority
   is active in step `4161.28142`; DMW030 config SHA-256
   `3837e43fd244c0f775b1f047ab875729f6ce9f3cbfe4e51167319a7a23816dca`
   remains unstarted.
+- The user expanded the exploratory objective on 2026-08-07: seek at least a
+  +2 percentage-point three-seed Macro-F1 gain over B403, with +3 points as a
+  stretch target, without materially changing the PRTA method. This adds an
+  aspirational target; it does not modify the immutable joint gate or revise
+  historical HOLD/STOP decisions.
+- Numerical search targets are now explicit. A Seed-17 candidate must reach
+  at least `0.546094` Macro-F1 (B403-S17 +0.02) with ODER no greater than
+  `0.005535` before exact seeds 28/43 confirmation. A reproducible +2-point
+  result requires three-seed mean Macro-F1 at least `0.544565`, mean ODER no
+  greater than B403's `0.006279`, and no seed violating the existing joint
+  floor/ceiling. The +3-point stretch means mean Macro-F1 `0.554565`.
+- After wave003, search remains one-axis and lightweight in this order unless
+  terminal evidence makes an axis inapplicable: focal gamma `0.5/1.5`,
+  class-balance beta `0.999/0.99999`, weight decay `0.005/0.02`, dropout
+  `0.05/0.15`, and direction-margin magnitude `0.1/0.3`. Keep LR, optimizer
+  family, native H0 head, adapter scope, batch size, epoch budget, early
+  stopping, data, labels, and split fixed. Only after individual axes close
+  may one frozen combination of the two best terminal axes be evaluated.
+- All these waves are outcome-adaptive exploratory Dev evidence. Every losing
+  arm remains visible; no result may be called a formal +2/+3-point gain until
+  an exact three-seed confirmation satisfies the expanded target.
 
 ## Terminal formal-program record - 2026-08-04
 

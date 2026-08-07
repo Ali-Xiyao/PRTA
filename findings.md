@@ -1100,3 +1100,12 @@
   field fixed while testing DMW 0.01 and 0.03 around the confirmed 0.02 value.
   This remains outcome-adaptive Dev search, not a revision of historical
   HOLD/STOP or permission to open protected cohorts.
+- The confirmed LR=1e-4 DMW=0.02 setting improves three-seed mean Macro-F1 over
+  B403 by `0.010057` (about one percentage point). Reaching the user's desired
+  +2-point level requires another `0.009943` absolute mean Macro-F1 gain; a
+  Seed-17-only spike is insufficient because LR=2e-4 already demonstrated
+  that such gains may fail to reproduce.
+- The expanded search therefore prioritizes low-dimensional regularization and
+  imbalance axes rather than a main-method rewrite. Any future +2/+3-point
+  statement requires exact three-seed confirmation and remains exploratory
+  until a new development protocol is separately frozen.

@@ -2882,3 +2882,16 @@
 - Intermediate Dev evidence was not used to mutate the run. At roughly eight
   minutes per epoch, the earliest unchanged terminal window is approximately
   35--50 minutes away unless later valid improvement extends patience.
+
+# 2026-08-07 expanded lightweight search objective
+
+- The user requested more tuning because the confirmed DMW=0.02 gain over
+  B403 is about `+1.006` percentage points, below the desired 2--3 points.
+- Kept the historical gate unchanged and added a separate exploratory target:
+  Seed-17 Macro-F1 at least `0.546094` with ODER at most `0.005535`, followed
+  by exact seeds 28/43; reproducible three-seed success requires mean
+  Macro-F1 at least `0.544565` and non-worse mean ODER versus B403.
+- The active DMW010/030 wave is unchanged. Subsequent permitted lightweight
+  axes are focal gamma, class-balance beta, weight decay, dropout, and margin
+  magnitude, tested in frozen two-arm waves. No protected cohort, data change,
+  large architecture change, or silent multi-axis mutation is authorized.
