@@ -3030,7 +3030,7 @@
   the same Train 80,402 / Dev 11,201 boundary and zero protected reads. The
   unrelated telemetry steps remain untouched.
 
-# 2026-08-07 13:12 CST 9929/3066 independent launches
+# 2026-08-07 12:52 CST 9929/3066 independent launches
 
 - Allocation 9929 passed the same fail-closed Train/Dev readiness probe as
   3066: A800 runtime, Train 80,402 / Dev 11,201, exact six inputs, protected
@@ -3054,3 +3054,13 @@
   `5a2f305eccf16c10abb878480bef6e1d3e8e8d6e8b870e78a1f52aa16090142b`.
   Both user telemetry steps remain present, no parent job was submitted or
   cancelled, and Internal-test/Gold remain unopened.
+
+# 2026-08-07 12:54 CST first dual-allocation monitor
+
+- Both independent scientific children remain RUNNING: DMW030 attempt 2 in
+  `9929.2` and focal gamma 0.5 in `3066.3`. Each advanced to epoch 0 step
+  2,100/5,026; neither has a terminal receipt or launcher error.
+- Slurm still shows exactly one scientific child plus the preserved telemetry
+  step on each allocation. Current RSS is about 3.6 GiB on 9929 and 18.7 GiB
+  on 3066 while initialization/training proceeds. Frozen identities are
+  unchanged and no protected cohort was opened.

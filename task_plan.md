@@ -1441,6 +1441,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | Resume-source inspection first guessed nonexistent `src/prta_cxr/training.py` | 1 | Use the actual `src/prta_cxr/training/engine.py`; it proves config/input/optimizer restoration but not data-loader/RNG restoration, so the cancelled mid-epoch run will be restarted unchanged in a new attempt namespace instead of being called an exact resume. |
 | First inline 9929 probe-status command mixed local PowerShell and remote Bash quoting and ended with an unmatched quote | 1 | Replace it with a transferred fixed Bash status script; the failed command was read-only and the probe continued unchanged. |
 | First dual-run `sstat` summary requested unsupported `Elapsed` | 1 | Keep the valid Slurm/progress/log evidence from the same read-only status script and omit that field on later monitors; both training steps remained healthy. |
+| A PowerShell text rewrite emitted a UTF-8 BOM and CRLF into a temporary Bash status copy, which the remote shell rejected before monitoring | 1 | Leave training untouched, patch the original helper with `apply_patch`, and redeploy its LF script; the failed copy performed no experiment action. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
