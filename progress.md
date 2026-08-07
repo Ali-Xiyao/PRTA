@@ -3064,3 +3064,14 @@
   step on each allocation. Current RSS is about 3.6 GiB on 9929 and 18.7 GiB
   on 3066 while initialization/training proceeds. Frozen identities are
   unchanged and no protected cohort was opened.
+
+# 2026-08-07 13:14 CST dual-allocation monitor
+
+- DMW030 attempt 2 (`9929.2`) and focal gamma 0.5 (`3066.3`) remain healthy
+  and synchronized near the end of epoch 2 at step 4,400/5,026. Both have a
+  valid best epoch 0 checkpoint; neither has a terminal receipt.
+- Slurm still shows exactly one scientific child and the untouched telemetry
+  step per allocation. Logs contain no traceback/error/OOM/non-finite marker,
+  frozen wave/config hashes remain exact, and shared storage has about 1.2 PB
+  free. With minimum epoch 6 and unchanged early stopping, the earliest likely
+  terminal window is roughly another 25--50 minutes.
