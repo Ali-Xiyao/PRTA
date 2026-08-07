@@ -1259,3 +1259,13 @@
   The freed allocation launches the previously frozen DMW015 arm, so the
   DMW005/DMW015 local bracket is now fully active without any intermediate
   selection.
+- Terminal DMW005 jointly qualifies at Macro-F1 `0.530308` / ODER `0.005267`,
+  but it loses `0.008353` Macro-F1 versus retained DMW010 and misses the
+  aspirational target. This rules out promotion of DMW005 while leaving the
+  still-running DMW015 blinded for selection.
+- The completed lower interval is therefore refined once at its midpoint:
+  DMW0075 is frozen from DMW005 and prior DMW010 terminal evidence only and
+  launched independently on the freed allocation. A 12-second control
+  postcheck timed out before initialization, but the exact unchanged child
+  became healthy without retry; that false-negative control record remains
+  preserved separately from the scientific result.

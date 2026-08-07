@@ -3741,3 +3741,31 @@
 - Both frozen Wave012 DMW bracket arms remain healthy and non-terminal. DMW005 is at epoch 7 step 1,300/5,026 in `3066.10`, with best epoch 4 and intact 310 MB checkpoints. DMW015 is at epoch 4 step 4,300/5,026 in `9929.11`, with best epoch 2 and intact 310 MB checkpoints.
 - Each allocation retains exactly one independent scientific child plus telemetry/batch steps. Launcher logs are error-free; there is no terminal receipt, terminal-race winner, or downstream selection.
 - Storage remains about 1.25 PB free. Internal-test and Gold remain closed, and the protected boundary is unchanged.
+
+# 2026-08-08 03:34 CST DMW005 terminal and Wave013 launch
+
+- Wave012 `SVR-FG1-DMW005-S17` is terminal `PASS_TRAINING_FINISHED` after nine
+  epochs at Dev Macro-F1 `0.5303079271663512` / ODER
+  `0.005267386840460673`; receipt SHA-256 is
+  `3d6bc8ab5dc2f641c5ab8a743a7b5240e9350e84b5ee9bc0c89c2e6145c6fb10`.
+  It passes the original joint gate but trails DMW010 on Macro-F1 and misses
+  the aspirational target, so it triggers neither cancellation nor
+  confirmation.
+- Using only DMW005 and prior terminal evidence while DMW015 remained blinded,
+  froze `wave013_dmw_lower_midpoint_v1` at DMW0075. Preparation/config/launcher
+  SHA-256 values are
+  `52bc249980429399c2299627e753ec079260be73b04b2f2ec6e3f8ec7a345e2f`,
+  `c2feeb9d0d5d676f4a9dadef4e005b2712cfa70982adddf447a5611edd9e8357`,
+  and `cd2bfcd813c6dd922d57ceada9f7ad22ba681fc8a0d25c092c551add3aec4005`.
+- Launched unchanged `SVR-FG1-DMW0075-S17` independently in `3066.11`. The
+  12-second launch-control postcheck timed out before progress initialization;
+  its preserved failure SHA-256 is
+  `4f584456de8df8b06173caa8d804f91dd54b10c9ac986e54aae441dfe58fbbb9`.
+  The same child then produced healthy progress without retry; launch receipt
+  SHA-256 is
+  `9352241e7a27ec18444cd063c1de8d720d5365dfe617f04d0d0ce2f24a4b034d`.
+- DMW015 continues unchanged in `9929.11` at epoch 8 step 500/5,026 with intact
+  checkpoints; DMW0075 is healthy at epoch 0 step 1,400/5,026. Each allocation
+  has exactly one scientific child plus telemetry/batch steps, launcher logs
+  are error-free, storage remains about 1.25 PB free, and Internal-test/Gold
+  remain closed.
