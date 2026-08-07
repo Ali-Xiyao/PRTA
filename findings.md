@@ -1247,3 +1247,9 @@
   retains LR1e-4 globally. The now-free allocation launches the already-frozen
   LR1.125e-4 arm; together with LR8.75e-5, this completes the symmetric local
   bracket without any choice from intermediate epochs.
+- Terminal LR8.75e-5 does not improve the LR1e-4 parent: Macro-F1 falls to
+  `0.530434` and ODER rises just beyond the ceiling to `0.005714`. With both
+  upward and downward LR evidence failing to beat LR1e-4, the next independent
+  lane returns to the strongest scientific axis and locally brackets DMW010
+  with DMW005/DMW015. This wave was frozen from completed evidence only while
+  LR1.125e-4 remained blinded for selection.

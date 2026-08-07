@@ -3677,3 +3677,29 @@
   present, so terminal-race and downstream selection actions remain locked.
 - Shared storage remains about 1.25 PB available; Internal-test/Gold remain
   closed and the protected-cohort boundary is unchanged.
+
+# 2026-08-08 02:14 CST LR8.75e-5 terminal and Wave012 launch
+
+- Wave011 `SVR-FG1-DMW010-LR0875-S17` is terminal
+  `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1
+  `0.5304341896827144` / ODER `0.005713775555753951`; receipt SHA-256 is
+  `b21281a446c39c98f010b84c47eb68f4efe924fc3ca07ba90a4788729deb6335`.
+  It clears the F1 floor but exceeds the original ODER ceiling and misses the
+  aspirational target, so it opens neither stopping nor confirmation.
+- Wave011 LR1.125e-4 continues unchanged in `9929.10` at epoch 7 step
+  2,400/5,026, with best epoch 4, intact checkpoints, and no launcher error.
+- Using completed DMW and LR8.75e-5 terminal evidence only, froze
+  `wave012_dmw_local_bracket_v1` with preparation SHA-256
+  `e2d94f2be8989c1ed8909e4ef69be14c92d7773825fad65f9357318c9b57129d`.
+  Exact DMW005 / DMW015 config SHAs are
+  `a0dbf6e17e4457b6f08d1f68d5c9c365e6884b7ca3a44f4c4c29a7340be92aba` /
+  `13a2ba82c8dac3d9632be1bb566aa5438d88cedc466a7e84a990e3d939440ec9`.
+- Launched `SVR-FG1-DMW005-S17` independently in `3066.10`; launch receipt
+  SHA-256 is
+  `175a723005b9a073b32bceeda32631716ed29e750a482732f0dd43dca7104722`
+  and launcher SHA-256 is
+  `cc738d76a08dc544ba4df468dfc0caeabe60b75e99b60a6e6d86465745303f95`.
+  It is healthy at epoch 0 step 300/5,026. DMW015 remains frozen and unstarted.
+- Both retained allocations again host exactly one independent scientific
+  child plus telemetry/batch steps. Hashes verify, no output was overwritten,
+  and Internal-test/Gold remain closed with zero protected reads.
