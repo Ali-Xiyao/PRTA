@@ -3665,3 +3665,15 @@
   exists, and no terminal-race or downstream selection action is permitted.
 - Shared storage remains about 1.25 PB available; Internal-test/Gold remain
   closed and the protected-cohort boundary is unchanged.
+
+# 2026-08-08 01:54 CST Wave011 parallel monitor
+
+- Both frozen Wave011 LR bracket arms remain healthy and non-terminal.
+  LR8.75e-5 is at epoch 7 step 900/5,026 in `3066.9`, with best epoch 4 and
+  intact 310 MB checkpoints. LR1.125e-4 is at epoch 4 step 4,100/5,026 in
+  `9929.10`, with best epoch 0 and intact 310 MB checkpoints.
+- Exactly one independent scientific child remains on each allocation beside
+  preserved telemetry/batch steps. No launcher error or terminal receipt is
+  present, so terminal-race and downstream selection actions remain locked.
+- Shared storage remains about 1.25 PB available; Internal-test/Gold remain
+  closed and the protected-cohort boundary is unchanged.
