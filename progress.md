@@ -3653,3 +3653,15 @@
   one independent scientific child plus telemetry/batch steps; hashes are
   exact, no output was overwritten, and Internal-test/Gold remain closed with
   zero protected reads.
+
+# 2026-08-08 01:34 CST Wave011 parallel monitor
+
+- Both frozen Wave011 LR bracket arms remain healthy and non-terminal.
+  LR8.75e-5 is at epoch 4 step 3,800/5,026 in `3066.9`, with best epoch 2 and
+  intact 310 MB checkpoints. LR1.125e-4 is at epoch 2 step 1,700/5,026 in
+  `9929.10`, with best epoch 0 and intact 310 MB checkpoints.
+- Each retained allocation has exactly one independent scientific child plus
+  its telemetry/batch steps. Launcher logs are error-free, no terminal receipt
+  exists, and no terminal-race or downstream selection action is permitted.
+- Shared storage remains about 1.25 PB available; Internal-test/Gold remain
+  closed and the protected-cohort boundary is unchanged.
