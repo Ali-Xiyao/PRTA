@@ -3464,3 +3464,15 @@
 - Shared storage has about 1.25 PB available, protected reads remain zero, and
   Internal-test/Gold stay closed. No seed confirmation or sweep decision was
   made from intermediate evidence.
+
+# 2026-08-07 22:33 CST best-axes combination monitor
+
+- `SVR-FG050-DMW010-S17` remains healthy at epoch 4 step 2,600/5,026 in
+  `9929.8`, with best epoch 2, intact 310 MB best/last checkpoints, no launcher
+  error, and no terminal receipt.
+- Wave009 preparation/config/launch hashes remain exact. Allocation 3066 stays
+  scientifically idle with telemetry preserved, while allocation 9929 retains
+  exactly one independent scientific child.
+- Shared storage remains about 1.25 PB free, protected reads remain zero, and
+  Internal-test/Gold stay closed. No downstream decision was made from
+  intermediate evidence.
