@@ -675,12 +675,15 @@ terminal with neither weight-decay arm passing the original joint gate, so the
 global DMW010 parent remains unchanged. The frozen dropout wave now runs
 dropout 0.05 in `9929.6` and dropout 0.15 in `3066.6`; both are now terminal
 and fail the joint gate on ODER, so DMW010 remains the parent. The frozen
-direction-margin magnitude wave has margin 0.3 terminally failing the joint
-gate at Macro-F1 `0.523014` / ODER `0.006785`; margin 0.1 remains active in
-`9929.7`. Keep allocation 3066 scientifically idle and wait for the margin 0.1
-terminal receipt before Wave008 selection or combination freeze. Do not cancel
-telemetry, overwrite outputs, read protected cohorts, or change data, seed,
-method, optimizer family, batch size, or budget.
+direction-margin magnitude wave is terminal with margin 0.1 at Macro-F1
+`0.530479` / ODER `0.007499` and margin 0.3 at `0.523014` / `0.006785`; both
+fail the joint gate. Wave008 is closed, and the sole allowed combination of
+DMW weight 0.01 plus focal gamma 0.5 now runs as `SVR-FG050-DMW010-S17` in
+`9929.8`. Keep allocation 3066 scientifically idle until this terminal receipt
+selects either exact seeds 28/43 confirmation (aspirational pass) or the final
+parameter setting and seed sweep (miss). Do not cancel telemetry, overwrite
+outputs, read protected cohorts, or change data, seed, method, optimizer
+family, batch size, or budget.
 
 ### Phase 71 - Nested risk-band exclusion contract
 Status: complete
@@ -1405,6 +1408,16 @@ Status: in progress under explicit 2026-08-06 user authority
   shard. The assertion stopped execution before any new worker launch. Revised
   the splitter to preserve all 33 real gaps and bisect the 31 largest, yielding
   exactly 64 non-overlapping ranges with exact remaining-count coverage.
+- 2026-08-07: the first Wave009 freeze/launch control attempt fail-closed before
+  creating the Wave009 namespace because the recorded focal-gamma-0.5 config
+  hash omitted its final `d`. Wave008's aggregate receipt had already been
+  written atomically and is preserved at SHA-256
+  `3ebc4bff4409e29f81a6dbdd0d9bb9bd8d6527de4fc9545efe596d5f5bb3cabe`.
+  Independently verified the exact focal config hash as
+  `9df910cb258cc2f73a99e9f2f760c5d9ab9b5a04a71292e0faedddc83380ad1d`;
+  the second identity-preserving engineering attempt froze Wave009 and launched
+  its unchanged scientific run successfully without consuming an extra
+  hyperparameter observation.
 
 | Error | Attempt | Resolution |
 |---|---:|---|

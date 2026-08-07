@@ -3416,3 +3416,39 @@
 - Preparation/config/launch hashes remain exact, shared storage has about
   1.25 PB available, and protected cohorts remain closed. Wave008 will not
   close and no combination will launch before MARGIN010 is terminal.
+
+# 2026-08-07 21:53 CST margin-magnitude terminal pair
+
+- MARGIN010 is terminal `PASS_TRAINING_FINISHED` after 12 epochs at Dev
+  Macro-F1 `0.530479` / ODER `0.007499`; receipt SHA-256 is
+  `721c3d05f38d509ed42ead1cd19b4e607011c2945e1876275cc7a65a5bf9ec02`.
+  It clears the F1 floor but fails the original joint gate on ODER and misses
+  the aspirational target.
+- MARGIN030 remains terminal at `0.523014` / `0.006785`. Both Wave008 arms
+  therefore fail the joint gate, so neither can replace the globally preferred
+  DMW010 parent (`0.538661` / `0.005178`).
+- Both scientific child steps have ended; allocations 9929 and 3066 retain
+  only their batch and telemetry steps. Frozen hashes remain exact, shared
+  storage has about 1.25 PB available, and both terminal receipts confirm that
+  Internal-test and protected outcomes were not opened.
+- The next permitted operation is to close Wave008 with a fail-closed aggregate
+  receipt, then freeze at most one Seed-17 combination of the two best completed
+  individual axes: DMW weight 0.01 plus focal gamma 0.5.
+- Wave008 closed atomically with aggregate receipt SHA-256
+  `3ebc4bff4409e29f81a6dbdd0d9bb9bd8d6527de4fc9545efe596d5f5bb3cabe`.
+  The subsequent Wave009 control attempt stopped before creating that namespace
+  because its pinned gamma-0.5 config hash was missing the final `d`; no
+  scientific child launched and both allocations remain free. The exact remote
+  hash was independently verified and the control script was corrected for one
+  identity-preserving engineering retry.
+- The corrected control completed successfully. Wave009 preparation SHA-256 is
+  `86de8abb051db5ca0aa59eb6b74f3c1c51a06e4b2885a1afdf52c47d7b773b46`;
+  its sole frozen config `SVR-FG050-DMW010-S17` has SHA-256
+  `3f08bf3c318e8034f1d4b1161f62b7816b4335abf62caeb90495b65eea57ec5b`
+  and combines only DMW weight 0.01 with focal gamma 0.5.
+- The run is healthy at epoch 0 step 100/5,026 in `9929.8`; launch receipt
+  SHA-256 is
+  `a3e67b8b8890f1aa84783de0c52f52f2f38a3cc3632fdf02733f78a0c500b72a`.
+  It has no error marker and records zero protected reads with Internal-test
+  and Gold closed. Allocation 3066 remains scientifically idle with telemetry
+  preserved until the combination is terminal.

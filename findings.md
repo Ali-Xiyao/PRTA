@@ -1200,3 +1200,16 @@
   `0.006785`, failing both parts of the original joint gate. Margin 0.1 remains
   blinded for selection until its own terminal receipt; protected cohorts were
   not opened.
+- Decreasing direction-margin magnitude to 0.1 also fails the joint gate:
+  Seed-17 Dev Macro-F1 is `0.530479`, but ODER rises to `0.007499`. Wave008
+  therefore rejects both magnitude alternatives and retains the parent margin
+  0.2. With all individual axes closed, the sole allowed combination is the
+  globally strongest qualified DMW weight 0.01 together with the best distinct
+  qualified focal axis, gamma 0.5; it must be frozen before launch and judged
+  only from its terminal Seed-17 receipt.
+- That single combination is now frozen as `SVR-FG050-DMW010-S17`: focal gamma
+  0.5, direction-margin loss weight 0.01, margin magnitude 0.2, LR 1e-4, and all
+  remaining method/data/budget fields inherited unchanged from DMW010. It is
+  the final parameter-search experiment before either exact multiseed
+  confirmation or final-setting seed sweep, not permission to inspect protected
+  cohorts.
