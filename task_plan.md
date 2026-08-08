@@ -1617,6 +1617,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first strict-zip correction compared unequal-length schedule slices and raised `ValueError` in one focused test | 1 | Compare `values[10:-1]` with `values[11:]` so strict zip validates equal-length adjacent pairs, then rerun the focused suite. The scheduler implementation and server runtime were unaffected. |
 | The corrected scheduler tests passed 14/14 and Ruff lint passed, but the final formatting check detected the newly wrapped strict-zip assertion | 1 | Apply Ruff formatting once more and rerun the full focused test/lint/format gate. No scientific or server artifact was touched. |
 | Repository-wide Ruff formatting check reports 90 legacy files that predate the scheduler change | 1 | Do not mechanically reformat unrelated user/project files. Keep the repository-wide 177/177 pytest and Ruff lint passes, and require targeted format checks on the two touched scheduler files, which pass. |
+| The first Wave019 terminal-receipt summary embedded a Python `-c` program through nested PowerShell/SSH quoting and the remote shell stripped the quoting | 1 | Stop composing Python inline. Transfer a fixed read-only status script to `/tmp`, restrict it to the exact Wave019 Train/Dev runtime paths and aggregate fields, then rerun sequentially; the failed command read or changed no scientific artifact. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

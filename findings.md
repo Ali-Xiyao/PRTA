@@ -1362,3 +1362,9 @@
   scheduler implementation and checkpoint/receipt audit fields before any
   scientific config can be frozen; configs that omit the new fields must keep
   byte-for-byte-equivalent constant-LR behavior.
+- Terminal adapter rank 16 is not a viable capacity reduction: its best Dev
+  Macro-F1 `0.522831` and ODER `0.006607` fail both original-gate dimensions
+  and trail retained rank-32 DMW010. Rank 64 remains scientifically blinded,
+  so this rank-16 result cannot alter its run or choose a successor; the free
+  9929 lane is held until Wave019 closes and the medium scheduler snapshot can
+  be deployed without mutating source under a live child.
