@@ -1466,3 +1466,18 @@
   direction-margin parent: its scalar weight is a separate default-off field,
   so a future two-weight bracket changes one interpretable dimension and old
   configs retain identical optimization behavior.
+- EMA materially improves the retained qualified frontier: its terminal
+  `0.542589 / 0.004107` beats constant-LR DMW010 on both Macro-F1 and ODER,
+  while still missing the aspirational Seed17 F1 target. It is therefore the
+  correct new exploratory Dev parent, not a confirmed robustness result.
+- Weight-averaging efficacy must be separated from mechanism activation. The
+  Wave021 SWA arm stopped before its frozen epoch-10 start and recorded zero
+  averaged updates; its terminal metrics are a protocol-inactive control, not
+  evidence that active SWA underperforms EMA. Any scientifically meaningful
+  SWA revisit must be newly frozen to guarantee activation and cannot be
+  labeled an identity-preserving infrastructure retry.
+- The already-frozen Wave022 two-stage bracket can launch without adapting to
+  Wave021 intermediate evidence. Both children now run independently on
+  `9929.20` and `3066.19`; the stage-two policy remains dormant until its
+  predeclared epoch boundary, so no intermediate trajectory may alter its
+  start, LR ratios, direction multiplier, or ODER ceiling.

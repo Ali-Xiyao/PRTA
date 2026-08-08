@@ -1644,6 +1644,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first compatibility-suppression placement split the preparation controller's future-import block | 1 | Move the file-level Ruff directive to the first line before the future import and rerun the unchanged checks; no remote artifact changed. |
 | The first Wave020 heartbeat used unsupported custom step-format tokens with `squeue -s` | 1 | Keep the valid default-field step rows returned by Slurm, use the default step view or only step-valid fields on later monitors, and record that the read-only command changed no allocation, process, or artifact. |
 | The first direct-cost validation found one 90-character error string, and a broad formatter pass proposed unrelated legacy layout changes | 2 | Wrap only the new error string, restore every unrelated formatting change with exact patches, and rerun repository Ruff plus 202/202 tests before freezing. No server source or scientific run changed. |
+| The first private Wave021 closure/Wave022 launch controller format check required Ruff reformatting | 1 | Apply Ruff formatting locally, rerun compile/lint/format checks, and transfer only the validated private controller. No remote artifact or scientific process existed at the failed local check. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1684,9 +1685,10 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] After both Wave020 arms produced complete non-winning terminal receipts,
   close Wave020 fail-closed and launch both already-frozen Wave021 arms on
   their assigned newly free allocations.
-- [ ] Monitor Wave021 EMA on `9929.19` and SWA on `3066.18`; only complete
-  terminal receipts may close the wave, select a setting, stop another child,
-  or trigger Seed 28/43 confirmation.
+- [x] Close Wave021 from complete terminal receipts only. EMA is the new
+  globally retained jointly qualified Dev setting; SWA is protocol-inactive
+  because early stopping preceded its frozen start epoch and is excluded from
+  SWA efficacy claims.
 
 ## 2026-08-08: two-stage successor capability
 
@@ -1705,9 +1707,11 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] Build and deploy an immutable source archive for the two-stage capability,
   then freeze an outcome-independent Wave022 bracket at stage-two LR ratios
   `0.10/0.25` while both Wave021 arms remain blinded and running.
-- [ ] Keep Wave022 unstarted until an assigned allocation becomes terminally
-  free; if its Wave021 arm is a non-winner, launch only the already-frozen
-  Wave022 arm assigned to that allocation.
+- [x] After both Wave021 arms were terminal and no target winner existed,
+  launch both already-frozen Wave022 arms on their assigned free allocations.
+- [ ] Monitor Wave022 two-stage LR-ratio `0.10` on `9929.20` and `0.25` on
+  `3066.19`; only complete terminal receipts may close/select/stop or trigger
+  Seed 28/43 confirmation.
 
 ## 2026-08-08: direct opposite-direction cost capability
 

@@ -4226,3 +4226,38 @@
   `4473c8ae65b65e390b93a58a1bc66ad8d77a4a34`. `local/main` matches exactly,
   no cloud push occurred, the Wave021/022 server snapshots remain untouched,
   and the two user-modified paper documents remain unstaged.
+
+## 2026-08-08 15:34 CST Wave021 closure and Wave022 parallel launch
+
+- Closed Wave021 from complete terminal receipts only. EMA decay `0.999`
+  completed after eight epochs at Dev Macro-F1 `0.5425893764160274` / ODER
+  `0.004106776180698152`, receipt SHA-256
+  `635d4450c1a99ef491229f8e2f7f87dfa3de0f43a2e33baaeec584a7a198d9ed`.
+  It passes the original joint gate and becomes the globally retained
+  qualified Dev setting, but misses the Seed17 target by about `0.003505` F1.
+- SWA start ratio `0.5` completed after nine epochs at Macro-F1
+  `0.5266213255152004` / ODER `0.005803053298812606`, receipt SHA-256
+  `868d38de55ca9130b26d1889ef357461f0dbbfd8ed041779a7760448f6e9d7b0`.
+  Its frozen zero-based start epoch was 10, while early stopping completed at
+  epoch 8, so it performed zero averaging updates. The immutable mechanism
+  audit classifies it `PROTOCOL_INACTIVE_TERMINAL`; this result is not evidence
+  about SWA efficacy, and any retest requires a new outcome-independent freeze.
+  Mechanism-audit SHA-256 is
+  `3911ead3603857f434b4a2b9dd3ca41044d77a71e5aa88f47c78f16fea81056a`.
+- Wave021 aggregate SHA-256 is
+  `56517eaceddafebe51a70660441885f4bcc9bef5a4c28ad6ec280722cb38730e`.
+  EMA records 40,208 averaging updates and remains scientifically
+  interpretable as configured; protected reads remain zero.
+- Launched both already-frozen Wave022 arms from immutable source commit
+  `4fb2c9f5f07780e8f9cf136f1297fa4d36cd3a66`. LR ratio `0.10` is active on
+  `9929.20`; LR ratio `0.25` is active on `3066.19`. Launch-intent,
+  launch-control, and finalization SHA-256 values are
+  `ce550efa07a912c4d29ff85930c786d690ff380f0fe39ede039ee1b3b53fde04`,
+  `769d2b44106a8f2e10996c73b10701355b15b3e5ae02157eb71e8a897010aba0`,
+  and `3c0cc8ed92fab5b43b618223afecbcbe17038acc09a38d2e29f11028d8163933`.
+  Per-arm launch-receipt SHA-256 values are
+  `1a4c8c896089151599cb8d9eb3e00b519cd6b938472392d28df40281319244ae`
+  and `722a5f70f63bde85cd18c7c9f74fc2253512d3f95370cd4439839e1c8a2a0b2a`.
+  Both exact children are healthy in stage `macro_f1`, with one scientific
+  child per allocation, telemetry preserved, no fatal log marker, and zero
+  protected reads.
