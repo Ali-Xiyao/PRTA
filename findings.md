@@ -1380,3 +1380,17 @@
   backward-compatible `PRTA_CXR_PROJECT_ROOT` and `PRTA_CXR_RUNTIME_ROOT`
   overrides so an immutable code snapshot can reuse the unchanged original
   Train/Dev runtime without touching the source tree used by rank 64.
+- Terminal adapter rank 64 also fails to improve capacity: Macro-F1 `0.525621`
+  and ODER `0.007856` fail both original-gate dimensions. Wave019 can therefore
+  close with neither rank arm qualified and retain rank-32 DMW010 globally;
+  because both allocations are now free, the scheduler bracket can start as a
+  true two-arm parallel wave rather than a staggered cross-wave race.
+- Existing server launch receipts bind allocation, config/launcher/preparation
+  hashes, pre/post Slurm step sets, progress-after-wait, and zero protected
+  reads. The historical reliable detachment boundary is a `setsid` wrapper;
+  the new launch controller must reproduce that receipt evidence rather than
+  rely on `nohup` under the closing SSH PTY.
+- Wave003's retained DMW010 config and terminal receipt remain byte-exact at
+  the hashes already recorded by Wave019. They provide a clean rank-32,
+  constant-LR parent for the scheduler bracket; only the schedule name,
+  warmup ratio, and minimum LR ratio need change in each Wave020 config.
