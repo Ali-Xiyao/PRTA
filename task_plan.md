@@ -711,18 +711,32 @@ gamma `0.9375/1.125` with preparation SHA-256
 Config SHA-256 values are
 `82dc7242d55abbaf24ed2dd65e7afe0f8090276d13ddb8378d743d8d2d8ce0b4`
 and `69a7b403a864a79b59b0931cfc545482407620b494c78c6f2b6683f0acc1569e`.
-Gamma0.9375 is healthy in `9929.14`, with launch receipt SHA-256
-`d16cc721ddcebd1f40d6f9135075e28452156ac7910cb2edad5ea9640cb19b20`;
-gamma1.125 is healthy in `3066.13`, with launch receipt SHA-256
-`e3a256457df0e411e5cc894556654238d8faba8bbb89377ddf852a5c7ee86832`.
-Monitor
-both active children without selecting from
+Gamma0.9375 is terminal after nine epochs at Macro-F1 `0.521726` / ODER
+`0.008749`, failing both original gate dimensions and the aspirational target;
+preserve terminal receipt SHA-256
+`2d71484e5037ea82c18c0347cfb66c1b3c43890b1069bff97f5b2c35ef8ef086`.
+Gamma1.125 remains healthy in `3066.13`, with launch receipt SHA-256
+`e3a256457df0e411e5cc894556654238d8faba8bbb89377ddf852a5c7ee86832`;
+Wave016 remains open until that arm is terminal. Using only completed
+gamma0.9375, the retained beta0.9999 parent, and closed Wave005 evidence while
+gamma1.125 remains blinded, Wave017 predeclares a tight class-balance-beta
+bracket at `0.9995/0.99995`. Preparation SHA-256 is
+`93220b7a5b178504c8d6981dac7b8b233a5f839ef7424feae071749a6349dff9`;
+config SHA-256 values are
+`6aab9cb50e7ce3e263593c0099c88e34f6d6fd37001345751eae5c559a494b60`
+and `6c056dc301efe7ce69340530e40e7791e9b897d5bcd00b6866ac7e31cc6ac0d1`.
+Beta0.9995 is healthy in `9929.15`, with launch receipt SHA-256
+`95b95c80640c34f2b593b2f6487fa374867f365083a0dc56a578d869bc178929`;
+beta0.99995 remains frozen and unstarted until one allocation is
+scientifically free. Monitor the two active children without selecting from
 intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise let both active runs terminate,
-close Wave016 only after both terminal receipts exist, and keep continuing
-small pre-frozen Train/Dev waves until the user explicitly stops.
+28/43 confirmation of the winner. Otherwise, when one active run terminates,
+let the other continue and launch the already-frozen beta0.99995 arm on the
+first scientifically free allocation. Close Wave016 only after gamma1.125 is
+terminal and Wave017 only after both beta arms are terminal; continue small
+pre-frozen Train/Dev waves until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.
@@ -1524,6 +1538,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first current-heartbeat base64 monitor invocation and a minimal quote test lost their nested Python quotes across PowerShell/SSH | 2 | Pipe the fixed Python monitor through SSH standard input; both failed commands stopped before any remote mutation. |
 | The first Wave015 preparation attempt interpolated a Bash `${PROJECT}` token in the local V8 template, and the next read-only precheck assumed the deployed runtime tree contained `.git` | 2 | Use absolute launcher paths and the already frozen source-commit pin; both attempts failed before creating the aggregate or wave namespace. |
 | The first post-launch step view reused unsupported step-format `%t` | 1 | Use `%i|%j` or the default step view. The same read-only check still confirmed `3066.12` and healthy progress; no run state changed. |
+| The first post-launch Wave017 monitor assumed epoch-0 checkpoints already existed and raised `FileNotFoundError` while the healthy child was still at step 700/5,026 | 1 | Treat checkpoint absence before the first completed epoch as expected, guard `stat` with existence checks, and retain the independently verified live step/progress/hash evidence; no scientific state changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

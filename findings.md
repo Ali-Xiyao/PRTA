@@ -1310,3 +1310,9 @@
 - Gamma1.125 was frozen before gamma0.875 finished. Launching it on the freed
   3066 lane completes the tight two-sided gamma bracket without allowing the
   gamma0.875 failure to alter its value or configuration.
+- Terminal gamma0.9375 confirms that the local lower gamma neighborhood does
+  not improve the retained gamma1/DMW010 parent: Macro-F1 falls to `0.521726`
+  and ODER rises to `0.008749`, failing both immutable gate dimensions. With
+  gamma1.125 still blinded, the next interpretable completed-evidence branch
+  returns to class balance and tightly brackets retained beta0.9999 at
+  `0.9995/0.99995`; both values were frozen before beta0.9995 launched.
