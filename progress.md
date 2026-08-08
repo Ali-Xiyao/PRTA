@@ -4559,3 +4559,11 @@
 - State0.025 is active on `3066.42`; state0.075 is active independently on
   `9929.39`. Each allocation has one scientific child, the parent allocations
   and telemetry remain untouched, and protected reads remain zero.
+- 2026-08-09 00:38 CST heartbeat: both Wave029 children remain `RUNNING` on
+  `3066.42` and `9929.39`, each at epoch 1 with 7,526 completed optimizer
+  steps. Frozen state weights `0.025/0.075`, EMA0.999, ODC0.05, constant LR,
+  effective config hashes, preparation/config/launcher/launch-receipt hashes,
+  and 489,336,070-byte best/last checkpoints audit exactly. Launcher logs have
+  zero fatal markers; A800 samples report 90%/89% utilization, 2,447 MiB each,
+  and 71/70 C. `/ipfs` remains 2% used, no terminal receipt exists, and no
+  intermediate outcome informed selection, stopping, or mutation.

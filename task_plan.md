@@ -1650,6 +1650,8 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first Wave029 private-controller format gate required canonical Ruff formatting | 1 | Apply Ruff formatting, then rerun compile/lint/format checks before transfer. No remote namespace or scientific child existed at the failed local check. |
 | A read-only Wave029 status command embedded a pipe-bearing grep pattern through PowerShell/SSH quoting | 1 | Split the audit into simpler literal-path reads; the failed command stopped locally before SSH and changed no runtime state. |
 | The first Wave029 step-state views reused unsupported `squeue -s` `%T`/`%t` format tokens | 2 | Verify the exact child steps with `sacct` and retain the successful file/GPU/disk evidence. Both commands were read-only and the children continued unchanged. |
+| A first Wave029 progress-field probe guessed protected-read keys that are recorded in launch receipts rather than training progress | 1 | Retain the immutable zero-read launch evidence and inspect only the actual progress audit keys; the failed grep was read-only. |
+| A looped Wave029 `jq` audit let local PowerShell consume the remote `$f` variable | 1 | Use two literal progress paths and the same read-only field projection. Both children continued unchanged and no artifact was written. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
