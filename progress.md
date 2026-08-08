@@ -3997,3 +3997,8 @@
 - Wave017 beta0.99995 is terminal `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1 `0.5244603295972732` / ODER `0.009909829479510758`; terminal receipt SHA-256 is `4db231168d1c9e3b7fe86d0149098f904ccded6b09ab1604d8bb7e30af50a056`. It fails both original-gate dimensions and the aspirational target.
 - Closed Wave017 fail-closed with aggregate receipt SHA-256 `e6cf4a499145eb3496ca24d66e363bbf55fd42ce8d75f78582779e84076292b5`; neither beta arm qualifies, so DMW010 remains globally retained.
 - Launched the already-frozen Wave018 gradient-clip 2.0 arm unchanged in `3066.15`. Launcher SHA-256 is `4f25cef4c88551a2e8a0281babf2bdc391b8af586ddb14a48e9c6e86af76fd8c`, and launch receipt SHA-256 is `9c4aae4022ad68d54242d8989db8ab5cb497889b15771010e04076754c204d5f`. It is healthy at epoch 0 step 200/5,026 while gradient clip 0.5 continues at epoch 2 step 2,500/5,026 in `9929.16`; each allocation has one scientific child plus telemetry/batch, hashes remain exact, shared storage has about 1.2 PB free, and protected reads remain zero.
+
+## 2026-08-08 09:58 CST Wave018 parallel monitor
+
+- Both frozen gradient-clip arms remain healthy and non-terminal. Gradient clip 0.5 is at epoch 4 step 4,700/5,026 with best epoch 2 in `9929.16`; gradient clip 2.0 is at epoch 2 step 2,400/5,026 with best epoch 0 in `3066.15`. Best/last checkpoints are intact at about 310 MB, and neither terminal receipt exists.
+- Wave018 preparation/config/launcher/launch-receipt hashes remain exact. Each retained allocation has one independent scientific child plus preserved telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed. No decision was made from intermediate epochs.
