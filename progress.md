@@ -4583,3 +4583,11 @@
   2,447 MiB each, and 74/73 C; `/ipfs` remains 2% used. No intermediate
   outcome informed selection, stopping, or mutation, and protected-read
   evidence remains unchanged at zero.
+- 2026-08-09 01:38 CST heartbeat: both Wave029 children remain `RUNNING` on
+  `3066.42` and `9929.39`, at epoch 8 with 44,208 and 44,108 completed
+  optimizer steps. Frozen scientific audits and effective config identities
+  remain exact, launcher logs have zero fatal markers, best/last checkpoints
+  are present, and no terminal receipt exists. A800 samples report 90%/89%
+  utilization, 2,447 MiB each, and 74/73 C; `/ipfs` remains 2% used. No
+  intermediate outcome informed selection, stopping, or mutation, and
+  protected-read evidence remains unchanged at zero.
