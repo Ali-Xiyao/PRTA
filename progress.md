@@ -4024,3 +4024,8 @@
 
 - Both adapter-rank arms remain healthy and non-terminal. Rank 16 is at epoch 4 step 3,100/5,026 with best epoch 2 in `9929.17`; rank 64 is at epoch 2 step 1,500/5,026 with best epoch 0 in `3066.16`. Best/last checkpoints are intact at about 309 MB and 313 MB respectively, and neither training receipt exists.
 - Wave019 preparation/config/launcher/launch-receipt hashes remain exact. Each retained allocation hosts one independent scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed. No intermediate result was used for selection or mutation.
+
+## 2026-08-08 11:38 CST Wave019 parallel monitor
+
+- Both adapter-rank arms remain healthy and non-terminal. Rank 16 is at epoch 7 step 200/5,026 with best epoch 5 in `9929.17`; rank 64 is at epoch 4 step 3,900/5,026 with best epoch 3 in `3066.16`. Best/last checkpoints remain intact at about 309 MB and 313 MB respectively, and neither training receipt exists.
+- All Wave019 frozen hashes remain exact. Each allocation continues to host exactly one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero. No intermediate result was used for selection, stopping, or mutation.
