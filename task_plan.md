@@ -729,19 +729,33 @@ bracket at `0.9995/0.99995`. Preparation SHA-256 is
 config SHA-256 values are
 `6aab9cb50e7ce3e263593c0099c88e34f6d6fd37001345751eae5c559a494b60`
 and `6c056dc301efe7ce69340530e40e7791e9b897d5bcd00b6866ac7e31cc6ac0d1`.
-Beta0.9995 is healthy in `9929.15`, with launch receipt SHA-256
-`95b95c80640c34f2b593b2f6487fa374867f365083a0dc56a578d869bc178929`;
+Beta0.9995 is terminal after nine epochs at Macro-F1 `0.526883` / ODER
+`0.003303`. It has substantial ODER headroom but fails the original Macro-F1
+floor and the aspirational target; preserve terminal receipt SHA-256
+`6fb4af4122f65c759ac97b35a0e13593acaa34cb9906421a2aa436c3af5d9b60`.
 beta0.99995 is healthy in `3066.14`, with launch receipt SHA-256
 `e4285a782d42d206dd08371dc4a06c479b57227660e5da6f9d3ecc5796936991`.
-Monitor both active beta children without selecting from intermediate epochs.
-If either reaches terminal Macro-F1 `>= 0.546094` with
+Wave017 remains open until beta0.99995 is terminal. Using only completed
+beta0.9995 and prior terminal evidence while beta0.99995 remains blinded,
+Wave018 predeclares a gradient-clip-norm bracket at `0.5/2.0` around the
+retained parent value `1.0`, with optimizer family, LR, batch, data, method,
+and budget unchanged. Preparation SHA-256 is
+`1265e7c545c46a8f9c0d02fd1869de43cab071a67d9d81d7b4f015ad793d26e8`;
+config SHA-256 values are
+`b9ed3bec08638e5b5960a4c386dabcd62281a3e19d1c320e4e9d1a27793fc948`
+and `ea6247c963516a5a39e0bb3d84043de27e83dc0c8c4002ab9fc74d6c3537361e`.
+Gradient clip 0.5 is healthy in `9929.16`, with launch receipt SHA-256
+`41e3bb06b22d5f2571454984fcdf0f4e626fecea644a63c7826583df9ea58d44`;
+gradient clip 2.0 remains frozen and unstarted until an allocation is
+scientifically free. Monitor both active children without selecting from
+intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise, when one active beta run
-terminates, let the other continue and freeze then launch one new small arm on
-the free allocation using only completed terminal evidence. Close Wave017 only
-after both beta arms are terminal; continue small pre-frozen Train/Dev waves
-until the user explicitly stops.
+28/43 confirmation of the winner. Otherwise, when one active run terminates,
+let the other continue and launch the already-frozen gradient-clip 2.0 arm on
+the first scientifically free allocation. Close Wave017 only after both beta
+arms are terminal and Wave018 only after both gradient-clip arms are terminal;
+continue small pre-frozen Train/Dev waves until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.

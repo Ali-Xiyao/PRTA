@@ -1321,3 +1321,9 @@
   gamma1.0 as the locally retained focal setting. Its terminal failure frees
   the second allocation for the already-frozen beta0.99995 arm, completing
   Wave017 without using beta0.9995 intermediate evidence.
+- Beta0.9995 lowers ODER strongly to `0.003303` but reduces Macro-F1 to
+  `0.526883`, below the immutable floor. With the loss, LR, weight-decay,
+  dropout, direction-margin, focal-gamma, and class-balance neighborhoods all
+  unable to improve retained DMW010 so far, the next bounded one-axis test
+  brackets gradient clipping at `0.5/2.0` around parent `1.0` while keeping
+  optimizer family and all other training/data/method fields unchanged.
