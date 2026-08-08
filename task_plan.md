@@ -715,9 +715,13 @@ Gamma0.9375 is terminal after nine epochs at Macro-F1 `0.521726` / ODER
 `0.008749`, failing both original gate dimensions and the aspirational target;
 preserve terminal receipt SHA-256
 `2d71484e5037ea82c18c0347cfb66c1b3c43890b1069bff97f5b2c35ef8ef086`.
-Gamma1.125 remains healthy in `3066.13`, with launch receipt SHA-256
-`e3a256457df0e411e5cc894556654238d8faba8bbb89377ddf852a5c7ee86832`;
-Wave016 remains open until that arm is terminal. Using only completed
+Gamma1.125 is terminal after nine epochs at Macro-F1 `0.528284` / ODER
+`0.005803`, failing both original gate dimensions and the aspirational target;
+preserve terminal receipt SHA-256
+`3405002b1c97e697d7839ed5c1e73d6b9ecd80450245f071af52980ee976bd7b`.
+Wave016 is closed fail-closed with aggregate SHA-256
+`bfc010de1299fdd3cb1360b95759fe15cc65fe1933dd1c59d184be63d253e929`
+and retains DMW010 globally. Using only completed
 gamma0.9375, the retained beta0.9999 parent, and closed Wave005 evidence while
 gamma1.125 remains blinded, Wave017 predeclares a tight class-balance-beta
 bracket at `0.9995/0.99995`. Preparation SHA-256 is
@@ -727,16 +731,17 @@ config SHA-256 values are
 and `6c056dc301efe7ce69340530e40e7791e9b897d5bcd00b6866ac7e31cc6ac0d1`.
 Beta0.9995 is healthy in `9929.15`, with launch receipt SHA-256
 `95b95c80640c34f2b593b2f6487fa374867f365083a0dc56a578d869bc178929`;
-beta0.99995 remains frozen and unstarted until one allocation is
-scientifically free. Monitor the two active children without selecting from
-intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
+beta0.99995 is healthy in `3066.14`, with launch receipt SHA-256
+`e4285a782d42d206dd08371dc4a06c479b57227660e5da6f9d3ecc5796936991`.
+Monitor both active beta children without selecting from intermediate epochs.
+If either reaches terminal Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise, when one active run terminates,
-let the other continue and launch the already-frozen beta0.99995 arm on the
-first scientifically free allocation. Close Wave016 only after gamma1.125 is
-terminal and Wave017 only after both beta arms are terminal; continue small
-pre-frozen Train/Dev waves until the user explicitly stops.
+28/43 confirmation of the winner. Otherwise, when one active beta run
+terminates, let the other continue and freeze then launch one new small arm on
+the free allocation using only completed terminal evidence. Close Wave017 only
+after both beta arms are terminal; continue small pre-frozen Train/Dev waves
+until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.

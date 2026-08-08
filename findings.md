@@ -1316,3 +1316,8 @@
   gamma1.125 still blinded, the next interpretable completed-evidence branch
   returns to class balance and tightly brackets retained beta0.9999 at
   `0.9995/0.99995`; both values were frozen before beta0.9995 launched.
+- Gamma1.125 is also inadmissible at Macro-F1 `0.528284` / ODER `0.005803`.
+  Wave016 therefore rejects both tight gamma alternatives and reinforces
+  gamma1.0 as the locally retained focal setting. Its terminal failure frees
+  the second allocation for the already-frozen beta0.99995 arm, completing
+  Wave017 without using beta0.9995 intermediate evidence.
