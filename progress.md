@@ -4002,3 +4002,8 @@
 
 - Both frozen gradient-clip arms remain healthy and non-terminal. Gradient clip 0.5 is at epoch 4 step 4,700/5,026 with best epoch 2 in `9929.16`; gradient clip 2.0 is at epoch 2 step 2,400/5,026 with best epoch 0 in `3066.15`. Best/last checkpoints are intact at about 310 MB, and neither terminal receipt exists.
 - Wave018 preparation/config/launcher/launch-receipt hashes remain exact. Each retained allocation has one independent scientific child plus preserved telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed. No decision was made from intermediate epochs.
+
+## 2026-08-08 10:18 CST Wave018 parallel monitor
+
+- Both gradient-clip arms remain healthy and non-terminal. Gradient clip 0.5 is at epoch 7 step 1,500/5,026 with best epoch 4 in `9929.16`; gradient clip 2.0 is at epoch 4 step 4,700/5,026 with best epoch 2 in `3066.15`. Best/last checkpoints remain intact at about 310 MB, and neither training receipt exists.
+- All frozen preparation/config/launcher/launch-receipt hashes remain exact. Each allocation continues to host exactly one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero. No intermediate result was used for selection or mutation.
