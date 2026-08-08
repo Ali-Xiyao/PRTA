@@ -1338,3 +1338,8 @@
   adapter rank `16/64` around parent `32`; rank 16 starts on the free 9929 lane
   while rank 64 remains frozen, preserving a one-axis comparison without
   changing adapter scope or the native H0 head.
+- Gradient clip 2.0 also fails both immutable gate dimensions at Macro-F1
+  `0.524957` / ODER `0.007410`. Wave018 therefore rejects both clipping
+  alternatives and retains the parent clip norm 1.0; the freed 3066 lane now
+  launches the already-frozen adapter-rank 64 arm, completing the rank bracket
+  without using rank-16 intermediate evidence.

@@ -752,8 +752,13 @@ Gradient clip 0.5 is terminal after nine epochs at Macro-F1 `0.527177` / ODER
 `0.006607`, failing both original-gate dimensions and the aspirational target;
 preserve training-receipt SHA-256
 `212a383aea40004ead90e519f1a5c4efbd069717d6601cc994fd84fcdbd21c03`.
-Gradient clip 2.0 continues unchanged in `3066.15`, with launch receipt
-SHA-256 `9c4aae4022ad68d54242d8989db8ab5cb497889b15771010e04076754c204d5f`.
+Gradient clip 2.0 is terminal after nine epochs at Macro-F1 `0.524957` / ODER
+`0.007410`, failing both original-gate dimensions and the aspirational target;
+preserve training-receipt SHA-256
+`a41566cf7543c0e62f1c7360edd76886cde0a6816de33f07f866eda1600285fe`.
+Wave018 is closed fail-closed with aggregate SHA-256
+`3af438ef31fe32322fe83f1dac69251a45642ed26cd64a7c3c2f3fa64ffaaada`
+and retains DMW010 globally.
 Using only terminal gradient-clip-0.5 and earlier completed evidence while
 gradient clip 2.0 remains blinded, Wave019 predeclares adapter rank `16/64`
 around parent `32`, keeping adapter scope, native H0 head, data, loss,
@@ -764,19 +769,18 @@ config SHA-256 values are
 and `7634237f87a0e8a5a0474e7d8c155474981b056223fa334890291fedfe47b3e0`.
 Adapter rank 16 is healthy in `9929.17`, with launch receipt SHA-256
 `c36c77f7ad69a9a561c4ea90461f4d3ee27c33e95cb039d88771fc811bfbe0ac`;
-adapter rank 64 remains frozen and unstarted until an allocation is
-scientifically free. Monitor active gradient clip 2.0 and adapter rank 16
-without selecting from intermediate epochs. If either reaches terminal
+adapter rank 64 is healthy in `3066.16`, with launch receipt SHA-256
+`92578208754159e29e76e3088a08fffb31adec5dc244e200451f56c9c5fc66cc`.
+Monitor both adapter-rank arms without selecting from intermediate epochs. If
+either reaches terminal
 Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise, when either active run
-terminates, let the other continue and launch the already-frozen adapter-rank
-64 arm on the first scientifically free allocation. If rank 64 is already
-active or terminal, freeze then launch one new small arm using only completed
-terminal evidence. Close Wave018 after gradient clip 2.0 is terminal and
-Wave019 only after both adapter-rank arms are terminal; continue small
-pre-frozen Train/Dev waves until the user explicitly stops.
+28/43 confirmation of the winner. Otherwise, when one active run terminates,
+let the other continue and freeze then launch one new small arm on the free
+allocation using only completed terminal evidence. Close Wave019 only after
+both adapter-rank arms are terminal; continue small pre-frozen Train/Dev waves
+until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.
