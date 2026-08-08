@@ -31,6 +31,7 @@ from prta_cxr.models.prta import (
     PRTATemporalAdapter,
     PRTATrainingHeads,
     cmcp_margin_loss,
+    opposite_direction_cost_loss,
     opposite_direction_margin_loss,
     state_preservation_loss,
     temporal_inversion_loss,
@@ -273,6 +274,12 @@ def _loss(
             logits,
             target,
             margin=float(direction_spec.get("margin", 0.2)),
+        )
+    direction_cost_weight = float(weights.get("opposite_direction_cost", 0.0))
+    if direction_cost_weight:
+        total = total + direction_cost_weight * opposite_direction_cost_loss(
+            logits,
+            target,
         )
     auxiliary_requested = any(
         float(weights.get(name, 0.0))
@@ -564,6 +571,32 @@ def _build_two_stage_training(
     }
 
 
+def _build_opposite_direction_cost(
+    loss_weights: Mapping[str, float],
+) -> dict[str, Any]:
+    weight = float(loss_weights.get("opposite_direction_cost", 0.0))
+    if not math.isfinite(weight) or weight < 0.0:
+        raise ValueError(
+            "opposite-direction-cost weight must be finite and non-negative"
+        )
+    if weight == 0.0:
+        return {
+            "name": "disabled",
+            "weight": 0.0,
+        }
+    return {
+        "name": "negative_log_complement",
+        "weight": weight,
+        "penalized_pairs": [
+            ["Improved", "Worse"],
+            ["Worse", "Improved"],
+            ["New", "Resolved"],
+            ["Resolved", "New"],
+        ],
+        "reduction": "directional_targets_mean",
+    }
+
+
 def _apply_two_stage_epoch_policy(
     optimizer: torch.optim.Optimizer,
     base_loss_weights: Mapping[str, float],
@@ -656,6 +689,7 @@ def train_model(
         config["loss_weights"],
         epochs=epochs,
     )
+    direction_cost_audit = _build_opposite_direction_cost(config["loss_weights"])
     start_epoch = 0
     best_f1 = -1.0
     best_epoch = -1
@@ -725,6 +759,7 @@ def train_model(
         "learning_rate_schedule": scheduler_audit,
         "weight_averaging": weight_averaging_audit,
         "two_stage_training": two_stage_audit,
+        "opposite_direction_cost": direction_cost_audit,
         "current_learning_rate": float(optimizer.param_groups[0]["lr"]),
         "completed_optimizer_steps": optimizer_steps,
     }
@@ -921,6 +956,7 @@ def train_model(
                 if int(value["epoch"]) == best_epoch
             ),
         },
+        "opposite_direction_cost": direction_cost_audit,
         "start_time": started,
         "end_time": ended,
         "internal_test_opened": False,

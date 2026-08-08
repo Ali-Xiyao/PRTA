@@ -12,6 +12,7 @@ from prta_cxr.models.prta import (
     PRTATemporalAdapter,
     cmcp_margin_loss,
     invert_progression_logits,
+    opposite_direction_cost_loss,
     opposite_direction_margin_loss,
     state_preservation_loss,
     transition_alignment_loss,
@@ -132,3 +133,44 @@ def test_direction_margin_penalizes_opposite_more_than_target():
     bad[torch.arange(4), torch.tensor([2, 1, 4, 3])] = 3.0
     assert opposite_direction_margin_loss(good, target) == 0
     assert opposite_direction_margin_loss(bad, target) > 0
+
+
+def test_direction_cost_directly_penalizes_opposite_probability():
+    target = torch.tensor([1, 2, 3, 4])
+    good = torch.zeros(4, 5)
+    good[torch.arange(4), target] = 4.0
+    bad = good.clone()
+    bad[torch.arange(4), torch.tensor([2, 1, 4, 3])] = 6.0
+
+    good_loss = opposite_direction_cost_loss(good, target)
+    bad.requires_grad_()
+    bad_loss = opposite_direction_cost_loss(bad, target)
+    bad_loss.backward()
+
+    assert bad_loss > good_loss
+    assert bool(
+        (
+            bad.grad[
+                torch.arange(4),
+                torch.tensor([2, 1, 4, 3]),
+            ]
+            > 0
+        ).all()
+    )
+
+
+def test_direction_cost_ignores_stable_targets():
+    logits = torch.randn(3, 5, requires_grad=True)
+    loss = opposite_direction_cost_loss(logits, torch.zeros(3, dtype=torch.long))
+    loss.backward()
+
+    assert loss == 0
+    assert torch.equal(logits.grad, torch.zeros_like(logits))
+
+
+def test_direction_cost_remains_finite_for_extreme_opposite_logit():
+    logits = torch.tensor([[0.0, 0.0, 100_000.0, 0.0, 0.0]])
+    loss = opposite_direction_cost_loss(logits, torch.tensor([1]))
+
+    assert torch.isfinite(loss)
+    assert loss > 99_000

@@ -481,6 +481,32 @@ def opposite_direction_margin_loss(
     return F.relu(margin - target_logits + opposite_logits)[directional].mean()
 
 
+def opposite_direction_cost_loss(
+    logits: torch.Tensor,
+    target: torch.Tensor,
+) -> torch.Tensor:
+    """Directly penalize probability mass assigned to the opposite label."""
+    if logits.ndim != 2 or logits.shape[-1] != len(PROGRESSION_LABELS):
+        raise ValueError("opposite-direction-cost logits must have shape [B, 5]")
+    if target.shape != (logits.shape[0],):
+        raise ValueError("opposite-direction-cost target must have shape [B]")
+    inversion = INVERSION_INDEX.to(device=target.device)
+    directional = target != 0
+    if not bool(directional.any()):
+        return logits.sum() * 0
+    row = torch.arange(target.shape[0], device=target.device)
+    opposite = inversion[target]
+    non_opposite_logits = logits.masked_fill(
+        F.one_hot(opposite, num_classes=len(PROGRESSION_LABELS)).bool(),
+        float("-inf"),
+    )
+    negative_log_complement = torch.logsumexp(logits, dim=-1) - torch.logsumexp(
+        non_opposite_logits,
+        dim=-1,
+    )
+    return negative_log_complement[row[directional]].mean()
+
+
 def state_preservation_loss(
     adapted_state: torch.Tensor, frozen_current_state: torch.Tensor
 ) -> torch.Tensor:
