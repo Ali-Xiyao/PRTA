@@ -4041,3 +4041,9 @@
 - Added a backward-compatible training-engine scheduler surface: omitted fields preserve constant AdamW learning rate, while `learning_rate_schedule=cosine` supports a frozen warmup ratio and minimum LR ratio. Scheduler state, optimizer-step counts, current LR, and schedule audit metadata are now checkpointed or written to progress/terminal receipts.
 - Added focused tests for constant-LR compatibility, exact warmup/cosine endpoints, scheduler-state round-trip, and fail-closed invalid configs. After two test-only strict-zip/format corrections, the focused gate passes 14/14 with Ruff lint and targeted format checks clean; the full repository suite passes 177/177 and repository-wide Ruff lint passes.
 - Repository-wide format checking identifies 90 unrelated legacy files; they were not reformatted. No scheduler code was deployed to the server, no active scientific child or source pin changed, and the two user-modified paper documents remain unstaged.
+
+## 2026-08-08 11:56 CST scheduler implementation freeze
+
+- Committed the validated warmup-plus-cosine implementation, tests, and expanded-search planning as Git commit `76cb10b9d9f74deb548cfee01c9e50e732c08da1`; pushed it only to the verified local bare remote, where `refs/remotes/local/main` matches exactly. No cloud push occurred.
+- Updated the active 20-minute monitor to keep Wave019 unchanged, forbid deployment while either rank child remains live, and deploy only an identity-pinned snapshot from commit `76cb10b9d9f74deb548cfee01c9e50e732c08da1` after both terminal receipts miss the target. The first frozen medium wave remains cosine scheduling with warmup ratios `0.05/0.10`, one arm per retained allocation.
+- The two user-modified paper documents remain the only unstaged worktree changes. Internal-test and Gold remain sealed, and no server scientific runtime was changed by this local implementation freeze.
