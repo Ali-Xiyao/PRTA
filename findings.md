@@ -1511,3 +1511,14 @@
   therefore reuses the already-deployed immutable source, retains the global
   EMA parent, and keeps the direct-cost audit exactly disabled rather than
   adding a third adaptive mechanism.
+- ODC0.05 terminates after ten epochs at Macro-F1 `0.542873152713817` / ODER
+  `0.004463887152932774`. It satisfies the original joint gate and improves
+  retained EMA by only about `0.000284` Macro-F1 while worsening ODER by about
+  `0.000357`; it is therefore the new qualified F1-first Dev frontier, but the
+  gain is small and remains exploratory rather than a robustness claim.
+- With ODC0.05 terminal, the completed evidence supports exactly one bounded
+  two-axis interaction test around retained EMA: cosine warmup0.05 plus direct
+  cost0.05. The numeric choices come from complete Wave020 and Wave023
+  receipts, while the still-running Wave024 trajectory remains unread for
+  selection. Exact source tests (17/17) and a joint EMA/scheduler/direct-cost
+  optimizer-step smoke pass before the Wave025 namespace or Slurm child exists.

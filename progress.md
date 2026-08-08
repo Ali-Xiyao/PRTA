@@ -4373,3 +4373,46 @@
   Inspecting the exact commit showed the frozen API uses
   `event="optimizer_step"`; rerunning with that exact signature passed before
   any Wave024 server namespace or Slurm step existed.
+- 2026-08-08 19:19 CST heartbeat: ODC0.05 remains non-terminal on `9929.27`
+  at epoch 9, 4,500/5,026, while Wave024 EMA+cosine remains non-terminal on
+  `3066.30` at epoch 1, 3,200/5,026. Both exact source/config/launcher/receipt
+  identities and mechanism audits remain frozen; ODC0.05 retains direct cost
+  `0.05` with constant LR, and Wave024 retains EMA `0.999`, cosine warmup
+  `0.05`, minimum LR ratio `0.05`, and direct cost disabled. Both A800s report
+  89--90% utilization with 2,447 MiB used, checkpoints are present, logs have
+  zero fatal markers, IPFS remains 2% used, one scientific child remains on
+  each allocation, and protected reads remain zero with Internal-test/Gold
+  unopened. No intermediate metric affected selection or the successor path.
+- 2026-08-08 19:38 CST terminal and new-launch event: ODC0.05 completed after
+  ten epochs at Dev Macro-F1 `0.542873152713817` / ODER
+  `0.004463887152932774`; training-receipt SHA-256 is
+  `75633402dcc93f4a949c386f48e93eff36881b7157de8aab000c68feed2a3181`.
+  It passes the original joint gate, marginally improves retained EMA, and is
+  now the global qualified F1-first Dev setting, but misses the Seed17 target.
+  Its receipt audits EMA decay `0.999` with 50,260 updates, direct-cost weight
+  `0.05`, constant LR, early-stop completion, and protected outcomes unopened.
+- Closed Wave023 only after both direct-cost arms were terminal. Aggregate
+  receipt SHA-256 is
+  `7df67ffb564ef0a833480912262928054c14da9e4cb1787b7056fbf0fa66164a`;
+  ODC0.05 is the within-wave and global retained qualified arm, while ODC0.20
+  remains preserved as the lower-F1 qualified result.
+- Exact commit `4473c8a` passed 17 focused scheduler/averaging/direct-cost tests
+  and `PASS_EMA999_COSINE_WARMUP005_ODC005_COMBINATION_SMOKE`. Wave025 then
+  froze EMA `0.999`, cosine warmup `0.05`, minimum LR ratio `0.05`, and direct
+  cost `0.05` using completed Wave020/Wave021/Wave023 evidence only. Preparation,
+  config, and launcher SHA-256 values are
+  `fb9fc8ccf1f6ba4d4a92221b266a8c95839a2e54205ddd286aaee17900b2e639`,
+  `408d2132640cb01d6d5ca3b2177d32df07464b15f9f459a5a5ff3535462d3a7f`,
+  and `28352030ce4973e0f3ec383dd486f66beb9b5f3e8072a3f8cbe1d089105fe6cc`.
+- Launched Wave025 unchanged on `9929.34`. Launch intent/control/receipt and
+  finalization SHA-256 values are
+  `8f9cda246234eeddde60fda726bec2944dbd341e6fffeaf3fb6710a35bca664e`,
+  `b1df6d48d319df5ddd2e04d48bc8e23bb9d6a57aee2a5b958cabfd650216367b`,
+  `800bb22974f54240a6a57ef648874c7c192b1e7b6598cf4c315f3f0a7090e06f`,
+  and `3407dc8b3fe9ab1814a82d701e0a74f2b8548fe0467a375b948681290cf2947b`.
+  Wave024 continues unchanged on `3066.30`; both exact configs/launchers/launch
+  receipts hash correctly, both launcher logs have zero fatal markers, and
+  each allocation has exactly one scientific child plus preserved telemetry.
+  A one-shot A800 audit reports 92%/87% utilization and 2,447 MiB each; `/ipfs`
+  is 2% used. Protected reads remain zero and no intermediate Wave024 outcome
+  informed Wave025.
