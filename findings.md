@@ -1578,3 +1578,9 @@
 - This is a terminal Seed17 exploratory winner, not yet reproducible evidence.
   The exact setting is now locked for Seeds 28/43; only the frozen three-seed
   mean and every-seed original-gate rules may determine confirmation.
+- Exact Seeds 17/28/43 confirmation does not meet the reproducible +2pp claim.
+  All three seeds independently pass the original joint gate and their mean
+  ODER is comfortably below ceiling, but mean Macro-F1 is `0.5440834`, about
+  `0.000482` below the predeclared `0.5445653` floor. State0.025 therefore
+  remains an exploratory Seed17 target winner rather than a reproducibly
+  confirmed setting; confirmation outcomes must not seed another tuning wave.

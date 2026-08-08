@@ -1095,7 +1095,7 @@ Status: complete; PASS engineering readiness; no formal launch authorized
   training queue remains locked behind a new freeze and explicit authority.
 
 ### Phase 92 - Continuous lightweight server Dev search
-Status: in progress under explicit 2026-08-06 user authority
+Status: HOLD after terminal Wave030 confirmation; expanded route input-blocked
 
 - Reuse only retained Slurm allocations `9929` and `3066` on `gpu01`; retired
   allocation `4161` must never be reused. Submit no new Slurm allocation and
@@ -1804,18 +1804,22 @@ Status: in progress under explicit 2026-08-06 user authority
   is jointly qualified but trails at `0.5429977923309984 / 0.0034818319792875637`.
 - [x] Freeze the exact state0.025 winner and launch its predeclared Seed 28/43
   confirmation children independently on `3066.48` and `9929.45`.
-- [ ] Monitor Wave030 confirmation from complete terminal receipts only and
-  evaluate the frozen three-seed reproducibility gate without tuning from
-  either confirmation trajectory.
+- [x] Close Wave030 from complete terminal receipts only and evaluate the
+  frozen three-seed reproducibility gate without tuning from either
+  confirmation trajectory. All three seeds pass the original joint gate and
+  mean ODER passes, but mean Macro-F1 `0.544083403350397` misses the +2pp
+  floor by about `0.000482`; status is
+  `HOLD_REPRODUCIBLE_PLUS2PP_MEAN_F1_MISSED`.
 - [ ] In parallel with scientific monitoring, prepare the minimum exact
   Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
   build for a new tail6/tail8 attempt namespace; do not inspect protected rows.
 
 ## Next Step
 
-Monitor the exact state0.025 Seed 28 confirmation on `3066.48` and Seed 43
-confirmation on `9929.45` without selecting, stopping, or mutating from
-intermediate epochs. After both complete terminal receipts exist, combine them
-with frozen Seed 17 to evaluate the predeclared three-seed mean and every-seed
-joint gate. Keep the Block-4 input repair separate and leave Internal-test/Gold
-sealed.
+HOLD the confirmed route: Wave030 is terminal and fails the predeclared +2pp
+three-seed mean-F1 gate despite every seed passing the original joint gate.
+Do not tune from confirmation-seed outcomes or open Internal-test/Gold. Keep
+allocations `9929/3066` and telemetry intact with no scientific children.
+Expanded tail6/tail8 remains blocked until an exact Train/Dev-only raw-image
+mapping/transfer or equivalent verified Block-4 cache is available in a new
+attempt namespace.

@@ -4646,3 +4646,29 @@
   exists. A800 samples report 92%/91% utilization, 2,447 MiB each, and 74/72
   C; `/ipfs` remains 2% used. No intermediate confirmation outcome informed
   any action, and protected-read evidence remains unchanged at zero.
+
+## 2026-08-09 03:21 CST Wave030 confirmation verdict and HOLD
+
+- Seed28 completed after nine epochs at Dev Macro-F1
+  `0.5426700667224693` / ODER `0.0036603874654048746`; terminal receipt
+  SHA-256 is
+  `299db384d874743b5b24aaf36b95b0131d9eccc6ce1a2685e2c60dda08e8335b`.
+  Seed43 completed after nine epochs at `0.5422625429878465` /
+  `0.00374966520846353`; terminal receipt SHA-256 is
+  `a69c0835c94a4ad4485da8c688fe9fd25002acaf7eb937d906f766d50aa045ab`.
+  Both terminal receipts report zero Internal-test/protected access and exact
+  frozen state0.025, EMA0.999, ODC0.05, constant-LR identities.
+- With frozen Seed17 `0.547317600340875 / 0.00374966520846353`, the exact
+  three-seed means are Macro-F1 `0.544083403350397` and ODER
+  `0.0037199059607773114`. Every seed passes the original joint gate and mean
+  ODER passes, but mean Macro-F1 misses the reproducible +2pp floor
+  `0.5445653392739055` by `0.0004819359235085363`; the +3pp stretch also
+  fails. Immutable Wave030 aggregate SHA-256 is
+  `a5af63b002732b12ac0ddb01bb1047fd68de69cec3beb2ad922734954aeb143c`
+  with status `HOLD_REPRODUCIBLE_PLUS2PP_MEAN_F1_MISSED`.
+- No confirmation outcome was fed back into tuning and no successor was
+  launched. Scientific steps `3066.48/9929.45` are `COMPLETED` with exit
+  `0:0`; retained parent allocations, batch steps, and telemetry `3066.2` /
+  `9929.0` remain intact, with no live scientific child. `/ipfs` remains 2%
+  used and protected reads remain zero. The separate expanded tail6/tail8
+  route remains input-blocked by missing verified Train/Dev raw-image paths.
