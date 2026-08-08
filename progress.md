@@ -4416,3 +4416,12 @@
   A one-shot A800 audit reports 92%/87% utilization and 2,447 MiB each; `/ipfs`
   is 2% used. Protected reads remain zero and no intermediate Wave024 outcome
   informed Wave025.
+- 2026-08-08 20:01 CST heartbeat: Wave024 and Wave025 remain non-terminal and
+  `RUNNING` on `3066.30` and `9929.34` with 34,356 and 14,952 completed
+  optimizer steps. Their frozen cosine/EMA/direct-cost audits and all six
+  config/launcher/launch-receipt hashes remain exact; both launcher logs have
+  zero fatal markers and all four best/last checkpoints are present. The A800
+  samples report 92%/87% utilization, 2,447 MiB each, and 73--74 C; `/ipfs`
+  remains 2% used. Each allocation still has exactly one scientific child plus
+  preserved telemetry, protected reads remain zero, and no intermediate outcome
+  affected selection, stopping, or mutation.
