@@ -3980,3 +3980,8 @@
 
 - Both frozen beta arms remain healthy and non-terminal. Beta0.9995 is at epoch 4 step 2,800/5,026 with best epoch 2 in `9929.15`; beta0.99995 is at epoch 2 step 1,800/5,026 with best epoch 0 in `3066.14`. Best/last checkpoints are intact at about 310 MB, and neither terminal receipt exists.
 - Wave017 preparation/config/launch-receipt hashes remain exact. Each retained allocation has exactly one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed.
+
+## 2026-08-08 08:55 CST Wave017 parallel monitor
+
+- Both beta arms remain healthy and non-terminal. Beta0.9995 has completed epoch 6 with best epoch 4 in `9929.15`; beta0.99995 is at epoch 4 step 4,300/5,026 with best epoch 2 in `3066.14`. Their progress files are fresh, best/last checkpoints remain intact at about 310 MB, and neither terminal receipt exists.
+- All Wave017 preparation/config/launch-receipt hashes remain exact. Each retained allocation has one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed. No decision was made from intermediate epochs.
