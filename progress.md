@@ -4622,3 +4622,11 @@
 - Seed28 is active on `3066.48`; Seed43 is active independently on `9929.45`.
   Each allocation has one scientific child, parent allocations and telemetry
   remain untouched, `/ipfs` is 2% used, and protected reads remain zero.
+- 2026-08-09 02:18 CST heartbeat: both Wave030 confirmation children remain
+  `RUNNING` on `3066.48` and `9929.45`, each after two completed epochs with
+  10,052 optimizer steps. Exact Seed 28/43 config identities, state0.025,
+  EMA0.999, ODC0.05, constant LR, checkpoints, and frozen launch hashes audit
+  correctly; launcher logs have zero fatal markers and no terminal receipt
+  exists. A800 samples report 87% utilization, 2,447 MiB each, and 74/72 C;
+  `/ipfs` remains 2% used. No intermediate confirmation outcome informed any
+  action, and protected-read evidence remains unchanged at zero.
