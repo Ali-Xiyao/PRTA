@@ -1495,3 +1495,19 @@
   `reduction` rather than a synthetic `enabled` flag. Launch verification must
   bind those four semantic fields plus the parent EMA audit; a missing helper
   boolean is not a mechanism failure.
+- Terminal ODC0.20 is jointly qualified at Macro-F1 `0.541489174895917` /
+  ODER `0.003571109722346219`, but trails retained EMA by about `0.001100`
+  Macro-F1 and misses the Seed17 target by about `0.004605`. Its lower ODER
+  does not justify promotion under the terminal F1-first qualified frontier.
+  The independent ODC0.05 arm remains blinded and unchanged. The released
+  3066 lane can therefore test a pre-frozen EMA-plus-cosine/warmup0.05
+  combination: EMA is the retained terminal gain and warmup0.05 is the best
+  completed scheduler arm, while direct cost stays disabled so the successor
+  does not depend on ODC0.05 intermediate evidence.
+- Exact-source combination validation confirms cosine warmup and EMA operate
+  together on commit `4473c8a`: 17 focused scheduler/averaging/direct-cost
+  tests pass, and a joint optimizer-step smoke records cosine warmup `0.05`,
+  minimum LR ratio `0.05`, EMA decay `0.999`, and one EMA update. Wave024
+  therefore reuses the already-deployed immutable source, retains the global
+  EMA parent, and keeps the direct-cost audit exactly disabled rather than
+  adding a third adaptive mechanism.

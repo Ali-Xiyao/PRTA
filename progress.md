@@ -4311,3 +4311,65 @@
   audit schema. It failed before writing finalization; the unchanged live runs
   remained healthy, and the corrected exact name/reduction/pairs/weight audit
   then finalized successfully without overwriting any immutable artifact.
+- 2026-08-08 18:19 CST heartbeat: Wave023 remains active and scientifically
+  blinded for selection. ODC0.05 and ODC0.20 are both `RUNNING` at epoch 2,
+  3,300/5,026 steps (13,352 optimizer steps total), with no terminal receipt.
+  Steps `9929.27` and `3066.26` remain the sole scientific children beside
+  retained telemetry; both A800s report 91--92% utilization, 2,447 MiB used,
+  and 73--74 C. All six config/launcher/launch-receipt hashes match the frozen
+  Wave023 values, both direct-cost weights and EMA decay 0.999 audit exactly,
+  all four best/last checkpoints are present at 489,337,350 bytes, launcher
+  fatal-marker count is zero, IPFS is 2% used, and launch-finalization still
+  records protected outcome reads 0 with Internal-test/Gold unopened. No
+  intermediate metric was used to select, stop, or mutate either arm.
+- Read-only monitoring errors at this heartbeat: `squeue -s` rejected custom
+  step format token `%t`, so the successful default step view was used; an
+  inline remote Bash loop also hit a quoting EOF, so exact literal paths plus
+  local PowerShell JSON parsing replaced it. Neither failed probe changed any
+  allocation, process, source, config, checkpoint, log, or result.
+- 2026-08-08 18:39 CST heartbeat: both Wave023 arms remain non-terminal and
+  `RUNNING` after completing epoch 4 (25,130 optimizer steps). Exact direct
+  weights `0.05/0.20`, EMA decay `0.999`, all six frozen hashes, steps
+  `9929.27`/`3066.26`, and one-child-per-allocation state remain intact.
+  Best/last checkpoints are present at 489,338,630--489,339,910 bytes, both
+  launcher logs have zero fatal markers, IPFS remains 2% used, and protected
+  reads remain zero with Internal-test/Gold unopened. A one-shot GPU sample
+  caught 9929 at 89% and 3066 at 6% while both progress files were exactly at
+  the epoch boundary; this is treated as a transient Dev/checkpoint phase,
+  not a terminal or infrastructure event. No intermediate outcome informed
+  selection, stopping, mutation, or the successor route.
+- 2026-08-08 18:59 CST terminal event: ODC0.20 completed early after seven
+  epochs at Dev Macro-F1 `0.541489174895917` / ODER
+  `0.003571109722346219`; training-receipt SHA-256 is
+  `18ceb1e127f05b80a2c550ddf86a9b43b904ca3eb28bbd232bb9d8f9ec097851`.
+  It passes the original joint gate but neither reaches the Seed17 target nor
+  improves retained EMA `0.5425893764160274 / 0.004106776180698152`.
+  Receipt audit confirms direct cost `0.20`, EMA decay `0.999` with 35,182
+  updates, early-stop completion, protected outcomes unopened, and exact
+  Train/Dev input hashes. ODC0.05 continues unchanged on `9929.27`; only its
+  complete terminal receipt may close Wave023. Allocation 3066 is
+  scientifically free and will receive a separately tested/frozen
+  EMA-plus-cosine/warmup0.05 combination based only on completed terminal
+  evidence, with direct cost disabled.
+- 2026-08-08 19:07 CST new frozen launch: exact commit `4473c8a` passed 17
+  focused scheduler/weight-averaging/direct-cost tests plus
+  `PASS_EMA999_COSINE_WARMUP005_COMBINATION_SMOKE`. Wave024 froze retained
+  EMA decay `0.999` together with completed cosine warmup `0.05` and minimum
+  LR ratio `0.05`, while direct cost remains exactly disabled. Preparation,
+  config, and launcher SHA-256 values are
+  `f69fe26efb68798bb9fa7e6fe4e0df1a6f2cbbd288905b81696593cf81c1f181`,
+  `d4bc9a10592aeaeb5e955aa54dab6d6d8b7b2fffdaaa793d25fb475f6684fc45`,
+  and `dfc9a13de02ca081fa9cb4974e03fa8bfc5d883378ac31d797fdeec507e5e4e4`.
+  Launch intent/control/receipt/finalization SHA-256 values are
+  `a6ebe9c7962a077e4ae0e0b2049263e602c38723f1ba74b324fb2745278b99e6`,
+  `6a947c75945d019e0393ab879c21cbf6b26d76b3ed01b3ac8c75749227b12fff`,
+  `d3784d33a3ac691bcd23bfee0201fb42a344d4552a93e6adb6d0634dce15a18b`,
+  and `eaf068005b1b42c2d8d7b758c9af37ccc834322a43e939cd9acde6593c300668`.
+  The child is healthy on `3066.30` beside unchanged ODC0.05 on `9929.27`;
+  both A800s are about 90--92% utilized, logs have zero fatal markers, IPFS is
+  2% used, one-child-per-allocation holds, and protected reads remain zero.
+- The first local combination smoke used an obsolete keyword
+  `optimizer_step_completed` and failed after all 17 focused tests had passed.
+  Inspecting the exact commit showed the frozen API uses
+  `event="optimizer_step"`; rerunning with that exact signature passed before
+  any Wave024 server namespace or Slurm step existed.

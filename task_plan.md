@@ -1735,3 +1735,12 @@ Status: in progress under explicit 2026-08-06 user authority
 - [ ] Monitor Wave023 direct-cost `0.05` on `9929.27` and `0.20` on
   `3066.26`; only complete terminal receipts may close/select/stop or trigger
   Seed 28/43 confirmation.
+- [x] Record the complete non-winning ODC0.20 terminal receipt without
+  changing the still-running ODC0.05 arm or the retained EMA parent.
+- [x] Use the scientifically free 3066 lane for one separately tested and
+  frozen EMA-plus-cosine/warmup0.05 combination based only on completed
+  Wave020/Wave021/ODC0.20 terminal evidence; keep direct cost disabled and
+  leave 9929.27 untouched.
+- [ ] Monitor Wave024 EMA-plus-cosine/warmup0.05 on `3066.30` independently
+  beside Wave023 ODC0.05 on `9929.27`; only complete terminal receipts may
+  select, stop, or define another combination.
