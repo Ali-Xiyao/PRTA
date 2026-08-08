@@ -1394,3 +1394,14 @@
   the hashes already recorded by Wave019. They provide a clean rank-32,
   constant-LR parent for the scheduler bracket; only the schedule name,
   warmup ratio, and minimum LR ratio need change in each Wave020 config.
+- Wave020 is now frozen as a true parallel scheduler bracket: both configs keep
+  retained DMW010/rank32/tail4, LR `1e-4`, AdamW family, batch, budget, data,
+  loss, and early stopping fixed; they add cosine decay with minimum LR ratio
+  `0.05` and differ only at warmup ratio `0.05` versus `0.10`. The source code
+  is isolated at commit `41a1869`, while all runtime inputs remain the exact
+  original Train/Dev artifacts.
+- The isolated-source mechanism is operational: the two Wave020 children run
+  from the same immutable `41a1869` code snapshot while sharing only the exact
+  read-only Train/Dev inputs from the live runtime root. Slurm exposes one new
+  scientific step per allocation (`9929.18`, `3066.17`), so the user's desired
+  two-lane terminal race is active without source mutation or oversubscription.

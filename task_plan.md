@@ -1639,6 +1639,9 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first local Wave020 controller syntax check put here-string content on the PowerShell header line | 1 | Use a simple local `python -c` compile check followed by Ruff instead; the parser failed before Python ran and no archive, server path, or scientific runtime changed. |
 | The corrected Wave020 controller compiled, but Ruff required its import block to match the repository's Python 3.11 target | 1 | Apply Ruff's import-only safe fix and formatter to the private control script, then rerun compile/lint/format before transfer; no server artifact changed. |
 | The first detached Wave020 launch-controller check compiled but Ruff required import-block normalization | 1 | Apply Ruff's import-only safe fix and formatter to this private controller, then rerun compile/lint/format before any remote launch. No Slurm step or server artifact changed. |
+| The first remote Wave020 preparation used Python 3.11's `datetime.UTC`, but the login-node control interpreter is Python 3.9 | 1 | Replace both private controllers with `datetime.timezone.utc`, rerun local compile/Ruff, and retransfer them. The import failed before archive validation or any server mutation, so no source, wave namespace, or Slurm step was created. |
+| Repository Ruff then recommended the Python 3.11-only `datetime.UTC` alias for the Python-3.9 control scripts | 1 | Add a narrow file-level `UP017` suppression documenting the login-node compatibility boundary; retain all other Ruff rules and rerun compile/lint/format. No remote action occurred. |
+| The first compatibility-suppression placement split the preparation controller's future-import block | 1 | Move the file-level Ruff directive to the first line before the future import and rerun the unchanged checks; no remote artifact changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
