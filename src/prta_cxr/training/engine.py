@@ -14,6 +14,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
 from torch.utils.data import DataLoader
 
 from prta_cxr.artifacts import replace_json_atomic, write_json_atomic
@@ -441,6 +442,77 @@ def _build_learning_rate_scheduler(
     }
 
 
+def _build_weight_averaging(
+    model: nn.Module,
+    optimization: Mapping[str, Any],
+    *,
+    epochs: int,
+) -> tuple[AveragedModel | None, dict[str, Any]]:
+    mode = str(optimization.get("weight_averaging", "none"))
+    if mode == "none":
+        return None, {
+            "name": mode,
+            "update_interval": "disabled",
+        }
+    if mode == "ema":
+        decay = float(optimization.get("ema_decay", 0.999))
+        if not 0.0 <= decay < 1.0:
+            raise ValueError("ema_decay must be in [0, 1)")
+        averaged_model = AveragedModel(
+            model,
+            multi_avg_fn=get_ema_multi_avg_fn(decay),
+            use_buffers=False,
+        )
+        return averaged_model, {
+            "name": mode,
+            "decay": decay,
+            "update_interval": "optimizer_step",
+        }
+    if mode == "swa":
+        start_ratio = float(optimization.get("swa_start_ratio", 0.5))
+        if not 0.0 <= start_ratio < 1.0:
+            raise ValueError("swa_start_ratio must be in [0, 1)")
+        start_epoch = min(int(epochs * start_ratio), epochs - 1)
+        return AveragedModel(model, use_buffers=False), {
+            "name": mode,
+            "start_ratio": start_ratio,
+            "start_epoch": start_epoch,
+            "update_interval": "epoch",
+        }
+    raise ValueError("weight_averaging must be none, ema, or swa")
+
+
+def _maybe_update_weight_averaging(
+    averaged_model: AveragedModel | None,
+    model: nn.Module,
+    audit: Mapping[str, Any],
+    *,
+    event: str,
+    epoch: int,
+) -> bool:
+    if averaged_model is None:
+        return False
+    mode = str(audit["name"])
+    should_update = mode == "ema" and event == "optimizer_step"
+    should_update = should_update or (
+        mode == "swa"
+        and event == "epoch"
+        and epoch >= int(audit["start_epoch"])
+    )
+    if should_update:
+        averaged_model.update_parameters(model)
+    return should_update
+
+
+def _weight_averaged_evaluation_model(
+    model: nn.Module,
+    averaged_model: AveragedModel | None,
+) -> nn.Module:
+    if averaged_model is None or int(averaged_model.n_averaged.item()) == 0:
+        return model
+    return averaged_model.module
+
+
 def train_model(
     model: nn.Module,
     train_loader: DataLoader,
@@ -476,6 +548,11 @@ def train_model(
         config["optimization"],
         total_steps=total_optimizer_steps,
     )
+    averaged_model, weight_averaging_audit = _build_weight_averaging(
+        model,
+        config["optimization"],
+        epochs=epochs,
+    )
     start_epoch = 0
     best_f1 = -1.0
     best_epoch = -1
@@ -488,7 +565,9 @@ def train_model(
             raise ValueError("resume checkpoint config mismatch")
         if checkpoint.get("input_hashes") != dict(input_hashes):
             raise ValueError("resume checkpoint input hash mismatch")
-        model.load_state_dict(checkpoint["model_state"])
+        model.load_state_dict(
+            checkpoint.get("training_model_state", checkpoint["model_state"])
+        )
         optimizer.load_state_dict(checkpoint["optimizer_state"])
         checkpoint_scheduler = checkpoint.get("scheduler_state")
         if scheduler is not None:
@@ -497,6 +576,14 @@ def train_model(
             scheduler.load_state_dict(checkpoint_scheduler)
         elif checkpoint_scheduler is not None:
             raise ValueError("resume checkpoint has unexpected scheduler state")
+        checkpoint_averaging_updates = checkpoint.get("weight_averaging_updates")
+        if averaged_model is not None:
+            if checkpoint_averaging_updates is None:
+                raise ValueError("resume checkpoint weight-averaging state missing")
+            averaged_model.module.load_state_dict(checkpoint["model_state"])
+            averaged_model.n_averaged.fill_(int(checkpoint_averaging_updates))
+        elif checkpoint_averaging_updates is not None:
+            raise ValueError("resume checkpoint has unexpected weight-averaging state")
         start_epoch = int(checkpoint["epoch"]) + 1
         best_f1 = float(checkpoint["best_dev_macro_f1"])
         best_epoch = int(checkpoint.get("best_epoch", checkpoint["epoch"]))
@@ -523,6 +610,7 @@ def train_model(
         "input_hashes": dict(input_hashes),
         "config_sha256": canonical_sha256(config),
         "learning_rate_schedule": scheduler_audit,
+        "weight_averaging": weight_averaging_audit,
         "current_learning_rate": float(optimizer.param_groups[0]["lr"]),
         "completed_optimizer_steps": optimizer_steps,
     }
@@ -542,6 +630,13 @@ def train_model(
                 float(config["optimization"].get("gradient_clip_norm", 1.0)),
             )
             optimizer.step()
+            _maybe_update_weight_averaging(
+                averaged_model,
+                model,
+                weight_averaging_audit,
+                event="optimizer_step",
+                epoch=epoch,
+            )
             if scheduler is not None:
                 scheduler.step()
             optimizer_steps += 1
@@ -557,8 +652,16 @@ def train_model(
                     }
                 )
                 replace_json_atomic(output_root / "training_progress.json", state)
-        metrics = evaluate_loader(
+        _maybe_update_weight_averaging(
+            averaged_model,
             model,
+            weight_averaging_audit,
+            event="epoch",
+            epoch=epoch,
+        )
+        evaluation_model = _weight_averaged_evaluation_model(model, averaged_model)
+        metrics = evaluate_loader(
+            evaluation_model,
             dev_loader,
             weights=config["loss_weights"],
             device=device,
@@ -570,21 +673,29 @@ def train_model(
         if improved:
             best_f1 = float(metrics["macro_f1"])
             best_epoch = epoch
+        evaluation_model_state = evaluation_model.state_dict()
         checkpoint = {
             "schema": "prta-cxr.checkpoint.v1",
             "epoch": epoch,
             "best_dev_macro_f1": best_f1,
             "best_epoch": best_epoch,
             "history": history,
-            "model_state": model.state_dict(),
+            "model_state": evaluation_model_state,
             "optimizer_state": optimizer.state_dict(),
             "scheduler_state": (
                 scheduler.state_dict() if scheduler is not None else None
             ),
             "completed_optimizer_steps": optimizer_steps,
+            "weight_averaging_updates": (
+                int(averaged_model.n_averaged.item())
+                if averaged_model is not None
+                else None
+            ),
             "config": dict(config),
             "input_hashes": dict(input_hashes),
         }
+        if averaged_model is not None:
+            checkpoint["training_model_state"] = model.state_dict()
         _save_checkpoint(output_root / "last.pt", checkpoint)
         if improved:
             _save_checkpoint(output_root / "best.pt", checkpoint)
@@ -646,6 +757,14 @@ def train_model(
             **scheduler_audit,
             "completed_optimizer_steps": optimizer_steps,
             "final_learning_rate": float(optimizer.param_groups[0]["lr"]),
+        },
+        "weight_averaging": {
+            **weight_averaging_audit,
+            "updates": (
+                int(averaged_model.n_averaged.item())
+                if averaged_model is not None
+                else 0
+            ),
         },
         "start_time": started,
         "end_time": ended,
