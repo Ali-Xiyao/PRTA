@@ -1327,3 +1327,8 @@
   unable to improve retained DMW010 so far, the next bounded one-axis test
   brackets gradient clipping at `0.5/2.0` around parent `1.0` while keeping
   optimizer family and all other training/data/method fields unchanged.
+- Beta0.99995 is terminally unstable at Macro-F1 `0.524460` / ODER `0.009910`;
+  together with beta0.9995 it closes the tight beta bracket with neither arm
+  admissible. The already-frozen gradient-clip 2.0 arm therefore launches on
+  the freed 3066 lane while gradient clip 0.5 continues, without using any
+  gradient-clip 0.5 intermediate evidence.
