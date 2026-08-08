@@ -1547,3 +1547,14 @@
   `3.7x`; because both environments used two independent GPU lanes, aggregate
   search throughput improves by approximately the same factor rather than an
   additional factor of two.
+- The bounded H3 state-anchor gate is decisively incompatible with the current
+  retained cached H0 frontier: both terminal H3 variants fall to about `0.413`
+  Macro-F1 with ODER above `0.034`, failing both original-gate dimensions by a
+  wide margin. Direct cost0.05 does not rescue the structural change, so H3 is
+  closed rather than used as a parent for further combinations.
+- A bounded auxiliary-supervision comparison remains legitimate while the
+  expanded adapter cache is input-blocked. Alignment-only0.05 and
+  state-preservation-only0.05 each change one already-supported loss field
+  around retained H0 EMA plus ODC0.05; the shared weight is an
+  outcome-independent half-step from the repository default `0.1`, not a value
+  chosen from any running trajectory.

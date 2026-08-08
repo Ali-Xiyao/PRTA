@@ -1773,9 +1773,21 @@ Status: in progress under explicit 2026-08-06 user authority
   the already-supported H3 bounded state-anchor gate on exact source commit
   `4473c8a`, freeze a two-arm H3 bracket from completed terminal evidence only,
   and launch one arm per retained allocation.
-- [ ] Monitor H3 gate without direct cost on `3066.36` and H3 gate with direct
-  cost0.05 on `9929.37`; only complete terminal receipts may select, stop, or
-  trigger Seed 28/43 confirmation.
+- [x] Monitor H3 gate without direct cost on `3066.36` and H3 gate with direct
+  cost0.05 on `9929.37`; close Wave027 from complete terminal receipts only.
+  Both H3 arms fail both original-gate dimensions, so retained H0 EMA plus
+  ODC0.05 remains unchanged.
+- [x] With tail6/tail8 still blocked on verified Train/Dev raw-image inputs,
+  validate the already-supported alignment/state auxiliary losses on exact
+  source commit `4473c8a` (14/14 focused tests), then freeze Wave028 at one
+  independent auxiliary weight `0.05` per arm around the retained parent.
+- [x] Launch Wave028 alignment0.05 on `3066.40` and state0.05 on `9929.38`,
+  retaining H0, tail4/rank32, EMA0.999, ODC0.05, constant LR, data, cache,
+  optimizer, batch, epoch budget, and early stopping.
+- [ ] Monitor Wave028 from complete terminal receipts only; if either reaches
+  the Seed17 target, stop only the other scientific child and begin exact
+  Seed 28/43 confirmation. Otherwise keep both allocations productive with
+  the next separately tested/frozen authorized successor.
 - [ ] In parallel with scientific monitoring, prepare the minimum exact
   Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
   build for a new tail6/tail8 attempt namespace; do not inspect protected rows.

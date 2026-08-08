@@ -4481,3 +4481,44 @@
   `90bc836d411ea7090bcc7a6fae2a17efa47893ec7ec4bddd836412d0b652dbe0`,
   and `558c64d9dd5221c47462076db22e971d70c6d57e98708a10a67851d247d08443`;
   one scientific child per allocation and zero protected reads hold.
+
+## 2026-08-08 23:06 CST Wave027 closure and Wave028 parallel launch
+
+- Wave027 is terminal/closed from complete receipts only. H3 without direct
+  cost completed after 13 epochs at Dev Macro-F1 `0.4131678533047407` / ODER
+  `0.0374966520846353`; receipt SHA-256 is
+  `e0640d5badbe03636ca9d6f881268cead65bc6188201c3ea9d4179eaeae8d95d`.
+  H3 with direct cost0.05 completed after 15 epochs at `0.4134539692967826` /
+  `0.03490759753593429`; receipt SHA-256 is
+  `4413086642cc7359fb07f0f04a69562458218d9850d49251c488eb137514560b`.
+  Both fail both original-gate dimensions and the Seed17 target. Wave027
+  aggregate SHA-256 is
+  `96446ce0139099230c64b4d6b647eec88fc18edf74a7291dfc2c31c0e346de94`;
+  retained H0 EMA plus ODC0.05 remains `0.542873152713817` /
+  `0.004463887152932774`. Internal-test/Gold remain sealed.
+- Tail6/tail8 remains input-blocked, so the next bounded authorized successor
+  uses existing Block-8 inputs and exact source commit `4473c8a`. An initial
+  quoted test wrapper and a login-node `/tmp` wrapper failed before executing
+  any test or changing scientific state; the shared-path identity-preserving
+  validation then passed 14/14 focused tests on retained allocation 3066.
+- Wave028 freezes two independent auxiliary-supervision arms at weight `0.05`,
+  half the repository default auxiliary weight `0.1`, without using Wave027
+  intermediates. Preparation SHA-256 is
+  `82e822a8a59d4686083ccb262cc3f8c95d26ff64a0639f479f26273636adf7af`.
+  Alignment0.05 config/launcher/launch-receipt SHA-256 values are
+  `c6f36013ab234b23655b32ae3eeb40ff43a01a899b520b3ed795e5a2a4a2e6f7`,
+  `6ee4b1a6c83f426b619c570572b29c2cb4b1d57eb92033b99524e70e3c346ea4`,
+  and `ec631fed15b6e21f2ce1c5272de0602561501736a7429fe5a4b1e0b5ae5d8c28`.
+  State0.05 corresponding values are
+  `8e28e084c553b5041cfb6db86ce1f245cf1f11097732457ef5300d394a2e7c80`,
+  `e4e490a434bb510b826930359f3e6a47acf93c831c5ea771508dc185bc9a71cf`,
+  and `613bd81140e355338dab74c930535fd8917f163e6f06264f51264068f9ab8cd3`.
+  Launch intent/control/finalization SHA-256 values are
+  `6964c0ac3670d07f034edbb32996aab52e4e5c9fc950eac0fb64a4b6950152d1`,
+  `d40c9ede4aa4aa290eb832589e7fd78a880cf7bd1dd62549af2b3c6b03aa6097`,
+  and `babbabdc7a492ef59c4551677b03720ea1dc6b322c17f7d9049bc4f83ecf242b`.
+- Alignment0.05 is active on `3066.40`; state0.05 is active independently on
+  `9929.38`. Initial progress audits bind the intended single auxiliary field,
+  retained EMA0.999 and ODC0.05, constant LR, exact effective config hashes,
+  one scientific child per allocation, and zero protected reads. No parent job
+  or telemetry step was submitted, stopped, or changed.
