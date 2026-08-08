@@ -1481,3 +1481,17 @@
   `9929.20` and `3066.19`; the stage-two policy remains dormant until its
   predeclared epoch boundary, so no intermediate trajectory may alter its
   start, LR ratios, direction multiplier, or ODER ceiling.
+- The Wave022 constrained second stage activates exactly as frozen but does
+  not produce an ODER-qualified stage-two checkpoint in either arm. The LR
+  `0.25` arm's stage-one fallback remains jointly qualified at
+  `0.536704 / 0.004642`, yet still trails retained EMA; lowering LR and
+  doubling the margin after epoch 10 therefore adds no terminal frontier gain.
+- Retained EMA is a valid one-axis parent for the direct-cost bracket. Keeping
+  EMA decay `0.999` fixed while adding weights `0.05/0.20` changes only the
+  newly authorized direct inverse-probability penalty, so Wave023 remains an
+  interpretable bounded scientific comparison rather than an uncontrolled
+  two-parameter combination.
+- Direct-cost audit state uses `name`, `weight`, `penalized_pairs`, and
+  `reduction` rather than a synthetic `enabled` flag. Launch verification must
+  bind those four semantic fields plus the parent EMA audit; a missing helper
+  boolean is not a mechanism failure.

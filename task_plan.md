@@ -1645,6 +1645,8 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first Wave020 heartbeat used unsupported custom step-format tokens with `squeue -s` | 1 | Keep the valid default-field step rows returned by Slurm, use the default step view or only step-valid fields on later monitors, and record that the read-only command changed no allocation, process, or artifact. |
 | The first direct-cost validation found one 90-character error string, and a broad formatter pass proposed unrelated legacy layout changes | 2 | Wrap only the new error string, restore every unrelated formatting change with exact patches, and rerun repository Ruff plus 202/202 tests before freezing. No server source or scientific run changed. |
 | The first private Wave021 closure/Wave022 launch controller format check required Ruff reformatting | 1 | Apply Ruff formatting locally, rerun compile/lint/format checks, and transfer only the validated private controller. No remote artifact or scientific process existed at the failed local check. |
+| The first private Wave023 controller validation found one unused local and required canonical Ruff formatting | 1 | Replace the unused read with an explicit control-receipt existence check, apply Ruff formatting, and rerun compile/lint/format before transfer. No remote artifact existed at this local-only failure. |
+| The first Wave023 launch finalization expected a nonexistent direct-cost `enabled` audit key | 1 | Inspect only the exact Train/Dev progress audit, verify its actual name/reduction/four-pair/weight schema, patch the private finalizer, and rerun without overwriting any immutable artifact. Both unchanged scientific children remained healthy. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1709,9 +1711,9 @@ Status: in progress under explicit 2026-08-06 user authority
   `0.10/0.25` while both Wave021 arms remain blinded and running.
 - [x] After both Wave021 arms were terminal and no target winner existed,
   launch both already-frozen Wave022 arms on their assigned free allocations.
-- [ ] Monitor Wave022 two-stage LR-ratio `0.10` on `9929.20` and `0.25` on
-  `3066.19`; only complete terminal receipts may close/select/stop or trigger
-  Seed 28/43 confirmation.
+- [x] Close Wave022 from complete terminal receipts only. Neither arm reaches
+  the target or improves retained EMA, and neither finds an ODER-qualified
+  stage-two best.
 
 ## 2026-08-08: direct opposite-direction cost capability
 
@@ -1727,5 +1729,9 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] Freeze the capability as Git commit
   `4473c8ae65b65e390b93a58a1bc66ad8d77a4a34` and push only to
   `local/main`.
-- [ ] Do not freeze numeric direct-cost weights from Wave021 intermediate
-  evidence; retain the already-frozen Wave022 queue as the next launch.
+- [x] After both Wave022 arms terminated, deploy the exact direct-cost source,
+  freeze weights `0.05/0.20` around retained EMA, and launch one arm on each
+  scientifically free allocation.
+- [ ] Monitor Wave023 direct-cost `0.05` on `9929.27` and `0.20` on
+  `3066.26`; only complete terminal receipts may close/select/stop or trigger
+  Seed 28/43 confirmation.

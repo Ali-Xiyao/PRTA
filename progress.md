@@ -4261,3 +4261,53 @@
   Both exact children are healthy in stage `macro_f1`, with one scientific
   child per allocation, telemetry preserved, no fatal log marker, and zero
   protected reads.
+
+## 2026-08-08 18:00 CST Wave022 closure and Wave023 parallel launch
+
+- Both Wave022 arms terminated after 15 completed epochs. Stage-two LR ratio
+  `0.10` finished at Dev Macro-F1 `0.5274588584062403` / ODER
+  `0.007052941701633782`, receipt SHA-256
+  `add614d1660d8fdcfec89af59d4a5334aeabc33e371495ff4ef44f2c11510453`;
+  LR ratio `0.25` finished at `0.5367042485619934` /
+  `0.004642442639050085`, receipt SHA-256
+  `90a6ebfa7390c6ddad405397b371ac03dc732b398b3f177c9f5a8c30e27d1000`.
+  The latter passes the original joint gate, but neither reaches the target or
+  improves retained EMA. Both terminal receipts report
+  `qualified_stage_two_best_found=false` and fall back to a stage-one best.
+- Closed Wave022 with aggregate receipt SHA-256
+  `30d93e4145ea08da8328fe2320a5013daf46bea51adc674bc5809ed7bbec553d`;
+  retained EMA remains global best at `0.5425893764160274` /
+  `0.004106776180698152`. Protected reads remain zero.
+- Built exact source archive commit
+  `4473c8ae65b65e390b93a58a1bc66ad8d77a4a34` (1,211,039 bytes), SHA-256
+  `7493fda01844d0cba02eb8ee462ad8f9ed563eeed972c298e04f8289a960fe85`,
+  and deployed it to a new immutable source root. Deployment-receipt SHA-256
+  is `87a7ed085eba51017ccbd9b49ad552a0dcd3159c37af42549b61093c8c50c674`.
+- Froze Wave023 around retained EMA using direct opposite-direction cost
+  weights `0.05/0.20` only after Wave022 was terminal. Preparation-receipt
+  SHA-256 is
+  `dcd551260c3df2102c5e5b2f13efd2143bfc2e2dfff6b6df0c312cad46607624`.
+  Config/launcher SHA-256 values are
+  `4e13989dc7c892b6042349b7150a244054b300c1ad2ed5344f5f9d4cabc3c5a6` /
+  `79aced0022ef158b1b464119469e092bc4b664fa2738f7b133ea0f2c0a58f6fc`
+  for weight `0.05`, and
+  `14471e886704cdea43c0e02a9a989af20363c06a6a9be263dee42d1942ad8bd8` /
+  `4a47b3d2df3697abd7eb871023ab96b778d2e7279692b3caa7c7d8b7568836b2`
+  for weight `0.20`.
+- Launched the exact arms on allocation steps `9929.27` and `3066.26`.
+  Launch-intent/control/finalization SHA-256 values are
+  `798474bc88555f117958ea7170b6de5f28bac0f3418d94a7e67aca9d6c7b628c`,
+  `6edf5080be35d991b3b08fdbbdca6bb39143cd9fbedd7ac25e24d7773b50900b`,
+  and `b5d5ed783c83e2c67ffefbeacaeef8c318956da262decb7346d9e92e57571995`.
+  Per-arm launch-receipt SHA-256 values are
+  `15a08afeeb27697a73a7b4669f04f187da25548ec78f316087bc5e92a816b4f6`
+  and `e21fe00f418d56438223b975a0c39eaa9753334e67671b3f96329fe0c24b699c`.
+  Both children audit exact direct-cost weights, four inverse-label pairs,
+  EMA decay `0.999`, healthy GPU use, one scientific step per allocation,
+  no fatal marker, and zero protected reads.
+- The first private controller validation found an unused control read and
+  formatting drift; both were fixed before transfer. The first post-launch
+  finalization assumed an `enabled` field absent from the actual direct-cost
+  audit schema. It failed before writing finalization; the unchanged live runs
+  remained healthy, and the corrected exact name/reduction/pairs/weight audit
+  then finalized successfully without overwriting any immutable artifact.
