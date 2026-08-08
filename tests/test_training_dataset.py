@@ -80,6 +80,27 @@ def test_feature_dataset_prefers_contiguous_training_store(tmp_path):
     assert torch.equal(actual, expected[[2, 0]].to(torch.float16))
 
 
+def test_block4_training_store_uses_distinct_filename_and_status(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("source-a", "image.png"),
+            "source": "source-a",
+            "image_path": "image.png",
+        }
+    ]
+    root = tmp_path / "block4"
+    write_block8_cache(
+        root,
+        inventory,
+        torch.randn(1, 197, 768),
+        encoder_receipt={"output_block": 4},
+    )
+    receipt = build_block8_training_store(root)
+    assert receipt["status"] == "PASS_BLOCK4_TRAINING_STORE"
+    assert receipt["path"] == "block4_features.f16.bin"
+    assert Block8CacheIndex(root).cache_entry_block == 4
+
+
 def test_matched_wrong_prior_comes_from_a_different_patient(tmp_path):
     rows = []
     inventory = []

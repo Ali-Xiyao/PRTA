@@ -25,13 +25,14 @@ class Block8CacheIndex:
         self,
         cache_root: Path,
         *,
-        required_status: str = "PASS_PRTA_CXR_BLOCK8_CACHE",
+        required_status: str | None = None,
         maximum_loaded_shards: int = 4,
     ):
         if maximum_loaded_shards <= 0:
             raise ValueError("maximum loaded shards must be positive")
         self.cache_root = Path(cache_root)
         self.required_status = required_status
+        self.cache_entry_block = 8
         self.maximum_loaded_shards = maximum_loaded_shards
         self.locations: dict[str, tuple[Path, int]] = {}
         self._loaded: OrderedDict[Path, dict[str, Any]] = OrderedDict()
@@ -47,8 +48,16 @@ class Block8CacheIndex:
                 encoding="utf-8"
             )
         )
-        if merged["status"] != self.required_status:
-            raise ValueError("Block-8 cache does not match the required status")
+        self.cache_entry_block = int(
+            merged.get(
+                "cache_entry_block",
+                dict(merged.get("encoder", {})).get("output_block", 8),
+            )
+        )
+        inferred_status = f"PASS_PRTA_CXR_BLOCK{self.cache_entry_block}_CACHE"
+        required_status = self.required_status or inferred_status
+        if merged["status"] != required_status:
+            raise ValueError("intermediate cache does not match the required status")
         if "parts" not in merged:
             self._build_direct_index(merged)
             store = merged.get("training_store")
@@ -58,9 +67,9 @@ class Block8CacheIndex:
                     path = self.cache_root / path
                 shape = tuple(int(value) for value in store["shape"])
                 if shape != (len(self.locations), 197, 768):
-                    raise ValueError("Block-8 training store shape mismatch")
+                    raise ValueError("intermediate training store shape mismatch")
                 if path.stat().st_size != int(store["bytes"]):
-                    raise ValueError("Block-8 training store byte size mismatch")
+                    raise ValueError("intermediate training store byte size mismatch")
                 self._training_store_path = path
                 self._training_store_shape = shape
             return
@@ -132,7 +141,7 @@ class Block8CacheIndex:
             return value
         value = torch.load(path, map_location="cpu", weights_only=True)
         if tuple(value["features"].shape[1:]) != (197, 768):
-            raise ValueError(f"unexpected Block-8 shard shape: {path}")
+            raise ValueError(f"unexpected intermediate shard shape: {path}")
         self._loaded[path] = value
         while len(self._loaded) > self.maximum_loaded_shards:
             self._loaded.popitem(last=False)

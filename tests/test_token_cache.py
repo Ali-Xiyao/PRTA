@@ -63,6 +63,29 @@ def test_direct_cache_round_trip_and_namespaced_key(tmp_path):
     assert loaded.shape == (2, 197, 768)
 
 
+def test_block4_cache_has_distinct_identity_and_remains_indexable(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("mimic", "image.jpg"),
+            "source": "mimic",
+            "image_path": "image.jpg",
+        }
+    ]
+    root = tmp_path / "block4"
+    manifest = write_block8_cache(
+        root,
+        inventory,
+        torch.randn(1, 197, 768),
+        encoder_receipt={"output_block": 4},
+    )
+    assert manifest["schema"] == "prta-cxr.block4-cache.v1"
+    assert manifest["status"] == "PASS_PRTA_CXR_BLOCK4_CACHE"
+    assert manifest["shards"][0]["path"] == "block4_00000.pt"
+    cache = Block8CacheIndex(root)
+    assert cache.cache_entry_block == 4
+    assert cache.get_many([inventory[0]["image_key"]]).shape == (1, 197, 768)
+
+
 def test_streaming_cache_resumes_without_rewriting_completed_shards(tmp_path):
     inventory = [
         {

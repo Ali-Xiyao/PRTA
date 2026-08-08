@@ -50,11 +50,27 @@ def _validate_feature_tensor(
     features: torch.Tensor, *, expected_images: int
 ) -> None:
     if features.ndim != 3 or tuple(features.shape[1:]) != (197, 768):
-        raise ValueError("Block-8 features must have shape [N, 197, 768]")
+        raise ValueError("intermediate features must have shape [N, 197, 768]")
     if features.shape[0] != expected_images:
         raise ValueError("inventory and feature counts differ")
     if not torch.isfinite(features).all():
-        raise ValueError("Block-8 features contain non-finite values")
+        raise ValueError("intermediate features contain non-finite values")
+
+
+def _entry_block(encoder_receipt: Mapping[str, Any]) -> int:
+    value = int(encoder_receipt.get("output_block", 8))
+    if value not in {4, 6, 8}:
+        raise ValueError("cache encoder output_block must be 4, 6, or 8")
+    return value
+
+
+def _cache_status(entry_block: int) -> str:
+    return f"PASS_PRTA_CXR_BLOCK{entry_block}_CACHE"
+
+
+def _cache_schema(entry_block: int, *, build: bool = False) -> str:
+    suffix = "-build" if build else ""
+    return f"prta-cxr.block{entry_block}-cache{suffix}.v1"
 
 
 def _streaming_identity(
@@ -63,9 +79,11 @@ def _streaming_identity(
     shard_size: int,
     encoder_receipt: Mapping[str, Any],
 ) -> dict[str, Any]:
+    entry_block = _entry_block(encoder_receipt)
     return {
-        "schema": "prta-cxr.block8-cache-build.v1",
+        "schema": _cache_schema(entry_block, build=True),
         "status": "IN_PROGRESS",
+        "cache_entry_block": entry_block,
         "cached_image_count": len(normalized),
         "token_shape": [197, 768],
         "dtype": "float16",
@@ -84,9 +102,10 @@ def _validate_recorded_streaming_shards(
 ) -> None:
     total = int(state["cached_image_count"])
     shard_size = int(state["shard_size"])
+    entry_block = int(state.get("cache_entry_block", 8))
     completed = 0
     for index, entry in enumerate(state["shards"]):
-        expected_name = f"block8_{index:05d}.pt"
+        expected_name = f"block{entry_block}_{index:05d}.pt"
         if entry["path"] != expected_name:
             raise ValueError("streaming cache shard order is not contiguous")
         expected_count = min(shard_size, total - completed)
@@ -137,6 +156,7 @@ def prepare_streaming_block8_cache(
     state = json.loads(state_path.read_text(encoding="utf-8"))
     identity_fields = (
         "schema",
+        "cache_entry_block",
         "cached_image_count",
         "token_shape",
         "dtype",
@@ -152,7 +172,10 @@ def prepare_streaming_block8_cache(
         raise ValueError("resume cache inventory content mismatch")
     _validate_recorded_streaming_shards(output_root, state)
     recorded_names = {str(entry["path"]) for entry in state["shards"]}
-    disk_names = {path.name for path in output_root.glob("block8_*.pt")}
+    entry_block = int(state.get("cache_entry_block", 8))
+    disk_names = {
+        path.name for path in output_root.glob(f"block{entry_block}_*.pt")
+    }
     if disk_names != recorded_names:
         raise ValueError("resume cache has unregistered or missing shard files")
     return normalized, state
@@ -171,7 +194,8 @@ def write_streaming_block8_shard(
     if expected_count <= 0:
         raise ValueError("streaming cache already contains every image")
     _validate_feature_tensor(features, expected_images=expected_count)
-    name = f"block8_{index:05d}.pt"
+    entry_block = int(state.get("cache_entry_block", 8))
+    name = f"block{entry_block}_{index:05d}.pt"
     target = output_root / name
     if target.exists():
         raise FileExistsError(f"refusing to overwrite cache shard: {target}")
@@ -202,9 +226,11 @@ def finalize_streaming_block8_cache(
     if int(state["completed_images"]) != int(state["cached_image_count"]):
         raise ValueError("cannot finalize an incomplete streaming cache")
     _validate_recorded_streaming_shards(output_root, state)
+    entry_block = int(state.get("cache_entry_block", 8))
     manifest = {
-        "schema": "prta-cxr.block8-cache.v1",
-        "status": "PASS_PRTA_CXR_BLOCK8_CACHE",
+        "schema": _cache_schema(entry_block),
+        "status": _cache_status(entry_block),
+        "cache_entry_block": entry_block,
         "cached_image_count": int(state["cached_image_count"]),
         "token_shape": [197, 768],
         "dtype": "float16",
@@ -242,9 +268,15 @@ def build_block8_training_store(output_root: Path) -> dict[str, Any]:
     output_root = Path(output_root)
     manifest_path = output_root / "cache_manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("status") != "PASS_PRTA_CXR_BLOCK8_CACHE":
-        raise ValueError("training store requires a complete Block-8 cache")
-    target = output_root / "block8_features.f16.bin"
+    entry_block = int(
+        manifest.get(
+            "cache_entry_block",
+            dict(manifest.get("encoder", {})).get("output_block", 8),
+        )
+    )
+    if manifest.get("status") != _cache_status(entry_block):
+        raise ValueError("training store requires a complete intermediate cache")
+    target = output_root / f"block{entry_block}_features.f16.bin"
     receipt_path = output_root / "training_store_receipt.json"
     expected_bytes = (
         int(manifest["cached_image_count"]) * 197 * 768 * 2
@@ -287,8 +319,9 @@ def build_block8_training_store(output_root: Path) -> dict[str, Any]:
         if temporary.exists():
             temporary.unlink()
     receipt = {
-        "schema": "prta-cxr.block8-training-store.v1",
-        "status": "PASS_BLOCK8_TRAINING_STORE",
+        "schema": f"prta-cxr.block{entry_block}-training-store.v1",
+        "status": f"PASS_BLOCK{entry_block}_TRAINING_STORE",
+        "cache_entry_block": entry_block,
         "path": target.name,
         "rows": rows,
         "shape": [rows, 197, 768],
@@ -334,6 +367,8 @@ def write_block8_cache(
     if shard_size <= 0:
         raise ValueError("shard_size must be positive")
     _validate_feature_tensor(features, expected_images=len(inventory))
+    receipt = dict(encoder_receipt or {})
+    entry_block = _entry_block(receipt)
 
     output_root.mkdir(parents=True)
     normalized = _normalized_inventory(inventory)
@@ -341,7 +376,7 @@ def write_block8_cache(
     shards = []
     for shard_index, start in enumerate(range(0, len(normalized), shard_size)):
         selected = features[start : start + shard_size].detach().cpu().to(torch.float16)
-        name = f"block8_{shard_index:05d}.pt"
+        name = f"block{entry_block}_{shard_index:05d}.pt"
         target = output_root / name
         temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
         try:
@@ -358,15 +393,16 @@ def write_block8_cache(
             }
         )
     manifest = {
-        "schema": "prta-cxr.block8-cache.v1",
-        "status": "PASS_PRTA_CXR_BLOCK8_CACHE",
+        "schema": _cache_schema(entry_block),
+        "status": _cache_status(entry_block),
+        "cache_entry_block": entry_block,
         "cached_image_count": len(normalized),
         "token_shape": [197, 768],
         "dtype": "float16",
         "inventory_path": "image_inventory.json",
         "inventory_sha256": canonical_sha256(normalized),
         "shards": shards,
-        "encoder": dict(encoder_receipt or {}),
+        "encoder": receipt,
         "contains_reports": False,
         "contains_labels": False,
         "contains_patient_identifiers": False,
