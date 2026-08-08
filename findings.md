@@ -1558,3 +1558,16 @@
   around retained H0 EMA plus ODC0.05; the shared weight is an
   outcome-independent half-step from the repository default `0.1`, not a value
   chosen from any running trajectory.
+- State-preservation auxiliary supervision is the first bounded model-side
+  change to approach the aspirational Seed17 target without sacrificing ODER:
+  state0.05 reaches `0.545793 / 0.004375`, improving retained ODC0.05 by about
+  `0.002920` Macro-F1 while remaining below the ODER ceiling. Alignment0.05
+  trails substantially at `0.536820 / 0.004375`, so the completed evidence
+  supports refining only the state-loss weight.
+- The remaining Seed17 gap is only about `0.000301` Macro-F1. A symmetric
+  `0.025/0.075` bracket around state0.05 is therefore a bounded, interpretable
+  single-axis refinement; it preserves H0, tail4/rank32, EMA0.999, ODC0.05,
+  constant LR, data/cache, optimizer, batch, budget, and early stopping.
+- Successor preparation must recheck terminality immediately before freeze.
+  The abandoned CMCP controller correctly rejected stale one-arm evidence when
+  state0.05 became terminal, preventing a scientifically obsolete launch.

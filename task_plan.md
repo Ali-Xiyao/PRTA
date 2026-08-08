@@ -667,7 +667,7 @@ Status: complete
 - Record GO/HOLD/STOP for this rerun, keep Internal-test/Gold sealed, run final
   audits, and push only Git-safe aggregates/code to the local bare remote.
 
-## Next Step
+## Historical rolling next-step log (superseded)
 
 Use only retained allocations `9929` and `3066`, one independent single-GPU
 run per allocation; never use retired allocation `4161` again. Wave012 remains
@@ -1647,6 +1647,9 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first private Wave021 closure/Wave022 launch controller format check required Ruff reformatting | 1 | Apply Ruff formatting locally, rerun compile/lint/format checks, and transfer only the validated private controller. No remote artifact or scientific process existed at the failed local check. |
 | The first private Wave023 controller validation found one unused local and required canonical Ruff formatting | 1 | Replace the unused read with an explicit control-receipt existence check, apply Ruff formatting, and rerun compile/lint/format before transfer. No remote artifact existed at this local-only failure. |
 | The first Wave023 launch finalization expected a nonexistent direct-cost `enabled` audit key | 1 | Inspect only the exact Train/Dev progress audit, verify its actual name/reduction/four-pair/weight schema, patch the private finalizer, and rerun without overwriting any immutable artifact. Both unchanged scientific children remained healthy. |
+| The first Wave029 private-controller format gate required canonical Ruff formatting | 1 | Apply Ruff formatting, then rerun compile/lint/format checks before transfer. No remote namespace or scientific child existed at the failed local check. |
+| A read-only Wave029 status command embedded a pipe-bearing grep pattern through PowerShell/SSH quoting | 1 | Split the audit into simpler literal-path reads; the failed command stopped locally before SSH and changed no runtime state. |
+| The first Wave029 step-state views reused unsupported `squeue -s` `%T`/`%t` format tokens | 2 | Verify the exact child steps with `sacct` and retain the successful file/GPU/disk evidence. Both commands were read-only and the children continued unchanged. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1784,10 +1787,29 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] Launch Wave028 alignment0.05 on `3066.40` and state0.05 on `9929.38`,
   retaining H0, tail4/rank32, EMA0.999, ODC0.05, constant LR, data, cache,
   optimizer, batch, epoch budget, and early stopping.
-- [ ] Monitor Wave028 from complete terminal receipts only; if either reaches
+- [x] Close Wave028 from complete terminal receipts only. Alignment0.05 passes
+  the original joint gate but trails the retained parent; state0.05 becomes
+  the new qualified Dev frontier at `0.5457930486390509 / 0.004374609409874119`
+  and misses the Seed17 target by about `0.000301` Macro-F1.
+- [x] Fail closed when the initially prepared CMCP successor detects the newly
+  terminal state arm before freezing; create no CMCP namespace or child.
+- [x] From both complete Wave028 receipts, freeze a tight state-loss bracket at
+  `0.025/0.075` around retained state0.05 and launch Wave029 independently on
+  `3066.42` and `9929.39` without changing any other scientific field.
+- [ ] Monitor Wave029 from complete terminal receipts only; if either reaches
   the Seed17 target, stop only the other scientific child and begin exact
   Seed 28/43 confirmation. Otherwise keep both allocations productive with
   the next separately tested/frozen authorized successor.
 - [ ] In parallel with scientific monitoring, prepare the minimum exact
   Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
   build for a new tail6/tail8 attempt namespace; do not inspect protected rows.
+
+## Next Step
+
+Monitor Wave029 state0.025 on `3066.42` and state0.075 on `9929.39` without
+selecting, stopping, or mutating from intermediate epochs. Act only on complete
+terminal receipts: a target winner triggers exact Seed 28/43 confirmation on
+both retained allocations; a non-winning terminal arm releases only its own
+allocation for a separately tested and frozen successor based on completed
+evidence. Keep the verified Train/Dev-only Block-4 input repair separate and
+leave Internal-test/Gold sealed.

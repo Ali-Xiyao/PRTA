@@ -4522,3 +4522,40 @@
   retained EMA0.999 and ODC0.05, constant LR, exact effective config hashes,
   one scientific child per allocation, and zero protected reads. No parent job
   or telemetry step was submitted, stopped, or changed.
+
+## 2026-08-09 00:27 CST Wave028 closure and Wave029 state-loss bracket launch
+
+- Wave028 is terminal/closed from complete receipts only. Alignment0.05
+  completed after seven epochs at Dev Macro-F1 `0.5368200469584875` / ODER
+  `0.004374609409874119`; receipt SHA-256 is
+  `3f8bc2d4a3c39116b42355aa2f0303a7c365df150a1df66bdaa30b7673f94667`.
+  State0.05 completed after nine epochs at `0.5457930486390509` /
+  `0.004374609409874119`; receipt SHA-256 is
+  `da9c58b457a3b148ff375f895f5452dc801f3c3be682787f9e26777fe3e872d4`.
+  Both pass the original joint gate, but only state0.05 improves the retained
+  frontier. It misses the Seed17 target by approximately `0.000301`
+  Macro-F1. Wave028 aggregate SHA-256 is
+  `66797c6c0da58af88a72ed8e9c8ce6a2cd59b39e265de71854dcb4fd3cf9e3d7`.
+- The initially prepared CMCP successor detected that the state arm had become
+  terminal before freeze and failed closed. No CMCP namespace, config, output,
+  or Slurm child was created. Exact source validation had already passed 15/15
+  focused tests, but no scientific action was taken from stale one-arm evidence.
+- Complete Wave028 evidence supports a tight single-axis state-loss bracket at
+  weights `0.025/0.075` around the newly retained state0.05 setting. Wave029
+  preparation SHA-256 is
+  `353974723b1dc031f6d68ccd7bb20ad17b188b420f87efa7548553cbac9ff502`.
+  State0.025 config/launcher/launch-receipt SHA-256 values are
+  `d7c8f00f68d092149e6702ec15ae4f99e8bd3b861ee7830fb233ba8783288c80`,
+  `662a972e0ca5ba57885ad5708f991da04f45625a203bfd0cf850adda4c44d646`,
+  and `52086325bba60adfdf7afdfb5802546ea3f56eb210e40637c38455c724e26511`.
+  State0.075 corresponding values are
+  `adc231aaac99994965f8bd90f606e00300cd4804b22ba5de2de3b65d888360e4`,
+  `dfe6c7159539569e211ac64e08e7bf0124fb5b7449eb3694175acb3eb5458b92`,
+  and `246fba1b28cd7ef11c3f909cb18f796f51e230e41bc64a5f49192d21b439546a`.
+  Launch intent/control/finalization SHA-256 values are
+  `0e6f5292186c9d777d7427a12f31cc019f5ab8b431fa0e25022924f21951155f`,
+  `ae5e23e4018c5b5aedcf05431034b47275681da4e8b02016ea6d6aa27a0b7a9d`,
+  and `25a51f4d147fbbcd46c4b02f4a6d7efe8b39687b5d0093169befd4543fc0dcd1`.
+- State0.025 is active on `3066.42`; state0.075 is active independently on
+  `9929.39`. Each allocation has one scientific child, the parent allocations
+  and telemetry remain untouched, and protected reads remain zero.
