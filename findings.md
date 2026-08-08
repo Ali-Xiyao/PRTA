@@ -1405,3 +1405,55 @@
   read-only Train/Dev inputs from the live runtime root. Slurm exposes one new
   scientific step per allocation (`9929.18`, `3066.17`), so the user's desired
   two-lane terminal race is active without source mutation or oversubscription.
+- A correct SWA implementation cannot evaluate the copied averaged module
+  before its first scheduled update; doing so would score initialization-time
+  weights. The implementation therefore falls back to the live training model
+  until `n_averaged > 0`, then evaluates the averaged module.
+- Weight-averaged checkpoints need two distinct model states: the evaluated
+  averaged state for best-checkpoint inference and the raw optimizer-coupled
+  training state for exact epoch-boundary resume. Persisting the averaging
+  update count is sufficient to reconstruct the EMA/SWA accumulator because
+  the averaging rule itself is frozen in the exact config.
+- The EMA/SWA capability is now locally identity-pinned at commit `18445b2`
+  with default `weight_averaging=none`, EMA decay default `0.999`, and SWA
+  start-ratio default `0.5`. Those defaults are implementation defaults only;
+  a scientific EMA-versus-SWA wave still requires an immutable preparation
+  receipt and exact numeric config freeze before either arm may launch.
+- Source deployment and scientific launch are separable safety boundaries.
+  An immutable source archive and frozen unstarted configs can be prepared
+  while both GPUs remain occupied because this neither mutates the live
+  Wave020 snapshot nor adds a Slurm step. Predeployment removes control-plane
+  idle time without using intermediate outcomes.
+- Wave021 is therefore frozen before either Wave020 terminal receipt, anchored
+  to the already-retained DMW010 constant-LR parent. Its numeric choices are
+  exactly the independently declared implementation defaults (EMA `0.999`,
+  SWA start ratio `0.5`), so the freeze is not outcome-adaptive to any hidden
+  Wave020 trajectory.
+- Cosine decay with either 0.05 or 0.10 warmup does not improve the retained
+  constant-LR DMW010 parent. The closer warmup 0.05 arm nearly matches parent
+  Macro-F1 (`0.538193` versus `0.538661`) but breaches the ODER ceiling at
+  `0.006607`; warmup 0.10 is worse on both dimensions. Wave020 therefore
+  rejects the entire scheduler bracket rather than trading F1 for direction
+  safety.
+- The first live Wave021 audit confirms the source-side averaging policy is
+  active exactly as frozen: EMA updates per optimizer step at decay `0.999`,
+  whereas SWA remains on raw-model evaluation until its epoch-10 averaging
+  start. This is expected protocol behavior, not an intermediate selection
+  signal.
+- A safe two-stage implementation needs two separate boundaries: the training
+  policy changes at a frozen epoch, while checkpoint selection changes only
+  after an epoch is complete. Stage-two checkpoints must pass the frozen ODER
+  ceiling before Macro-F1 ranking; otherwise a high-F1/high-ODER epoch could
+  silently defeat the purpose of the second stage.
+- The transition also needs its own early-stopping clock. Resetting that clock
+  at the frozen stage boundary guarantees the lower-LR constrained phase gets
+  its declared patience window, while a resume stores the same clock and
+  qualified-stage flag rather than reconstructing them from mutable history.
+- The implementation freeze `4fb2c9f` is capability evidence only. It leaves
+  both Wave021 source snapshots untouched and does not authorize a numeric
+  two-stage scientific bracket; that freeze remains terminal-evidence gated.
+- Freezing the next two-stage bracket while Wave021 remains scientifically
+  blinded removes control-plane idle time without outcome leakage. The two
+  Wave022 arms share the same start boundary, ODER ceiling, and direction-cost
+  multiplier and vary only the low-LR ratio (`0.10` versus `0.25`), so a later
+  terminal comparison remains interpretable.

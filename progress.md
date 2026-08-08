@@ -4075,3 +4075,127 @@
 - Froze launch intent SHA-256 `e02c4dee1fa5a8eeeea400094cf7ff16634e8a8cf901cf82183e4d7a6d26b4e7`, then detached both scientific children at 12:50 CST without submitting a parent job. Warmup 0.05 runs on allocation 9929 step `9929.18`; warmup 0.10 runs independently on allocation 3066 step `3066.17`.
 - Both children produced `RUNNING` progress with their exact effective-config hashes. Launch finalization is `PASS_BOTH_CHILDREN_LAUNCHED`; launch-control SHA-256 is `070d3003bc7e1fcef090df2c9f5467976c2c2ca7a1c281cd21f3b7ec4c897f0b`. Warmup 0.05/0.10 launch-receipt SHA-256 values are `b78b0c7479b4cb1e425742a7fb5a38ab016877e2bd8c1d48efe0bf74e7bba3bc` and `2a36669b7367d20f6ec38191860339453258450506f54ccaa5a968b2d0110525`.
 - Each retained allocation has exactly one scientific child plus its preserved telemetry/batch step. Protected reads remain zero. Only a complete terminal receipt meeting Macro-F1 `>=0.5460939600646948` and ODER `<=0.00553522006963664` may stop the competing child and trigger Seed 28/43 confirmation; intermediate epochs cannot affect either run.
+
+## 2026-08-08 13:03 CST Wave020 health and EMA/SWA implementation freeze
+
+- Read-only monitoring confirms both Wave020 children remain healthy and
+  non-terminal on `9929.18` and `3066.17`. Each retained allocation still has
+  exactly one scientific child plus telemetry/batch, `/ipfs` has about 1.2 PB
+  free, launch/preparation receipts remain present, and protected reads remain
+  zero. No intermediate metric was used for selection, stopping, or mutation.
+- Added default-off EMA/SWA support locally. EMA updates after each optimizer
+  step; SWA begins at its frozen epoch and averages once per epoch. Dev
+  selection evaluates the actual averaged weights once at least one average
+  exists, while checkpoints preserve both the raw resumable training weights
+  and the evaluated averaged weights plus update count.
+- Focused scheduler/averaging tests pass 12/12, the full repository suite
+  passes 184/184, repository-wide Ruff lint passes, and the staged diff is
+  clean. The implementation is frozen at Git commit
+  `18445b246b1f8d5bec196d11c7739d41e6555d22`; `local/main` matches exactly,
+  no cloud push occurred, and the two user-modified paper documents remain
+  unstaged.
+- This implementation has not been deployed to either live Wave020 child and
+  no EMA/SWA numeric scientific config is frozen yet. Deployment remains gated
+  on a complete non-winning Wave020 terminal receipt freeing an allocation.
+
+## 2026-08-08 13:15 CST Wave021 immutable predeployment and freeze
+
+- A fresh terminal-blind status audit found both Wave020 arms still `RUNNING`
+  at epoch 3 on `9929.18` and `3066.17`; no terminal receipt exists, every
+  frozen hash remains exact, both best/last checkpoints are present, launcher
+  logs have no fatal marker, and protected reads remain zero. No intermediate
+  metric was read or used for the successor freeze.
+- Built the exact Git archive for EMA/SWA commit
+  `18445b246b1f8d5bec196d11c7739d41e6555d22`: 1,202,720 bytes, SHA-256
+  `612b1948f5180356b6fa99effce5cab33ed1d57c9298e798e28888c1cfe0b05b`.
+  Deployed it to a new isolated immutable source root; deployment-receipt
+  SHA-256 is `48d1ff792e4bd528540ddc44c29d73dddf7b1e94b5f5e02b6bf0a2a6414dd09b`.
+- Atomically froze `wave021_weight_averaging_v1` around retained constant-LR
+  DMW010 using predeclared implementation defaults only. EMA decay `0.999` is
+  assigned to allocation 9929 with config/launcher SHA-256
+  `fe019a661414baed57b3d5b529c6e30b9693a15696a2a970f1eb01c5ee4011b6` /
+  `35ec04d2d73cfe88c3b7522191f66501565d80c487edbf21dd605b4f029bdffd`;
+  SWA start ratio `0.5` is assigned to allocation 3066 with SHA-256
+  `bf6485c08b022b3e9c5581fabc92cb2501d3ce0210588fe4b21d2f0173b906a1` /
+  `ce33fb7945e19179521713d4180ac501d11e8581dd4e646154f144b45277328f`.
+  Wave021 preparation-receipt SHA-256 is
+  `3ab25ba9b72a16733264535f20f9177e025650b386997f90f52e7bf7342d76c3`.
+- Independent post-freeze audit passes: source commit/deployment/config/
+  launcher/preparation hashes are exact, Wave021 has no registry or run-output
+  entries, `training_started=false`, and the only scientific Slurm steps remain
+  Wave020 `9929.18` and `3066.17`. No Wave021 child has launched yet.
+
+## 2026-08-08 14:20 CST Wave020 closure and Wave021 parallel launch
+
+- Both Wave020 arms are terminal after nine completed epochs. Warmup 0.05
+  finished at Dev Macro-F1 `0.538193426869759` / ODER
+  `0.006606552986340506`, receipt SHA-256
+  `0c17fa6a5b2ecd917ced3cdfa174dc0da87a868dadee980e789c9cbe7a9ab4a2`;
+  warmup 0.10 finished at `0.5281280848216965` /
+  `0.0068743862155164715`, receipt SHA-256
+  `bc94666369efadd4ac5a6efaf9c46bcfc467810d0c7e76b79c228f9817faccad`.
+  Neither passes the original joint gate or aspirational target.
+- Closed Wave020 fail-closed with aggregate receipt SHA-256
+  `b721dbc2512462b48fe382edb3781324f920d1d5063b5e9f69dffb6bc52cc29a`;
+  constant-LR DMW010 remains globally retained at Macro-F1
+  `0.5386611795068659` / ODER `0.005178109097402018`.
+- Froze Wave021 launch intent SHA-256
+  `559f77eebb98e80b268247dd3b19345497392b51d12d2e9494309902341ba0ec`
+  and detached both children without submitting/cancelling a parent job.
+  EMA runs on allocation 9929 step `9929.19`; SWA runs on allocation 3066
+  step `3066.18`. Launch-control receipt SHA-256 is
+  `b199eca675e85d98826538fd97472085c1f6c797f66bd3533c3cce88a2d32240`.
+- Launch finalization is `PASS_BOTH_CHILDREN_LAUNCHED`. EMA/SWA launch-receipt
+  SHA-256 values are
+  `bc849097ba5e71543cb82a59e0beab10040c519bfabcc285e00f1642530ad8d9`
+  and `e1eaa7de265ae70c48b41693aa0df9fa63d0fc816336379902da418af645fa01`.
+  Both exact configs are active and correctly audit EMA decay `0.999` versus
+  SWA start epoch 10/start ratio `0.5`; each reached epoch 0 step 2,000/5,026
+  with no fatal marker. Protected reads remain zero and telemetry is preserved.
+
+## 2026-08-08 14:42 CST two-stage capability freeze
+
+- Read-only monitoring found both Wave021 children healthy and non-terminal on
+  `9929.19` and `3066.18`, with exact source/config/launcher/receipt hashes,
+  checkpoints growing normally, no fatal log marker, ample shared storage, and
+  zero protected reads. No intermediate metric was read or used.
+- Added backward-compatible, default-off two-stage training support locally.
+  Stage one retains normal Macro-F1 selection. At a predeclared epoch boundary,
+  stage two lowers the constant learning rate, increases direction-margin cost,
+  and admits best checkpoints only when the explicit frozen ODER ceiling passes.
+  If no stage-two epoch qualifies, the stage-one checkpoint remains the
+  fail-closed fallback.
+- Resume/progress/checkpoint/receipt state now records the active stage, active
+  loss weights, ODER-qualified-stage flag, and early-stopping improvement clock.
+  Existing configs omit the feature and retain their prior numerical policy.
+- Focused tests pass 16/16, the full repository suite passes 194/194, and Ruff
+  plus diff checks pass. The capability is frozen at Git commit
+  `4fb2c9f5f07780e8f9cf136f1297fa4d36cd3a66`; `local/main` matches exactly,
+  no cloud push occurred, and the two user-modified paper documents remain
+  unstaged. No two-stage source snapshot or scientific config has been deployed.
+
+## 2026-08-08 14:49 CST Wave022 immutable predeployment and freeze
+
+- Built the exact Git archive for two-stage commit
+  `4fb2c9f5f07780e8f9cf136f1297fa4d36cd3a66`: 1,204,746 bytes, SHA-256
+  `94841fdf7bf3309d72e08c51e80839f3ae3ff0d6f4723d43b043c3c4310f4539`.
+  Deployed it to a new isolated immutable source root; deployment-receipt
+  SHA-256 is `aba6672cb863d13c9e63764d06e7979400e838ae015ad6b34773b9fb878bd863`.
+- Atomically froze `wave022_two_stage_low_lr_bracket_v1` without reading any
+  Wave021 intermediate metric. Both arms use the retained DMW010 parent,
+  stage-two start ratio `0.5` (zero-based epoch 10 of 20), direction-margin
+  multiplier `2.0`, and the original ODER ceiling
+  `0.00553522006963664`; they differ only at stage-two LR ratio `0.10` versus
+  `0.25`.
+- Wave022 preparation-receipt SHA-256 is
+  `0e3ff9169cdeeb2bcf26dc05abd7360f29080cab2c0012675e3b8d7dc3a7ada4`.
+  The 0.10 arm assigned to 9929 has config/launcher SHA-256
+  `2380b051ad19a7363151db5c7fab1b818c1831ea5946dacb428b12cb86ba6252` /
+  `fb3d902f8e8259fbf9a16ee9c93aa468dd1434223a1926abff73483d18dd03fe`;
+  the 0.25 arm assigned to 3066 has
+  `74006c3d3470fd99d47cbfc408a41c63f7cbd6358c95d24e5f05e8ac2c8c2182` /
+  `f5e9b1c0b58ea785579c9a32dbb14b0f3baa0dd3f4dc95fa1633acd1f9228f49`.
+- Post-freeze audit passes every exact hash, confirms no registry, log, launch
+  receipt, or run output exists, records `training_started=false`, and keeps
+  protected reads at zero. Wave021 remains healthy/non-terminal on `9929.19`
+  and `3066.18`; Wave022 has not launched.

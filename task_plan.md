@@ -1642,6 +1642,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first remote Wave020 preparation used Python 3.11's `datetime.UTC`, but the login-node control interpreter is Python 3.9 | 1 | Replace both private controllers with `datetime.timezone.utc`, rerun local compile/Ruff, and retransfer them. The import failed before archive validation or any server mutation, so no source, wave namespace, or Slurm step was created. |
 | Repository Ruff then recommended the Python 3.11-only `datetime.UTC` alias for the Python-3.9 control scripts | 1 | Add a narrow file-level `UP017` suppression documenting the login-node compatibility boundary; retain all other Ruff rules and rerun compile/lint/format. No remote action occurred. |
 | The first compatibility-suppression placement split the preparation controller's future-import block | 1 | Move the file-level Ruff directive to the first line before the future import and rerun the unchanged checks; no remote artifact changed. |
+| The first Wave020 heartbeat used unsupported custom step-format tokens with `squeue -s` | 1 | Keep the valid default-field step rows returned by Slurm, use the default step view or only step-valid fields on later monitors, and record that the read-only command changed no allocation, process, or artifact. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1657,3 +1658,52 @@ Status: in progress under explicit 2026-08-06 user authority
 - [ ] After the live local run ends, copy the static 97.9 GB cache and then
   snapshot the 10.2 GB active-results directory; do not transfer either while
   it is being read or written.
+
+## 2026-08-08: EMA/SWA successor preparation
+
+- [x] Verify both Wave020 arms remain live on `9929.18` and `3066.17`, with
+  one independent scientific child per retained allocation, no terminal
+  receipt, ample shared storage, and zero protected reads.
+- [x] Add backward-compatible `none`/`ema`/`swa` weight-averaging support
+  without changing the immutable Wave020 source snapshot.
+- [x] Make EMA update per optimizer step and SWA update per epoch from a
+  frozen start ratio; evaluate and checkpoint the actual averaged weights.
+- [x] Preserve raw training weights, optimizer state, scheduler state, and
+  averaging update count so an averaged run can resume fail-closed.
+- [x] Validate focused weight-averaging/scheduler tests, full repository tests,
+  Ruff, and staged-diff checks; freeze as Git commit
+  `18445b246b1f8d5bec196d11c7739d41e6555d22` and push only to `local/main`.
+- [x] Supersede the temporary deployment hold after the monitor was updated:
+  predeploy the immutable source and prefreeze both outcome-independent
+  EMA/SWA configs while Wave020 runs, but keep both scientific arms unstarted
+  until their assigned allocation is terminally free.
+- [x] Freeze Wave021 at EMA decay `0.999` on allocation 9929 and SWA start
+  ratio `0.5` on allocation 3066, based only on predeclared implementation
+  defaults and retained DMW010 rather than any Wave020 intermediate evidence.
+- [x] After both Wave020 arms produced complete non-winning terminal receipts,
+  close Wave020 fail-closed and launch both already-frozen Wave021 arms on
+  their assigned newly free allocations.
+- [ ] Monitor Wave021 EMA on `9929.19` and SWA on `3066.18`; only complete
+  terminal receipts may close the wave, select a setting, stop another child,
+  or trigger Seed 28/43 confirmation.
+
+## 2026-08-08: two-stage successor capability
+
+- [x] Add default-off, backward-compatible two-stage training support without
+  changing the immutable source used by either live Wave021 child.
+- [x] Keep stage one selected by Dev Macro-F1, then switch at a frozen epoch
+  boundary to a lower constant learning rate and stronger direction-margin
+  weight.
+- [x] Make stage-two checkpoint admission fail closed on an explicit frozen
+  ODER ceiling; preserve the stage-one fallback if no stage-two epoch qualifies.
+- [x] Preserve stage identity, active loss weights, selection state, and the
+  early-stopping clock in progress, checkpoints, resume state, and receipts.
+- [x] Pass 194/194 repository tests, Ruff, and diff checks; freeze the capability
+  as Git commit `4fb2c9f5f07780e8f9cf136f1297fa4d36cd3a66` and push only to
+  `local/main`.
+- [x] Build and deploy an immutable source archive for the two-stage capability,
+  then freeze an outcome-independent Wave022 bracket at stage-two LR ratios
+  `0.10/0.25` while both Wave021 arms remain blinded and running.
+- [ ] Keep Wave022 unstarted until an assigned allocation becomes terminally
+  free; if its Wave021 arm is a non-winner, launch only the already-frozen
+  Wave022 arm assigned to that allocation.
