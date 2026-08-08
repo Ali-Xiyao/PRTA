@@ -4019,3 +4019,8 @@
 - Wave018 gradient clip 2.0 is terminal `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1 `0.5249565430689004` / ODER `0.007410052673868405`; training-receipt SHA-256 is `a41566cf7543c0e62f1c7360edd76886cde0a6816de33f07f866eda1600285fe`. It fails both original-gate dimensions and the aspirational target.
 - Closed Wave018 fail-closed with aggregate receipt SHA-256 `3af438ef31fe32322fe83f1dac69251a45642ed26cd64a7c3c2f3fa64ffaaada`; neither gradient-clip arm qualifies, so DMW010 remains globally retained.
 - Launched the already-frozen Wave019 adapter-rank 64 arm unchanged in `3066.16`; launch receipt SHA-256 is `92578208754159e29e76e3088a08fffb31adec5dc244e200451f56c9c5fc66cc`. It is healthy at epoch 0 step 100/5,026 while rank 16 continues at epoch 2 step 1,600/5,026 in `9929.17`. Each allocation has one scientific child plus telemetry/batch, frozen hashes remain exact, about 1.2 PB remains free, and protected reads remain zero.
+
+## 2026-08-08 11:18 CST Wave019 parallel monitor
+
+- Both adapter-rank arms remain healthy and non-terminal. Rank 16 is at epoch 4 step 3,100/5,026 with best epoch 2 in `9929.17`; rank 64 is at epoch 2 step 1,500/5,026 with best epoch 0 in `3066.16`. Best/last checkpoints are intact at about 309 MB and 313 MB respectively, and neither training receipt exists.
+- Wave019 preparation/config/launcher/launch-receipt hashes remain exact. Each retained allocation hosts one independent scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed. No intermediate result was used for selection or mutation.
