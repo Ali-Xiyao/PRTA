@@ -1643,6 +1643,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | Repository Ruff then recommended the Python 3.11-only `datetime.UTC` alias for the Python-3.9 control scripts | 1 | Add a narrow file-level `UP017` suppression documenting the login-node compatibility boundary; retain all other Ruff rules and rerun compile/lint/format. No remote action occurred. |
 | The first compatibility-suppression placement split the preparation controller's future-import block | 1 | Move the file-level Ruff directive to the first line before the future import and rerun the unchanged checks; no remote artifact changed. |
 | The first Wave020 heartbeat used unsupported custom step-format tokens with `squeue -s` | 1 | Keep the valid default-field step rows returned by Slurm, use the default step view or only step-valid fields on later monitors, and record that the read-only command changed no allocation, process, or artifact. |
+| The first direct-cost validation found one 90-character error string, and a broad formatter pass proposed unrelated legacy layout changes | 2 | Wrap only the new error string, restore every unrelated formatting change with exact patches, and rerun repository Ruff plus 202/202 tests before freezing. No server source or scientific run changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1707,3 +1708,20 @@ Status: in progress under explicit 2026-08-06 user authority
 - [ ] Keep Wave022 unstarted until an assigned allocation becomes terminally
   free; if its Wave021 arm is a non-winner, launch only the already-frozen
   Wave022 arm assigned to that allocation.
+
+## 2026-08-08: direct opposite-direction cost capability
+
+- [x] Confirm Wave021 remains healthy and non-terminal on `9929.19` and
+  `3066.18` before changing any local successor code.
+- [x] Add a default-off direct cost that penalizes exact opposite-label
+  probability with a numerically stable negative-log-complement objective.
+- [x] Bind the four ODER metric pairs, the frozen scalar weight, and reduction
+  policy into progress and terminal receipts while leaving legacy configs
+  numerically unchanged.
+- [x] Cover gradient direction, Stable-row exclusion, extreme-logit stability,
+  default-off audit, and invalid-weight rejection; pass 202/202 tests and Ruff.
+- [x] Freeze the capability as Git commit
+  `4473c8ae65b65e390b93a58a1bc66ad8d77a4a34` and push only to
+  `local/main`.
+- [ ] Do not freeze numeric direct-cost weights from Wave021 intermediate
+  evidence; retain the already-frozen Wave022 queue as the next launch.

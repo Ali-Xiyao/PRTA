@@ -1457,3 +1457,12 @@
   Wave022 arms share the same start boundary, ODER ceiling, and direction-cost
   multiplier and vary only the low-LR ratio (`0.10` versus `0.25`), so a later
   terminal comparison remains interpretable.
+- A direct ODER surrogate can match the evaluation definition exactly by
+  penalizing probability mass on the inverse label for Improved/Worse and
+  New/Resolved, while excluding Stable. The stable partition-gap identity
+  `logsumexp(all) - logsumexp(non-opposite)` implements
+  `-log(1-p_opposite)` without overflowing when the opposite logit dominates.
+- This direct cost complements rather than silently replaces the retained
+  direction-margin parent: its scalar weight is a separate default-off field,
+  so a future two-weight bracket changes one interpretable dimension and old
+  configs retain identical optimization behavior.

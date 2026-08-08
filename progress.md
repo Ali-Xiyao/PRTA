@@ -4199,3 +4199,30 @@
   receipt, or run output exists, records `training_started=false`, and keeps
   protected reads at zero. Wave021 remains healthy/non-terminal on `9929.19`
   and `3066.18`; Wave022 has not launched.
+
+## 2026-08-08 15:00 CST direct opposite-direction cost capability freeze
+
+- Read-only Wave021 status remains healthy and non-terminal: EMA is `RUNNING`
+  on `9929.19`, SWA is `RUNNING` on `3066.18`, both expected Slurm steps are
+  present, all source/config/launcher/receipt hashes remain exact, checkpoint
+  sizes are growing, logs contain no fatal marker, shared storage is ample,
+  and protected reads remain zero. No intermediate metric was read or used.
+- Added a backward-compatible, default-off `opposite_direction_cost` loss.
+  For every non-Stable target it directly minimizes the probability assigned
+  to the exact inverse label using a numerically stable
+  `-log(1 - p_opposite)` partition-gap implementation. This aligns the training
+  surrogate with all four ODER pairs rather than relying only on a fixed logit
+  margin.
+- Progress and terminal receipts now audit the exact scalar weight, four
+  penalized pairs, and directional-target mean reduction. Tests prove the
+  gradient lowers opposite-label logits, Stable-only batches contribute zero,
+  extreme opposite logits stay finite, default omission is disabled, and
+  invalid negative/non-finite weights fail closed.
+- The first focused gate passed but Ruff found one overlong new error string;
+  after wrapping it, a broad formatter proposed unrelated legacy layout
+  changes. Those unrelated changes were restored exactly before final
+  validation. Repository Ruff and 202/202 tests pass, diff checks pass, and
+  the capability is frozen at Git commit
+  `4473c8ae65b65e390b93a58a1bc66ad8d77a4a34`. `local/main` matches exactly,
+  no cloud push occurred, the Wave021/022 server snapshots remain untouched,
+  and the two user-modified paper documents remain unstaged.
