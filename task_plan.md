@@ -1232,6 +1232,21 @@ Status: in progress under explicit 2026-08-06 user authority
   stops only the other scientific child step. The user's planning envelope is
   approximately 8--16 hours for several Seed-17 screens and 1--2 hours for
   confirmation; treat these as estimates, not completion guarantees.
+- On 2026-08-08 after rank 16 became terminal, the user explicitly overrode the
+  temporary 9929 hold and authorized a cross-wave terminal race. While rank 64
+  continues unchanged on 3066 against its original source snapshot, deploy the
+  validated scheduler commit into a separate immutable source directory and
+  launch the already-planned warmup-plus-cosine bracket on 9929 without
+  changing the live rank-64 source tree. Predeclare both warmup ratios
+  `0.05/0.10`; launch the closer `0.05` arm first and keep `0.10` frozen until
+  a scientifically free allocation exists.
+- In this cross-wave race, only a complete terminal receipt at Macro-F1
+  `>=0.5460939600646948` and ODER `<=0.00553522006963664` is a winner. A winner
+  stops only the other live scientific child step, preserves its partial logs
+  and checkpoints, never cancels allocations or telemetry, and moves both
+  lanes to exact seeds 28/43 confirmation. A nonwinning terminal arm releases
+  its lane for the next already-frozen arm while every other live arm remains
+  unchanged and scientifically blinded.
 - On 2026-08-07 the user authorized both retained A800 allocations for higher
   throughput. Live Slurm state shows 3066 was freshly restarted at 12:18 CST
   with one GPU and only its batch step, while 4161 continues DMW030. This does
@@ -1618,6 +1633,8 @@ Status: in progress under explicit 2026-08-06 user authority
 | The corrected scheduler tests passed 14/14 and Ruff lint passed, but the final formatting check detected the newly wrapped strict-zip assertion | 1 | Apply Ruff formatting once more and rerun the full focused test/lint/format gate. No scientific or server artifact was touched. |
 | Repository-wide Ruff formatting check reports 90 legacy files that predate the scheduler change | 1 | Do not mechanically reformat unrelated user/project files. Keep the repository-wide 177/177 pytest and Ruff lint passes, and require targeted format checks on the two touched scheduler files, which pass. |
 | The first Wave019 terminal-receipt summary embedded a Python `-c` program through nested PowerShell/SSH quoting and the remote shell stripped the quoting | 1 | Stop composing Python inline. Transfer a fixed read-only status script to `/tmp`, restrict it to the exact Wave019 Train/Dev runtime paths and aggregate fields, then rerun sequentially; the failed command read or changed no scientific artifact. |
+| The first isolated-runner focused gate passed all seven tests but Ruff flagged the new test's unnecessary future-import block | 1 | Remove the unnecessary future import and rerun the unchanged focused/full validation before committing or deploying; no server source or scientific runtime changed. |
+| Ruff's second isolated-runner pass still required one rather than two blank lines between the single import and module constant | 1 | Apply the exact one-line import-spacing diff reported by Ruff, then rerun the same fail-fast gate; no server or experiment state changed. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

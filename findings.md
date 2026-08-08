@@ -1368,3 +1368,15 @@
   so this rank-16 result cannot alter its run or choose a successor; the free
   9929 lane is held until Wave019 closes and the medium scheduler snapshot can
   be deployed without mutating source under a live child.
+- The user now prefers throughput over wave-synchronous closure: independent
+  frozen waves may race on 9929 and 3066, provided each live child uses an
+  immutable source/config namespace and no intermediate trajectory influences
+  the other. This removes the temporary 9929 hold but not the terminal-only
+  winner rule, protected-cohort seal, or one-child-per-allocation limit.
+- The server arm runner hardcodes both the code checkout and runtime-data root
+  to the live PRTA-CXR directory. An archive snapshot therefore cannot be used
+  safely by changing `PYTHONPATH` alone: the bootstrap prepends the script's
+  own `src`, and provenance resolves from that checkout. Add separate,
+  backward-compatible `PRTA_CXR_PROJECT_ROOT` and `PRTA_CXR_RUNTIME_ROOT`
+  overrides so an immutable code snapshot can reuse the unchanged original
+  Train/Dev runtime without touching the source tree used by rank 64.

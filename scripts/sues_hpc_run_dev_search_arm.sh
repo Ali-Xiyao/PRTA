@@ -12,8 +12,9 @@ OUTPUT=$3
 RUN_REGISTRY=$4
 EXPECTED_ALLOCATION=$5
 
-PROJECT_ROOT=/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR
-RUNTIME_ROOT=${PROJECT_ROOT}/data/runtime
+DEFAULT_PROJECT_ROOT=/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR
+PROJECT_ROOT=${PRTA_CXR_PROJECT_ROOT:-${DEFAULT_PROJECT_ROOT}}
+RUNTIME_ROOT=${PRTA_CXR_RUNTIME_ROOT:-${PROJECT_ROOT}/data/runtime}
 CACHE_ROOT=${RUNTIME_ROOT}/formal_program_v1/cache/full_repartition_v1
 SPLIT_MANIFEST=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/manifests/train_dev_cleaned_v1.jsonl
 CLEANED_SPLIT_FREEZE=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/cleaned_split_freeze_receipt.json
