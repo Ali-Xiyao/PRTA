@@ -748,19 +748,35 @@ and budget unchanged. Preparation SHA-256 is
 config SHA-256 values are
 `b9ed3bec08638e5b5960a4c386dabcd62281a3e19d1c320e4e9d1a27793fc948`
 and `ea6247c963516a5a39e0bb3d84043de27e83dc0c8c4002ab9fc74d6c3537361e`.
-Gradient clip 0.5 is healthy in `9929.16`, with launch receipt SHA-256
-`41e3bb06b22d5f2571454984fcdf0f4e626fecea644a63c7826583df9ea58d44`;
-gradient clip 2.0 is healthy in `3066.15`, with launch receipt SHA-256
-`9c4aae4022ad68d54242d8989db8ab5cb497889b15771010e04076754c204d5f`.
-Monitor both active gradient-clip children without selecting from
-intermediate epochs. If either reaches terminal Macro-F1 `>= 0.546094` with
+Gradient clip 0.5 is terminal after nine epochs at Macro-F1 `0.527177` / ODER
+`0.006607`, failing both original-gate dimensions and the aspirational target;
+preserve training-receipt SHA-256
+`212a383aea40004ead90e519f1a5c4efbd069717d6601cc994fd84fcdbd21c03`.
+Gradient clip 2.0 continues unchanged in `3066.15`, with launch receipt
+SHA-256 `9c4aae4022ad68d54242d8989db8ab5cb497889b15771010e04076754c204d5f`.
+Using only terminal gradient-clip-0.5 and earlier completed evidence while
+gradient clip 2.0 remains blinded, Wave019 predeclares adapter rank `16/64`
+around parent `32`, keeping adapter scope, native H0 head, data, loss,
+optimizer family, batch, budget, and early stopping unchanged. Preparation
+SHA-256 is `f87adb3a06b0008a23379af9d21303dcc506a926d57e3435d01a18ec3fd78d47`;
+config SHA-256 values are
+`ac9f7b4354f13c58637b821cffb21c7fba31a274351975eaa5a8ee7083282ef7`
+and `7634237f87a0e8a5a0474e7d8c155474981b056223fa334890291fedfe47b3e0`.
+Adapter rank 16 is healthy in `9929.17`, with launch receipt SHA-256
+`c36c77f7ad69a9a561c4ea90461f4d3ee27c33e95cb039d88771fc811bfbe0ac`;
+adapter rank 64 remains frozen and unstarted until an allocation is
+scientifically free. Monitor active gradient clip 2.0 and adapter rank 16
+without selecting from intermediate epochs. If either reaches terminal
+Macro-F1 `>= 0.546094` with
 ODER `<= 0.005535`, stop only the other scientific child, preserve its partial
 artifacts, keep both allocations and telemetry alive, and freeze exact seeds
-28/43 confirmation of the winner. Otherwise, when one active run terminates,
-let the other continue and freeze then launch one new small arm on the free
-allocation using only completed terminal evidence. Close Wave018 only after
-both gradient-clip arms are terminal; continue small pre-frozen Train/Dev
-waves until the user explicitly stops.
+28/43 confirmation of the winner. Otherwise, when either active run
+terminates, let the other continue and launch the already-frozen adapter-rank
+64 arm on the first scientifically free allocation. If rank 64 is already
+active or terminal, freeze then launch one new small arm using only completed
+terminal evidence. Close Wave018 after gradient clip 2.0 is terminal and
+Wave019 only after both adapter-rank arms are terminal; continue small
+pre-frozen Train/Dev waves until the user explicitly stops.
 Do not cancel telemetry, overwrite outputs, read protected cohorts, or change
 data, labels, patients, splits, method family, optimizer family, batch size,
 epoch budget, or early stopping.
@@ -1563,6 +1579,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first Wave015 preparation attempt interpolated a Bash `${PROJECT}` token in the local V8 template, and the next read-only precheck assumed the deployed runtime tree contained `.git` | 2 | Use absolute launcher paths and the already frozen source-commit pin; both attempts failed before creating the aggregate or wave namespace. |
 | The first post-launch step view reused unsupported step-format `%t` | 1 | Use `%i|%j` or the default step view. The same read-only check still confirmed `3066.12` and healthy progress; no run state changed. |
 | The first post-launch Wave017 monitor assumed epoch-0 checkpoints already existed and raised `FileNotFoundError` while the healthy child was still at step 700/5,026 | 1 | Treat checkpoint absence before the first completed epoch as expected, guard `stat` with existence checks, and retain the independently verified live step/progress/hash evidence; no scientific state changed. |
+| The first Wave019 freeze preflight transcribed the Wave018 preparation SHA without its `d81` segment | 1 | The identity check failed before creating a staging or final namespace. Re-run the same completed-evidence freeze with the exact recorded SHA; no scientific config, process, or artifact was changed by the failed attempt. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

@@ -1332,3 +1332,9 @@
   admissible. The already-frozen gradient-clip 2.0 arm therefore launches on
   the freed 3066 lane while gradient clip 0.5 continues, without using any
   gradient-clip 0.5 intermediate evidence.
+- Gradient clip 0.5 is also inadmissible at Macro-F1 `0.527177` / ODER
+  `0.006607`, so stronger clipping does not improve retained DMW010. With
+  gradient clip 2.0 still blinded, the next bounded capacity test freezes
+  adapter rank `16/64` around parent `32`; rank 16 starts on the free 9929 lane
+  while rank 64 remains frozen, preserving a one-axis comparison without
+  changing adapter scope or the native H0 head.
