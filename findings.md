@@ -1539,3 +1539,11 @@
   changes only the newly authorized gated state/temporal head. Exact-source
   tests prove the gate stays in `[0,1]`, becomes zero for identical temporal
   inputs, and receives gradients through the temporal residual expert.
+- The server is materially faster than the local RTX 3090 path for this exact
+  5,026-step/epoch workload. Three recent A800 terminal receipts average
+  `8.19`, `8.25`, and `8.25` minutes per completed epoch; the local
+  `CLN1-PRTA-S17` monitoring window was about 274 minutes for nine epochs, or
+  `30.4` minutes/epoch. The observed single-arm speedup is therefore about
+  `3.7x`; because both environments used two independent GPU lanes, aggregate
+  search throughput improves by approximately the same factor rather than an
+  additional factor of two.
