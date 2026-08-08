@@ -4630,3 +4630,11 @@
   exists. A800 samples report 87% utilization, 2,447 MiB each, and 74/72 C;
   `/ipfs` remains 2% used. No intermediate confirmation outcome informed any
   action, and protected-read evidence remains unchanged at zero.
+- 2026-08-09 02:38 CST heartbeat: both Wave030 confirmation children remain
+  `RUNNING` on `3066.48` and `9929.45`, each at epoch 4 with 23,104 completed
+  optimizer steps. Exact Seed 28/43 effective-config identities, state0.025,
+  EMA0.999, ODC0.05, constant LR, and best/last checkpoints audit correctly;
+  launcher logs have zero fatal markers and no terminal receipt exists. A800
+  samples report 91% utilization, 2,447 MiB each, and 73/71 C; `/ipfs`
+  remains 2% used. No intermediate confirmation outcome informed any action,
+  and protected-read evidence remains unchanged at zero.
