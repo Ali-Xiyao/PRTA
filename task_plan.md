@@ -1652,6 +1652,7 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first Wave029 step-state views reused unsupported `squeue -s` `%T`/`%t` format tokens | 2 | Verify the exact child steps with `sacct` and retain the successful file/GPU/disk evidence. Both commands were read-only and the children continued unchanged. |
 | A first Wave029 progress-field probe guessed protected-read keys that are recorded in launch receipts rather than training progress | 1 | Retain the immutable zero-read launch evidence and inspect only the actual progress audit keys; the failed grep was read-only. |
 | A looped Wave029 `jq` audit let local PowerShell consume the remote `$f` variable | 1 | Use two literal progress paths and the same read-only field projection. Both children continued unchanged and no artifact was written. |
+| The first Wave030 private-controller format gate found long lines after compile passed | 1 | Apply canonical Ruff formatting and rerun compile/lint/format before transfer. No Wave030 namespace or child existed at the failed local check. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 
@@ -1798,20 +1799,23 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] From both complete Wave028 receipts, freeze a tight state-loss bracket at
   `0.025/0.075` around retained state0.05 and launch Wave029 independently on
   `3066.42` and `9929.39` without changing any other scientific field.
-- [ ] Monitor Wave029 from complete terminal receipts only; if either reaches
-  the Seed17 target, stop only the other scientific child and begin exact
-  Seed 28/43 confirmation. Otherwise keep both allocations productive with
-  the next separately tested/frozen authorized successor.
+- [x] Close Wave029 from complete terminal receipts only. State0.025 reaches
+  the Seed17 target at `0.547317600340875 / 0.00374966520846353`; state0.075
+  is jointly qualified but trails at `0.5429977923309984 / 0.0034818319792875637`.
+- [x] Freeze the exact state0.025 winner and launch its predeclared Seed 28/43
+  confirmation children independently on `3066.48` and `9929.45`.
+- [ ] Monitor Wave030 confirmation from complete terminal receipts only and
+  evaluate the frozen three-seed reproducibility gate without tuning from
+  either confirmation trajectory.
 - [ ] In parallel with scientific monitoring, prepare the minimum exact
   Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
   build for a new tail6/tail8 attempt namespace; do not inspect protected rows.
 
 ## Next Step
 
-Monitor Wave029 state0.025 on `3066.42` and state0.075 on `9929.39` without
-selecting, stopping, or mutating from intermediate epochs. Act only on complete
-terminal receipts: a target winner triggers exact Seed 28/43 confirmation on
-both retained allocations; a non-winning terminal arm releases only its own
-allocation for a separately tested and frozen successor based on completed
-evidence. Keep the verified Train/Dev-only Block-4 input repair separate and
-leave Internal-test/Gold sealed.
+Monitor the exact state0.025 Seed 28 confirmation on `3066.48` and Seed 43
+confirmation on `9929.45` without selecting, stopping, or mutating from
+intermediate epochs. After both complete terminal receipts exist, combine them
+with frozen Seed 17 to evaluate the predeclared three-seed mean and every-seed
+joint gate. Keep the Block-4 input repair separate and leave Internal-test/Gold
+sealed.

@@ -1571,3 +1571,10 @@
 - Successor preparation must recheck terminality immediately before freeze.
   The abandoned CMCP controller correctly rejected stale one-arm evidence when
   state0.05 became terminal, preventing a scientifically obsolete launch.
+- State loss has a narrow optimum in the tested bracket: weight0.025 reaches
+  `0.547318 / 0.003750` and clears the Seed17 target, while weight0.075 falls
+  to `0.542998 / 0.003482`. The smaller auxiliary weight preserves the ODER
+  benefit while avoiding excessive regularization of Macro-F1.
+- This is a terminal Seed17 exploratory winner, not yet reproducible evidence.
+  The exact setting is now locked for Seeds 28/43; only the frozen three-seed
+  mean and every-seed original-gate rules may determine confirmation.

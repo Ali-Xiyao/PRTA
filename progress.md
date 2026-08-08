@@ -4591,3 +4591,34 @@
   utilization, 2,447 MiB each, and 74/73 C; `/ipfs` remains 2% used. No
   intermediate outcome informed selection, stopping, or mutation, and
   protected-read evidence remains unchanged at zero.
+
+## 2026-08-09 02:03 CST Wave029 target winner and Wave030 confirmation launch
+
+- Wave029 is terminal/closed from complete receipts only. State0.025 completed
+  after nine epochs at Dev Macro-F1 `0.547317600340875` / ODER
+  `0.00374966520846353`; receipt SHA-256 is
+  `f130ac7aa5ff4b599a6afb32bd1625536c411173a3b71f582aa8bde891041401`.
+  State0.075 completed after nine epochs at `0.5429977923309984` /
+  `0.0034818319792875637`; receipt SHA-256 is
+  `f83b00d926085ca2984946c4423919d44f8eeec6d04f7b5d0633d894c37233f0`.
+  Both pass the original joint gate; state0.025 exceeds the Seed17 target by
+  about `0.001224` Macro-F1. Wave029 aggregate SHA-256 is
+  `87c92e247a2ad5d109db50625a8e075042c5d978b58b9bad8fb43e8e1ac6eecf`.
+- The exact state0.025 winner was frozen unchanged for predeclared Seeds 28 and
+  43. Wave030 preparation SHA-256 is
+  `89e99702391a15a8a164a16c80835b7818a2e6629a872d70db6f5fc7e052f058`.
+  Seed28 config/launcher/launch-receipt SHA-256 values are
+  `3948910e2d2cf3e533d0da1161d734eeddf540c03f12265ef6b8efb6f5d28b8f`,
+  `c2a091eb1be073b68c59e54a36c09b2f2c4882661dff5f29a42ce2226dac5e2f`,
+  and `1f1ccd21ac8e2ad7b258c332d00c3a7b601d80109de8b934066a44296a4adf5f`.
+  Seed43 corresponding values are
+  `b3e3afb15199c57ad8c4c0f814c387ab12cab5592e17b34b508c94ec467874bd`,
+  `eee47f37e273ca3628f5d2f88b56d03a7c6944486363874b9b7efa9d8d3f6adc`,
+  and `04a09d5873bc61862009d52805aa29b1f0c7c7901fb330a94272edd5ca07902f`.
+  Launch intent/control/finalization SHA-256 values are
+  `b3a9397eea4f56e63e9aba4713051c0697bf1390332e4cfdd4233a3726faa3eb`,
+  `b2c0a165cfbb91bc0196806ae66d5e10db5c330081218323e427d7a36d000340`,
+  and `4fcde54685ef9a3a271900ef6eca2aa3d506d9efdcccf6d43130c24cdb17a36e`.
+- Seed28 is active on `3066.48`; Seed43 is active independently on `9929.45`.
+  Each allocation has one scientific child, parent allocations and telemetry
+  remain untouched, `/ipfs` is 2% used, and protected reads remain zero.
