@@ -3975,3 +3975,8 @@
 - Wave016 gamma1.125 is terminal `PASS_TRAINING_FINISHED` after nine epochs at Dev Macro-F1 `0.5282841644175841` / ODER `0.005803053298812606`; terminal receipt SHA-256 is `3405002b1c97e697d7839ed5c1e73d6b9ecd80450245f071af52980ee976bd7b`. It fails both original-gate dimensions and the aspirational target.
 - Closed Wave016 fail-closed with aggregate receipt SHA-256 `bfc010de1299fdd3cb1360b95759fe15cc65fe1933dd1c59d184be63d253e929`; neither gamma arm qualifies, so the retained DMW010 parent remains unchanged.
 - Launched the already-frozen Wave017 beta0.99995 arm unchanged in `3066.14`. Launcher SHA-256 is `978a84f7b3b6dfa8aa33674b594414aff24db39b78b3fb1dca05f9622c70d706`, and launch receipt SHA-256 is `e4285a782d42d206dd08371dc4a06c479b57227660e5da6f9d3ecc5796936991`. It is healthy at epoch 0 step 200/5,026 while beta0.9995 continues at epoch 2 step 1,300/5,026 in `9929.15`; each allocation has exactly one scientific child plus telemetry/batch, hashes remain exact, shared storage has about 1.2 PB free, and protected reads remain zero.
+
+## 2026-08-08 08:35 CST Wave017 parallel monitor
+
+- Both frozen beta arms remain healthy and non-terminal. Beta0.9995 is at epoch 4 step 2,800/5,026 with best epoch 2 in `9929.15`; beta0.99995 is at epoch 2 step 1,800/5,026 with best epoch 0 in `3066.14`. Best/last checkpoints are intact at about 310 MB, and neither terminal receipt exists.
+- Wave017 preparation/config/launch-receipt hashes remain exact. Each retained allocation has exactly one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero with Internal-test/Gold sealed.
