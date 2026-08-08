@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import random
 from collections.abc import Mapping
@@ -58,9 +59,7 @@ class PRTATrainModel(nn.Module):
         model = config["model"]
         components = dict(model.get("components", {}))
         width = int(model.get("width", 768))
-        self.finding_conditioning = bool(
-            components.get("finding_conditioning", True)
-        )
+        self.finding_conditioning = bool(components.get("finding_conditioning", True))
         self.dual_branch = bool(components.get("dual_branch", True))
         self.adapter = PRTATemporalAdapter(
             frozen_tail,
@@ -71,12 +70,8 @@ class PRTATrainModel(nn.Module):
             transition_tokens=int(model["transition_tokens"]),
             dropout=float(model.get("dropout", 0.0)),
             frozen_final_norm=final_norm,
-            cross_time_alignment=bool(
-                components.get("cross_time_alignment", True)
-            ),
-            bounded_state_anchor=bool(
-                components.get("bounded_state_anchor", False)
-            ),
+            cross_time_alignment=bool(components.get("cross_time_alignment", True)),
+            bounded_state_anchor=bool(components.get("bounded_state_anchor", False)),
             adapter_indices=_adapter_indices(model),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
@@ -360,9 +355,7 @@ def evaluate_loader(
         "macro_f1": ordinary["macro_f1"],
         "balanced_accuracy": ordinary["balanced_accuracy"],
         "min_class_recall": ordinary["min_class_recall"],
-        "opposite_direction_error_rate": ordinary[
-            "opposite_direction_error_rate"
-        ],
+        "opposite_direction_error_rate": ordinary["opposite_direction_error_rate"],
         "nll": nll_sum / count,
         "brier": brier_sum / count,
         "patient_balanced": metrics["patient_balanced"],
@@ -381,6 +374,71 @@ def _save_checkpoint(path: Path, value: Mapping[str, Any]) -> None:
     finally:
         if temporary.exists():
             temporary.unlink()
+
+
+def _cosine_warmup_multiplier(
+    step: int,
+    *,
+    total_steps: int,
+    warmup_steps: int,
+    minimum_ratio: float,
+) -> float:
+    if total_steps < 1:
+        raise ValueError("total scheduler steps must be positive")
+    if not 0 <= warmup_steps < total_steps:
+        raise ValueError("warmup steps must be in [0, total_steps)")
+    if not 0.0 <= minimum_ratio <= 1.0:
+        raise ValueError("minimum learning-rate ratio must be in [0, 1]")
+    bounded_step = min(max(int(step), 0), total_steps - 1)
+    if warmup_steps and bounded_step < warmup_steps:
+        return float(bounded_step + 1) / float(warmup_steps)
+    decay_steps = total_steps - warmup_steps
+    decay_index = bounded_step - warmup_steps
+    progress = float(decay_index) / float(max(decay_steps - 1, 1))
+    cosine = 0.5 * (1.0 + math.cos(math.pi * progress))
+    return minimum_ratio + (1.0 - minimum_ratio) * cosine
+
+
+def _build_learning_rate_scheduler(
+    optimizer: torch.optim.Optimizer,
+    optimization: Mapping[str, Any],
+    *,
+    total_steps: int,
+) -> tuple[torch.optim.lr_scheduler.LambdaLR | None, dict[str, Any]]:
+    schedule = str(optimization.get("learning_rate_schedule", "constant"))
+    warmup_ratio = float(optimization.get("warmup_ratio", 0.0))
+    minimum_ratio = float(optimization.get("minimum_learning_rate_ratio", 0.05))
+    if schedule == "constant":
+        if warmup_ratio != 0.0:
+            raise ValueError("constant learning rate cannot use warmup")
+        return None, {
+            "name": schedule,
+            "total_steps": total_steps,
+            "warmup_ratio": 0.0,
+            "warmup_steps": 0,
+            "minimum_learning_rate_ratio": 1.0,
+        }
+    if schedule != "cosine":
+        raise ValueError("learning_rate_schedule must be constant or cosine")
+    if not 0.0 <= warmup_ratio < 1.0:
+        raise ValueError("warmup_ratio must be in [0, 1)")
+    warmup_steps = int(total_steps * warmup_ratio)
+    scheduler = torch.optim.lr_scheduler.LambdaLR(
+        optimizer,
+        lr_lambda=lambda step: _cosine_warmup_multiplier(
+            step,
+            total_steps=total_steps,
+            warmup_steps=warmup_steps,
+            minimum_ratio=minimum_ratio,
+        ),
+    )
+    return scheduler, {
+        "name": schedule,
+        "total_steps": total_steps,
+        "warmup_ratio": warmup_ratio,
+        "warmup_steps": warmup_steps,
+        "minimum_learning_rate_ratio": minimum_ratio,
+    }
 
 
 def train_model(
@@ -411,6 +469,13 @@ def train_model(
         lr=float(config["optimization"]["learning_rate"]),
         weight_decay=float(config["optimization"].get("weight_decay", 0.0)),
     )
+    epochs = int(config["optimization"]["epochs"])
+    total_optimizer_steps = epochs * len(train_loader)
+    scheduler, scheduler_audit = _build_learning_rate_scheduler(
+        optimizer,
+        config["optimization"],
+        total_steps=total_optimizer_steps,
+    )
     start_epoch = 0
     best_f1 = -1.0
     best_epoch = -1
@@ -425,11 +490,18 @@ def train_model(
             raise ValueError("resume checkpoint input hash mismatch")
         model.load_state_dict(checkpoint["model_state"])
         optimizer.load_state_dict(checkpoint["optimizer_state"])
+        checkpoint_scheduler = checkpoint.get("scheduler_state")
+        if scheduler is not None:
+            if checkpoint_scheduler is None:
+                raise ValueError("resume checkpoint scheduler state missing")
+            scheduler.load_state_dict(checkpoint_scheduler)
+        elif checkpoint_scheduler is not None:
+            raise ValueError("resume checkpoint has unexpected scheduler state")
         start_epoch = int(checkpoint["epoch"]) + 1
         best_f1 = float(checkpoint["best_dev_macro_f1"])
         best_epoch = int(checkpoint.get("best_epoch", checkpoint["epoch"]))
         history = list(checkpoint.get("history", []))
-    epochs = int(config["optimization"]["epochs"])
+    optimizer_steps = start_epoch * len(train_loader)
     patience = int(config["optimization"].get("early_stopping_patience", epochs))
     min_epochs = int(config["optimization"].get("minimum_epochs", 1))
     min_delta = float(config["optimization"].get("early_stopping_min_delta", 0.0))
@@ -450,6 +522,9 @@ def train_model(
         "best_epoch": best_epoch,
         "input_hashes": dict(input_hashes),
         "config_sha256": canonical_sha256(config),
+        "learning_rate_schedule": scheduler_audit,
+        "current_learning_rate": float(optimizer.param_groups[0]["lr"]),
+        "completed_optimizer_steps": optimizer_steps,
     }
     replace_json_atomic(output_root / "training_progress.json", state)
     stopped_early = False
@@ -467,6 +542,9 @@ def train_model(
                 float(config["optimization"].get("gradient_clip_norm", 1.0)),
             )
             optimizer.step()
+            if scheduler is not None:
+                scheduler.step()
+            optimizer_steps += 1
             train_losses.append(float(loss.detach()))
             if step % 100 == 0 or step == len(train_loader):
                 state.update(
@@ -474,6 +552,8 @@ def train_model(
                         "current_epoch": epoch,
                         "completed_steps_in_epoch": step,
                         "latest_train_loss": train_losses[-1],
+                        "current_learning_rate": float(optimizer.param_groups[0]["lr"]),
+                        "completed_optimizer_steps": optimizer_steps,
                     }
                 )
                 replace_json_atomic(output_root / "training_progress.json", state)
@@ -498,6 +578,10 @@ def train_model(
             "history": history,
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
+            "scheduler_state": (
+                scheduler.state_dict() if scheduler is not None else None
+            ),
+            "completed_optimizer_steps": optimizer_steps,
             "config": dict(config),
             "input_hashes": dict(input_hashes),
         }
@@ -558,6 +642,11 @@ def train_model(
         "checkpoint_path": "best.pt",
         "fraction_audit": dict(fraction_audit or {}),
         "dev_prior_audit": dev_prior_audit,
+        "learning_rate_schedule": {
+            **scheduler_audit,
+            "completed_optimizer_steps": optimizer_steps,
+            "final_learning_rate": float(optimizer.param_groups[0]["lr"]),
+        },
         "start_time": started,
         "end_time": ended,
         "internal_test_opened": False,

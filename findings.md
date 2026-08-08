@@ -1343,3 +1343,22 @@
   alternatives and retains the parent clip norm 1.0; the freed 3066 lane now
   launches the already-frozen adapter-rank 64 arm, completing the rank bracket
   without using rank-16 intermediate evidence.
+- The completed lightweight search has repeatedly traded Macro-F1 against ODER
+  without surpassing retained DMW010. The user's expanded authority therefore
+  prioritizes training-dynamics changes before architecture changes: cosine
+  scheduling with warmup, then weight averaging, two-stage optimization, and
+  a direct cost-sensitive ODER objective. These mechanisms can alter
+  optimization or generalization while retaining the native H0 method surface.
+- Broader capacity changes are intentionally second tier. Adapter-scope and
+  rank-by-scope brackets remain easier to interpret than immediately changing
+  temporal fusion or auxiliary branches; fusion and auxiliary supervision are
+  reserved for later frozen waves if the medium route misses the terminal
+  target. Current Wave019 intermediate trajectories cannot influence this
+  ordering or any numeric freeze.
+- Source inspection confirms the current training engine uses AdamW at a
+  constant configured learning rate, steps no scheduler, and saves optimizer
+  state but no scheduler state. There is no EMA/SWA path in the main PRTA
+  trainer. A warmup-plus-cosine wave therefore requires a backward-compatible
+  scheduler implementation and checkpoint/receipt audit fields before any
+  scientific config can be frozen; configs that omit the new fields must keep
+  byte-for-byte-equivalent constant-LR behavior.

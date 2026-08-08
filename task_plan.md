@@ -1203,6 +1203,35 @@ Status: in progress under explicit 2026-08-06 user authority
   family, native H0 head, adapter scope, batch size, epoch budget, early
   stopping, data, labels, and split fixed. Only after individual axes close
   may one frozen combination of the two best terminal axes be evaluated.
+- On 2026-08-08 the user explicitly broadened the post-Wave019 authority if
+  the current adapter-rank bracket misses the aspirational target. Wave019
+  itself remains frozen and may be selected only from terminal receipts. The
+  successor route may use medium training-policy changes and, if those fail,
+  bounded model-capacity changes; this supersedes the former one-combination
+  limit without weakening any gate or opening protected cohorts.
+- Medium-expansion order is now: (1) add a default-preserving implementation
+  of cosine learning-rate scheduling and freeze a warmup-ratio bracket,
+  initially `0.05/0.10`; (2) compare EMA and SWA checkpoint averaging around
+  the best terminal scheduler setting; (3) evaluate a predeclared two-stage
+  schedule that first optimizes Macro-F1 and then uses a lower learning rate
+  with an ODER constraint; (4) replace the fixed-margin proxy with two frozen
+  weights of a direct cost-sensitive opposite-direction loss; and (5) test a
+  small number of pre-frozen two-parameter combinations chosen only from
+  completed terminal evidence. Each new capability requires tests, an exact
+  source/config freeze, and an identity-pinned server deployment before any
+  scientific child starts.
+- If the medium route remains below target, the larger-capacity order is:
+  adapter scope `tail6` then `tail8`, at most two pre-frozen rank-by-scope
+  combinations, then one bounded temporal-difference/gated-fusion wave, and
+  finally one bounded activation of currently unused state/alignment or other
+  auxiliary supervision. Native H0 and the patient/data/split/cache surface
+  remain fixed unless the user separately authorizes a new method family.
+- Continue using both retained allocations as independent single-GPU lanes.
+  Only complete terminal receipts may choose the next wave. A Seed-17 target
+  pass immediately diverts both lanes to exact seeds 28/43 confirmation and
+  stops only the other scientific child step. The user's planning envelope is
+  approximately 8--16 hours for several Seed-17 screens and 1--2 hours for
+  confirmation; treat these as estimates, not completion guarantees.
 - On 2026-08-07 the user authorized both retained A800 allocations for higher
   throughput. Live Slurm state shows 3066 was freshly restarted at 12:18 CST
   with one GPU and only its batch step, while 4161 continues DMW030. This does
@@ -1584,6 +1613,10 @@ Status: in progress under explicit 2026-08-06 user authority
 | The first post-launch step view reused unsupported step-format `%t` | 1 | Use `%i|%j` or the default step view. The same read-only check still confirmed `3066.12` and healthy progress; no run state changed. |
 | The first post-launch Wave017 monitor assumed epoch-0 checkpoints already existed and raised `FileNotFoundError` while the healthy child was still at step 700/5,026 | 1 | Treat checkpoint absence before the first completed epoch as expected, guard `stat` with existence checks, and retain the independently verified live step/progress/hash evidence; no scientific state changed. |
 | The first Wave019 freeze preflight transcribed the Wave018 preparation SHA without its `d81` segment | 1 | The identity check failed before creating a staging or final namespace. Re-run the same completed-evidence freeze with the exact recorded SHA; no scientific config, process, or artifact was changed by the failed attempt. |
+| First scheduler implementation validation passed 14 tests but Ruff required explicit `zip(strict=...)` and canonical formatting | 1 | Add `strict=True`, apply Ruff formatting to the two touched files, and rerun the same focused tests/lint before considering the implementation frozen. No server or scientific runtime was changed. |
+| The first strict-zip correction compared unequal-length schedule slices and raised `ValueError` in one focused test | 1 | Compare `values[10:-1]` with `values[11:]` so strict zip validates equal-length adjacent pairs, then rerun the focused suite. The scheduler implementation and server runtime were unaffected. |
+| The corrected scheduler tests passed 14/14 and Ruff lint passed, but the final formatting check detected the newly wrapped strict-zip assertion | 1 | Apply Ruff formatting once more and rerun the full focused test/lint/format gate. No scientific or server artifact was touched. |
+| Repository-wide Ruff formatting check reports 90 legacy files that predate the scheduler change | 1 | Do not mechanically reformat unrelated user/project files. Keep the repository-wide 177/177 pytest and Ruff lint passes, and require targeted format checks on the two touched scheduler files, which pass. |
 
 ## 2026-08-06: SUES HPC deployment (in progress)
 

@@ -4029,3 +4029,15 @@
 
 - Both adapter-rank arms remain healthy and non-terminal. Rank 16 is at epoch 7 step 200/5,026 with best epoch 5 in `9929.17`; rank 64 is at epoch 4 step 3,900/5,026 with best epoch 3 in `3066.16`. Best/last checkpoints remain intact at about 309 MB and 313 MB respectively, and neither training receipt exists.
 - All Wave019 frozen hashes remain exact. Each allocation continues to host exactly one scientific child plus telemetry/batch, launcher logs contain no fatal markers, shared storage has about 1.2 PB free, and protected reads remain zero. No intermediate result was used for selection, stopping, or mutation.
+
+## 2026-08-08 11:45 CST expanded-search authorization
+
+- The user explicitly authorized a wider successor route if Wave019 does not reach the aspirational target. Current rank-16/rank-64 runs remain unchanged and blinded until terminal receipts.
+- Recorded a staged expansion: warmup plus cosine scheduling first; EMA/SWA averaging; two-stage Macro-F1 then low-LR ODER-constrained training; a direct cost-sensitive opposite-direction loss; and only a few pre-frozen two-parameter combinations. If these remain insufficient, the plan may expand adapter scope to tail6/tail8, test bounded rank-by-scope combinations, gated temporal fusion, and selected auxiliary branches.
+- The expansion preserves Train/Dev-only evaluation, exact source/config freezes, one independent scientific child per retained allocation, all historical HOLD/STOP decisions, terminal-only selection, and sealed Internal-test/Gold. New runtime behavior must be implemented with backward-compatible defaults, tested, committed, and identity-pinned before server launch.
+
+## 2026-08-08 11:52 CST warmup-cosine implementation preparation
+
+- Added a backward-compatible training-engine scheduler surface: omitted fields preserve constant AdamW learning rate, while `learning_rate_schedule=cosine` supports a frozen warmup ratio and minimum LR ratio. Scheduler state, optimizer-step counts, current LR, and schedule audit metadata are now checkpointed or written to progress/terminal receipts.
+- Added focused tests for constant-LR compatibility, exact warmup/cosine endpoints, scheduler-state round-trip, and fail-closed invalid configs. After two test-only strict-zip/format corrections, the focused gate passes 14/14 with Ruff lint and targeted format checks clean; the full repository suite passes 177/177 and repository-wide Ruff lint passes.
+- Repository-wide format checking identifies 90 unrelated legacy files; they were not reformatted. No scheduler code was deployed to the server, no active scientific child or source pin changed, and the two user-modified paper documents remain unstaged.
