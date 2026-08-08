@@ -1522,3 +1522,20 @@
   receipts, while the still-running Wave024 trajectory remains unread for
   selection. Exact source tests (17/17) and a joint EMA/scheduler/direct-cost
   optimizer-step smoke pass before the Wave025 namespace or Slurm child exists.
+- Cosine warmup does not add to the retained EMA/direct-cost frontier in either
+  tested combination. Wave024 reaches `0.540799 / 0.003482`; adding ODC0.05 in
+  Wave025 reaches `0.542479 / 0.004017`. Both are jointly qualified and safer
+  on ODER than retained ODC0.05, but neither exceeds its Macro-F1 `0.542873`.
+- Expanded tail6/tail8 adapters cannot be trained from the existing 42 GiB
+  Block-8 cache alone. They need an earlier Block-4 representation, and the
+  server does not contain the raw images named by the frozen Train/Dev
+  inventory. The preserved zero-shard failure proves the missing-input
+  boundary before any model result exists; changing path strings alone is not
+  an identity-preserving retry unless the corresponding image bytes are
+  transferred and verified in a new namespace.
+- The H3 bounded-state gate is a suitable productive fallback while Block-4
+  inputs are prepared: it consumes the existing Block-8 cache, leaves rank32,
+  tail4, EMA, optimizer, batch, data, budget, and early stopping fixed, and
+  changes only the newly authorized gated state/temporal head. Exact-source
+  tests prove the gate stays in `[0,1]`, becomes zero for identical temporal
+  inputs, and receives gradients through the temporal residual expert.

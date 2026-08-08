@@ -1746,6 +1746,36 @@ Status: in progress under explicit 2026-08-06 user authority
 - [x] Freeze and launch Wave025 on the newly free `9929` allocation by
   combining completed ODC0.05 with completed cosine warmup0.05 around EMA;
   do not use Wave024 intermediate outcomes.
-- [ ] Monitor Wave024 EMA-plus-cosine/warmup0.05 on `3066.30` and Wave025
-  EMA-plus-cosine/warmup0.05-plus-ODC0.05 on `9929.34`; only complete terminal
-  receipts may select, stop, or trigger Seed 28/43 confirmation.
+- [x] Close Wave024 from its complete terminal receipt at
+  `0.5407989496500015 / 0.0034818319792875637`; it passes the original joint
+  gate but neither improves retained ODC0.05 nor reaches the Seed17 target.
+- [x] Close Wave025 from its complete terminal receipt at
+  `0.5424792391155224 / 0.004017498437639496`; it also passes the original
+  joint gate but trails retained ODC0.05 and misses the Seed17 target.
+
+## 2026-08-08: bounded model-capacity successor route
+
+- [x] Add backward-compatible tail6/tail8 adapter-scope support with a distinct
+  Block-4 intermediate-cache identity while preserving legacy tail4/Block-8
+  defaults; pass 208/208 repository tests and Ruff.
+- [x] Freeze commit `821e8040aec9b47536f3755c4ede7fc5aef008d4`, push only to
+  `local/main`, and deploy an exact immutable server source snapshot with
+  deployment-receipt SHA-256
+  `641d6d9c67cebafabca8cb50c146243bd6044908dda74e6490a26f0bb58b2bd2`.
+- [x] Preserve the first Block-4 cache-build attempt after it failed before the
+  first shard because the server lacks the Windows-path raw Train/Dev images;
+  record immutable failure-receipt SHA-256
+  `b8cc52c73896b9f3861f19b5bd433d8f67572988fcd102a46ed5f5bb11e49961`.
+- [x] Keep Internal-test/Gold sealed and allow only a new attempt namespace
+  after the exact Train/Dev image mapping or transfer is available; never
+  overwrite the failed partial cache/log/progress artifacts.
+- [x] Because both A800s became free and tail6/tail8 was input-blocked, validate
+  the already-supported H3 bounded state-anchor gate on exact source commit
+  `4473c8a`, freeze a two-arm H3 bracket from completed terminal evidence only,
+  and launch one arm per retained allocation.
+- [ ] Monitor H3 gate without direct cost on `3066.36` and H3 gate with direct
+  cost0.05 on `9929.37`; only complete terminal receipts may select, stop, or
+  trigger Seed 28/43 confirmation.
+- [ ] In parallel with scientific monitoring, prepare the minimum exact
+  Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
+  build for a new tail6/tail8 attempt namespace; do not inspect protected rows.

@@ -4425,3 +4425,59 @@
   remains 2% used. Each allocation still has exactly one scientific child plus
   preserved telemetry, protected reads remain zero, and no intermediate outcome
   affected selection, stopping, or mutation.
+- 2026-08-08 20:34 CST terminal event: Wave024 completed after eight epochs at
+  Dev Macro-F1 `0.5407989496500015` / ODER `0.0034818319792875637`;
+  training-receipt SHA-256 is
+  `8d50b6c8ff7e5232b61de5e4c3f4b672f29c01c900369c4e5200251de95ebb2b`.
+  It passes the original joint gate but neither improves retained ODC0.05 nor
+  reaches the Seed17 target. The one-arm Wave024 aggregate SHA-256 is
+  `119b3e58128acf09b1e6a286b85dc6c0299c27422b1f5ca39942c21d161862c4`.
+- 2026-08-08 20:44 CST terminal event: Wave025 completed after eight epochs at
+  Dev Macro-F1 `0.5424792391155224` / ODER `0.004017498437639496`;
+  training-receipt SHA-256 is
+  `43f90b98009788d63f09ec4db84289ee646a1a4ab3a7005aabd4221d0c566d9f`.
+  It passes the original joint gate but trails retained ODC0.05
+  `0.542873152713817 / 0.004463887152932774` and misses the Seed17 target.
+  The one-arm Wave025 aggregate SHA-256 is
+  `c53e22b1e2c34adc3b3098094d8fdd1ed9fe5b9d985ba397276414d9743540fa`.
+- Tail6/tail8 capability work is complete and default-compatible. Commit
+  `821e8040aec9b47536f3755c4ede7fc5aef008d4` passes 208/208 tests plus Ruff,
+  is pushed only to `local/main`, and is deployed as an immutable server
+  snapshot. Source archive SHA-256 is
+  `1c9766e2b6c491cc3c4f96de3b4303b20ca96035903a95810d489c6624cb9596`;
+  deployment-receipt SHA-256 is
+  `641d6d9c67cebafabca8cb50c146243bd6044908dda74e6490a26f0bb58b2bd2`.
+- The first frozen Block-4 cache builder was prepared with preparation,
+  builder, and launcher SHA-256 values
+  `ef24bb34341be563f9e890391ed4f25c0617a8c7ff2a9d31aabadec6b81b347d`,
+  `bac7463d71fe470a60f21ad1bc3743d1f73da2648f2c9f4cc3ec0ceebe328cf3`,
+  and `2af63de436eb81447bf0fe571a0ba42eadc75e6fb5980b6d0fdb8a4f70ed5803`.
+  Its `3066` child failed before the first shard because the frozen Train/Dev
+  inventory contains Windows raw-image paths unavailable on the server. The
+  partial cache, progress, and log remain preserved; immutable failure-receipt
+  SHA-256 is
+  `b8cc52c73896b9f3861f19b5bd433d8f67572988fcd102a46ed5f5bb11e49961`.
+  This is an input-path infrastructure failure, not a scientific result; only
+  a new attempt namespace may retry after verified Train/Dev input transfer.
+- To keep both retained allocations productive while the Block-4 input route
+  is repaired, exact source commit `4473c8a` passed two focused H3 gate tests,
+  Ruff, and `PASS_H3_BOUNDED_STATE_ANCHOR_GATE_SMOKE`. Wave027 froze a bounded
+  current-state anchor plus gated temporal-residual H3 model with direct cost
+  disabled versus `0.05`, using complete Wave021/Wave023/Wave024/Wave025
+  terminal evidence only. Preparation SHA-256 is
+  `1f83bda8b33dbbff12cc49a1a39900367b04b33e360457100cae8ada9f817835`.
+- Wave027 is healthy and active: no-direct-cost H3 runs on `3066.36` with
+  config/launcher/launch-receipt SHA-256 values
+  `a897800c7f306d03060b4783594c910da2cba700044d4a70a11d3160706c023a`,
+  `d772a1284fdaa53cae5b4f3cc1e3f5c01ebd08191dd4e1f1044941ba62de7540`,
+  and `3da70ad3abc51bc57271a0b95d1167a030884ffba5eda3b1772346231071d67b`;
+  direct-cost0.05 H3 runs independently on `9929.37` with corresponding
+  SHA-256 values
+  `113e198c451e03c6edfef8629d40c14501cc2e6672ad144407dbf88cf021c691`,
+  `7d08f7c346f02672509a7ec33b76b6206f556d8cd42df008a9f3d242d7f3df50`,
+  and `52fd2cb1fea221edccf297d872916b82eda95721c1f2466676d6f1e7f3b02275`.
+  Launch intent/control/finalization SHA-256 values are
+  `ef5c513302e4562991a2b2e21272bf02cc70ccfbc3b154b39f719d480e19b294`,
+  `90bc836d411ea7090bcc7a6fae2a17efa47893ec7ec4bddd836412d0b652dbe0`,
+  and `558c64d9dd5221c47462076db22e971d70c6d57e98708a10a67851d247d08443`;
+  one scientific child per allocation and zero protected reads hold.
