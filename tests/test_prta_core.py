@@ -18,6 +18,10 @@ from prta_cxr.models.prta import (
     transition_alignment_loss,
 )
 from prta_cxr.training.engine import build_train_model
+from prta_cxr.vision.biomedclip import (
+    adapter_scope_cache_entry_block,
+    tail_modules,
+)
 
 
 def model() -> PRTATemporalAdapter:
@@ -96,6 +100,60 @@ def test_adapter_scope_can_be_limited_to_last_two_tail_blocks():
     )
     assert tuple(adapter.tail.adapter_indices) == (2, 3)
     assert set(adapter.tail.adapters) == {"2", "3"}
+
+
+@pytest.mark.parametrize(
+    ("scope", "expected_indices"),
+    (
+        ("tail6", tuple(range(2, 8))),
+        ("tail8", tuple(range(8))),
+    ),
+)
+def test_expanded_adapter_scopes_use_block4_cache(scope, expected_indices):
+    config = {
+        "model": {
+            "family": "prta",
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "adapter_scope": scope,
+            "state_tokens": 4,
+            "transition_tokens": 4,
+            "dropout": 0.0,
+        }
+    }
+    value = build_train_model(
+        [nn.Identity() for _ in range(8)], nn.Identity(), config
+    )
+    assert tuple(value.adapter.tail.adapter_indices) == expected_indices
+    assert adapter_scope_cache_entry_block(scope) == 4
+
+
+def test_expanded_adapter_scope_rejects_legacy_block8_tail():
+    config = {
+        "model": {
+            "family": "prta",
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "adapter_scope": "tail6",
+            "state_tokens": 4,
+            "transition_tokens": 4,
+        }
+    }
+    with pytest.raises(ValueError, match="Block-4 cache"):
+        build_train_model(
+            [nn.Identity() for _ in range(4)], nn.Identity(), config
+        )
+
+
+def test_block4_tail_exposes_eight_frozen_transformer_blocks():
+    visual = nn.Module()
+    visual.blocks = nn.ModuleList(nn.Identity() for _ in range(12))
+    visual.norm = nn.Identity()
+    blocks, final_norm = tail_modules(visual, start_block=4)
+    assert len(blocks) == 8
+    assert final_norm is visual.norm
 
 
 def test_state_anchor_gate_is_bounded_and_zero_for_identical_pair():

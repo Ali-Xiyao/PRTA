@@ -112,6 +112,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             train_model,
         )
         from prta_cxr.vision.biomedclip import (
+            adapter_scope_cache_entry_block,
             load_biomedclip_visual,
             tail_modules,
         )
@@ -139,6 +140,20 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         experiment_id = str(config.get("experiment_id", ""))
         if not experiment_id:
             raise ValueError("formal training config requires experiment_id")
+        adapter_scope = str(config["model"].get("adapter_scope", "tail4"))
+        cache_entry_block = adapter_scope_cache_entry_block(adapter_scope)
+        cache_manifest = json.loads(
+            (args.cache_root / "cache_manifest.json").read_text(encoding="utf-8")
+        )
+        recorded_entry_block = int(
+            dict(cache_manifest.get("encoder", {})).get("output_block", 8)
+        )
+        if recorded_entry_block != cache_entry_block:
+            raise ValueError(
+                "adapter scope/cache entry mismatch: "
+                f"scope={adapter_scope}, expected Block-{cache_entry_block}, "
+                f"cache is Block-{recorded_entry_block}"
+            )
         cache = Block8CacheIndex(args.cache_root)
         train_dataset = PRTAFeatureDataset(
             rows, cache=cache, text_cache_path=args.text_cache, split="train"
@@ -176,7 +191,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             num_workers=workers,
         )
         visual, _ = load_biomedclip_visual(args.weights)
-        blocks, final_norm = tail_modules(visual)
+        blocks, final_norm = tail_modules(visual, start_block=cache_entry_block)
         model = build_train_model(blocks, final_norm, config)
         input_hashes = {
             "split_manifest": sha256_file(args.split_manifest),

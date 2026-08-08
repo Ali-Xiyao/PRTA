@@ -15,7 +15,8 @@ EXPECTED_ALLOCATION=$5
 DEFAULT_PROJECT_ROOT=/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR
 PROJECT_ROOT=${PRTA_CXR_PROJECT_ROOT:-${DEFAULT_PROJECT_ROOT}}
 RUNTIME_ROOT=${PRTA_CXR_RUNTIME_ROOT:-${PROJECT_ROOT}/data/runtime}
-CACHE_ROOT=${RUNTIME_ROOT}/formal_program_v1/cache/full_repartition_v1
+CACHE_ROOT=${PRTA_CXR_CACHE_ROOT:-${RUNTIME_ROOT}/formal_program_v1/cache/full_repartition_v1}
+TEXT_CACHE=${PRTA_CXR_TEXT_CACHE:-${CACHE_ROOT}/text_cache.pt}
 SPLIT_MANIFEST=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/manifests/train_dev_cleaned_v1.jsonl
 CLEANED_SPLIT_FREEZE=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/cleaned_split_freeze_receipt.json
 WEIGHTS=/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/model/biomedclip/open_clip_pytorch_model.bin
@@ -69,7 +70,7 @@ python scripts/07_train.py \
   --cleaned-split-freeze "${CLEANED_SPLIT_FREEZE}" \
   --cleaned-split-platform-root "${RUNTIME_ROOT}/formal_cleaned_split_v1_1" \
   --cache-root "${CACHE_ROOT}" \
-  --text-cache "${CACHE_ROOT}/text_cache.pt" \
+  --text-cache "${TEXT_CACHE}" \
   --weights "${WEIGHTS}" \
   --label-quality-audit "${QUALITY_AUDIT}" \
   --run-registry "${RUN_REGISTRY}" \

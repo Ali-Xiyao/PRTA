@@ -54,6 +54,7 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--shard-size", type=int, default=256)
+    parser.add_argument("--output-block", type=int, choices=(4, 6, 8), default=8)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--synthetic-count", type=int, default=4)
     parser.add_argument("--resume", action="store_true")
@@ -111,12 +112,13 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     rows = _read_jsonl(args.pair_manifest)
     inventory = unique_image_inventory(rows)
     from prta_cxr.vision.biomedclip import (
-        BiomedCLIPBlock8Encoder,
+        BiomedCLIPIntermediateEncoder,
         encode_image_paths,
         load_biomedclip_visual,
     )
 
     visual, encoder_receipt = load_biomedclip_visual(args.weights)
+    encoder_receipt["output_block"] = int(args.output_block)
     device = torch.device(args.device)
     normalized, state = prepare_streaming_block8_cache(
         args.output,
@@ -125,7 +127,9 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
         encoder_receipt=encoder_receipt,
         resume=args.resume,
     )
-    encoder = BiomedCLIPBlock8Encoder(visual)
+    encoder = BiomedCLIPIntermediateEncoder(
+        visual, output_block=args.output_block
+    )
     while int(state["completed_images"]) < len(normalized):
         start = int(state["completed_images"])
         selected = normalized[start : start + args.shard_size]

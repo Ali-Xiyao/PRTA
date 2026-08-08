@@ -40,13 +40,27 @@ from prta_cxr.models.prta import (
 from prta_cxr.training.losses import progression_classification_loss
 
 
-def _adapter_indices(model: Mapping[str, Any]) -> tuple[int, ...]:
+def _adapter_indices(
+    model: Mapping[str, Any], *, tail_length: int
+) -> tuple[int, ...]:
     scope = str(model.get("adapter_scope", "tail4"))
     if scope == "tail4":
+        if tail_length != 4:
+            raise ValueError("tail4 scope requires a four-block cached tail")
         return (0, 1, 2, 3)
     if scope == "last2":
+        if tail_length != 4:
+            raise ValueError("last2 scope requires a four-block cached tail")
         return (2, 3)
-    raise ValueError("adapter_scope must be tail4 or last2")
+    if scope == "tail6":
+        if tail_length != 8:
+            raise ValueError("tail6 scope requires the Block-4 cache")
+        return tuple(range(2, 8))
+    if scope == "tail8":
+        if tail_length != 8:
+            raise ValueError("tail8 scope requires the Block-4 cache")
+        return tuple(range(8))
+    raise ValueError("adapter_scope must be tail4, last2, tail6, or tail8")
 
 
 class PRTATrainModel(nn.Module):
@@ -74,7 +88,7 @@ class PRTATrainModel(nn.Module):
             frozen_final_norm=final_norm,
             cross_time_alignment=bool(components.get("cross_time_alignment", True)),
             bounded_state_anchor=bool(components.get("bounded_state_anchor", False)),
-            adapter_indices=_adapter_indices(model),
+            adapter_indices=_adapter_indices(model, tail_length=len(frozen_tail)),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
         head_name = str(model.get("native_head", "H0"))
@@ -129,7 +143,7 @@ class _NativeTemporalBaseline(nn.Module):
             adapter_rank=int(model["adapter_rank"]),
             dropout=float(model.get("dropout", 0.0)),
             final_norm=final_norm,
-            adapter_indices=_adapter_indices(model),
+            adapter_indices=_adapter_indices(model, tail_length=len(frozen_tail)),
         )
         self.finding_projection = nn.Sequential(
             nn.LayerNorm(512), nn.Linear(512, self.width)

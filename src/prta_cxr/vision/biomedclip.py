@@ -12,6 +12,15 @@ from prta_cxr.contracts import sha256_file
 VISUAL_PREFIXES = ("visual.trunk.", "module.visual.trunk.")
 
 
+def adapter_scope_cache_entry_block(scope: object) -> int:
+    name = str(scope)
+    if name in {"tail4", "last2"}:
+        return 8
+    if name in {"tail6", "tail8"}:
+        return 4
+    raise ValueError("adapter_scope must be tail4, last2, tail6, or tail8")
+
+
 def _checkpoint_state(path: Path) -> dict[str, torch.Tensor]:
     value = torch.load(Path(path), map_location="cpu", weights_only=True)
     if isinstance(value, dict):
@@ -63,12 +72,15 @@ def load_biomedclip_visual(weights_path: Path) -> tuple[nn.Module, dict[str, Any
     return model, receipt
 
 
-class BiomedCLIPBlock8Encoder(nn.Module):
-    def __init__(self, visual: nn.Module) -> None:
+class BiomedCLIPIntermediateEncoder(nn.Module):
+    def __init__(self, visual: nn.Module, *, output_block: int = 8) -> None:
         super().__init__()
         if len(visual.blocks) != 12:
             raise ValueError("encoder requires a 12-block visual transformer")
+        if output_block not in {4, 6, 8}:
+            raise ValueError("encoder output_block must be 4, 6, or 8")
         self.visual = visual.eval().requires_grad_(False)
+        self.output_block = int(output_block)
 
     def train(self, mode: bool = True):
         super().train(False)
@@ -81,21 +93,32 @@ class BiomedCLIPBlock8Encoder(nn.Module):
         tokens = visual._pos_embed(tokens)
         tokens = visual.patch_drop(tokens)
         tokens = visual.norm_pre(tokens)
-        for block in visual.blocks[:8]:
+        for block in visual.blocks[: self.output_block]:
             tokens = block(tokens)
         if tuple(tokens.shape[1:]) != (197, 768):
-            raise ValueError(f"unexpected Block-8 shape: {tuple(tokens.shape)}")
+            raise ValueError(
+                f"unexpected Block-{self.output_block} shape: {tuple(tokens.shape)}"
+            )
         return tokens
 
 
-def tail_modules(visual: nn.Module) -> tuple[list[nn.Module], nn.Module]:
+class BiomedCLIPBlock8Encoder(BiomedCLIPIntermediateEncoder):
+    def __init__(self, visual: nn.Module) -> None:
+        super().__init__(visual, output_block=8)
+
+
+def tail_modules(
+    visual: nn.Module, *, start_block: int = 8
+) -> tuple[list[nn.Module], nn.Module]:
     if len(visual.blocks) != 12:
         raise ValueError("tail extraction requires a 12-block visual transformer")
-    return list(visual.blocks[8:12]), visual.norm
+    if start_block not in {4, 6, 8}:
+        raise ValueError("tail start_block must be 4, 6, or 8")
+    return list(visual.blocks[start_block:12]), visual.norm
 
 
 def encode_image_paths(
-    encoder: BiomedCLIPBlock8Encoder,
+    encoder: BiomedCLIPIntermediateEncoder,
     image_paths: Iterable[Path],
     *,
     device: torch.device,
