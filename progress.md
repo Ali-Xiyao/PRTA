@@ -4997,3 +4997,40 @@
   checkpoint pairs, scientific steps, telemetry, launcher logs, and disk state
   remain healthy. Neither terminal receipt exists, so no result was inspected,
   selected, or used to stop the other arm.
+
+## 2026-08-09 18:36 CST Wave032 closure and corrected conditional ablation launch
+
+- Both Wave032 arms became complete-terminal before this heartbeat decision.
+  Tail6 finished after nine epochs with best epoch 4, Macro-F1
+  `0.5455946225148461`, and ODER `0.0029461655209356307`; terminal receipt SHA
+  is `3987f5ed...`. Tail8 finished after eight epochs with best epoch 3,
+  `0.5432830360883125 / 0.00374966520846353`; receipt SHA is `89d4179a...`.
+  Both pass the original joint gate and miss the Seed17 target. All four
+  best/last checkpoints were size- and SHA-verified, and protected reads are
+  zero.
+- Immutable Wave032 close controller SHA is `c77986b6...`; aggregate SHA is
+  `4b857f41b438c847a92979c4d8794562adc79f033cc7f9b2102712dced2830d2`.
+  It closes the search with no confirmation launch and retains the prior
+  tail4 state0.025 frontier at `0.547317600340875 / 0.00374966520846353`.
+- The separately frozen nine-cell conditional ablation initially used one
+  common Block-4 cache so that only scope appeared to vary. Tail4 failed
+  closed before its run directory and first optimizer step because the exact
+  deployed contract requires tail4 at Block-8. The tail6 Seed17 cell remained
+  valid and active on `9929.50`; no intermediate metric was read. Attempt1
+  preparation SHA is `ac49b345...`, failure-controller SHA is `80b5a1d0...`,
+  and immutable failure-receipt SHA is `9e2077ec...`.
+- Corrected Wave033 attempt2 freezes the complete Seeds17/28/43 x
+  tail4/tail6/tail8 queue in advance, with tail4 bound to verified Block-8
+  manifest `7bec0eb4...` and tail6/tail8 to verified Block-4 manifest
+  `c541ec8c...`. All numeric/model/data/budget fields remain H0, rank32,
+  state0.025, ODC0.05, DMW010, EMA0.999, constant LR, and the same Train/Dev
+  rows. Controller/preparation SHAs are `f9e79b9d...` and `a0b6ca16...`.
+- Corrected stage1 is active with exactly one scientific child per allocation:
+  new tail4 Seed17 on `3066.54` and preserved exact tail6 Seed17 on `9929.50`.
+  Tail4 config/effective-config/launcher SHAs are `96464ac3...`, `a927923c...`,
+  and `f2a4989e...`; tail6 corresponding hashes are `9016e14e...`,
+  `7b4b0ace...`, and `611c078b...`. Stage1 intent/control/finalization SHAs are
+  `4d257d88...`, `6f10bd13...`, and `aab0c2e1...`. Both telemetry steps and
+  retained parents remain alive, no new Slurm parent was submitted, and the
+  remaining queue may advance only on terminal receipts without outcome-based
+  mutation.

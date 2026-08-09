@@ -1851,13 +1851,16 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Launch at most one single-GPU scientific child on each retained
   allocation `9929/3066`, keep telemetry and parents intact, and monitor only
   complete terminal receipts for selection or stopping.
+- [x] Close Wave032 only after both Seed17 scope arms are terminal, verify
+  receipt/checkpoint hashes and protected-read state, and retain the prior
+  tail4 state0.025 frontier when neither expanded scope reaches the target.
 
-## Deferred adapter-scope ablation after final parameter freeze
+## Active conditional adapter-scope ablation after final parameter freeze
 
-- [ ] After all non-scope training parameters are finally frozen, add a formal
+- [x] After all non-scope training parameters are finally frozen, add a formal
   conditional adapter-scope ablation with `tail4`, `tail6`, and `tail8` as the
   only changing field.
-- [ ] Run or reuse exact-hash-matching Seeds `17/28/43` for every scope; do not
+- [ ] Complete the newly frozen Seeds `17/28/43` queue for every scope; do not
   drop losing scopes, select seeds, or change numeric settings from any
   intermediate or terminal scope outcome.
 - [ ] Keep H0, rank32, state loss, ODC, EMA, learning rate, optimizer, batch,
@@ -1868,15 +1871,24 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   together with trainable parameter count, peak GPU memory, and wall-clock
   time. Describe this as a conditional adapter-scope ablation at the frozen
   setting, not as an unbiased architecture search or protected-test result.
+- [x] Preserve the first Wave033 freeze after tail4 failed before its run
+  directory or first optimizer step: the training contract requires tail4 to
+  use the verified Block-8 cache, whereas tail6/tail8 require Block-4. Keep the
+  valid tail6 child unchanged and bind the failure in an immutable receipt.
+- [x] Freeze corrected Wave033 attempt2 with the full nine-cell queue fixed in
+  advance, scope-specific cache-entry identities, no adaptive cell dropping,
+  and exact reuse of the already-live tail6 Seed17 cell. Launch corrected
+  tail4 Seed17 on the newly free allocation without reading tail6 metrics.
 
 ## Next Step
 
-Monitor Wave032 tail6 on `3066.52` and tail8 on `9929.49` without reading,
-selecting, or stopping from intermediate epochs. Act only on complete terminal
-receipts: if either arm reaches the frozen Seed17 target, stop only the other
-scientific child, preserve its partial artifacts, and freeze exact Seeds 28/43
-confirmation for the terminal winner. Keep parent allocations and telemetry,
-Internal-test/Gold sealing, and all failed/partial cache-transfer artifacts.
+Monitor corrected Wave033 attempt2 stage1: tail4 Seed17 on `3066.54` with the
+verified Block-8 cache and the preserved exact tail6 Seed17 cell on `9929.50`
+with Block-4. Read no intermediate metrics and do not alter the predeclared
+nine-cell queue. After both stage1 cells have complete terminal receipts,
+preserve/hash them and launch the fixed stage2 pair (tail8 Seed17 and tail4
+Seed28) without using their outcomes. Keep parent allocations/telemetry,
+Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing artifact.
 
 ## Errors Encountered
 
@@ -1897,3 +1909,5 @@ Internal-test/Gold sealing, and all failed/partial cache-transfer artifacts.
 | Transfer retry2 reached the corrected local basename but OpenSSH `put -a` refused because the remote file did not yet exist | 1 | Preserve retry2 failure SHA `a26c9900...`; no bytes were transferred. Freeze retry3 with the same audit/manifest/batch, strictly verify the remote directory, create only missing predeclared files at zero bytes, and then resume with `put -a`. |
 | The first combined retry3 patch used pre-format context from the transfer controller | 1 | Read back the exact formatted block, patch the base resume guard separately, then add the retry3 controller and planning entries in isolated patches. The failed patch changed no file. |
 | Heartbeat creation used unsupported `notificationPolicy=important_only` | 1 | The API rejected it before creating any automation. Recreated the same current-thread heartbeat without that optional field; exactly one active monitor now exists. |
+| A one-line remote Block-8 manifest diagnostic was corrupted by nested PowerShell/SSH quoting | 1 | The command had already returned the exact manifest SHA; reran only the aggregate semantic read through a base64 Python payload and confirmed the Block-8 status/count/store without touching row contents. |
+| Initial Wave033 forced a common Block-4 cache for all scopes, but the deployed training contract requires tail4 at Block-8 | 1 | Tail4 failed before creating a run directory or optimizer step; preserve failure receipt `9e2077ec...`, leave the valid tail6 child unchanged on `9929.50`, and freeze corrected attempt2 with tail4->Block-8 and tail6/tail8->Block-4 as the scope-required cache boundary. |

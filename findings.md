@@ -1728,3 +1728,22 @@
   arms without adaptive dropping, report accuracy/error and compute costs, and
   be framed as a conditional ablation rather than reusing a winner-only search
   as an unbiased comparison.
+- Wave032 closes without a Seed17 target winner. Tail6 reaches Macro-F1
+  `0.5455946225148461` / ODER `0.0029461655209356307`, while tail8 reaches
+  `0.5432830360883125` / `0.00374966520846353`; both pass the original joint
+  gate but miss the `0.5460939600646948` target. The prior tail4 state0.025
+  frontier (`0.547317600340875 / 0.00374966520846353`) therefore remains the
+  globally retained exploratory Dev setting. Wave032 aggregate SHA is
+  `4b857f41b438c847a92979c4d8794562adc79f033cc7f9b2102712dced2830d2`.
+- A clean conditional scope ablation cannot force one cache-entry block across
+  all three scopes. The deployed reader enforces tail4->Block-8 and
+  tail6/tail8->Block-4 because the cache is the frozen boundary immediately
+  before the earliest trainable adapter. The first Wave033 common-Block-4
+  freeze failed tail4 before any run directory or optimizer step, while the
+  independently valid tail6 child remained unchanged. This is a configuration
+  contract failure, not a model outcome.
+- Corrected Wave033 attempt2 freezes all nine Seeds17/28/43 x
+  tail4/tail6/tail8 cells before outcomes, prohibits adaptive cell dropping,
+  and binds the required cache identity as part of the scope axis. Stage1 now
+  pairs corrected tail4 Seed17 on Block-8 with the exact preserved tail6
+  Seed17 Block-4 cell; no intermediate metric informed the correction.
