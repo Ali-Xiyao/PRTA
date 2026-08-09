@@ -1833,6 +1833,12 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Freeze attempt3 as a new immutable exact-identity resume namespace around
   the same dual-encoder/single-writer builder and the attempt2 failure receipt;
   launch it only after both GPUs are again free of non-display processes.
+- [x] When a new unrelated GPU0 process appeared after attempt3 encoded all
+  571 shards but before the terminal build receipt, stop only attempt3, validate
+  the complete 146,110-image shard boundary, and preserve the external work.
+- [x] Freeze attempt4 from the exact attempt3 failure receipt with all 571
+  shards already complete; keep it unstarted while either GPU has a competing
+  process, then resume only the terminal cache consolidation/receipt path.
 - [ ] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.
@@ -1864,8 +1870,8 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 ## Next Step
 
-Wait for both local 3090s to be free, launch only the frozen Wave031 attempt3
-exact-identity resume, verify the complete cache, then transfer the identical
+Wait for both local 3090s to be free, launch only the frozen Wave031 attempt4
+exact-identity resume from all 571 shards, verify the complete cache, then transfer the identical
 local Train/Dev-only Block-4 cache. Do not
 open Internal-test/Gold or use confirmation-seed outcomes to choose new
 numeric settings. Preserve retained allocations `9929/3066`, telemetry, and
@@ -1881,4 +1887,5 @@ the failed server zero-shard cache attempt.
 | A second combined patch again matched a `progress.md` paragraph against `task_plan.md` | 2 | Applied one multi-file patch with each context under its correct file header; future planning updates keep file-local context blocks. |
 | Wave031 preparation rejected local GPU0 because `nvidia-smi` listed the Codex desktop `ChatGPT.exe` WDDM display context | 1 | Verified both 3090s were at 0% utilization and 13 MiB, and the only listed PID was the Codex UI with `[N/A]` memory on both GPUs. Narrow the guard to ignore only that exact display-only row while continuing to reject every other process. No Wave031 namespace or cache was created. |
 | Unrelated VisionPulse compute processes appeared on both 3090s while Wave031 attempt2 was active | 1 | Stopped only PRTA-CXR PID `17348`, preserved the external jobs, revalidated 429 contiguous shards / 109,824 images with no temporary fragment or protected read, classified an identity-preserving infrastructure failure, and froze attempt3 for exact resume only after both GPUs are free. |
+| A new VisionPulse training process appeared on GPU0 after attempt3 finished encoding all 571 shards but before it wrote a complete build receipt | 1 | Stopped only PRTA-CXR PID `18796`, preserved the external job, revalidated all 146,110 images / 571 contiguous shards with no temporary fragment or protected read, and froze attempt4 at the complete-shard boundary; do not start it while either GPU remains occupied. |
 | Heartbeat creation used unsupported `notificationPolicy=important_only` | 1 | The API rejected it before creating any automation. Recreated the same current-thread heartbeat without that optional field; exactly one active monitor now exists. |

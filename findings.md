@@ -1667,6 +1667,11 @@
   both were absent, then reused the exact same frozen builder through a
   namespace-only wrapper; this preserves scientific and cache identity while
   keeping attempt-specific progress and receipts separate.
+- `completed_shards=571` is not equivalent to terminal cache completion: the
+  builder must still finalize the manifest, materialize/hash the contiguous
+  training store, verify the cache index, and write a complete receipt. A GPU
+  conflict in that window must therefore preserve the complete shard boundary
+  and resume the terminal path in a new namespace rather than claim success.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

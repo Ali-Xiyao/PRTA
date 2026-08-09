@@ -4837,3 +4837,17 @@
   and `bd090397b890dbe934419b98d483b35de31b501c7af992871caec497a74044ab`.
   The same PID is now present on both GPUs and no competing compute row remains;
   startup is validating the frozen cache boundary before new shard progress.
+- Attempt3 reached all 571 shards / 146,110 images, but its progress still read
+  `RUNNING` and no complete build receipt existed when another unrelated
+  VisionPulse training process appeared on GPU0. Only PRTA PID `18796` was
+  stopped; the external process was preserved. Full shard revalidation found
+  no gap, hash drift, temporary fragment, or protected read. Immutable attempt3
+  competition-stop receipt SHA-256 is
+  `278bb5e40acb76e2da62ed12c0966ff0d3bb7271bab9d3218b3aa9245cfd770d`,
+  binding resume-state SHA `11abb137...`.
+- Attempt4 is frozen unstarted from that exact complete-shard boundary. Its
+  preparation SHA is
+  `d4804f78f5229160d0787eea5b188fd704bd907e02edaebf4370bb34c4f62713`,
+  wrapper SHA is `60c4a089...`, controller SHA is `117df345...`, and the
+  unchanged underlying builder remains `b464fde9...`. Both GPUs currently have
+  unrelated compute rows, so the launch guard correctly keeps attempt4 idle.
