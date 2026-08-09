@@ -1695,6 +1695,17 @@
   match the immutable build/finalization receipts. Transferring only those six
   runtime files is therefore sufficient for training and avoids transferring
   redundant build shards.
+- On Windows OpenSSH 9.5, SFTP batch mode accepts the H: drive through `lcd
+  H:/path` but fails to resolve the same drive-qualified full path as a quoted
+  `put` local operand. A resumable retry should therefore change only transport
+  syntax: bind the same frozen manifest, `lcd` once, use basename `put -a`
+  commands, preserve the existing remote directory/partial bytes, and reject
+  unexpected or oversized remote files before launch.
+- OpenSSH's SFTP `put -a` resume flag does not create a missing remote file; it
+  first stats the destination and exits when absent. A safe first resumable
+  upload must therefore create zero-byte placeholders only for exact manifest
+  destinations after an allowlist/size audit. Subsequent retries can preserve
+  and resume those bytes without truncating any partial file.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

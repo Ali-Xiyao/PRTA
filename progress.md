@@ -4894,3 +4894,29 @@
   creating it empty. Launch-intent SHA is `4bda4306...`; the worker is alive,
   no failure or completion receipt exists yet, and shared server storage has
   about 1.2 PB available. No scientific child was launched.
+- Transfer attempt1 failed closed before sending any file. Immutable failure
+  receipt SHA is `3fba2399...`; the remote target remains empty, partial bytes
+  are preserved by policy, and protected reads remain zero. Read-only SFTP
+  probes isolate a Windows OpenSSH path-parser issue: `lls` cannot resolve the
+  quoted full `H:/.../file` operand, while `lcd H:/...` followed by basename
+  lookup succeeds. Retry2 is implemented as a new immutable namespace that
+  retains the exact manifest/audit, uses `lcd` plus basename `put -a`, accepts
+  only expected non-oversized remote partial files, and records the raw SFTP
+  transcript.
+- Retry2 bound the same manifest/audit and corrected the Windows local path via
+  `lcd`, but failed closed at the first remote `stat`: OpenSSH `put -a`
+  requires its remote destination file to exist. Failure-receipt SHA is
+  `a26c9900...`; the transcript proves the exact failing command, the remote
+  target is still empty, and protected reads remain zero. Retry3 is a new
+  immutable namespace that first validates remote names/sizes, creates only
+  the six missing manifest files at zero bytes, then reuses the identical
+  `lcd` plus basename `put -a` batch.
+- Retry3 preparation SHA is `84a2a733...`; it binds retry2 failure SHA
+  `a26c9900...`, the unchanged independent-audit SHA `3c7a69a4...`, unchanged
+  transfer-manifest SHA `e72b963c...`, and unchanged SFTP batch SHA
+  `fbc23acf...`. Start created only the six exact manifest destinations at
+  zero bytes, then launched detached PID `13480` with launch-intent SHA
+  `7d8adfa9...`. The first live size audit shows
+  `block4_features.f16.bin` advanced to 599,654,400 bytes while all companion
+  files remain zero pending the large-store upload; no failure receipt exists
+  and protected reads remain zero.
