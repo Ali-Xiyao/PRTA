@@ -1843,12 +1843,12 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.
-- [ ] Transfer the verified Block-4 cache to the canonical server runtime and
+- [x] Transfer the verified Block-4 cache to the canonical server runtime and
   verify exact byte/hash identity after transfer.
-- [ ] Freeze tail6 and tail8 as two independent Seed17 arms around the existing
+- [x] Freeze tail6 and tail8 as two independent Seed17 arms around the existing
   pre-confirmation state0.025 parent, changing only adapter scope and cache
   identity; do not tune from Seeds 28/43 confirmation outcomes.
-- [ ] Launch at most one single-GPU scientific child on each retained
+- [x] Launch at most one single-GPU scientific child on each retained
   allocation `9929/3066`, keep telemetry and parents intact, and monitor only
   complete terminal receipts for selection or stopping.
 
@@ -1871,12 +1871,12 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 ## Next Step
 
-Monitor the active six-file Wave031 Block-4 transfer, then independently verify
-the remote byte hashes, `[146110,197,768]` shape, aggregate feature read, and
-zero protected access. Do not
-open Internal-test/Gold or use confirmation-seed outcomes to choose new
-numeric settings. Preserve retained allocations `9929/3066`, telemetry, and
-the failed server zero-shard cache attempt.
+Monitor Wave032 tail6 on `3066.52` and tail8 on `9929.49` without reading,
+selecting, or stopping from intermediate epochs. Act only on complete terminal
+receipts: if either arm reaches the frozen Seed17 target, stop only the other
+scientific child, preserve its partial artifacts, and freeze exact Seeds 28/43
+confirmation for the terminal winner. Keep parent allocations and telemetry,
+Internal-test/Gold sealing, and all failed/partial cache-transfer artifacts.
 
 ## Errors Encountered
 

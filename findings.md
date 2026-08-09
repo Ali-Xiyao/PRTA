@@ -1706,6 +1706,22 @@
   upload must therefore create zero-byte placeholders only for exact manifest
   destinations after an allowlist/size audit. Subsequent retries can preserve
   and resume those bytes without truncating any partial file.
+- The transferred Block-4 runtime is now independently proven usable on the
+  server, not merely byte-complete. Six exact SHA-256/size checks plus the
+  deployed source's real cache reader confirm 146,110 Train/Dev entries,
+  Block-4 identity, `[146110,197,768]` storage, and a finite aggregate
+  `[2,197,768]` feature read. No protected cohort was opened.
+- A nested single-quoted `bash -lc` around an already complete SSH command is
+  not portable through Windows OpenSSH when that command embeds a Python
+  payload. The failure was verifier transport, not cache identity: direct
+  remote execution of the same frozen payload passed. Preserving retry3 and
+  using a verification-only retry namespace retained immutable evidence while
+  avoiding any retransmission or mutation of the 44.2 GB store.
+- Tail6/tail8 are now an active outcome-adaptive Dev search rather than the
+  later formal scope ablation. The two arms share the exact state0.025 parent
+  and differ only in adapter scope plus its required Block-4 cache identity;
+  Seeds 28/43 confirmation results did not influence the freeze. A future
+  tail4/tail6/tail8 Seeds17/28/43 comparison remains separately conditional.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

@@ -4925,3 +4925,38 @@
   28,846,182,400 / 44,211,717,120 bytes; the five companion destinations remain
   their expected zero-byte placeholders until the first upload completes.
   Server storage remains ample and protected reads remain zero.
+
+## 2026-08-09 16:18 CST Block-4 server verification and Wave032 launch
+
+- Retry3 completed the exact six-file transfer. Its process receipt SHA is
+  `c5dabc5f3193ef64c631d7ccb43018feb2f692be06ca9d833766a79bd854ff74`;
+  no transfer failure exists and the detached transfer PID exited normally.
+- The first server-verification call rehashed all six remote files successfully
+  but failed before receipt creation because an extra single-quoted
+  `bash -lc` wrapper corrupted the nested Python payload under Windows
+  OpenSSH. Retry3 remains immutable. Verification-failure receipt SHA is
+  `a9899c6cc609fa85ec2df0d0ffa7701120abbfd7706aab55812e0f25c97d2f9c`.
+  An equivalent aggregate-only diagnostic read confirmed 146,110 entries,
+  Block-4, `[2,197,768]`, and finite values with zero protected reads.
+- A verification-only retry4 froze the shell-wrapper correction without
+  retransferring, deleting, or truncating any remote byte. Its preparation SHA
+  is `f704724e9182fff80928971be21ae45e32584be35deba29cef0590f9eb02c29c`.
+  Retry4 then passed: all six remote sizes/SHA-256 values match the frozen
+  manifest, the store is `[146110,197,768]`, the real aggregate feature read is
+  finite, and Internal-test/Gold/protected reads remain zero. Final server-
+  verification receipt SHA is
+  `dc3ba3e02e887e9ab438ef14d146f4e1b5f969229252169b005f0173938eb070`.
+- Wave032 froze tail6 and tail8 from the pre-confirmation Seed17 state0.025
+  parent only. All other fields remain H0, rank32, EMA0.999, DMW010, direct
+  cost0.05, state auxiliary0.025, constant LR, identical Train/Dev rows,
+  optimizer, batch, budget, and early stopping. Preparation SHA is
+  `a4b7760d86146b9d08f14844563789262cef6db761e983eacea0722d74b2310b`.
+  Tail6 config/launcher/launch-receipt SHAs are `8803578d...`, `59427b10...`,
+  and `006d98d2...`; tail8 corresponding SHAs are `9790f976...`,
+  `b29d88c5...`, and `20bfe994...`.
+- Both scientific children are now active independently: tail6 on `3066.52`
+  and tail8 on `9929.49`. Telemetry `3066.2/9929.0` and both parent allocations
+  remain alive; there is exactly one scientific child per allocation, no new
+  Slurm parent job, no fatal launcher marker, and ample disk. Launch
+  intent/control/finalization SHAs are `f93b0464...`, `1e8d874f...`, and
+  `fedcc865...`. Only terminal receipts may select or stop.
