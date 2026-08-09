@@ -5129,3 +5129,10 @@
   scientific steps, telemetry, parents, logs, disk, and protected-read state
   remain healthy. Neither terminal receipt exists and no intermediate metric
   was read or used to alter the fixed queue.
+- 21:42 CST heartbeat: stage2 tail8 Seed17 remains `RUNNING` at epoch 3 with
+  20,104 completed optimizer steps; tail4 Seed28 remains `RUNNING` at epoch 6
+  with 34,956. Frozen effective configs, required Block-4/Block-8 cache
+  identities, state/EMA/ODC/schedule audits, checkpoint pairs, scientific
+  steps, telemetry, parents, logs, storage, and protected-read state remain
+  healthy. Neither terminal receipt exists and no intermediate metric was
+  read or used.
