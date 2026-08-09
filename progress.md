@@ -5079,3 +5079,7 @@
   35,182 optimizer steps on `9929.50`; no intermediate metric was read.
   Allocation `3066` is intentionally free until the paired stage1 boundary is
   complete, while both parents and telemetry remain alive.
+- The existing heartbeat was updated in place to preserve the terminal tail4
+  cell, monitor only the unchanged tail6 cell, and launch the already-frozen
+  stage2 pair only after both stage1 receipts are terminal. No duplicate
+  automation was created.
