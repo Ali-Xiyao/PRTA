@@ -5199,3 +5199,9 @@
   state/EMA/ODC/schedule audits, checkpoint pairs, scientific steps,
   telemetry, retained parents, logs, memory, and storage remain healthy.
   Neither terminal receipt exists and no intermediate metric was read or used.
+- 2026-08-10 00:02 CST heartbeat: both frozen stage3 cells remain `RUNNING`.
+  Tail6 Seed28 is at epoch 4 with 21,304 completed optimizer steps; tail8
+  Seed28 is at epoch 3 with 19,678. Frozen effective configs, Block-4 cache,
+  state/EMA/ODC/schedule audits, checkpoint pairs, scientific steps,
+  telemetry, parents, logs, memory, and storage remain healthy. Neither
+  terminal receipt exists and no intermediate metric was read or used.
