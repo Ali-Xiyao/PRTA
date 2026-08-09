@@ -4788,3 +4788,9 @@
 - Updated the existing 20-minute heartbeat in place to monitor attempt2 PID
   `17348`, both GPUs, the attempt2 receipt paths, dual-GPU finalizer, transfer,
   and subsequent tail6/tail8 launch gates. No duplicate automation was created.
+- A steady-state follow-up advanced from 85 to 97 shards in about 66 seconds,
+  or roughly 5.5 seconds per shard. Attempt1 averaged about 10 seconds per
+  shard over its preserved run, so the realized dual-GPU speedup is about
+  1.8x. Instantaneous utilization can read 0% during ordered writes, but both
+  devices retain PID `17348`, about 1.31 GiB each, and elevated power while the
+  atomic progress continues to advance.

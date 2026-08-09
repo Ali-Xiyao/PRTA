@@ -1636,6 +1636,10 @@
   3090s simultaneously execute the same PID near full utilization, while shard
   state advances contiguously from 81 to 85. This raises encoding parallelism
   without changing cache identity or introducing concurrent state writers.
+- Measured throughput improves by about 1.8x rather than a perfect 2x because
+  image decoding and the single ordered writer remain shared. This is the
+  expected safe tradeoff: most GPU encoding overlaps, while serialization is
+  retained only where cache correctness requires it.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all
