@@ -1759,3 +1759,8 @@
   or altered the nine-cell queue. The immutable stage1 aggregate therefore
   closes the pair without ranking and advances exactly to the pre-frozen
   tail8 Seed17 plus tail4 Seed28 stage2 pair.
+- Frozen stage2 tail4 Seed28 is terminal at Macro-F1 `0.543454750661478` /
+  ODER `0.0047317203821087405`. It passes the original joint gate, but remains
+  only one mandatory ablation cell: the still-running tail8 Seed17 cell is
+  unchanged, allocation `9929` stays idle at the paired-stage boundary, and
+  the stage3 queue remains locked until both stage2 cells are terminal.

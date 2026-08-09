@@ -5136,3 +5136,17 @@
   steps, telemetry, parents, logs, storage, and protected-read state remain
   healthy. Neither terminal receipt exists and no intermediate metric was
   read or used.
+- 22:02 CST heartbeat: stage2 tail4 Seed28 is complete-terminal after seven
+  epochs with best epoch 2, Macro-F1 `0.543454750661478`, and ODER
+  `0.0047317203821087405`. Training-receipt SHA is `22e50956...`; best/last
+  checkpoint SHAs are `7a8d893b...` and `bb0639b...`, with exact sizes
+  489,338,630 and 489,343,814 bytes. Its effective config, Block-8 cache,
+  state/EMA/ODC/schedule fields, and zero protected-read state pass. The cell
+  was recorded without selection and did not change the queue.
+- Stage2 tail8 Seed17 remains unchanged and `RUNNING` at epoch 5 with 26,730
+  completed optimizer steps on `3066.55`; no intermediate metric was read.
+  Allocation `9929` is intentionally free until the paired stage2 boundary is
+  complete, while both parents and telemetry remain alive.
+- The existing heartbeat was updated in place to preserve the terminal tail4
+  Seed28 cell, monitor only unchanged tail8 Seed17, and keep stage3 locked
+  until both stage2 receipts are terminal. No duplicate automation was created.
