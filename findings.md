@@ -1672,6 +1672,11 @@
   training store, verify the cache index, and write a complete receipt. A GPU
   conflict in that window must therefore preserve the complete shard boundary
   and resume the terminal path in a new namespace rather than claim success.
+- Once all shards are complete, a retry still briefly initializes the exact
+  encoder environment before validating the frozen state because the unchanged
+  builder verifies encoder identity as part of resume. This is expected and
+  does not imply that images are re-encoded; the starting boundary remains
+  146,110/571.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

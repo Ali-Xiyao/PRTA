@@ -1838,7 +1838,8 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   the complete 146,110-image shard boundary, and preserve the external work.
 - [x] Freeze attempt4 from the exact attempt3 failure receipt with all 571
   shards already complete; keep it unstarted while either GPU has a competing
-  process, then resume only the terminal cache consolidation/receipt path.
+  process, then resume only the terminal cache consolidation/receipt path after
+  a fresh two-GPU clean audit.
 - [ ] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.

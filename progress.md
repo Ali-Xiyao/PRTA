@@ -4851,3 +4851,11 @@
   wrapper SHA is `60c4a089...`, controller SHA is `117df345...`, and the
   unchanged underlying builder remains `b464fde9...`. Both GPUs currently have
   unrelated compute rows, so the launch guard correctly keeps attempt4 idle.
+- At 13:44 CST both external GPU processes had exited without intervention;
+  both 3090s showed only the Codex display context, 0% utilization, and 13 MiB.
+  Attempt4 therefore launched exactly once as PID `4624`. Launch-intent and
+  launch-control SHA-256 values are
+  `b36b099e7cf66f6c1135af6cc001658d12bdee79f1e789d6f156945edd62cdd2`
+  and `f0ab5a96adb56b7272fcf7e09510da55411f6690e03a667f737f24931cc3164c`.
+  Startup is revalidating the complete 571-shard boundary before terminal
+  consolidation; no additional cache writer or scientific child exists.
