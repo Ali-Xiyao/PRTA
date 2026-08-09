@@ -4960,3 +4960,10 @@
   Slurm parent job, no fatal launcher marker, and ample disk. Launch
   intent/control/finalization SHAs are `f93b0464...`, `1e8d874f...`, and
   `fedcc865...`. Only terminal receipts may select or stop.
+- 16:22 CST heartbeat: both Wave032 children remain `RUNNING` at epoch 0;
+  tail6 has 2,300 completed optimizer steps and tail8 has 2,000. Their frozen
+  effective config hashes, Block-4 cache manifest, state0.025, EMA0.999,
+  direct cost0.05, and constant-LR audits match exactly. Both scientific steps
+  and telemetry remain alive, no terminal receipt/checkpoint or fatal launcher
+  marker exists yet, and storage remains healthy. No metric was inspected or
+  used for selection.
