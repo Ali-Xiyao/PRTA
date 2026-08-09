@@ -4974,3 +4974,10 @@
   scope-dependent sizes (717,829,052 bytes for tail6 and 719,467,026 bytes for
   tail8); no terminal receipt or fatal log marker exists. Allocations,
   telemetry, and disk remain healthy, and no intermediate metric was used.
+- 17:02 CST heartbeat: both Wave032 arms remain `RUNNING` at epoch 3. Tail6
+  has 17,478 optimizer steps and tail8 has 15,778; their exact effective
+  config, Block-4 cache, state0.025, EMA0.999, direct-cost0.05, and constant-LR
+  audits remain unchanged. Checkpoint pairs remain present at the expected
+  expanded-scope sizes, both scientific steps/telemetry are alive, logs and
+  disk are healthy, and neither terminal receipt exists. No intermediate
+  metric was read or used.
