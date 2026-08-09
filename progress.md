@@ -5115,3 +5115,10 @@
 - The existing 20-minute heartbeat was updated in place to bind stage1 closure
   and the active stage2 pair plus the frozen stage3-5 advance rule; no duplicate
   automation was created.
+- 21:02 CST heartbeat: frozen stage2 remains healthy and `RUNNING`. Tail8
+  Seed17 is at epoch 1 with 5,826 completed optimizer steps on `3066.55`;
+  tail4 Seed28 is at epoch 2 with 10,152 steps on `9929.51`. Both exact
+  effective configs, scope-required Block-4/Block-8 manifests, state0.025,
+  EMA0.999, DMW010, ODC0.05, constant-LR audits, best/last checkpoint pairs,
+  telemetry, retained parents, logs, disk, and protected-read state pass.
+  Neither terminal receipt exists and no intermediate metric was read or used.
