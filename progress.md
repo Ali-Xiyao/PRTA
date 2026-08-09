@@ -5046,3 +5046,11 @@
   frozen attempt2 contract. Scientific steps `3066.54/9929.50`, telemetry,
   parents, logs, and disk are healthy; no checkpoint or terminal receipt exists
   yet, and no intermediate metric was read or used.
+- 19:02 CST heartbeat: both corrected Wave033 stage1 cells remain `RUNNING`.
+  Tail4 Seed17 is at epoch 3 with 16,978 completed optimizer steps; tail6
+  Seed17 is at epoch 2 with 12,452. Their exact effective configs,
+  scope-required Block-8/Block-4 manifests, state0.025, EMA0.999, DMW010,
+  ODC0.05, and constant-LR audits remain frozen. Both best/last checkpoint
+  pairs now exist at their expected scope-dependent sizes; scientific steps,
+  telemetry, logs, parents, and storage are healthy, and neither terminal
+  receipt exists. No intermediate metric was read or used.
