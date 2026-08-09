@@ -5265,3 +5265,14 @@
   state/EMA/ODC/schedule audits, checkpoint pairs, scientific steps,
   telemetry, parents, logs, memory, and storage remain healthy. Neither
   terminal receipt exists and no intermediate metric was read or used.
+- 02:42 CST heartbeat: frozen stage4 tail4 Seed43 is complete-terminal after
+  nine epochs with best epoch 4, Macro-F1 `0.5420727590146667`, and ODER
+  `0.003928220694580841`. Training-receipt SHA is `2c723911...`; best/last
+  checkpoint SHAs are `a25e5fb1...`/`5f3218a5...`; wall-clock time is
+  `4452.729199` seconds. Exact config, required Block-8 cache, state0.025,
+  EMA0.999, DMW010, ODC0.05, constant-LR, checkpoint, and zero protected-read
+  audits pass. The result passes the original joint gate but performs no
+  selection and does not alter the frozen queue. Tail6 Seed43 remains healthy
+  and unchanged on `9929.53` at epoch 5 with 29,730 completed optimizer steps;
+  allocation `3066` is free at the paired-stage boundary while both retained
+  parents and telemetry remain alive. No intermediate tail6 metric was read.

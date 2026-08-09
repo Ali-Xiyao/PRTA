@@ -1776,3 +1776,10 @@
   conditional-ablation cells, not selection events. Immutable stage3 aggregate
   SHA is `1df869e4...`, and the unchanged queue advances exactly to tail4
   Seed43 plus tail6 Seed43.
+- Frozen stage4 tail4 Seed43 is terminal at Macro-F1
+  `0.5420727590146667` / ODER `0.003928220694580841`. It passes the original
+  joint gate and remains only a mandatory conditional-ablation cell: the
+  unchanged tail6 Seed43 cell continues, allocation `3066` stays idle at the
+  paired-stage boundary, and stage5 remains locked until both stage4 receipts
+  are terminal. Training-receipt SHA is `2c723911...`; no outcome changed the
+  frozen queue.
