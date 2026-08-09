@@ -4672,3 +4672,76 @@
   `9929.0` remain intact, with no live scientific child. `/ipfs` remains 2%
   used and protected reads remain zero. The separate expanded tail6/tail8
   route remains input-blocked by missing verified Train/Dev raw-image paths.
+
+## 2026-08-09 user-authorized Block-4 repair and tail6/tail8 continuation
+
+- The user explicitly authorized starting the previously blocked expanded
+  adapter route after the distinction between tail scope, seed confirmation,
+  and formal comparison was clarified.
+- The execution order is frozen as: local Train/Dev-only raw-path and cache
+  audit; new immutable Block-4 build namespace; complete cache verification;
+  hash-verified server transfer; then one Seed17 tail6 arm and one Seed17
+  tail8 arm with every non-scope scientific field fixed to the pre-confirmation
+  state0.025 parent. Internal-test/Gold remain sealed, confirmation Seeds
+  28/43 do not drive numeric tuning, and the failed server zero-shard attempt
+  remains immutable.
+- The first Wave031 preparation call failed closed before creating its wave or
+  target cache because `nvidia-smi` reported the Codex desktop `ChatGPT.exe`
+  WDDM context on GPU0. A direct audit showed the same PID on both GPUs with
+  `[N/A]` memory, only 13 MiB device memory, and 0% utilization. The launch
+  guard is narrowed only for this exact display-only process; every other GPU
+  process remains a hard stop.
+- Recovered the prior default-compatible Block-4 streaming builder and its
+  preserved Wave026 failure controller. The frozen private image inventory
+  contains 146,110 Train/Dev image entries and has SHA-256
+  `8231538d1f205f75ac60bf961197de4c4a0a9ae6b381af85cdb58cc0802ec581`.
+  The builder already supports 256-image resumable shards, Block-4 tensor
+  generation, manifest/training-store finalization, exact hash binding, and
+  zero protected-read receipts; the new retry must use a new cache and wave
+  namespace rather than overwrite the preserved zero-shard failure.
+- Local input audit confirms all 146,110 frozen image paths are unique,
+  present, and rooted on `H:`; both RTX 3090s are idle with 24 GiB each, and
+  `H:` has about 359 GiB free. The initially assumed E: copy of the server
+  Block-8 cache is absent, so asset discovery must locate the migrated local
+  cache and BiomedCLIP weights before the new preparation can be frozen.
+- H: contains dedicated `VisualVIT_runtime`, `moved-caches`, and model-store
+  roots. A broad recursive filename scan produced no concrete candidate, so
+  discovery is switching to bounded root-by-root inspection rather than
+  repeating the failed wide scan.
+- Bounded root inspection resolved the actual local assets:
+  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1` contains the formal
+  cache tree, while `H:\Xiyao_Wang\001_models\biomedclip` contains
+  `open_clip_pytorch_model.bin`. These concrete candidates will be accepted
+  only after their manifests and hashes match the frozen inventory/source
+  identities.
+- Exact identity audit passes. The local and server source Block-8 manifests
+  both hash to
+  `7bec0eb448206ad01c13248f69c611a49e8669ff69a7e7fed1adbf8aaa57d7d5`;
+  the local and server BiomedCLIP weights both hash to
+  `52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be`;
+  and the source cache inventory file exactly matches the frozen private
+  inventory SHA-256 `8231538d...`. The local Python stack has CUDA on both
+  RTX 3090s plus compatible timm/torchvision/Pillow, and Git contains exact
+  source commit `821e8040...`.
+- Wave031 preparation is now immutable and unstarted after Ruff, syntax, and
+  24 focused cache/data tests passed. Preparation receipt SHA-256 is
+  `bb1bc6c2ff68cfc1a1a19b2b898db38cd676ecb60e1605b594617c2e38db523d`,
+  frozen builder SHA-256 is
+  `0f00afed34b8d62d428f51aa1b44b410458ba088cb80eb78e238e2a5327d8212`,
+  controller SHA-256 is
+  `6c1acef5dcdbcebdda797c7fab2231382d939a887f78cfdb63544e9b3b6d43ee`,
+  and all five critical source-file hashes match commit `821e8040...`.
+- Wave031 then launched successfully as detached local PID `19520` on RTX 3090
+  GPU0. Launch-intent SHA-256 is
+  `d8fdb442e9a1bb99af9d3d27c9481a47cf0578fa4dc711f333b0ae815c6b619a`
+  and launch-control SHA-256 is
+  `c649728fa13009be40815077777ee89b166c5041e01b138bec397b90829f9f60`.
+  The first durable audit observed 12 complete 256-image shards (about 930 MB),
+  GPU memory about 1.3 GiB, an active Python worker, about 384.8 GB free on H:,
+  and zero protected reads. The empty log is expected because progress is
+  recorded atomically after each shard and no error has occurred.
+- Recreated the active current-thread 20-minute heartbeat
+  `prta-cxr-server-dev-search-monitor`. Its first creation call was rejected
+  before creation because `important_only` is not a supported notification
+  policy; the corrected call omitted that optional field and created exactly
+  one monitor.

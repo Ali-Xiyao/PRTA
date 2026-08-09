@@ -1095,7 +1095,7 @@ Status: complete; PASS engineering readiness; no formal launch authorized
   training queue remains locked behind a new freeze and explicit authority.
 
 ### Phase 92 - Continuous lightweight server Dev search
-Status: HOLD after terminal Wave030 confirmation; expanded route input-blocked
+Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 - Reuse only retained Slurm allocations `9929` and `3066` on `gpu01`; retired
   allocation `4161` must never be reused. Submit no new Slurm allocation and
@@ -1814,12 +1814,57 @@ Status: HOLD after terminal Wave030 confirmation; expanded route input-blocked
   Train/Dev-only raw-image transfer or an equivalent verified Block-4 cache
   build for a new tail6/tail8 attempt namespace; do not inspect protected rows.
 
+## 2026-08-09: authorized Block-4 repair and expanded adapter search
+
+- [x] Audit the frozen local Train/Dev-only image inventory, raw-path
+  availability, BiomedCLIP identity, cache builder, free disk, and resumable
+  output contract without opening Internal-test/Gold rows.
+- [x] Freeze a new local Block-4 cache-build namespace and immutable
+  preparation receipt; preserve the failed server zero-shard attempt.
+- [ ] Build and independently verify the complete Block-4 Train/Dev cache,
+  including shard count, tensor shape/finiteness, manifest hashes, and zero
+  protected reads.
+- [ ] Transfer the verified Block-4 cache to the canonical server runtime and
+  verify exact byte/hash identity after transfer.
+- [ ] Freeze tail6 and tail8 as two independent Seed17 arms around the existing
+  pre-confirmation state0.025 parent, changing only adapter scope and cache
+  identity; do not tune from Seeds 28/43 confirmation outcomes.
+- [ ] Launch at most one single-GPU scientific child on each retained
+  allocation `9929/3066`, keep telemetry and parents intact, and monitor only
+  complete terminal receipts for selection or stopping.
+
+## Deferred adapter-scope ablation after final parameter freeze
+
+- [ ] After all non-scope training parameters are finally frozen, add a formal
+  conditional adapter-scope ablation with `tail4`, `tail6`, and `tail8` as the
+  only changing field.
+- [ ] Run or reuse exact-hash-matching Seeds `17/28/43` for every scope; do not
+  drop losing scopes, select seeds, or change numeric settings from any
+  intermediate or terminal scope outcome.
+- [ ] Keep H0, rank32, state loss, ODC, EMA, learning rate, optimizer, batch,
+  Train/Dev split, epoch budget, and early stopping identical. Reuse existing
+  tail4 receipts only if the effective config and input hashes match the final
+  ablation freeze exactly.
+- [ ] Report every seed plus mean and standard deviation for Macro-F1 and ODER,
+  together with trainable parameter count, peak GPU memory, and wall-clock
+  time. Describe this as a conditional adapter-scope ablation at the frozen
+  setting, not as an unbiased architecture search or protected-test result.
+
 ## Next Step
 
-HOLD the confirmed route: Wave030 is terminal and fails the predeclared +2pp
-three-seed mean-F1 gate despite every seed passing the original joint gate.
-Do not tune from confirmation-seed outcomes or open Internal-test/Gold. Keep
-allocations `9929/3066` and telemetry intact with no scientific children.
-Expanded tail6/tail8 remains blocked until an exact Train/Dev-only raw-image
-mapping/transfer or equivalent verified Block-4 cache is available in a new
-attempt namespace.
+Run and verify the frozen local Train/Dev-only Wave031 Block-4 cache build, then
+transfer that cache before launching any tail6/tail8 scientific child. Do not
+open Internal-test/Gold or use confirmation-seed outcomes to choose new
+numeric settings. Preserve retained allocations `9929/3066`, telemetry, and
+the failed server zero-shard cache attempt.
+
+## Errors Encountered
+
+| Error | Attempt | Resolution |
+|---|---:|---|
+| Assumed the server cache root `data/runtime/formal_program_v1/cache/full_repartition_v1` also existed under the local E: checkout | 1 | Resolved the migrated assets under `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1` and the BiomedCLIP model under `H:\Xiyao_Wang\001_models\biomedclip`; verify hashes before freeze. |
+| Broad `rg --files` asset lookup across four large H: roots returned no usable result | 1 | Inspect the known `H:\VisualVIT_runtime`, `H:\moved-caches`, and `H:\Xiyao_Wang\001_models` directory structures separately, then hash only concrete candidates. |
+| Combined planning-file patch used a `progress.md` context while targeting `task_plan.md` | 1 | Split the patch by target file; the corrected planning update applied without modifying unrelated content. |
+| A second combined patch again matched a `progress.md` paragraph against `task_plan.md` | 2 | Applied one multi-file patch with each context under its correct file header; future planning updates keep file-local context blocks. |
+| Wave031 preparation rejected local GPU0 because `nvidia-smi` listed the Codex desktop `ChatGPT.exe` WDDM display context | 1 | Verified both 3090s were at 0% utilization and 13 MiB, and the only listed PID was the Codex UI with `[N/A]` memory on both GPUs. Narrow the guard to ignore only that exact display-only row while continuing to reject every other process. No Wave031 namespace or cache was created. |
+| Heartbeat creation used unsupported `notificationPolicy=important_only` | 1 | The API rejected it before creating any automation. Recreated the same current-thread heartbeat without that optional field; exactly one active monitor now exists. |

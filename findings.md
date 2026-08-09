@@ -1584,3 +1584,42 @@
   `0.000482` below the predeclared `0.5445653` floor. State0.025 therefore
   remains an exploratory Seed17 target winner rather than a reproducibly
   confirmed setting; confirmation outcomes must not seed another tuning wave.
+- The preserved Wave026 builder is reusable as an implementation reference but
+  not as a retry namespace. It binds a 146,110-image Train/Dev inventory,
+  outputs Block-4 `[197,768]` FP16 shards, and finalizes the same cache/training
+  store contract consumed by the adapter training path. A local retry can
+  remove the server Windows-path mismatch without changing scientific rows,
+  provided it freezes a new namespace and independently verifies every shard
+  and manifest before transfer.
+- The frozen image inventory is locally complete: 146,110/146,110 unique paths
+  exist on `H:`. Local compute and capacity are viable (two idle 24-GiB RTX
+  3090s and about 359 GiB free on `H:`), but the old cache/model roots are not
+  colocated with the E: clean checkout and must be resolved by frozen identity
+  rather than guessed path substitution.
+- The resolved local assets are byte-identical to the server inputs: Block-8
+  manifest SHA-256 `7bec0eb4...` and BiomedCLIP weight SHA-256 `52cc993c...`
+  match exactly, while the old cache inventory file is the same
+  `8231538d...` frozen 146,110-image inventory. This permits a local Block-4
+  rebuild as an input-location repair without changing data membership,
+  encoder weights, preprocessing, or protected-cohort state.
+- On this Windows host, the Codex desktop process `ChatGPT.exe` appears in the
+  NVIDIA compute-app table for both 3090s even at 0% utilization and 13 MiB,
+  with memory reported as `[N/A]`. It is a display-context false positive for
+  the launch guard; only that exact row may be ignored, while any Python or
+  other process remains blocking.
+- The new local build is frozen before execution: Wave031 preparation SHA is
+  `bb1bc6c2...`, builder SHA is `0f00afed...`, and it binds exact source commit
+  `821e8040...`, the old Block-8 manifest `7bec0eb4...`, the inventory file
+  `8231538d...`, and BiomedCLIP weights `52cc993c...`. This creates a new
+  resume-safe identity without mutating the failed server Wave026 namespace.
+- Wave031 is now proven active rather than merely spawned: PID `19520` created
+  the target cache and advanced from one to 12 immutable 256-image shards while
+  holding about 1.3 GiB on GPU0. This is an engineering cache build only; it
+  produces no Dev metric and cannot select tail6/tail8 before full verification
+  and server hash parity.
+- User decision: after the final non-scope parameter setting is frozen, include
+  `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
+  scope comparison must hold every other training field fixed, complete all
+  arms without adaptive dropping, report accuracy/error and compute costs, and
+  be framed as a conditional ablation rather than reusing a winner-only search
+  as an unbiased comparison.
