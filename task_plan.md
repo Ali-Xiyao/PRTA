@@ -1888,23 +1888,29 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Complete the frozen stage3 pair, verify both complete terminal receipts,
   and close them in an immutable no-selection aggregate without changing the
   stage4-5 queue.
-- [ ] Complete the active frozen stage4 pair: tail4 Seed43 on `3066.57` and
+- [x] Complete the frozen stage4 pair: tail4 Seed43 on `3066.57` and
   tail6 Seed43 on `9929.53`; do not inspect intermediate metrics or adapt the
   remaining stage5 cell.
+- [ ] Complete the active frozen stage5 tail8 Seed43 cell on `3066.58`, then
+  verify/hash all nine cells and write the final conditional-ablation
+  aggregate without selection.
 
 ## Next Step
 
-Preserve the complete stage1-3 no-selection aggregates and monitor the active
-frozen stage4 pair only: tail4 Seed43 on `3066.57` and tail6 Seed43 on
-`9929.53`. Read no intermediate metric. When both complete terminal receipts
-exist, close stage4 without selection and launch exactly the pre-frozen stage5
-tail8 Seed43 cell on `3066`. Keep parent allocations/telemetry,
-Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing artifact.
+Preserve the complete stage1-4 no-selection aggregates and monitor only the
+active frozen stage5 tail8 Seed43 cell on `3066.58`; keep allocation `9929`
+free and both parent allocations/telemetry alive. Read no intermediate metric.
+When the complete terminal receipt exists, verify/hash it and write the stage5
+plus full nine-cell conditional-ablation aggregates, including every cell,
+per-scope mean/std Macro-F1 and ODER, trainable parameters, peak GPU memory,
+and wall-clock time. Preserve Internal-test/Gold sealing and every failed or
+losing artifact.
 
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Looked for the Wave033 attempt2 preparation receipt under the local private runtime even though only its controller surface is mirrored locally | 1 | The missing-path read changed nothing. Read the immutable preparation receipt from the canonical server runtime, verified the frozen stage5 arm there, and kept all subsequent controller hashes bound to that server receipt. |
 | Assumed the server cache root `data/runtime/formal_program_v1/cache/full_repartition_v1` also existed under the local E: checkout | 1 | Resolved the migrated assets under `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1` and the BiomedCLIP model under `H:\Xiyao_Wang\001_models\biomedclip`; verify hashes before freeze. |
 | Broad `rg --files` asset lookup across four large H: roots returned no usable result | 1 | Inspect the known `H:\VisualVIT_runtime`, `H:\moved-caches`, and `H:\Xiyao_Wang\001_models` directory structures separately, then hash only concrete candidates. |
 | Combined planning-file patch used a `progress.md` context while targeting `task_plan.md` | 1 | Split the patch by target file; the corrected planning update applied without modifying unrelated content. |

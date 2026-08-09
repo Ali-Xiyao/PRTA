@@ -5283,3 +5283,25 @@
   logs, memory, and storage remain healthy. Its terminal receipt does not yet
   exist; allocation `3066` remains free at the paired-stage boundary and no
   intermediate metric was read or used.
+- 03:22 CST heartbeat: frozen stage4 tail6 Seed43 is complete-terminal after
+  eight epochs with best epoch 3, Macro-F1 `0.5431192385315183`, and ODER
+  `0.003571109722346219`. Training-receipt SHA is `3516def2...`; best/last
+  checkpoint SHAs are `4da56fc3...`/`61d7142f...`; wall-clock time is
+  `6414.141364` seconds. Exact config, Block-4 cache, state0.025, EMA0.999,
+  DMW010, ODC0.05, constant-LR, checkpoint, and zero protected-read audits
+  pass. The result passes the original joint gate but performs no selection.
+- Stage4 closed in immutable no-selection aggregate SHA `798ed198...` after
+  both allocations were independently verified free with both telemetry and
+  parents alive. New stage4-close/stage5-advance controller SHA is
+  `a8194799...`; local compile/Ruff and exact server hash/compile checks pass.
+  A local read initially looked for the server-only preparation receipt under
+  the local private runtime and failed without changing any artifact; the
+  corrected read used the canonical immutable server receipt.
+- Frozen stage5 launched exactly tail8 Seed43 on `3066.58`, leaving `9929`
+  free. Config/effective-config/launcher SHAs are `ff179b50...`/
+  `db310ef9...`/`3e53ac55...`; intent/control/finalization SHAs are
+  `34b3800c...`, `bfe8be87...`, and `0a7a228b...`; launch-receipt SHA is
+  `18da6df4...`. Initial progress, Block-4 cache, state/EMA/ODC/schedule,
+  scientific-step, telemetry, parent, free-9929, log, memory, disk, and zero
+  protected-read audits pass. No parent job was submitted and no
+  intermediate metric was read.

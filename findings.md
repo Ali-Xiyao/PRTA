@@ -1783,3 +1783,9 @@
   paired-stage boundary, and stage5 remains locked until both stage4 receipts
   are terminal. Training-receipt SHA is `2c723911...`; no outcome changed the
   frozen queue.
+- Frozen stage4 tail6 Seed43 is terminal at Macro-F1
+  `0.5431192385315183` / ODER `0.003571109722346219`. Both stage4 cells pass
+  the original joint gate, but neither selects a scope or changes the queue.
+  Immutable stage4 aggregate SHA is `798ed198...`; the final pre-frozen tail8
+  Seed43 cell therefore starts unchanged on `3066`, with allocation `9929`
+  deliberately kept free.
