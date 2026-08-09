@@ -4987,3 +4987,8 @@
   still audit exactly; checkpoint pairs are present, scientific steps and
   telemetry are alive, storage is healthy, and no terminal receipt or fatal
   log marker exists. Intermediate metrics were neither read nor used.
+- 17:42 CST heartbeat: tail6 remains `RUNNING` at epoch 6 with 32,756 steps;
+  tail8 remains `RUNNING` at epoch 5 with 30,030. Both retain their exact
+  config/cache/state/EMA/direct-cost/schedule identities, checkpoint pairs,
+  scientific Slurm steps, and telemetry. No terminal receipt, fatal log
+  marker, disk issue, protected read, or intermediate-result action exists.
