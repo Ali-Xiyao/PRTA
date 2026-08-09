@@ -5083,3 +5083,11 @@
   cell, monitor only the unchanged tail6 cell, and launch the already-frozen
   stage2 pair only after both stage1 receipts are terminal. No duplicate
   automation was created.
+- 20:22 CST heartbeat: the remaining stage1 tail6 Seed17 cell remains
+  `RUNNING` at epoch 8 with 43,308 completed optimizer steps on `9929.50`.
+  Its frozen effective config, Block-4 cache manifest, state0.025, EMA0.999,
+  DMW010, ODC0.05, and constant-LR audits still match; best/last checkpoints,
+  telemetry, retained parents, logs, storage, and protected-read state remain
+  healthy. No terminal receipt exists and no intermediate metric was read or
+  used. Allocation `3066` remains intentionally free until the paired stage1
+  boundary is complete.
