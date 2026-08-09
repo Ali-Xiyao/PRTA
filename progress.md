@@ -4981,3 +4981,9 @@
   expanded-scope sizes, both scientific steps/telemetry are alive, logs and
   disk are healthy, and neither terminal receipt exists. No intermediate
   metric was read or used.
+- 17:22 CST heartbeat: tail6 and tail8 remain `RUNNING` at epoch 4 with 25,130
+  and 22,904 completed optimizer steps. Frozen effective configs, Block-4
+  cache identity, state0.025, EMA0.999, direct-cost0.05, and constant-LR fields
+  still audit exactly; checkpoint pairs are present, scientific steps and
+  telemetry are alive, storage is healthy, and no terminal receipt or fatal
+  log marker exists. Intermediate metrics were neither read nor used.
