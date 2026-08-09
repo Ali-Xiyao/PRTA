@@ -5193,3 +5193,9 @@
   constant-LR audits, checkpoint pairs, scientific steps, telemetry, retained
   parents, logs, memory, and storage remain healthy. Neither terminal receipt
   exists and no intermediate metric was read or used to alter the fixed queue.
+- 23:42 CST heartbeat: both frozen stage3 cells remain `RUNNING`. Tail6
+  Seed28 is at epoch 2 with 13,952 completed optimizer steps; tail8 Seed28 is
+  at epoch 2 with 12,552. Exact effective configs, Block-4 cache identity,
+  state/EMA/ODC/schedule audits, checkpoint pairs, scientific steps,
+  telemetry, retained parents, logs, memory, and storage remain healthy.
+  Neither terminal receipt exists and no intermediate metric was read or used.
