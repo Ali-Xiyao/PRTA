@@ -4745,3 +4745,46 @@
   before creation because `important_only` is not a supported notification
   policy; the corrected call omitted that optional field and created exactly
   one monitor.
+
+## 2026-08-09 user-authorized dual-3090 Wave031 speedup
+
+- The user explicitly requested that both local RTX 3090s be used to improve
+  cache-build throughput. The current single-GPU PID `19520` has already
+  reached 50 complete shards / 12,800 images with atomic resume state, so the
+  speedup will preserve that work rather than restart.
+- Source inspection confirms safe coordination is feasible: each
+  `BiomedCLIPIntermediateEncoder` owns an independent visual model and accepts
+  an explicit CUDA device, while the cache contract requires contiguous shard
+  names and a single mutable state file. Therefore attempt2 will run two
+  concurrent encoders but retain exactly one ordered writer; two independent
+  writers against the same cache are forbidden.
+- The new dual-GPU builder/controller pass Ruff, Python compilation, and the
+  same 24 focused cache/data tests. A real GPU1-only Block-4 smoke encode also
+  passes with exact output shape `[1,197,768]`, finite float32 values, and the
+  frozen BiomedCLIP weight SHA `52cc993c...`; it accessed no protected cohort.
+  Attempt1 remained healthy and advanced to 75 complete shards during these
+  validations.
+- Attempt1 PID `19520` was then stopped exactly under the user's dual-GPU
+  authority. Immutable stop-receipt SHA-256 is
+  `5bed8d7cbe415559cac5e08cfbaa03999940739ac91a13eb04a7a035809732e5`.
+  The verified resume boundary contains 81 complete shards / 20,736 images,
+  6,274,653,741 registered bytes, state SHA `f20b59bb...`, no unregistered
+  temporary file, no live child afterward, and zero protected reads. Both
+  3090s are now free except for the Codex display-only context.
+- Dual-GPU attempt2 froze successfully from that exact boundary. Preparation
+  receipt SHA-256 is
+  `9d9642419b27aaf24462e2c006831a9f290c212bb4bd25dcfeebf736392f6485`,
+  builder SHA-256 is
+  `b464fde9a2493393b4fc87e8e5f2478244964ce4415169ccada23bb8766142c2`,
+  controller SHA-256 is `f153ceb9...`, and its starting state is exactly 81
+  shards / 20,736 images.
+- Attempt2 launched as detached PID `17348` with launch-intent SHA
+  `b86a4ec016e0122aa1c81abd966ce3df987bdbc64830fefd61835b89aa01c451`
+  and launch-control SHA
+  `d3e689bda626de66710d03acb07d446659f476b54e441da35caf5b84cd3e0398`.
+  The first steady-state audit observed the same PID on both GPUs, utilization
+  about 90%/100%, about 1.3 GiB on each GPU, and progress at 85 shards / 21,760
+  images. Internal-test, Gold, and protected-read counts remain zero.
+- Updated the existing 20-minute heartbeat in place to monitor attempt2 PID
+  `17348`, both GPUs, the attempt2 receipt paths, dual-GPU finalizer, transfer,
+  and subsequent tail6/tail8 launch gates. No duplicate automation was created.

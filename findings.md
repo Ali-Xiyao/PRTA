@@ -1617,6 +1617,25 @@
   holding about 1.3 GiB on GPU0. This is an engineering cache build only; it
   produces no Dev metric and cannot select tail6/tail8 before full verification
   and server hash parity.
+- Dual-GPU speedup must happen above the cache-writer layer, not by launching a
+  second ordinary builder. The existing cache state enforces contiguous shard
+  order and one atomic state replacement. The safe design is two independent
+  encoders (CUDA0/CUDA1) producing the next two shards concurrently, followed
+  by one coordinator writing those tensors in index order. This preserves the
+  exact inventory, preprocessing, shard size, and resume identity.
+- Physical GPU1 independently passes the exact Block-4 encoder path. This
+  removes the remaining hardware/runtime uncertainty before the attempt1 stop;
+  the switch can now be based on the atomic cache state rather than an untested
+  assumption that the second 3090 supports the frozen environment.
+- Forced termination at the shard boundary is safe for this builder because
+  shard payloads and state use temporary-file replacement. The actual stop
+  audit confirmed the stronger case: all 81 registered shards revalidated and
+  there was no orphan temporary file. Attempt2 can therefore resume directly
+  from image 20,736 without rebuilding prior work.
+- The dual-encoder/single-writer design works in the real run: both physical
+  3090s simultaneously execute the same PID near full utilization, while shard
+  state advances contiguously from 81 to 85. This raises encoding parallelism
+  without changing cache identity or introducing concurrent state writers.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

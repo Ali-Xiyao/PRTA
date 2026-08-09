@@ -1821,6 +1821,10 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   output contract without opening Internal-test/Gold rows.
 - [x] Freeze a new local Block-4 cache-build namespace and immutable
   preparation receipt; preserve the failed server zero-shard attempt.
+- [x] Under the user's explicit dual-3090 speedup authority, stop the active
+  single-GPU child only after preserving a complete-shard resume boundary,
+  freeze a new attempt2 dual-GPU coordinator, and resume the identical cache
+  with one encoder on each 3090 and a single ordered atomic shard writer.
 - [ ] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.
@@ -1852,8 +1856,8 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 ## Next Step
 
-Run and verify the frozen local Train/Dev-only Wave031 Block-4 cache build, then
-transfer that cache before launching any tail6/tail8 scientific child. Do not
+Run and verify the active frozen Wave031 dual-3090 attempt2 cache build, then
+transfer the identical local Train/Dev-only Block-4 cache. Do not
 open Internal-test/Gold or use confirmation-seed outcomes to choose new
 numeric settings. Preserve retained allocations `9929/3066`, telemetry, and
 the failed server zero-shard cache attempt.
