@@ -1770,3 +1770,9 @@
   the result performs no selection, drops no cell, and does not reorder the
   pre-frozen queue. Immutable stage2 aggregate SHA is `30ca3c17...`; stage3
   therefore advances exactly to tail6 Seed28 plus tail8 Seed28.
+- Frozen stage3 Seed28 is terminal for both expanded scopes: tail6 reaches
+  Macro-F1 `0.5475287322146956` / ODER `0.00374966520846353`, while tail8
+  reaches `0.5490341517666544` / `0.003303276493170253`. Both are mandatory
+  conditional-ablation cells, not selection events. Immutable stage3 aggregate
+  SHA is `1df869e4...`, and the unchanged queue advances exactly to tail4
+  Seed43 plus tail6 Seed43.

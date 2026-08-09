@@ -5223,3 +5223,24 @@
   checkpoint pairs, scientific steps, telemetry, parents, logs, memory, and
   storage remain healthy. Neither terminal receipt exists and no intermediate
   metric was read or used.
+- 01:22 CST heartbeat: both stage3 Seed28 cells are complete-terminal. Tail6
+  completed nine epochs with best epoch 4, Macro-F1 `0.5475287322146956`, and
+  ODER `0.00374966520846353`; training-receipt SHA is `6e7ff4a2...` and
+  best/last checkpoint SHAs are `b9ffb28d...`/`f97b05e0...`. Tail8 completed
+  eight epochs with best epoch 3, Macro-F1 `0.5490341517666544`, and ODER
+  `0.003303276493170253`; receipt SHA is `3d4b6da4...` and checkpoint SHAs are
+  `a771b07e...`/`ddcdb6b4...`. Both exact config/cache/loss/EMA/schedule and
+  zero protected-read audits pass; neither outcome changed the queue.
+- Stage3 closed in immutable no-selection aggregate SHA `1df869e4...`. New
+  stage3-close/stage4-advance controller SHA is `13d6a570...` and passed local
+  compile/Ruff plus exact server hash/compile verification.
+- Frozen stage4 launched exactly tail4 Seed43 on `3066.57` and tail6 Seed43 on
+  `9929.53`. Their config/effective-config/launcher SHAs are respectively
+  `391542e5...`/`73547b64...`/`7027ade2...` and
+  `84f35d5c...`/`aa59fabe...`/`37a42314...`. Stage4 intent/control/
+  finalization SHAs are `4cc727f1...`, `2cfc4a29...`, and `0093ea90...`;
+  launch-receipt SHAs are `dbef07a4...` and `0713bca0...`. Initial progress
+  identities, required Block-8/Block-4 boundaries, frozen loss/EMA/schedule,
+  scientific steps, telemetry, parents, logs, disk, and protected-read launch
+  receipts pass. No parent job was submitted and no intermediate metric was
+  read.
