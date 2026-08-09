@@ -5205,3 +5205,9 @@
   state/EMA/ODC/schedule audits, checkpoint pairs, scientific steps,
   telemetry, parents, logs, memory, and storage remain healthy. Neither
   terminal receipt exists and no intermediate metric was read or used.
+- 00:22 CST heartbeat: both frozen stage3 Seed28 cells remain `RUNNING` at
+  epoch 5. Tail6 has 29,130 completed optimizer steps and tail8 has 26,330.
+  Their exact effective configs, Block-4 cache, state/EMA/ODC/schedule audits,
+  checkpoint pairs, scientific steps, telemetry, retained parents, logs,
+  memory, and storage remain healthy. Neither terminal receipt exists and no
+  intermediate metric was read or used.
