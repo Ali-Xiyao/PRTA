@@ -5061,3 +5061,10 @@
   scientific steps, telemetry, parents, logs, and storage remain healthy.
   Neither terminal receipt exists, and no intermediate metric was read or
   used to alter the frozen queue.
+- 19:42 CST heartbeat: corrected tail4 Seed17 remains `RUNNING` at epoch 8
+  with 41,508 completed optimizer steps; preserved tail6 Seed17 remains
+  `RUNNING` at epoch 5 with 27,730. Frozen effective configs, required
+  Block-8/Block-4 cache identities, loss/EMA/schedule audits, checkpoint
+  pairs, scientific steps, telemetry, parents, logs, and disk remain healthy.
+  No terminal receipt exists for either cell, and no intermediate metric was
+  read or used.
