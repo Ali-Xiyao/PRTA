@@ -5122,3 +5122,10 @@
   EMA0.999, DMW010, ODC0.05, constant-LR audits, best/last checkpoint pairs,
   telemetry, retained parents, logs, disk, and protected-read state pass.
   Neither terminal receipt exists and no intermediate metric was read or used.
+- 21:22 CST heartbeat: both frozen stage2 cells remain `RUNNING`. Tail8
+  Seed17 is at epoch 2 with 12,952 completed optimizer steps; tail4 Seed28 is
+  at epoch 4 with 22,504. Their exact effective configs, scope-required
+  Block-4/Block-8 manifests, state/EMA/ODC/schedule audits, checkpoint pairs,
+  scientific steps, telemetry, parents, logs, disk, and protected-read state
+  remain healthy. Neither terminal receipt exists and no intermediate metric
+  was read or used to alter the fixed queue.
