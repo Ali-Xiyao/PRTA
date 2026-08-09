@@ -5068,3 +5068,14 @@
   pairs, scientific steps, telemetry, parents, logs, and disk remain healthy.
   No terminal receipt exists for either cell, and no intermediate metric was
   read or used.
+- 20:02 CST heartbeat: corrected tail4 Seed17 is complete-terminal after nine
+  epochs with best epoch 4, Macro-F1 `0.541813906562499`, and ODER
+  `0.003571109722346219`. Training-receipt SHA is `0d8645e7...`; best/last
+  checkpoint SHAs are `6a097fe2...` and `88e8e69f...`, with exact sizes
+  489,341,190 and 489,346,374 bytes. Its config, Block-8 cache, state/EMA/ODC/
+  schedule fields, and zero protected-read state pass. This result was only
+  recorded as one mandatory ablation cell and did not alter the queue.
+  Preserved tail6 Seed17 remains unchanged and `RUNNING` at epoch 6 with
+  35,182 optimizer steps on `9929.50`; no intermediate metric was read.
+  Allocation `3066` is intentionally free until the paired stage1 boundary is
+  complete, while both parents and telemetry remain alive.

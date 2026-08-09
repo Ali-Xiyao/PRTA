@@ -1747,3 +1747,9 @@
   and binds the required cache identity as part of the scope axis. Stage1 now
   pairs corrected tail4 Seed17 on Block-8 with the exact preserved tail6
   Seed17 Block-4 cell; no intermediate metric informed the correction.
+- The corrected conditional-ablation tail4 Seed17 cell is terminal at
+  Macro-F1 `0.541813906562499` / ODER `0.003571109722346219`. It passes the
+  original joint gate, but the outcome cannot select, drop, or reorder any
+  ablation cell. Its role is one of nine mandatory conditional-comparison
+  measurements; stage2 remains locked until the unchanged tail6 Seed17 cell
+  also reaches a complete terminal receipt.

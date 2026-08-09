@@ -1882,13 +1882,14 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 ## Next Step
 
-Monitor corrected Wave033 attempt2 stage1: tail4 Seed17 on `3066.54` with the
-verified Block-8 cache and the preserved exact tail6 Seed17 cell on `9929.50`
-with Block-4. Read no intermediate metrics and do not alter the predeclared
-nine-cell queue. After both stage1 cells have complete terminal receipts,
-preserve/hash them and launch the fixed stage2 pair (tail8 Seed17 and tail4
-Seed28) without using their outcomes. Keep parent allocations/telemetry,
-Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing artifact.
+Preserve the complete-terminal corrected tail4 Seed17 cell and its verified
+receipt/checkpoint hashes. Continue monitoring only the unchanged tail6
+Seed17 cell on `9929.50`; leave allocation `3066` free until both stage1 cells
+are terminal because the full queue was frozen in paired stages. Read no
+tail6 intermediate metric. Once its terminal receipt exists, close stage1 and
+launch the fixed stage2 pair (tail8 Seed17 and tail4 Seed28) without using
+either stage1 outcome. Keep parent allocations/telemetry, Internal-test/Gold
+sealing, and every Wave032/Wave033 failed or losing artifact.
 
 ## Errors Encountered
 
