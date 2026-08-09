@@ -5186,3 +5186,10 @@
   scientific steps, telemetry, parents, logs, disk, and protected-read launch
   receipts pass. No new Slurm parent was submitted and no intermediate metric
   was read.
+- 23:22 CST heartbeat: both frozen stage3 Seed28 cells remain healthy and
+  `RUNNING`. Tail6 is at epoch 1 with 6,126 completed optimizer steps on
+  `3066.56`; tail8 is at epoch 1 with 5,526 steps on `9929.52`. Their exact
+  effective configs, Block-4 manifest, state0.025, EMA0.999, DMW010, ODC0.05,
+  constant-LR audits, checkpoint pairs, scientific steps, telemetry, retained
+  parents, logs, memory, and storage remain healthy. Neither terminal receipt
+  exists and no intermediate metric was read or used to alter the fixed queue.
