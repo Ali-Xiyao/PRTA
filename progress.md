@@ -5157,3 +5157,9 @@
   parents, log, storage, and protected-read state remain healthy. No terminal
   receipt exists and no intermediate metric was read or used. Allocation
   `9929` remains intentionally free until the paired stage2 boundary closes.
+- 22:42 CST heartbeat: stage2 tail8 Seed17 remains `RUNNING` at epoch 8 with
+  40,608 completed optimizer steps on `3066.55`. Its exact frozen config,
+  Block-4 cache, state/EMA/ODC/schedule audits, checkpoint pair, scientific
+  step, telemetry, parents, log, disk, and protected-read state remain healthy.
+  No terminal receipt exists and no intermediate metric was read or used;
+  allocation `9929` remains free at the paired-stage boundary.
