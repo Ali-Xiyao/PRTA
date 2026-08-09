@@ -5150,3 +5150,10 @@
 - The existing heartbeat was updated in place to preserve the terminal tail4
   Seed28 cell, monitor only unchanged tail8 Seed17, and keep stage3 locked
   until both stage2 receipts are terminal. No duplicate automation was created.
+- 22:22 CST heartbeat: the remaining stage2 tail8 Seed17 cell remains
+  `RUNNING` at epoch 6 with 33,856 completed optimizer steps on `3066.55`.
+  Its frozen effective config, Block-4 cache, state0.025, EMA0.999, DMW010,
+  ODC0.05, constant-LR audit, checkpoint pair, scientific step, telemetry,
+  parents, log, storage, and protected-read state remain healthy. No terminal
+  receipt exists and no intermediate metric was read or used. Allocation
+  `9929` remains intentionally free until the paired stage2 boundary closes.
