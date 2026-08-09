@@ -4794,3 +4794,24 @@
   1.8x. Instantaneous utilization can read 0% during ordered writes, but both
   devices retain PID `17348`, about 1.31 GiB each, and elevated power while the
   atomic progress continues to advance.
+- 12:18 CST heartbeat: attempt2 remains healthy at 322 registered progress
+  shards / 82,432 images (323 shard files visible during the atomic
+  state/progress handoff). PID `17348` remains the only non-display process on
+  both GPUs, each holds about 1.31 GiB, H: has about 360.1 GB free, the log is
+  empty, and Internal-test/Gold/protected-read counts remain zero. No
+  completion, failure, transfer, or scientific-launch notification gate fired.
+- Transfer-readiness audit confirmed both retained server allocations `3066`
+  and `9929` remain RUNNING and the canonical server runtime is reachable with
+  ample storage. The proven Block-8 transfer precedent uploads only the
+  consolidated feature store plus manifest, inventory, text cache, and their
+  receipts. Wave031 will use the same minimal surface in a new immutable
+  Block-4 namespace, but transfer remains gated on attempt2 finalization and
+  independent local verification.
+- The private Wave031 transfer controller is now implemented, compiles, and
+  passes Ruff. It will independently re-hash and finiteness-check all 571 local
+  shards, verify the `[146110,197,768]` Block-4 store, freeze the exact six-file
+  resumable SFTP manifest at 200 Mbit/s, reject any protected marker, and verify
+  destination hashes plus a real aggregate-only feature read. Its canonical
+  server target is confirmed absent, so no existing cache can be overwritten.
+  Preparation/start remain intentionally unexecuted until the dual-GPU build
+  and local finalization receipts exist.

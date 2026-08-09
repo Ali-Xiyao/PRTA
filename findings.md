@@ -1640,6 +1640,22 @@
   image decoding and the single ordered writer remain shared. This is the
   expected safe tradeoff: most GPU encoding overlaps, while serialization is
   retained only where cache correctness requires it.
+- A one-shard difference between the cache directory and `build_progress.json`
+  can appear during monitoring because the writer atomically registers a shard
+  before the separate progress file is updated. The authoritative registered
+  state remained contiguous and the next heartbeat showed continued progress;
+  this is not an orphan-shard condition while PID `17348` is live.
+- The training reader prefers the contiguous `training_store` when present, so
+  server training does not need the 571 build shards after they have been
+  independently verified locally. A safe minimal transfer is therefore the
+  exact Block-4 consolidated store, manifest, image inventory, text cache, and
+  receipts, followed by destination hash/shape/count checks and one real
+  aggregate-only feature read. This reduces transfer time without changing
+  scientific inputs or omitting any runtime dependency.
+- Commit `821e8040...` adds `PRTA_CXR_CACHE_ROOT`, allowing tail6/tail8
+  launchers to point explicitly at the new Block-4 cache while the original
+  Block-8 cache remains untouched. The new server cache target was verified
+  absent and the matching immutable source snapshot is already deployed.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all
