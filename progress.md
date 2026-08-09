@@ -5091,3 +5091,27 @@
   healthy. No terminal receipt exists and no intermediate metric was read or
   used. Allocation `3066` remains intentionally free until the paired stage1
   boundary is complete.
+- 20:42 CST heartbeat: stage1 tail6 Seed17 is complete-terminal after nine
+  epochs with best epoch 4, Macro-F1 `0.5452085553463556`, and ODER
+  `0.00374966520846353`. Training-receipt SHA is `dd7b4d66...`; best/last
+  checkpoint SHAs are `f11dbbe2...` and `c7e10b80...`, with exact sizes
+  717,834,172 and 717,839,292 bytes. Its effective config, Block-4 cache,
+  state/EMA/ODC/schedule fields, and zero protected-read state pass.
+- Both stage1 cells were independently verified and written to immutable
+  no-selection aggregate SHA `4152166b...`; the aggregate explicitly records
+  `selection_performed=false` and leaves the pre-frozen queue unchanged.
+  New stage-advance controller SHA is `36cadb0d...` and passed compile/Ruff
+  locally plus exact server hash verification.
+- Frozen stage2 launched exactly tail8 Seed17 on `3066.55` and tail4 Seed28 on
+  `9929.51`. Their config/effective-config/launcher SHAs are respectively
+  `2be30cdf...`/`43c94c30...`/`5559d915...` and
+  `79942b09...`/`595bf7bc...`/`1a0d7f5f...`. Stage2 intent/control/
+  finalization SHAs are `70fe6035...`, `9ca7f93c...`, and `2de7c64f...`;
+  launch-receipt SHAs are `7a993478...` and `c067ed24...`. Both progress
+  identities, required Block-4/Block-8 cache boundaries, frozen loss/EMA/
+  schedule fields, telemetry, parents, logs, disk, and zero protected-read
+  state pass. No new Slurm parent was submitted and no intermediate metric was
+  read.
+- The existing 20-minute heartbeat was updated in place to bind stage1 closure
+  and the active stage2 pair plus the frozen stage3-5 advance rule; no duplicate
+  automation was created.

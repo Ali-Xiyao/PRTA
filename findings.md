@@ -1753,3 +1753,9 @@
   ablation cell. Its role is one of nine mandatory conditional-comparison
   measurements; stage2 remains locked until the unchanged tail6 Seed17 cell
   also reaches a complete terminal receipt.
+- The corrected stage1 tail6 Seed17 cell is terminal at Macro-F1
+  `0.5452085553463556` / ODER `0.00374966520846353`. Like tail4 Seed17, it is
+  recorded only as a mandatory ablation cell: neither result selected a scope
+  or altered the nine-cell queue. The immutable stage1 aggregate therefore
+  closes the pair without ranking and advances exactly to the pre-frozen
+  tail8 Seed17 plus tail4 Seed28 stage2 pair.

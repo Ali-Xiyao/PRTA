@@ -1879,17 +1879,22 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   advance, scope-specific cache-entry identities, no adaptive cell dropping,
   and exact reuse of the already-live tail6 Seed17 cell. Launch corrected
   tail4 Seed17 on the newly free allocation without reading tail6 metrics.
+- [x] Close corrected stage1 only after both terminal receipts, record both
+  cells in an immutable no-selection aggregate, and preserve the frozen queue
+  unchanged.
+- [ ] Complete the active frozen stage2 pair: tail8 Seed17 on `3066.55` and
+  tail4 Seed28 on `9929.51`; do not inspect intermediate metrics or adapt the
+  remaining stage3-5 queue.
 
 ## Next Step
 
-Preserve the complete-terminal corrected tail4 Seed17 cell and its verified
-receipt/checkpoint hashes. Continue monitoring only the unchanged tail6
-Seed17 cell on `9929.50`; leave allocation `3066` free until both stage1 cells
-are terminal because the full queue was frozen in paired stages. Read no
-tail6 intermediate metric. Once its terminal receipt exists, close stage1 and
-launch the fixed stage2 pair (tail8 Seed17 and tail4 Seed28) without using
-either stage1 outcome. Keep parent allocations/telemetry, Internal-test/Gold
-sealing, and every Wave032/Wave033 failed or losing artifact.
+Preserve the complete stage1 no-selection aggregate and monitor the active
+frozen stage2 pair only: tail8 Seed17 on `3066.55` and tail4 Seed28 on
+`9929.51`. Read no intermediate metric. When both complete terminal receipts
+exist, close stage2 without selection and launch exactly the pre-frozen stage3
+pair (tail6 Seed28 and tail8 Seed28). Keep parent allocations/telemetry,
+Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing
+artifact.
 
 ## Errors Encountered
 
