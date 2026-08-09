@@ -5039,3 +5039,10 @@
   the full outcome-independent stage2-5 queue. Its first update call omitted
   the required existing ID and was rejected without state change; the corrected
   call with `prta-cxr-server-dev-search-monitor` succeeded.
+- 18:42 CST heartbeat: corrected tail4 Seed17 and preserved tail6 Seed17 are
+  both `RUNNING` at epoch 0 with 5,000 and 5,026 completed optimizer steps.
+  Their exact effective configs, required Block-8/Block-4 cache manifests,
+  state0.025, EMA0.999, DMW010, ODC0.05, and constant-LR audits match the
+  frozen attempt2 contract. Scientific steps `3066.54/9929.50`, telemetry,
+  parents, logs, and disk are healthy; no checkpoint or terminal receipt exists
+  yet, and no intermediate metric was read or used.
