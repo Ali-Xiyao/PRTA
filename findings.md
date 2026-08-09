@@ -1656,6 +1656,12 @@
   launchers to point explicitly at the new Block-4 cache while the original
   Block-8 cache remains untouched. The new server cache target was verified
   absent and the matching immutable source snapshot is already deployed.
+- Exclusive local-GPU monitoring is necessary even after a clean launch:
+  unrelated work can appear later. Because the cache writer commits each shard
+  atomically, stopping only the PRTA child at the conflict preserved a fully
+  reusable 429-shard boundary. The correct response is a new immutable resume
+  namespace after both GPUs are free, not killing unrelated work or silently
+  continuing under contention.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

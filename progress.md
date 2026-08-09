@@ -4815,3 +4815,17 @@
   server target is confirmed absent, so no existing cache can be overwritten.
   Preparation/start remain intentionally unexecuted until the dual-GPU build
   and local finalization receipts exist.
+- 12:34 CST infrastructure event: two unrelated VisionPulse compute processes
+  appeared, one on each local 3090. They were neither the Codex display context
+  nor descendants of PRTA-CXR PID `17348`. Per the exclusive-resource guard,
+  only the PRTA-CXR child was stopped; the external processes were preserved.
+  Full resume validation preserved exactly 429 contiguous shards / 109,824
+  images, resume-state SHA `7754c219...`, no temporary fragment, and zero
+  protected reads. Immutable stop/failure receipt SHA-256 is
+  `71216cb482d426e3de05880a8754cdb8534a27f82ec648434c49a8f3020ed9f1`.
+- Attempt3 exact-identity resume is frozen but unstarted at that boundary.
+  Preparation binds the unchanged underlying builder SHA `b464fde9...`, frozen
+  namespace wrapper SHA `9565cbf0...`, source commit `821e8040...`, and the
+  exact attempt2 failure receipt. It will refuse launch while any non-display
+  process remains on either GPU; GPU0 still hosts one external process at the
+  latest audit, so no retry child has launched.
