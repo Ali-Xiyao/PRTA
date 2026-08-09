@@ -5217,3 +5217,9 @@
   audits, checkpoint pairs, scientific steps, telemetry, parents, logs,
   memory, and storage remain healthy. Neither terminal receipt exists and no
   intermediate metric was read or used.
+- 01:02 CST heartbeat: frozen tail6 Seed28 remains `RUNNING` at epoch 8 with
+  44,508 completed optimizer steps; tail8 Seed28 remains `RUNNING` at epoch 7
+  with 40,208. Exact configs, Block-4 cache, loss/EMA/schedule audits,
+  checkpoint pairs, scientific steps, telemetry, parents, logs, memory, and
+  storage remain healthy. Neither terminal receipt exists and no intermediate
+  metric was read or used.
