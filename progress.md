@@ -4992,3 +4992,8 @@
   config/cache/state/EMA/direct-cost/schedule identities, checkpoint pairs,
   scientific Slurm steps, and telemetry. No terminal receipt, fatal log
   marker, disk issue, protected read, or intermediate-result action exists.
+- 18:02 CST heartbeat: tail6 remains `RUNNING` at epoch 8 with 40,408 steps
+  and tail8 remains `RUNNING` at epoch 7 with 36,882. Exact frozen identities,
+  checkpoint pairs, scientific steps, telemetry, launcher logs, and disk state
+  remain healthy. Neither terminal receipt exists, so no result was inspected,
+  selected, or used to stop the other arm.
