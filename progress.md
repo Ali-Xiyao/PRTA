@@ -5034,3 +5034,8 @@
   retained parents remain alive, no new Slurm parent was submitted, and the
   remaining queue may advance only on terminal receipts without outcome-based
   mutation.
+- The existing 20-minute heartbeat was updated in place (no duplicate) to bind
+  Wave032 closure, preserved Wave033 attempt1, corrected attempt2 stage1, and
+  the full outcome-independent stage2-5 queue. Its first update call omitted
+  the required existing ID and was rejected without state change; the corrected
+  call with `prta-cxr-server-dev-search-monitor` succeeded.
