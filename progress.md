@@ -4823,9 +4823,17 @@
   images, resume-state SHA `7754c219...`, no temporary fragment, and zero
   protected reads. Immutable stop/failure receipt SHA-256 is
   `71216cb482d426e3de05880a8754cdb8534a27f82ec648434c49a8f3020ed9f1`.
-- Attempt3 exact-identity resume is frozen but unstarted at that boundary.
+- Attempt3 exact-identity resume was frozen unstarted at that boundary.
   Preparation binds the unchanged underlying builder SHA `b464fde9...`, frozen
   namespace wrapper SHA `9565cbf0...`, source commit `821e8040...`, and the
   exact attempt2 failure receipt. It will refuse launch while any non-display
   process remains on either GPU; GPU0 still hosts one external process at the
-  latest audit, so no retry child has launched.
+  first post-freeze audit, so no retry child launched at that point.
+- Both external VisionPulse GPU processes later exited without intervention.
+  With both 3090 guards clean, attempt3 launched exactly once as detached PID
+  `18796`. Preparation, launch-intent, and launch-control SHA-256 values are
+  `56b894a5997db431a9674c1847bd03c027e41507d4af3c4fb269447be4aa0b47`,
+  `ea82ddb2a76f8339cd0fa05794a600d36d61c5a8bf8b058717f33195a41f3688`,
+  and `bd090397b890dbe934419b98d483b35de31b501c7af992871caec497a74044ab`.
+  The same PID is now present on both GPUs and no competing compute row remains;
+  startup is validating the frozen cache boundary before new shard progress.

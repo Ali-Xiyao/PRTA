@@ -1832,7 +1832,7 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   external processes.
 - [x] Freeze attempt3 as a new immutable exact-identity resume namespace around
   the same dual-encoder/single-writer builder and the attempt2 failure receipt;
-  leave it unstarted until both GPUs are again free of non-display processes.
+  launch it only after both GPUs are again free of non-display processes.
 - [ ] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.

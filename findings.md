@@ -1662,6 +1662,11 @@
   reusable 429-shard boundary. The correct response is a new immutable resume
   namespace after both GPUs are free, not killing unrelated work or silently
   continuing under contention.
+- A resume retry should be launched only after a fresh two-GPU process audit,
+  even when one competitor exits earlier than the other. Attempt3 waited until
+  both were absent, then reused the exact same frozen builder through a
+  namespace-only wrapper; this preserves scientific and cache identity while
+  keeping attempt-specific progress and receipts separate.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all
