@@ -5345,3 +5345,57 @@
   protected-read launch state remain healthy. Its terminal receipt does not
   yet exist, no additional scientific child was launched, and no intermediate
   metric was read or used.
+- 05:22 CST heartbeat: frozen stage5 tail8 Seed43 is complete-terminal after
+  eight epochs with best epoch 3, Macro-F1 `0.5464585750581572`, and ODER
+  `0.003303276493170253`. It completed 40,208 optimizer steps in
+  `6968.697182` seconds. Training-receipt/progress SHAs are `984687e1...` and
+  `f7ed1e91...`; best/last checkpoint SHAs are `d4f06667...` and
+  `605c762f...`. Exact config, Block-4 cache, H0/rank32/state0.025/EMA0.999/
+  DMW010/ODC0.05/constant-LR, checkpoint, and zero protected-read audits pass.
+- A source-isolation concern from a plain interpreter probe was resolved
+  before aggregation. The environment's editable install points at the live
+  server tree when imported directly, but the frozen launcher executes
+  `scripts/07_train.py`, whose `_bootstrap.py` prepends the immutable snapshot
+  `src` before importing `prta_cxr`. An execution-equivalent probe resolved
+  `/PRTA-CXR-source-snapshots/821e8040.../src/prta_cxr` and the expected
+  expanded `tail_modules(visual, *, start_block=8)` signature. Frozen-source
+  reconstruction gives exact trainable parameter counts of `16,399,630`,
+  `16,501,008`, and `16,602,386` for tail4/tail6/tail8 respectively.
+- New immutable stage5-close/full-aggregate controller SHA is `2edc2b91...`;
+  local compile/Ruff, exact server copy hash, and server compile checks pass.
+  It independently rehashed the frozen source files, preparation, stage1-4
+  aggregates, all nine terminal receipts/progress files/checkpoints/configs,
+  scope-cache boundaries, parents/telemetry, free scientific boundary, and
+  zero protected-read fields before writing anything.
+- Wave033 stage5 is closed in immutable no-selection aggregate SHA
+  `79fdaed753ce824711928f9e807b830c5194f5aa62b92a524f381a544e750929`.
+  The full nine-cell conditional-ablation aggregate SHA is
+  `606e10c0168bd662fee07999f40e8d9c32134d039c049a5b992fea626d6f221d`.
+  Per-scope mean/sample-standard-deviation Macro-F1 and ODER are: tail4
+  `0.5424471387462145 +/- 0.0008821635204620253` and
+  `0.0040770169330119335 +/- 0.0005944405069618243`; tail6
+  `0.5452855086975231 +/- 0.002205753839209375` and
+  `0.003690146713091093 +/- 0.0001030890579751139`; tail8
+  `0.5481375519034803 +/- 0.0014551577756332` and
+  `0.003303276493170253 +/- 0.0`. This is descriptive conditional-ablation
+  evidence only: selection is false, outcomes did not change the queue, and
+  no additional child was launched.
+- Historical peak GPU memory cannot be recovered: the retained telemetry
+  probe overwrites its current sample, Slurm recorded no gres/gpumem, and
+  NVIDIA accounting was disabled. The final aggregate therefore records
+  `peak_gpu_memory_mib: null` with status
+  `NOT_RECORDED_HISTORICALLY_UNRECOVERABLE`; no cell was replayed merely to
+  manufacture a compute field.
+- Independent post-close audit confirms nine cells, three seeds per scope,
+  exact stage5/final hashes, no temporary fragments, no scientific child,
+  both retained parent allocations and telemetry still alive, and
+  Internal-test/Gold/protected-read counts all false/false/zero. Final state is
+  `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE` pending explicit user
+  direction.
+- Final-heartbeat diagnostic errors were non-mutating and resolved: a server
+  path was first read as Windows-local, a `miniconda3` path was guessed before
+  resolving the actual `miniforge3` environment, local probes targeted
+  server-only Wave033 runtime directories, and the initial parameter-count
+  probe imported the editable live package. Each was corrected through exact
+  SSH paths, frozen bootstrap resolution, and explicit snapshot `src`
+  insertion before the terminal aggregate was written.

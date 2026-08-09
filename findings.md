@@ -1789,3 +1789,32 @@
   Immutable stage4 aggregate SHA is `798ed198...`; the final pre-frozen tail8
   Seed43 cell therefore starts unchanged on `3066`, with allocation `9929`
   deliberately kept free.
+- Frozen stage5 tail8 Seed43 is terminal at Macro-F1
+  `0.5464585750581572` / ODER `0.003303276493170253`, completing the full
+  nine-cell matrix. Its terminal receipt SHA is `984687e1...`; stage5 aggregate
+  SHA is `79fdaed7...` and final conditional-ablation aggregate SHA is
+  `606e10c0...`. No result selected a scope or changed the frozen queue.
+- Across Seeds 17/28/43, the descriptive conditional-ablation means are
+  tail4 `0.5424471` Macro-F1 / `0.0040770` ODER, tail6 `0.5452855` /
+  `0.0036901`, and tail8 `0.5481376` / `0.0033033`. Tail8 has the highest mean
+  Macro-F1 and lowest mean ODER in this frozen conditional comparison, but the
+  evidence is not an unbiased architecture search and does not override the
+  development HOLD or authorize protected evaluation.
+- Frozen-source reconstruction shows the compute-capacity increase is small
+  in trainable parameters: tail4 `16,399,630`, tail6 `16,501,008`, and tail8
+  `16,602,386`. Mean wall-clock time rises from about `4,125.48` seconds for
+  tail4 to `6,926.12` for tail6 and `7,269.88` for tail8. Historical peak GPU
+  memory is unknowable from the retained evidence because telemetry kept only
+  the current sample, Slurm kept no gpumem high-water mark, and NVIDIA process
+  accounting was disabled; the aggregate correctly reports null rather than
+  replaying experiments.
+- The frozen launcher is source-isolated despite the Conda environment's
+  editable install. `_bootstrap.py` inserts the snapshot `src` at position 0
+  before dispatch, and an execution-equivalent probe resolves the immutable
+  commit `821e8040...` package with the expanded adapter-scope implementation.
+  Plain interpreter imports that bypass `_bootstrap.py` are not equivalent to
+  the scientific launch path.
+- Wave033 is formally complete but the route remains closed:
+  `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE`. Internal-test and Gold
+  remained sealed, the protected-read count is zero, both retained allocations
+  and telemetry remain alive, and no successor scientific queue exists.

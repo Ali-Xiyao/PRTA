@@ -1095,7 +1095,7 @@ Status: complete; PASS engineering readiness; no formal launch authorized
   training queue remains locked behind a new freeze and explicit authority.
 
 ### Phase 92 - Continuous lightweight server Dev search
-Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
+Status: terminal/closed at `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE`
 
 - Reuse only retained Slurm allocations `9929` and `3066` on `gpu01`; retired
   allocation `4161` must never be reused. Submit no new Slurm allocation and
@@ -1860,14 +1860,14 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] After all non-scope training parameters are finally frozen, add a formal
   conditional adapter-scope ablation with `tail4`, `tail6`, and `tail8` as the
   only changing field.
-- [ ] Complete the newly frozen Seeds `17/28/43` queue for every scope; do not
+- [x] Complete the newly frozen Seeds `17/28/43` queue for every scope; do not
   drop losing scopes, select seeds, or change numeric settings from any
   intermediate or terminal scope outcome.
-- [ ] Keep H0, rank32, state loss, ODC, EMA, learning rate, optimizer, batch,
+- [x] Keep H0, rank32, state loss, ODC, EMA, learning rate, optimizer, batch,
   Train/Dev split, epoch budget, and early stopping identical. Reuse existing
   tail4 receipts only if the effective config and input hashes match the final
   ablation freeze exactly.
-- [ ] Report every seed plus mean and standard deviation for Macro-F1 and ODER,
+- [x] Report every seed plus mean and standard deviation for Macro-F1 and ODER,
   together with trainable parameter count, peak GPU memory, and wall-clock
   time. Describe this as a conditional adapter-scope ablation at the frozen
   setting, not as an unbiased architecture search or protected-test result.
@@ -1891,20 +1891,19 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Complete the frozen stage4 pair: tail4 Seed43 on `3066.57` and
   tail6 Seed43 on `9929.53`; do not inspect intermediate metrics or adapt the
   remaining stage5 cell.
-- [ ] Complete the active frozen stage5 tail8 Seed43 cell on `3066.58`, then
+- [x] Complete the active frozen stage5 tail8 Seed43 cell on `3066.58`, then
   verify/hash all nine cells and write the final conditional-ablation
   aggregate without selection.
 
 ## Next Step
 
-Preserve the complete stage1-4 no-selection aggregates and monitor only the
-active frozen stage5 tail8 Seed43 cell on `3066.58`; keep allocation `9929`
-free and both parent allocations/telemetry alive. Read no intermediate metric.
-When the complete terminal receipt exists, verify/hash it and write the stage5
-plus full nine-cell conditional-ablation aggregates, including every cell,
-per-scope mean/std Macro-F1 and ODER, trainable parameters, peak GPU memory,
-and wall-clock time. Preserve Internal-test/Gold sealing and every failed or
-losing artifact.
+Wave033 attempt2 is terminal and closed without selection. Preserve final
+nine-cell aggregate SHA `606e10c0...`, stage5 aggregate SHA `79fdaed7...`,
+both verified Train/Dev caches, every receipt/checkpoint, both retained parent
+allocations, and telemetry. Keep `HOLD_DEVELOPMENT_GATE` and
+`STOP_CURRENT_PRTA_ROUTE`; launch no additional scientific child and await
+explicit user direction. Historical peak GPU memory is transparently recorded
+as unavailable rather than reconstructed from a replay.
 
 ## Errors Encountered
 
@@ -1929,3 +1928,11 @@ losing artifact.
 | A one-line remote Block-8 manifest diagnostic was corrupted by nested PowerShell/SSH quoting | 1 | The command had already returned the exact manifest SHA; reran only the aggregate semantic read through a base64 Python payload and confirmed the Block-8 status/count/store without touching row contents. |
 | Initial Wave033 forced a common Block-4 cache for all scopes, but the deployed training contract requires tail4 at Block-8 | 1 | Tail4 failed before creating a run directory or optimizer step; preserve failure receipt `9e2077ec...`, leave the valid tail6 child unchanged on `9929.50`, and freeze corrected attempt2 with tail4->Block-8 and tail6/tail8->Block-4 as the scope-required cache boundary. |
 | First automation-update call omitted the required existing automation ID | 1 | The API rejected the update without changing the monitor; reran with `prta-cxr-server-dev-search-monitor` and the full preserved heartbeat fields, which updated successfully. |
+| A local `Get-Content` call treated the server `/ipfs/.../_bootstrap.py` path as a Windows-local path | 1 | The failed read changed nothing. Reissued the read through `ssh sues-hpc` and verified the frozen bootstrap directly on the server. |
+| The first frozen-source import probe guessed a nonexistent `miniconda3` environment path | 1 | Resolved the actual launcher environment under `$HOME/miniforge3/envs/prta-cxr311` and reran the probe successfully. |
+| A plain Python import from the snapshot working directory resolved the editable `prta_cxr` install in the live server tree | 1 | Audited `scripts/_bootstrap.py`, which prepends the frozen snapshot `src` before dispatch. An execution-equivalent probe resolved the frozen package and expanded `tail_modules` signature, confirming training source isolation. |
+| Local `rg` probes looked for Wave033 runtime directories that exist only on the canonical server | 1 | Kept the local miss immutable and inspected the server-only launchers/configs over SSH; private runtime remained outside Git. |
+| Early remote diagnostics used a PowerShell-sensitive pipe and a nonexistent `scripts/07_train_prta.py` path | 1 | Replaced the transport with base64 Python payloads and restricted source inspection to the actual frozen files; no scientific or protected artifact was touched. |
+| Initial source-identity checks attempted `git -C` inside deployed snapshot trees without `.git` metadata | 1 | Switched to exact SHA-256 comparisons of the deployed files and then verified bootstrap import resolution; the frozen source identity passed. |
+| The first trainable-parameter reconstruction imported the live editable package and rejected `tail_modules(start_block=...)` | 1 | Explicitly inserted the frozen snapshot `src`, reconstructed all three models on CPU, and recorded exact trainable counts `16,399,630 / 16,501,008 / 16,602,386` for tail4/tail6/tail8. |
+| Historical peak GPU memory was not retained by the overwrite-only telemetry probe, Slurm gres/gpumem, or NVIDIA accounting | 1 | Recorded `NOT_RECORDED_HISTORICALLY_UNRECOVERABLE` and `null` for every cell instead of inventing a value or launching an unauthorized replay. |
