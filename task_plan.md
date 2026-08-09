@@ -1840,7 +1840,7 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
   shards already complete; keep it unstarted while either GPU has a competing
   process, then resume only the terminal cache consolidation/receipt path after
   a fresh two-GPU clean audit.
-- [ ] Build and independently verify the complete Block-4 Train/Dev cache,
+- [x] Build and independently verify the complete Block-4 Train/Dev cache,
   including shard count, tensor shape/finiteness, manifest hashes, and zero
   protected reads.
 - [ ] Transfer the verified Block-4 cache to the canonical server runtime and
@@ -1871,9 +1871,9 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 
 ## Next Step
 
-Wait for both local 3090s to be free, launch only the frozen Wave031 attempt4
-exact-identity resume from all 571 shards, verify the complete cache, then transfer the identical
-local Train/Dev-only Block-4 cache. Do not
+Monitor the active six-file Wave031 Block-4 transfer, then independently verify
+the remote byte hashes, `[146110,197,768]` shape, aggregate feature read, and
+zero protected access. Do not
 open Internal-test/Gold or use confirmation-seed outcomes to choose new
 numeric settings. Preserve retained allocations `9929/3066`, telemetry, and
 the failed server zero-shard cache attempt.
@@ -1889,4 +1889,8 @@ the failed server zero-shard cache attempt.
 | Wave031 preparation rejected local GPU0 because `nvidia-smi` listed the Codex desktop `ChatGPT.exe` WDDM display context | 1 | Verified both 3090s were at 0% utilization and 13 MiB, and the only listed PID was the Codex UI with `[N/A]` memory on both GPUs. Narrow the guard to ignore only that exact display-only row while continuing to reject every other process. No Wave031 namespace or cache was created. |
 | Unrelated VisionPulse compute processes appeared on both 3090s while Wave031 attempt2 was active | 1 | Stopped only PRTA-CXR PID `17348`, preserved the external jobs, revalidated 429 contiguous shards / 109,824 images with no temporary fragment or protected read, classified an identity-preserving infrastructure failure, and froze attempt3 for exact resume only after both GPUs are free. |
 | A new VisionPulse training process appeared on GPU0 after attempt3 finished encoding all 571 shards but before it wrote a complete build receipt | 1 | Stopped only PRTA-CXR PID `18796`, preserved the external job, revalidated all 146,110 images / 571 contiguous shards with no temporary fragment or protected read, and froze attempt4 at the complete-shard boundary; do not start it while either GPU remains occupied. |
+| Attempt4 finalization re-ran the pre-launch resume-state identity check after the builder had legitimately replaced the state with its complete terminal state | 1 | Keep the parent failure and frozen source/wrapper checks, but require the stopped-state SHA only before launch. During finalization, verify the immutable build receipt, completed counts, manifest/store hashes, and protected-read fields instead; the rejected finalization wrote no receipt and changed no cache artifact. |
+| The first narrow controller patch applied the post-completion exception to `start()` rather than `finalize()` | 1 | The immediate readback caught it before any launch or finalization call. Restore strict default verification in `start()` and pass the exception only from `finalize()`, then rerun compile/Ruff/format gates. |
+| The first independent transfer audit expected a `file_sha256` inside the manifest's text-cache semantic metadata object | 1 | The manifest intentionally stores only frozen encoder/shape semantics there. Compare the actual `text_cache.pt` SHA against the immutable attempt4 build receipt's `text_cache_sha256`; actual and receipt both equal `1846e3d9...`. The failed audit atomically removed its staging directory and created neither a transfer namespace nor a server target. |
+| The first combined patch for the text-cache audit used the controller's pre-format line wrapping | 1 | Read back the exact formatted context and apply the same one-condition fix against current text; the failed patch changed no file. |
 | Heartbeat creation used unsupported `notificationPolicy=important_only` | 1 | The API rejected it before creating any automation. Recreated the same current-thread heartbeat without that optional field; exactly one active monitor now exists. |

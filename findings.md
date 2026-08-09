@@ -1677,6 +1677,24 @@
   builder verifies encoder identity as part of resume. This is expected and
   does not imply that images are re-encoded; the starting boundary remains
   146,110/571.
+- Resume-state identity is a pre-launch invariant, not a post-completion
+  invariant. After a valid resumed builder writes its terminal manifest and
+  training-store metadata, the live state file may legitimately differ from
+  the stopped parent SHA. Finalization must keep the frozen parent receipt,
+  builder, wrapper, counts, hashes, and protected-read checks while validating
+  the new terminal artifacts rather than demanding the old mutable state SHA.
+- The cache manifest's `text_cache` field is semantic metadata, not a file
+  receipt: it records the frozen encoder, 12 findings, and 60 transition
+  prototypes but no `file_sha256`. The authoritative text-cache byte hash is
+  the attempt4 build receipt's `text_cache_sha256`, which exactly matches the
+  local `text_cache.pt` SHA `1846e3d9...`.
+- The corrected independent audit proves the local transfer surface is
+  self-consistent at both representations: all 571 build shards pass their
+  registered hashes, shapes, row counts, and finiteness checks, while the
+  consolidated `[146110,197,768]` FP16 store and exact five companion files
+  match the immutable build/finalization receipts. Transferring only those six
+  runtime files is therefore sufficient for training and avoids transferring
+  redundant build shards.
 - User decision: after the final non-scope parameter setting is frozen, include
   `tail4/tail6/tail8` as a complete Seeds 17/28/43 adapter-scope ablation. The
   scope comparison must hold every other training field fixed, complete all

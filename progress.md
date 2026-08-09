@@ -4859,3 +4859,38 @@
   and `f0ab5a96adb56b7272fcf7e09510da55411f6690e03a667f737f24931cc3164c`.
   Startup is revalidating the complete 571-shard boundary before terminal
   consolidation; no additional cache writer or scientific child exists.
+- Attempt4 completed the terminal consolidation path and wrote a complete
+  build receipt at 14:22 CST. It binds 146,110 Train/Dev images, all 571
+  Block-4 shards, shape `[146110,197,768]`, cache-manifest SHA
+  `c541ec8c...`, 44,211,717,120-byte training-store SHA `9119fa66...`, text
+  cache SHA `1846e3d9...`, and zero protected reads. PID `4624` exited cleanly;
+  both 3090s are idle except for the Codex display context.
+- The first finalization call failed closed before writing a receipt because
+  the generic resume controller incorrectly reapplied the pre-launch stopped-
+  state SHA check after legitimate terminal state replacement. The cache and
+  build receipt remain intact. The controller now preserves that exact-state
+  requirement for preparation/start while finalization verifies the frozen
+  parent/source identities and completed build artifacts.
+- Attempt4 finalization then passed after independently rehashing the 44.2 GB
+  store. Finalization status is
+  `PASS_LOCAL_BLOCK4_ATTEMPT4_CACHE_VERIFIED_COMPLETE`, build-receipt SHA is
+  `c3bf81f8...`, training-store SHA remains `9119fa66...`, no temporary files
+  exist, and protected reads remain zero.
+- The first transfer-preparation audit completed all expensive shard checks but
+  failed closed at a controller-only text-cache comparison: the manifest's
+  `text_cache` object contains semantic metadata and intentionally has no file
+  hash. The actual `text_cache.pt` SHA and attempt4 build-receipt SHA both equal
+  `1846e3d9...`; no transfer namespace, staging directory, or remote target was
+  left behind. The check now binds the actual file to the immutable build
+  receipt instead.
+- The corrected full independent audit passed after re-hashing and loading all
+  571 registered shards, checking Block-4 shape/finiteness, re-hashing the
+  44.2 GB training store and five companion files, finding no temporary
+  fragments, and confirming zero protected reads. Transfer preparation SHA is
+  `a804e5a6...`; local-audit SHA is `3c7a69a4...`; exact six-file manifest SHA
+  is `e72b963c...`.
+- The resumable 200 Mbit/s SFTP transfer launched exactly once as detached PID
+  `4984` after confirming the new canonical server target was absent and
+  creating it empty. Launch-intent SHA is `4bda4306...`; the worker is alive,
+  no failure or completion receipt exists yet, and shared server storage has
+  about 1.2 PB available. No scientific child was launched.
