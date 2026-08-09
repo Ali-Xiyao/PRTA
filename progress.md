@@ -5054,3 +5054,10 @@
   pairs now exist at their expected scope-dependent sizes; scientific steps,
   telemetry, logs, parents, and storage are healthy, and neither terminal
   receipt exists. No intermediate metric was read or used.
+- 19:22 CST heartbeat: corrected tail4 Seed17 remains `RUNNING` at epoch 5
+  with 29,530 completed optimizer steps; preserved tail6 Seed17 remains
+  `RUNNING` at epoch 3 with 20,104. Effective configs, scope-required
+  Block-8/Block-4 manifests, loss/EMA/schedule audits, checkpoint pairs,
+  scientific steps, telemetry, parents, logs, and storage remain healthy.
+  Neither terminal receipt exists, and no intermediate metric was read or
+  used to alter the frozen queue.
