@@ -4967,3 +4967,10 @@
   and telemetry remain alive, no terminal receipt/checkpoint or fatal launcher
   marker exists yet, and storage remains healthy. No metric was inspected or
   used for selection.
+- 16:42 CST heartbeat: tail6 and tail8 remain `RUNNING` on `3066.52` and
+  `9929.49`, both at epoch 1 with 10,052 and 9,126 completed optimizer steps.
+  Frozen effective-config/cache/EMA/direct-cost/state/schedule identities still
+  match exactly. Both best/last checkpoint pairs exist at the expected
+  scope-dependent sizes (717,829,052 bytes for tail6 and 719,467,026 bytes for
+  tail8); no terminal receipt or fatal log marker exists. Allocations,
+  telemetry, and disk remain healthy, and no intermediate metric was used.
