@@ -1882,19 +1882,21 @@ Status: in progress under explicit 2026-08-09 tail6/tail8 continuation authority
 - [x] Close corrected stage1 only after both terminal receipts, record both
   cells in an immutable no-selection aggregate, and preserve the frozen queue
   unchanged.
-- [ ] Complete the active frozen stage2 pair: tail8 Seed17 on `3066.55` and
-  tail4 Seed28 on `9929.51`; do not inspect intermediate metrics or adapt the
-  remaining stage3-5 queue.
+- [x] Complete the frozen stage2 pair, verify both complete terminal receipts,
+  and close them in an immutable no-selection aggregate without changing the
+  stage3-5 queue.
+- [ ] Complete the active frozen stage3 pair: tail6 Seed28 on `3066.56` and
+  tail8 Seed28 on `9929.52`; do not inspect intermediate metrics or adapt the
+  remaining stage4-5 queue.
 
 ## Next Step
 
-Preserve the complete stage1 no-selection aggregate and monitor the active
-frozen stage2 pair only: tail8 Seed17 on `3066.55` and tail4 Seed28 on
-`9929.51`. Read no intermediate metric. When both complete terminal receipts
-exist, close stage2 without selection and launch exactly the pre-frozen stage3
-pair (tail6 Seed28 and tail8 Seed28). Keep parent allocations/telemetry,
-Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing
-artifact.
+Preserve the complete stage1/stage2 no-selection aggregates and monitor the
+active frozen stage3 pair only: tail6 Seed28 on `3066.56` and tail8 Seed28 on
+`9929.52`. Read no intermediate metric. When both complete terminal receipts
+exist, close stage3 without selection and launch exactly the pre-frozen stage4
+pair (tail4 Seed43 and tail6 Seed43). Keep parent allocations/telemetry,
+Internal-test/Gold sealing, and every Wave032/Wave033 failed or losing artifact.
 
 ## Errors Encountered
 

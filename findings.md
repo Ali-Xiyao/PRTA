@@ -1764,3 +1764,9 @@
   only one mandatory ablation cell: the still-running tail8 Seed17 cell is
   unchanged, allocation `9929` stays idle at the paired-stage boundary, and
   the stage3 queue remains locked until both stage2 cells are terminal.
+- Frozen stage2 tail8 Seed17 is terminal at Macro-F1 `0.5489199288856293` /
+  ODER `0.003303276493170253`. Although this single cell exceeds the earlier
+  Seed17 search target, Wave033 is an outcome-independent conditional ablation:
+  the result performs no selection, drops no cell, and does not reorder the
+  pre-frozen queue. Immutable stage2 aggregate SHA is `30ca3c17...`; stage3
+  therefore advances exactly to tail6 Seed28 plus tail8 Seed28.

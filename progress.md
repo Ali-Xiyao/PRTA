@@ -5163,3 +5163,26 @@
   step, telemetry, parents, log, disk, and protected-read state remain healthy.
   No terminal receipt exists and no intermediate metric was read or used;
   allocation `9929` remains free at the paired-stage boundary.
+- 23:02 CST heartbeat: the remaining stage2 tail8 Seed17 cell is
+  complete-terminal after nine epochs with best epoch 4, Macro-F1
+  `0.5489199288856293`, and ODER `0.003303276493170253`. Training-receipt SHA
+  is `bf614f50...`; best/last checkpoint SHAs are `3cc88648...` and
+  `ec43650e...`, with exact sizes 719,472,146 and 719,477,266 bytes. Its
+  effective config, Block-4 cache, state/EMA/ODC/schedule fields, and zero
+  protected-read state pass. The metric was recorded only after terminal
+  receipt and did not alter the frozen ablation queue.
+- Stage2 was independently closed in immutable no-selection aggregate SHA
+  `30ca3c17...`, explicitly recording `selection_performed=false` and
+  `outcomes_used_to_change_queue=false`. The new stage2-close/stage3-advance
+  controller SHA is `5173fb6a...` and passed local compile/Ruff plus exact
+  server hash/compile verification.
+- Frozen stage3 launched exactly tail6 Seed28 on `3066.56` and tail8 Seed28 on
+  `9929.52`. Their config/effective-config/launcher SHAs are respectively
+  `b0aa41b2...`/`94b01030...`/`9007b891...` and
+  `c47c7813...`/`b83c2e8b...`/`ff459396...`. Stage3 intent/control/
+  finalization SHAs are `12aa182d...`, `bac8be37...`, and `8abc10ef...`;
+  launch-receipt SHAs are `325e3c6c...` and `e849c67a...`. Both initial
+  progress identities, Block-4 cache, frozen loss/EMA/schedule fields,
+  scientific steps, telemetry, parents, logs, disk, and protected-read launch
+  receipts pass. No new Slurm parent was submitted and no intermediate metric
+  was read.
