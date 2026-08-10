@@ -2088,10 +2088,38 @@ may start without new explicit authority that also respects this HOLD.
   hashes/counts/confusions/protected reads, preserve all outputs, and close the
   Gold route after reporting the result and next action.
 
+## 2026-08-10: final paper-ready result organization
+
+- [x] Inventory the immutable Wave033 conditional ablation, pre-review Wave035
+  Internal-test baseline, final physician-reviewed Wave039 Internal-test, and
+  Wave040 one-time Gold terminal receipts without reopening any protected
+  label surface.
+- [x] Create a standalone Chinese final-results summary that separates
+  development evidence, the pre-review Internal-test baseline, the final formal
+  physician-reviewed Internal-test, and the exhausted one-time Gold result;
+  leave the two user-edited paper documents untouched.
+- [x] Create paper-ready CSV tables for the nine-cell adapter-scope ablation
+  and the pre-review/formal physician-reviewed/Gold evaluation results,
+  including exact seeds, sample counts, means/sample standard deviations, and
+  receipt identities.
+- [x] Cross-check every published number against frozen terminal aggregates,
+  state unrecoverable peak-GPU-memory values as missing rather than estimated,
+  and document the exact scientific claims that are and are not supported. The
+  final reporting hierarchy must treat the 12,219-row physician-reviewed set
+  as the official Internal-test and the 13,219-row set only as a pre-review
+  data-quality baseline.
+- [ ] Commit only the new Git-safe result package plus aggregate planning files
+  and push only to the local bare remote. Keep private runtime and the two
+  user-modified paper documents unstaged.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| The organization-phase memory-index `rg` search returned no matches, which made the combined read command exit nonzero | 1 | No workspace or memory artifact was changed. Treat this as a clean no-memory-hit result and derive all current facts from frozen workspace/server receipts instead. |
+| A PowerShell hash probe used the unavailable static `SHA256.HashData` method in the installed runtime | 1 | The receipt JSON read itself succeeded, but the hash field was blank. Use `Get-FileHash -Algorithm SHA256` for the exact immutable receipt hash and do not modify the receipt. |
+| Old Windows PowerShell could not parse the large artifact-tool validation JSON through its default text-decoding path | 1 | The artifact-tool inspections and three rendered sheet previews had already passed. Verify the zero-error notice by exact text match, re-read the UTF-8 CSVs explicitly, and independently recompute the official Internal-test and Gold means/sample standard deviations from their seed rows. |
+| A combined recursive cleanup command for the generated spreadsheet support directory was blocked by command policy | 1 | The command was rejected before execution, so no file moved or was deleted. Keep the support directory untracked, preserve its required `outputs/` workbook, and remove only the unwanted Git-visible docs sidecar through `apply_patch`. |
 | Looked for the Wave033 attempt2 preparation receipt under the local private runtime even though only its controller surface is mirrored locally | 1 | The missing-path read changed nothing. Read the immutable preparation receipt from the canonical server runtime, verified the frozen stage5 arm there, and kept all subsequent controller hashes bound to that server receipt. |
 | Assumed the server cache root `data/runtime/formal_program_v1/cache/full_repartition_v1` also existed under the local E: checkout | 1 | Resolved the migrated assets under `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1` and the BiomedCLIP model under `H:\Xiyao_Wang\001_models\biomedclip`; verify hashes before freeze. |
 | Broad `rg --files` asset lookup across four large H: roots returned no usable result | 1 | Inspect the known `H:\VisualVIT_runtime`, `H:\moved-caches`, and `H:\Xiyao_Wang\001_models` directory structures separately, then hash only concrete candidates. |

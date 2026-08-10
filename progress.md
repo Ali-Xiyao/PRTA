@@ -5803,3 +5803,27 @@
   the aggregate and Macro-F1 gate, confirmed one total Gold-manifest read and
   zero auditor Gold-manifest reads, found no failure/temp artifacts, and closed
   the Gold route with no rerun, selection, or retuning authorized.
+
+## 2026-08-10 final paper-ready result organization
+
+- The user made a strict reporting correction: the physician-reviewed 12,219
+  rows are the official Internal-test. The 13,219-row Wave035 outcome is now
+  reported only as the pre-review data-quality baseline. Historical receipt
+  names/statuses remain immutable, but they no longer define the final paper
+  hierarchy.
+- Added the standalone Chinese final summary plus UTF-8 CSV tables for the
+  formal evaluation and nine-cell adapter-scope ablation, and a three-sheet
+  XLSX combining both tables with a frozen-method note sheet. The two existing
+  user-modified paper documents were not edited.
+- Independent table checks found 20 evaluation rows and 12 ablation rows. All
+  three official Tail8 rows bind cohort size 12,219; every pre-review row is
+  explicitly `NOT_OFFICIAL*`. Recomputed official Internal-test Macro-F1
+  mean/sample-std `0.5561880108952626 / 0.0017913448786845809` and Gold
+  `0.548708398358418 / 0.017998591595492035` exactly match frozen receipts.
+- Artifact-tool inspection found zero spreadsheet formula-error tokens and all
+  three rendered sheets passed visual review. No protected label, prediction,
+  Internal-test row, or Gold row was reopened; only existing aggregate/terminal
+  receipts were used.
+- Final artifact SHAs are summary Markdown `7c089000...5937a`, formal-results
+  CSV `b6ff2f72...2b0ef`, ablation CSV `660d2d98...71a08`, and XLSX
+  `0cbbd0e1...ce7c4`.

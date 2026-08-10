@@ -2181,3 +2181,23 @@
   second Gold run, or additional scientific queue is authorized. Gold is now
   exhausted as an evaluation surface; the result is final for the available
   data rather than evidence of external clinical generalization.
+
+# 2026-08-10 final reporting hierarchy
+
+- Per the user's explicit final authority, the 12,219-row physician-reviewed
+  cohort is the official Internal-test. Tail8 is formally reported at per-seed
+  Macro-F1 `0.5542012507019569 / 0.5576798931735671 /
+  0.5566828888102636`, with mean/sample-std
+  `0.5561880108952626 / 0.0017913448786845809`; all three seeds pass the
+  current Macro-F1-only target. ODER remains descriptive.
+- The 13,219-row Wave035 result is retained only as an immutable pre-review
+  data-quality baseline. It must not be used as the paper's official
+  Internal-test result or main method conclusion.
+- The one-time 175-row Gold result remains the final available-data test:
+  three-seed Macro-F1 mean/sample-std is
+  `0.548708398358418 / 0.017998591595492035`, passing the frozen mean threshold.
+  The large seed spread and absence of an additional external cohort remain
+  explicit limitations.
+- The final result package deliberately separates the official Internal-test,
+  Gold, pre-review baseline, and conditional Dev ablation. It introduces no
+  new protected evaluation or retrospective number selection.
