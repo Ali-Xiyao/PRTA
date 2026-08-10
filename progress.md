@@ -5885,3 +5885,23 @@
 - Updated the recurring monitor to continue the full queue and Block-2
   build/verification/transfer path automatically until the immutable final
   aggregate is complete or a genuine blocker occurs.
+
+## 2026-08-10 Wave041 stage1 terminal and Block-2 competition stop
+
+- Wave041 stage1 closed from two complete terminal receipts with immutable
+  no-selection aggregate SHA `9f055d529c5e1641b658302343199b32fa7cf16376378dd6266abe3dc96abe9d`.
+  No-tail Seed17 completed at Dev Macro-F1 `0.5322764454315905` / ODER
+  `0.005803053298812606`; Tail2 Seed17 completed at `0.5380975148105176` /
+  `0.003571109722346219`. The fixed queue advanced unchanged to stage2:
+  no-finding Seed17 and no-cross-time-alignment Seed17.
+- Local Block-2 attempt2 encoded all 146,110 Train/Dev images into 571
+  contiguous shards, then unrelated VisionPulse process PID `23668`
+  (`train_phase32_set_lcar_stage_a.py`, CUDA device1) appeared before terminal
+  consolidation/receipt. Stopped only PRTA PID `5492`; the external process
+  was neither stopped nor modified.
+- Exact preserved boundary: 571 contiguous shard files, 44,212,464,559 total
+  bytes, state SHA `9e3cd8cdd9d7166428c979a69aeed74eecc0806c3aa0aa15729c588bed15325d`,
+  zero temporary fragments, and zero protected reads. Immutable competition
+  stop receipt SHA is `4672e731395b01f396a0d51f75ebe486cfbe39de69d3b5b6ff1cb1704a65a7c9`.
+- Do not restart attempt2 or touch the unrelated job. A new immutable
+  finalization-only retry may start only after both local GPUs are free.

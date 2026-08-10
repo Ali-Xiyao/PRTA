@@ -2159,6 +2159,12 @@ may start without new explicit authority that also respects this HOLD.
 - [ ] Complete all nine new scope cells after the independently verified
   Block-2 cache becomes available for tail10, then write the immutable full
   six-scope aggregate.
+- [x] Close Wave041 stage1 from terminal receipts only and advance the frozen
+  queue to stage2 without selection or queue mutation.
+- [ ] Preserve local Block-2 attempt2 at its complete 146110-image/571-shard
+  boundary after unrelated VisionPulse PID 23668 appeared on GPU1. Keep its
+  immutable competition-stop receipt and do not start a new finalization-only
+  retry until both local GPUs are free.
 
 ## Errors Encountered
 

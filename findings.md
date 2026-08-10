@@ -2252,3 +2252,17 @@
   SHA is `f1defea9...e8965c3a`; the attempt remains immutable. A separate local
   dual-RTX3090 attempt is active as PID `5492` and will be transferred only
   after complete local verification.
+
+# 2026-08-10 Wave041 stage1 and complete-shard Block-2 finding
+
+- Stage1 provides terminal, outcome-independent evidence only: no-tail Seed17
+  is `0.5322764454315905 / 0.005803053298812606` and tail2 Seed17 is
+  `0.5380975148105176 / 0.003571109722346219` for Dev Macro-F1/ODER. The
+  controller advanced to stage2 without using these outcomes to change the
+  queue.
+- The local Block-2 encoder reached the complete 146,110-image/571-shard
+  boundary before an unrelated VisionPulse job appeared on GPU1. This means
+  no further image encoding is needed, but manifest finalization, store
+  consolidation, independent verification, and transfer remain incomplete.
+  The safe next action is a new finalization-only retry after both GPUs are
+  free, bound to state SHA `9e3cd8cd...15325d`; attempt2 itself is immutable.
