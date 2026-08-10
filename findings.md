@@ -1948,3 +1948,53 @@
   protected outcomes is permissible. Gold remained structurally unreachable
   and unopened, so the terminal HOLD closes the current route without a Gold
   result.
+
+# 2026-08-10 physician-facing Internal-test case-study authority
+
+- The user explicitly requested a case study of poorly performing
+  Internal-test samples for physician review of possible data problems. This
+  is new diagnostic-use authority to reopen the active cleaned Internal-test
+  labels only for case selection and adjudication packaging. It does not
+  authorize model reruns, new scientific gates, tuning, selection, Gold access,
+  or reinterpretation of Wave035's immutable `HOLD_INTERNAL_TEST_GATE`.
+- The package must prioritize the failure mechanism actually observed in the
+  terminal confusion matrices: opposite-direction errors
+  (`Improved<->Worse`, `New<->Resolved`), especially when all three tail8 seeds
+  agree with high confidence. A bounded set of other consensus errors and
+  correct controls is required so the doctor can distinguish label/pairing
+  problems from genuinely difficult but valid cases.
+- Patient-facing material must omit reports and raw patient identifiers. Use
+  case aliases plus paired `prior`/`current` image files and leave physician
+  adjudication columns blank. The resulting roster is outcome-adaptive
+  diagnostic evidence only and cannot feed training or a protected rerun.
+- The local terminal mirror contains receipts but not row predictions. The
+  immutable server outcome still contains exactly six registered JSONL
+  prediction files, one per frozen tail4/tail8 seed, each about 5.2 MB plus
+  worker/coordinator receipts. Prediction rows contain only observation ID,
+  scope/system/seed, predicted class, five probabilities, temperature, and
+  cohort; they contain no labels, patient identifiers, reports, or image paths.
+  These six files can therefore be copied into the new private diagnostic
+  namespace and hash-checked before the newly authorized label join.
+- The user expanded the deliverable from a bounded case sample to all failed
+  predictions. The primary remediation table will therefore include every
+  unique Internal-test sample missed by at least one tail8 seed and record all
+  three tail8 outcomes plus exact frozen prior/current image paths. A second
+  event table will retain every wrong prediction from all six tail8/tail4
+  seed cells. The 60-case blinded pack remains a separate priority view, not a
+  substitute for the exhaustive tables.
+- The exhaustive tail8 case table contains 6,366 unique Internal-test samples
+  missed by at least one of Seeds17/28/43. Of these, 4,528 are wrong for all
+  three seeds and 3,928 have the same wrong class across all three. The full
+  tail8/tail4 event table contains 32,616 seed-level errors. All 26,438 frozen
+  prior/current path checks exist; Gold reads remain zero.
+- For the user's requested simple handoff, the primary artifact is
+  `01_tail8_failed_cases_deduplicated.csv`: one row per failed sample with
+  source/finding/reference label, all three predictions/confidences, error
+  consistency flags, and exact prior/current source paths. The optional richer
+  workbook is not required for physician review.
+- The final simplified handoff is `internal_test_suspect_samples.csv` with
+  exactly 6,366 unique tail8-failed Internal-test samples and ten columns:
+  sample ID, source, finding, frozen label, number of wrong seeds, three seed
+  predictions, and exact prior/current image locations. SHA-256 is
+  `ed4bc0d41793f808266ac2d2b12541b0e9491fb8430b74ef0e9b524ec387bc63`;
+  all 12,732 referenced image paths exist.

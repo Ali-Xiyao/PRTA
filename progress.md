@@ -5596,3 +5596,32 @@
   finalization receipt `118f6825...`. A post-closeout SSH audit confirms both
   retained parents and telemetry remain alive, no scientific child remains,
   and the server connection is healthy.
+
+## 2026-08-10 physician-facing Internal-test failure case study
+
+- The user explicitly authorized identifying poorly performing Internal-test
+  cases for physician data-quality review. A new private case-study phase is
+  open with Gold still prohibited and Wave035 immutable. The authorized output
+  is a bounded paired-image review pack plus blank physician adjudication
+  fields; it is not a model rerun, protected metric recomputation, tuning
+  surface, or successor scientific queue.
+- Located all six immutable Wave035 prediction JSONLs on the server and
+  confirmed their row schema is label-free and patient-free. The local terminal
+  mirror contains only receipts, so the case-study controller will bind and
+  retrieve the registered prediction files into a new private diagnostic root
+  without modifying the original outcome.
+- Expanded the controller before any diagnostic label read so it will produce
+  complete tail8 case-level and six-model event-level failure CSVs with exact
+  source image locations, then separately create the 60-case blinded review
+  pack. Python compilation, Ruff lint, and formatter checks now pass.
+- Completed the single authorized diagnostic label join and wrote immutable
+  terminal receipt status `PASS_INTERNAL_TEST_DOCTOR_CASE_STUDY_PACKAGE_COMPLETE`.
+  The simple deduplicated CSV has 6,366 rows; the event CSV has 32,616 rows;
+  all 13,219 cases' prior/current paths were checked with zero missing files.
+  No inference, training, gate recomputation, Wave035 mutation, or Gold access
+  occurred. Per the user's simplification, hand off the deduplicated CSV as
+  the primary doctor table and stop optional spreadsheet polishing.
+- Created the user-requested plain CSV
+  `formal_internal_test_case_study_v1/internal_test_suspect_samples.csv`.
+  Independent checks confirm 6,366 data rows, zero missing prior/current paths,
+  and SHA-256 `ed4bc0d41793f808266ac2d2b12541b0e9491fb8430b74ef0e9b524ec387bc63`.

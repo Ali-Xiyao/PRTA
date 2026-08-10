@@ -1959,6 +1959,39 @@ may start without new explicit authority that also respects this HOLD.
   preserve private runtime and user documents outside the commit, and push
   only intended planning changes to the local bare remote.
 
+## 2026-08-10: physician-facing Internal-test failure case study
+
+- [x] Receive the user's explicit authorization to identify poorly performing
+  Internal-test cases for physician data-quality review. Treat this as a new
+  diagnostic-use authority, not as a rerun or extension of the closed Wave035
+  scientific gate; Gold remains prohibited.
+- [x] Freeze a new private case-study namespace and bind the immutable Wave035
+  terminal receipt, all six registered prediction files, the active cleaned
+  Internal-test manifest, and the outcome-free prior/current roster by SHA-256.
+- [x] Build an exhaustive failure index before the bounded review roster:
+  include every wrong tail8 Seed17/28/43 event, a case-deduplicated view for
+  every Internal-test sample missed by at least one tail8 seed, and an
+  all-six-model event table for tail8/tail4 comparison. Include exact frozen
+  prior/current source paths and path-existence audits; do not copy or mutate
+  the full source corpus.
+- [x] Select a bounded, clinically reviewable priority roster for blinded
+  adjudication: emphasize unanimous/high-confidence tail8 direction errors,
+  balance the four opposite-direction pairs and findings/sources, and include
+  a smaller matched set of other consensus errors plus correct controls. Do
+  not use the roster for model tuning or protected retesting.
+- [x] Build two physician deliverables: an exhaustive unblinded CSV package
+  with exact source locations, labels, predictions, confidences and blank-safe
+  metadata for remediation; plus a separate priority blinded package
+  containing only case aliases, copied prior/current radiographs, finding,
+  blank physician adjudication fields, a Chinese guide, and an HTML viewer.
+  Exclude reports and Gold artifacts from both.
+- [x] Independently audit case counts, source-file hashes, image readability,
+  pair-role filenames, package manifest/ZIP integrity, zero Gold reads, and
+  absence of any training or evaluation launch.
+- [x] Record aggregate case-study findings and hand off the exact private
+  package path. Keep Wave035 terminal HOLD and every original artifact
+  immutable.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
