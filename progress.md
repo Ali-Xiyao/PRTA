@@ -5927,3 +5927,19 @@
   once on terminal completion, independently audit, and then transfer/verify
   the six-file Train/Dev Block-2 surface. It must never touch GPU1 or protected
   evaluation data.
+
+## 2026-08-10 Wave041 Block-2 attempt3 terminal build
+
+- PID `4908` completed the finalization-only build without re-encoding. The
+  immutable build receipt SHA is
+  `42b3ff7fc28a283661a950662bb247e65b84a762f1989976f0aeafcad965115d`;
+  it records 146110 images, 571 shards, zero protected reads, and
+  `reencoding_performed=false`.
+- The completed manifest SHA is
+  `c522f5dcc95252652f1fc17af2153a232832f2a940922f6db61e648a48984112`;
+  the 44,211,717,120-byte training-store SHA is
+  `73a2ce7e70bfedc68c7d5df4b7cdd9a9e68d81e7ece288cda0b973ef636f3183`;
+  text-cache SHA remains `1846e3d9...1a3fd`.
+- The exact controller finalization call is active as PID `22112`; it is
+  independently rehashing the 44.2-GB store before writing the immutable
+  finalization receipt. No duplicate finalization invocation was made.
