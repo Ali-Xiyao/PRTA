@@ -1955,7 +1955,7 @@ may start without new explicit authority that also respects this HOLD.
 - [x] Apply the preregistered joint decision: PASS only if all six gates pass;
   otherwise write `HOLD_INTERNAL_TEST_GATE`. Keep Gold locked in either case
   pending its own separate explicit authority.
-- [ ] Update aggregate planning files, run full engineering verification,
+- [x] Update aggregate planning files, run full engineering verification,
   preserve private runtime and user documents outside the commit, and push
   only intended planning changes to the local bare remote.
 
