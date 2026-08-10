@@ -2169,6 +2169,8 @@ may start without new explicit authority that also respects this HOLD.
   queue to stage5 without selection or queue mutation.
 - [x] Close Wave041 stage5 from terminal receipts only and advance the frozen
   queue to stage6 without selection or queue mutation.
+- [x] Close Wave041 stage6 from terminal receipts only and advance the frozen
+  queue to stage7 without selection or queue mutation.
 - [x] Preserve local Block-2 attempt2 at its complete 146110-image/571-shard
   boundary after unrelated VisionPulse PID 23668 appeared on GPU1. Under the
   user's explicit GPU0-only authorization, freeze and launch immutable

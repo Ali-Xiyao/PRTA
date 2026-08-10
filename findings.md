@@ -2352,3 +2352,12 @@
 - Stage6 runs the frozen tail2 Seed28 / no-finding Seed28 pair on the two
   retained allocations. Parents, telemetry, and zero-protected-read guards
   remain intact.
+
+# 2026-08-10 Wave041 stage6 transition finding
+
+- Stage6 completed and stage7 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage6 aggregate SHA is
+  `643b205e...0c6ed8`.
+- Stage7 runs the frozen no-cross-time-alignment / no-dual-branch Seed28 pair
+  on the two retained allocations. Parents, telemetry, and zero-protected-
+  read guards remain intact.
