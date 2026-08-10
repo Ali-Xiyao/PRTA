@@ -5625,3 +5625,8 @@
   `formal_internal_test_case_study_v1/internal_test_suspect_samples.csv`.
   Independent checks confirm 6,366 data rows, zero missing prior/current paths,
   and SHA-256 `ed4bc0d41793f808266ac2d2b12541b0e9491fb8430b74ef0e9b524ec387bc63`.
+- Filtered that same CSV in place to retain only the 4,528 samples jointly
+  misclassified by all three tail8 seeds. Removed 1,838 rows that were wrong
+  for only one or two seeds. Verification found zero non-three-seed rows, zero
+  missing prior/current paths, no temporary file, and final SHA-256
+  `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`.

@@ -1998,3 +1998,9 @@
   predictions, and exact prior/current image locations. SHA-256 is
   `ed4bc0d41793f808266ac2d2b12541b0e9491fb8430b74ef0e9b524ec387bc63`;
   all 12,732 referenced image paths exist.
+- At the user's request, the simplified CSV was filtered in place to the
+  intersection of the three tail8 seeds: every retained sample is wrong for
+  Seed17, Seed28, and Seed43. It now contains 4,528 rows; 1,838 partial-seed
+  failures were removed. The full 6,366-row immutable source table remains
+  available for recovery. New SHA-256 is
+  `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`.
