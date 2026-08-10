@@ -1818,3 +1818,57 @@
   `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE`. Internal-test and Gold
   remained sealed, the protected-read count is zero, both retained allocations
   and telemetry remain alive, and no successor scientific queue exists.
+- The 2026-08-10 authority is deliberately narrower than protected evaluation:
+  it unlocks formal-candidate identity freezing and preregistration only. The
+  safe boundary is to use already-complete Train/Dev aggregate evidence,
+  create no prediction, never enumerate protected paths or row contents, keep
+  Gold locked, and require a new explicit authorization before the one-time
+  Internal-test gate can run.
+- The active manuals support a staged unlock: protocol/candidate identity must
+  be frozen before Internal-test or Gold is read, and protected outcomes may
+  never feed model selection or calibration. Because the cleaned protected
+  cohorts are outcome-adaptive curated sets, the future result must be framed
+  as bounded internal evidence, not unbiased external or clinical
+  generalization. Gold should remain locked through an Internal-test-only
+  gate.
+- The repository's legacy formal protocol freezer is a post-GO mechanism that
+  opens and hashes protected manifest files during freeze. Reusing it under the
+  current HOLD would violate both its own contract and the new narrow
+  authorization. A separate pre-protected receipt must bind only public code,
+  Train/Dev artifacts, terminal candidate evidence, proposed gates, and a
+  protected-read count of zero.
+- The legacy one-time outcome runner is also technically out of scope: it
+  hardcodes the four-block tail path and opens both Internal-test and Gold in a
+  single session. A future authorized evaluation needs a newly reviewed
+  tail8/Block-4, Internal-test-only runner with Gold structurally unreachable,
+  not merely a different command-line argument to the old session.
+- The final aggregate is sufficient to freeze candidate and comparator without
+  opening protected manifests. Tail8's three `best.pt` identities are
+  `3cc88648...`, `a771b07e...`, and `d4f06667...`; its effective-config hashes
+  are `43c94c30...`, `b83c2e8b...`, and `db310ef9...`, all on Block-4 manifest
+  `c541ec8c...`. Tail4 can be frozen as the scope control from the same matrix
+  using its three Block-8 terminal cells, avoiding any new Train/Dev run.
+- Tail4 is the cleanest protected-evaluation control because it comes from the
+  same outcome-independent nine-cell matrix and differs from tail8 only in
+  adapter scope plus the architecturally required Block-8/Block-4 entry
+  boundary. Freezing all three `best.pt` checkpoints for both scopes supports
+  paired seed reporting without importing a mismatched historical baseline or
+  cherry-picking one seed.
+- Wave033's immutable preparation receipt binds each raw config, effective
+  config, launcher, cache boundary, seed, and run identity, while its final
+  aggregate binds every terminal receipt, progress file, best/last checkpoint,
+  metric, parameter count, and zero-protected-read field. Verifying both hashes
+  is therefore sufficient for Wave034 to freeze the complete candidate/control
+  identity without copying row data or enumerating protected artifacts.
+- Direct comparison of the frozen tail4 and tail8 configs confirms that their
+  scientific settings are identical except for `experiment_id`, seed, and
+  `model.adapter_scope`; the scope axis necessarily carries its cache-entry
+  boundary (Block-8 for tail4, Block-4 for tail8). H0, rank32, EMA0.999,
+  DMW0.01, direct cost0.05, state0.025, constant LR 1e-4, batch16, full
+  Train/Dev rows, epoch budget, and early stopping are unchanged.
+- Wave034 now immutably freezes tail8 Seeds 17/28/43 as the formal candidate
+  and the same-matrix tail4 Seeds 17/28/43 as control, using every `best.pt`
+  checkpoint and no best-seed selection. Candidate receipt SHA is
+  `83444681...`; Internal-test-only preregistration SHA is `c59414aa...`.
+  Independent audit passed two exact files, six cells, six joint gates, no
+  absolute data paths, no temporary fragments, and zero protected reads.

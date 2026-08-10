@@ -1095,7 +1095,8 @@ Status: complete; PASS engineering readiness; no formal launch authorized
   training queue remains locked behind a new freeze and explicit authority.
 
 ### Phase 92 - Continuous lightweight server Dev search
-Status: terminal/closed at `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE`
+Status: formal-candidate freeze complete; stopped before protected evaluation;
+`HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE` preserved
 
 - Reuse only retained Slurm allocations `9929` and `3066` on `gpu01`; retired
   allocation `4161` must never be reused. Submit no new Slurm allocation and
@@ -1897,13 +1898,37 @@ Status: terminal/closed at `HOLD_DEVELOPMENT_GATE / STOP_CURRENT_PRTA_ROUTE`
 
 ## Next Step
 
-Wave033 attempt2 is terminal and closed without selection. Preserve final
-nine-cell aggregate SHA `606e10c0...`, stage5 aggregate SHA `79fdaed7...`,
-both verified Train/Dev caches, every receipt/checkpoint, both retained parent
-allocations, and telemetry. Keep `HOLD_DEVELOPMENT_GATE` and
-`STOP_CURRENT_PRTA_ROUTE`; launch no additional scientific child and await
-explicit user direction. Historical peak GPU memory is transparently recorded
-as unavailable rather than reconstructed from a replay.
+Stop at the completed Train/Dev-only Wave034 freeze boundary. Do not open,
+list, parse, hash, or evaluate Internal-test/Gold. A future turn may proceed
+only after the user gives the exact separate authorization token
+`AUTHORIZE_TAIL8_INTERNAL_TEST_ONLY_ONCE`; even then, first implement and
+review a tail8/Block-4 Internal-test-only runner whose Gold path is structurally
+unreachable, reverify the frozen candidate/preregistration hashes, and satisfy
+both formal-entry guards. Historical `HOLD_DEVELOPMENT_GATE` and
+`STOP_CURRENT_PRTA_ROUTE` remain preserved.
+
+## 2026-08-10: tail8 formal-candidate freeze and protected-evaluation preregistration
+
+- [x] Audit repository/server authority surfaces and the final Wave033
+  aggregate without reading protected cohort artifacts.
+- [x] Resume after interruption and confirm the Wave034 private namespace and
+  controller are still absent, so no partial freeze artifact can be mistaken
+  for the immutable candidate package.
+- [x] Author and locally validate the fail-closed Wave034 controller; compile,
+  Ruff, format, empty-server-target, retained-parent, telemetry, and
+  zero-scientific-child preflight checks all pass before deployment.
+- [x] Freeze the exact tail8 source, configs, cache identity, Seeds 17/28/43
+  terminal receipts, progress files, and best/last checkpoint identities.
+- [x] Pre-register a no-cherry-picking reporting rule, Internal-test primary/
+  safety gates, fail-closed behavior, and Gold remaining locked.
+- [x] Write immutable candidate-freeze and preregistration receipts in a new
+  private runtime namespace; independently verify their hashes and zero
+  protected reads.
+- [x] Update only aggregate planning/source-of-truth files, preserve the two
+  user-modified paper documents unstaged, and push intended planning changes
+  only to the local bare remote.
+- [x] Stop before any protected evaluation and request separate explicit
+  authorization for the frozen one-time Internal-test execution.
 
 ## Errors Encountered
 
@@ -1936,3 +1961,6 @@ as unavailable rather than reconstructed from a replay.
 | Initial source-identity checks attempted `git -C` inside deployed snapshot trees without `.git` metadata | 1 | Switched to exact SHA-256 comparisons of the deployed files and then verified bootstrap import resolution; the frozen source identity passed. |
 | The first trainable-parameter reconstruction imported the live editable package and rejected `tail_modules(start_block=...)` | 1 | Explicitly inserted the frozen snapshot `src`, reconstructed all three models on CPU, and recorded exact trainable counts `16,399,630 / 16,501,008 / 16,602,386` for tail4/tail6/tail8. |
 | Historical peak GPU memory was not retained by the overwrite-only telemetry probe, Slurm gres/gpumem, or NVIDIA accounting | 1 | Recorded `NOT_RECORDED_HISTORICALLY_UNRECOVERABLE` and `null` for every cell instead of inventing a value or launching an unauthorized replay. |
+| Initial formal-outcome source read requested nonexistent `src/prta_cxr/formal_outcome.py` | 1 | The failed read changed nothing. Use the actual `formal_outcome_session.py` module discovered from `cli_formal_outcome.py` and inspect it separately. |
+| First Wave034 aggregate-schema probe embedded a quoted Python command inside PowerShell and SSH, so PowerShell interpreted part of the payload locally | 1 | The probe failed before reading or writing any server artifact. Use a base64 payload passed as a single SSH argument through `--%`-free PowerShell argument construction, then inspect only the already-authorized Wave033 Train/Dev receipts. |
+| Initial local Wave034 controller lint found four overlength JSON-construction lines and a pending formatter change | 1 | The controller had not been deployed or run. Wrapped the four strings, ran the formatter locally, and repeated compile/Ruff checks before any server mutation. |

@@ -5399,3 +5399,72 @@
   probe imported the editable live package. Each was corrected through exact
   SSH paths, frozen bootstrap resolution, and explicit snapshot `src`
   insertion before the terminal aggregate was written.
+- 2026-08-10: the user explicitly authorized starting the tail8 formal-candidate
+  freeze and Internal-test preregistration phase. The active plan now requires
+  a new immutable Train/Dev-only freeze namespace, exact binding of source,
+  configs, caches, three terminal seeds, receipts/progress/checkpoints,
+  no-best-seed reporting, and a fail-closed one-time Internal-test proposal.
+  This authority does not authorize opening, listing, parsing, hashing, or
+  evaluating Internal-test/Gold; both protected cohorts remain locked until a
+  separate explicit authorization.
+- Planning-with-files session catchup reported that native Codex session
+  parsing is unavailable, so current `task_plan.md`, `progress.md`,
+  `findings.md`, Git state, and the immutable Wave033 terminal aggregate remain
+  the recovery authority. Repository `AGENTS.md` independently requires
+  explicit formal authority, dual formal-entry guards, protected-outcome
+  sealing, private real-data artifacts, and full engineering verification.
+- Read both user-modified active authority manuals without editing them. They
+  require protocol freeze before any Internal-test/Gold outcome read, prohibit
+  protected outcomes from model selection, temperature fitting, prompt/rule
+  changes, or label changes, and classify the cleaned protected cohorts as
+  outcome-adaptive curated evaluation rather than an unbiased external test.
+  The current phase will therefore freeze a candidate and proposed protocol
+  only; it cannot relabel the historical development STOP as GO.
+- Existing `freeze_formal_protocol()` is intentionally unusable for this
+  candidate phase: it requires a `GO` development gate and hashes the sealed
+  Internal-test/Gold manifests. Current authority permits neither. The new
+  artifact must therefore be a distinct pre-protected candidate freeze and
+  preregistration, not a counterfeit `PASS_PROTOCOL_FROZEN` receipt.
+- Inspected the actual `formal_outcome_session.py` after correcting the module
+  path. That legacy session loads a Block-8 tail, evaluates a broad formal
+  matrix, and opens Internal-test plus Gold in one session. It is incompatible
+  with the selected tail8/Block-4 candidate and the newly required staged
+  Internal-test-only gate. The preregistration will explicitly prohibit using
+  this legacy entrypoint for the candidate.
+- Re-read the active phase before freeze and independently inspected the
+  canonical server final aggregate without any protected path access. It is
+  terminal at SHA `606e10c0...`, binds source commit `821e8040...`, contains
+  all nine cells, reports false/false/zero for Internal-test/Gold/protected
+  reads, and provides complete config/cache/receipt/checkpoint identities for
+  tail8 Seeds 17/28/43 plus the tail4 comparator cells.
+- Audited the exact tail4/tail8 configs and frozen arm records. The six cells
+  share family PRTA, H0, rank32, DMW0.01, ODC0.05, state0.025, EMA0.999,
+  constant LR `1e-4`, batch16, 20-epoch budget, minimum6, patience4,
+  class-balanced focal loss, and full Train/Dev fraction. Scope and its
+  required cache boundary are the only intended method-axis differences.
+- Resumed after the interrupted turn and confirmed that neither the Wave034
+  namespace nor its controller existed on the server. Authored the private
+  fail-closed controller, fixed four local line-length findings before
+  deployment, and passed Python compile, Ruff, format, empty-target, retained
+  allocation/telemetry, and zero-scientific-child preflights. Local and server
+  controller SHA-256 is
+  `778948d99631d6e1981af10392c260995bfa1a171897aaa8236be36205ef9389`.
+- Wave034 formal-candidate freeze completed exactly once without launching a
+  scientific child. Tail8 Seeds 17/28/43 are frozen as candidate and tail4
+  Seeds 17/28/43 as same-matrix control, using all three `best.pt` checkpoints
+  and no best-seed selection. Candidate receipt SHA is
+  `83444681a3b0944571f87ce364a6d3120b25d58556b53d3de686588bfa1e3003`;
+  Internal-test-only preregistration SHA is
+  `c59414aaed002435ba83705fd4fef731934ff347d2709a14a199f2a1fbed1326`.
+- Independent server audit passed the exact two-file namespace, three
+  candidate cells, three control cells, six joint gates, controller/receipt
+  hashes, no absolute data paths, no temporary fragments, and zero protected
+  reads. The byte-identical receipts are mirrored into the local private
+  runtime. Internal-test and Gold remain unopened; protected evaluation is
+  unauthorized pending the exact separate token
+  `AUTHORIZE_TAIL8_INTERNAL_TEST_ONLY_ONCE`.
+- Full engineering verification passes after the freeze: `208` pytest tests,
+  Ruff over `src`, `tests`, `scripts`, and the private Wave034 controller, plus
+  compileall over the same code surfaces. Only `task_plan.md`, `progress.md`,
+  and `findings.md` are intended for the local-bare Git handoff; the two
+  user-modified paper documents and private `data/` runtime remain unstaged.
