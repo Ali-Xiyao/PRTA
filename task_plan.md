@@ -2027,6 +2027,17 @@ may start without new explicit authority that also respects this HOLD.
   and protected-read fields. Report the second result as another explicitly
   outcome-adaptive sensitivity analysis while preserving formal Wave035 HOLD.
 
+## 2026-08-10: restore the common-error physician handoff CSV
+
+- [x] Preserve the immutable 3,528-row second-pass doctor-edited snapshot and
+  verify its exact SHA-256 before changing the user-facing CSV.
+- [x] Rebuild the user-facing CSV from the immutable 6,366-row failure source,
+  retaining only the 4,528 samples misclassified by all three tail8 seeds.
+- [x] Verify exact schema, unique IDs, all-three-seed error semantics, zero
+  outside-source rows, and byte equality with the historical pre-deletion CSV.
+- [x] Replace only `internal_test_suspect_samples.csv`; do not rerun metrics,
+  training, inference, Internal-test joins, or any Gold operation.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |

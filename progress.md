@@ -5680,3 +5680,19 @@
   cumulative deletion count 1,000, second-pass count 500, no temporary
   fragment, one label-manifest read, six prediction reads, zero Gold reads,
   no GPU/training/inference, and preservation of formal Wave035 HOLD.
+
+## 2026-08-10 restored common-error physician handoff CSV
+
+- Restored the 1,000 rows removed during the two doctor passes to the
+  user-facing `internal_test_suspect_samples.csv`. The restored table contains
+  exactly 4,528 unique samples, and every row remains wrong for tail8 Seeds
+  17, 28, and 43 with zero semantic violations or outside-source IDs.
+- Artifact-tool reconstruction plus an independent byte comparison reproduced
+  the historical pre-deletion SHA-256 exactly:
+  `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`.
+  The immutable 3,528-row v2 snapshot remains unchanged at SHA-256
+  `3b4ff8682a88a02728182683e450d3236e04369ef1470a3e2a65e306e8da59ed`,
+  so the doctor-edited state remains recoverable.
+- This operation changed only the physician handoff CSV. It performed no
+  protected metric recomputation, training, inference, or Gold access and did
+  not reinterpret the formal Wave035 HOLD.

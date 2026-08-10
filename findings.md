@@ -2063,3 +2063,15 @@
   training or inference. This stronger post-hoc result still cannot reverse
   the formal Wave035 `HOLD_INTERNAL_TEST_GATE` because the exclusions were
   chosen after observing errors and the ODER condition remains failed.
+
+# 2026-08-10 restored common-error handoff finding
+
+- The two physician edit passes were fully reversible because their exact
+  3,528-row state was preserved in the immutable v2 preparation snapshot.
+  Rebuilding from the immutable 6,366-row failure table restores exactly the
+  4,528-sample intersection where tail8 Seeds17/28/43 are all incorrect.
+- The restored CSV has zero duplicate IDs, zero rows outside the frozen source,
+  zero common-error semantic violations, and SHA-256
+  `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`,
+  exactly matching the historical pre-deletion artifact. The 3,528-row doctor
+  snapshot remains recoverable at SHA-256 `3b4ff868...a59ed`.
