@@ -2161,10 +2161,14 @@ may start without new explicit authority that also respects this HOLD.
   six-scope aggregate.
 - [x] Close Wave041 stage1 from terminal receipts only and advance the frozen
   queue to stage2 without selection or queue mutation.
-- [ ] Preserve local Block-2 attempt2 at its complete 146110-image/571-shard
-  boundary after unrelated VisionPulse PID 23668 appeared on GPU1. Keep its
-  immutable competition-stop receipt and do not start a new finalization-only
-  retry until both local GPUs are free.
+- [x] Preserve local Block-2 attempt2 at its complete 146110-image/571-shard
+  boundary after unrelated VisionPulse PID 23668 appeared on GPU1. Under the
+  user's explicit GPU0-only authorization, freeze and launch immutable
+  attempt3 with `CUDA_VISIBLE_DEVICES=0`, GPU1 hidden, and re-encoding
+  structurally prohibited.
+- [ ] Complete attempt3 terminal shard validation/store consolidation,
+  finalize and independently verify the Block-2 cache, then transfer and
+  verify only its six-file Train/Dev runtime surface on the server.
 
 ## Errors Encountered
 

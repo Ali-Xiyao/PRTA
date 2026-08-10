@@ -5905,3 +5905,25 @@
   stop receipt SHA is `4672e731395b01f396a0d51f75ebe486cfbe39de69d3b5b6ff1cb1704a65a7c9`.
 - Do not restart attempt2 or touch the unrelated job. A new immutable
   finalization-only retry may start only after both local GPUs are free.
+
+# 2026-08-10 Wave041 Block-2 attempt3 GPU0-only launch
+
+- The user explicitly authorized continuing on GPU0 while unrelated
+  VisionPulse work remains on GPU1. GPU0 was independently observed at 0%
+  utilization and 13 MiB with only the ignored ChatGPT.exe WDDM row; H: had
+  224,440,504,320 bytes free.
+- Frozen `cache_build_local_attempt3_gpu0_finalization_only` from the immutable
+  attempt2 stop receipt/state. Preparation SHA is
+  `4d924bd1e77e5d52f5f6a8a386f88677c3dcf34a4de5554999ef4ea55981c7e8`
+  and wrapper SHA is
+  `8519d117c94be15a3f4af0b81e1017e0e5d93f1ffec8b906d05cc12abbcfa136`.
+- Launched detached PID `4908` with `CUDA_VISIBLE_DEVICES=0`; GPU1 is not
+  visible to the child. Launch-intent/control SHAs are
+  `2d063f1479a15329ebab09b7118bde9e00840c814c66b1183fe610025624d247`
+  and `06f0e4871fb7a30e906c7fa8a3677853ecba64c9562947045cd9202c7442ed4c`.
+  The first live status is `VALIDATING_COMPLETE_SHARDS` at 146110 images and
+  571 shards, with `reencoding_performed=false` and zero protected reads.
+- Updated the 15-minute heartbeat to monitor PID 4908/GPU0, finalize exactly
+  once on terminal completion, independently audit, and then transfer/verify
+  the six-file Train/Dev Block-2 surface. It must never touch GPU1 or protected
+  evaluation data.

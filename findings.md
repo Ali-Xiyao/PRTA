@@ -2264,5 +2264,20 @@
   boundary before an unrelated VisionPulse job appeared on GPU1. This means
   no further image encoding is needed, but manifest finalization, store
   consolidation, independent verification, and transfer remain incomplete.
-  The safe next action is a new finalization-only retry after both GPUs are
-  free, bound to state SHA `9e3cd8cd...15325d`; attempt2 itself is immutable.
+  The initially registered safe action was a finalization-only retry after
+  both GPUs became free, bound to state SHA `9e3cd8cd...15325d`; attempt2
+  itself remains immutable. The later explicit GPU0-only authorization is
+  recorded separately below and supersedes only that resource-wait condition.
+
+# 2026-08-10 GPU0-isolated Block-2 finalization finding
+
+- The user's GPU0-only authorization safely removes the need to wait for the
+  unrelated GPU1 process because the complete-shard boundary requires no
+  encoder reconstruction. Attempt3 masks the child to GPU0 and its wrapper
+  imports no image encoder or re-encoding path; terminal work is principally
+  CPU/disk shard validation and 44.2-GB store consolidation.
+- Attempt3 is active as PID `4908`, bound to attempt2 stop receipt SHA
+  `4672e731...65a7c9` and stopped-state SHA `9e3cd8cd...15325d`. Its first
+  progress receipt confirms 146110 starting/completed images, 571 starting/
+  completed shards, `reencoding_performed=false`, GPU1 hidden, and zero
+  Internal-test/Gold reads.
