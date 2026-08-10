@@ -2201,3 +2201,54 @@
 - The final result package deliberately separates the official Internal-test,
   Gold, pre-review baseline, and conditional Dev ablation. It introduces no
   new protected evaluation or retrospective number selection.
+
+# 2026-08-10 subsequent-experiment cleaned-data contract
+
+- Wave033 is already a valid physician-cleaned Train/Dev scope ablation. All
+  nine Tail4/Tail6/Tail8 cells used the same Train 80,402 / Dev 11,201 rows;
+  tail4 required the verified Block-8 cache while tail6/tail8 required the
+  verified Block-4 cache. This cache-entry distinction does not change cohort
+  membership and is not a reason to repeat the scope ablation.
+- The only admissible data surface for future trainable baselines, component
+  ablations, efficiency runs, or retraining analyses is the cleaned Train/Dev
+  manifest SHA `45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89`,
+  containing Train 80,402 and Dev 11,201. Historical or unregistered manifest
+  copies fail closed even if their contents appear similar.
+- The official 12,219-row Internal-test and 175-row Gold are exhausted frozen
+  evaluation surfaces. They cannot enter future experiment selection,
+  ablation, tuning, or baseline design. Reuse of a historical Train/Dev result
+  is allowed only after exact manifest/config/source/seed/budget identity is
+  proven.
+- The requested expanded adapter-scope matrix is `no-tail / tail2 / tail4 /
+  tail6 / tail8 / tail10`. Existing code already has `last2`, which is
+  behaviorally the requested tail2 on a four-block Block-8 tail. Tail4 also
+  uses Block-8; tail6/tail8 use Block-4. `no-tail` requires an explicit empty
+  adapter index set while retaining the frozen visual tail and PRTA temporal
+  head. Tail10 is not currently supported and requires a new Block-2 cache,
+  a ten-block frozen tail, and expanded source/config/test contracts before any
+  scientific launch.
+- Wave033 provides exact reusable tail4/tail6/tail8 cells. New or uncertain
+  cells are no-tail, tail2, and tail10; they must be run under a newly frozen,
+  outcome-independent three-seed queue after code/cache readiness passes.
+
+# 2026-08-10 Wave041 full-ablation freeze and launch finding
+
+- Expanded source commit `8ccace5b64d3a084f8cd919d2cfc2906d81b4136`
+  now supports no-tail, tail2, tail10 and generic Block-2 cache reconstruction;
+  full validation passed 217 tests.
+- The final retained parent already has alignment, CMCP, and inversion loss
+  weights equal to zero. Those three apparent deletion ablations are identity
+  rows, not distinct scientific treatments. The unique component treatments
+  are no finding conditioning, no cross-time alignment, no dual branch, no
+  direction margin, no opposite-direction cost, no state preservation, and
+  classification-only.
+- Wave041 froze 30 unique new cells into 15 outcome-independent paired stages;
+  it reuses the nine audited Wave033 scope cells and records three identity
+  N/A rows. Preparation SHA is `af802481...4567ce7`, controller SHA is
+  `c230a772...9b37be8`, and the detached supervisor started as PID `3749601`
+  with zero protected reads.
+- The first server Block-2 build failed before any cache write because the
+  frozen Train/Dev inventory carries Windows `H:` image paths. Failure receipt
+  SHA is `f1defea9...e8965c3a`; the attempt remains immutable. A separate local
+  dual-RTX3090 attempt is active as PID `5492` and will be transferred only
+  after complete local verification.

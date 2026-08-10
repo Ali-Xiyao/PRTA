@@ -1351,6 +1351,11 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 
 ## Errors Encountered
 
+- 2026-08-10: Local immutable source extraction initially used
+  `New-Item -LiteralPath`, but this PowerShell version does not expose that
+  parameter for `New-Item`. No target was created. Retried with an explicit
+  resolved `-Path` inside `data/runtime/local_source_snapshots`.
+
 - 2026-08-03: an inventory `rg` pattern began with `--mode`, which `rg`
   interpreted as an option and rejected. Future searches use the `--` option
   terminator before such patterns; no files or experiments were changed.
@@ -2112,10 +2117,54 @@ may start without new explicit authority that also respects this HOLD.
   and push only to the local bare remote. Keep private runtime and the two
   user-modified paper documents unstaged.
 
+## 2026-08-10: clean-data-only contract for subsequent experiments
+
+- [x] Verify that the completed Wave033 Tail4/Tail6/Tail8 scope ablation used
+  the physician-cleaned Train 80,402 / Dev 11,201 rows. Record that its
+  Block-8 versus Block-4 distinction is a required feature-cache entry
+  boundary, not a different cohort.
+- [x] Publish a Git-safe Chinese protocol that makes the cleaned Train/Dev
+  manifest SHA `45985f4f...e38f89` mandatory for every future baseline,
+  component ablation, efficiency run, and retraining analysis.
+- [x] Update the final result summary and cleaned-split authority note so the
+  completed scope ablation is not repeated and the 12,219-row physician-
+  reviewed Internal-test remains distinct from the historical 13,219-row
+  pre-review baseline.
+- [x] Before any new component-ablation launch, audit historical runs against
+  the exact cleaned manifest, source, final Tail8 configuration, seeds, and
+  budget; freeze all missing cells before reading outcomes.
+- [x] Freeze and launch only the 21 unique missing Train/Dev component-
+  ablation cells; register the three already-zero loss deletions as identity
+  N/A rows. Keep Internal-test and Gold sealed.
+- [ ] Complete all 21 unique component cells and write the immutable per-
+  variant and full aggregates without outcome-adaptive queue changes.
+
+## 2026-08-10: expanded adapter-scope ablation
+
+- [x] Freeze the requested scientific scope list as no-tail, tail2, tail4,
+  tail6, tail8, and tail10. Define no-tail as no visual bottleneck adapters
+  while retaining the frozen visual tail and identical PRTA temporal head.
+- [x] Audit current support: existing `last2` is the tail2 behavior on Block-8;
+  tail4 uses Block-8; tail6/tail8 use Block-4; tail10 is unsupported and needs
+  a new Block-2 cache plus ten-block tail support.
+- [x] Implement backward-compatible `no_tail`, `tail2`, and `tail10` scope
+  contracts, generic Block-2 cache support, tests, and configuration audits.
+- [x] Update all Git-safe experiment protocol/result documents with the six-
+  scope matrix and the cleaned Train 80,402 / Dev 11,201 hard requirement.
+- [ ] Build and independently verify the label-free Block-2 Train/Dev cache
+  without opening Internal-test or Gold.
+- [x] Reuse Wave033 tail4/tail6/tail8 only after exact source/config/data/budget
+  reconstruction; freeze and launch no-tail/tail2/tail10 x Seeds17/28/43 in a
+  new immutable queue. Do not adapt the queue from outcomes.
+- [ ] Complete all nine new scope cells after the independently verified
+  Block-2 cache becomes available for tail10, then write the immutable full
+  six-scope aggregate.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| The planning-with-files session-catchup and memory-index probes were issued together; the combined call exited nonzero without returning a usable catchup report | 1 | Do not repeat the combined call. Read the current planning files and Git status directly; the memory search has no known PRTA-CXR entry, so use the workspace planning records and frozen receipts as authority. |
 | The organization-phase memory-index `rg` search returned no matches, which made the combined read command exit nonzero | 1 | No workspace or memory artifact was changed. Treat this as a clean no-memory-hit result and derive all current facts from frozen workspace/server receipts instead. |
 | A PowerShell hash probe used the unavailable static `SHA256.HashData` method in the installed runtime | 1 | The receipt JSON read itself succeeded, but the hash field was blank. Use `Get-FileHash -Algorithm SHA256` for the exact immutable receipt hash and do not modify the receipt. |
 | Old Windows PowerShell could not parse the large artifact-tool validation JSON through its default text-decoding path | 1 | The artifact-tool inspections and three rendered sheet previews had already passed. Verify the zero-error notice by exact text match, re-read the UTF-8 CSVs explicitly, and independently recompute the official Internal-test and Gold means/sample standard deviations from their seed rows. |
@@ -2182,3 +2231,5 @@ may start without new explicit authority that also respects this HOLD.
 | First combined final planning patch matched a level-two heading while `findings.md` uses a level-one heading | 1 | The patch failed atomically and changed no file. Reapply file-local updates with the exact current headings. |
 | Initial Wave040 preflight guessed obsolete `engine/...` frozen-source paths and used the bundled Python without PyTorch | 1 | No Gold namespace or protected read occurred. Resolve the actual `data/cache_writer.py`, `data/token_cache.py`, and `vision/biomedclip.py` paths, bind their exact hashes, and use the installed CUDA-enabled Python 3.12 runtime for controller execution. |
 | Wave040 cache builder wrote a complete terminal cache/build receipt, then raised a duplicate `status` keyword error while updating its progress mirror | 1 | Preserve the completed cache, builder, receipt, and stale `RUNNING` progress exactly. Do not re-encode. Freeze a separate read-only audit namespace that independently verifies all hashes/counts/shape/finiteness, records the post-receipt control error, and authorizes transfer only if it passes. |
+| Wave041 server Block-2 cache build rejected all 146110 frozen inventory paths because they are Windows `H:` paths unavailable on the server | 1 | Preserve the zero-byte server attempt and immutable failure receipt `f1defea9...e8965c3a`. Build the identical Train/Dev-only Block-2 cache locally on the two authorized RTX3090s, verify it independently, then resumably transfer only the six-file runtime surface. |
+| Initial Wave041 full-controller Ruff check rejected Python-3.9-compatible `Optional` annotations under UP045 | 1 | Add a file-local UP045 exemption documenting the login-node Python 3.9 constraint, then rerun Ruff and compilation successfully before freezing any experiment namespace. |

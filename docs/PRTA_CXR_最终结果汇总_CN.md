@@ -22,12 +22,18 @@
 
 | 层级 | 数据/实验 | 正式用途 | 当前结论 |
 |---|---|---|---|
-| 方法选择 | Wave033，Train/Dev，Tail4/Tail6/Tail8 × Seeds17/28/43 | 条件适配器范围消融 | Tail8 的三 Seed Dev 均值最高；保留 Tail8 |
+| 方法选择 | Wave033，医生清洗后 Train 80,402 / Dev 11,201，Tail4/Tail6/Tail8 × Seeds17/28/43 | 条件适配器范围消融 | Tail8 的三 Seed Dev 均值最高；保留 Tail8 |
 | 正式内部测试 | 医生最终确认的 12,219 例 Internal-test | 论文正式 Internal-test 主结果 | Tail8 三 Seed 全部超过 Macro-F1 目标，PASS |
 | 最终可用测试 | 一次性 Gold，175 例 | 当前数据条件下的最终测试 | Tail8 三 Seed均值超过 Macro-F1 目标，PASS |
 | 历史基线 | 医生复核前的 13,219 例 Internal-test | 仅说明数据清洗前后差异 | 非正式结果，不作为最终性能结论 |
 
 历史 Wave039 文件名仍保留 `posthoc` 字样，这是为了保持既有收据不可篡改；本汇总依据用户最终确认，将医生筛选后的 12,219 例定义为项目正式 Internal-test。旧收据名称和旧状态不被改写，但不再决定论文的正式数据口径。
+
+### 2.1 后续实验统一数据契约
+
+Wave033 适配器层范围消融已经使用医生清洗后冻结的 Train 80,402 / Dev 11,201 行完成。Tail4 使用 Block-8 缓存，Tail6/Tail8 使用 Block-4 缓存，这是模型入口要求造成的无标签特征边界差异；三个范围使用的是同一清洗后病例行集合，因此不需要重跑层范围消融。
+
+所有后续基线、组件消融、效率测试和需要重新训练的分析，必须继续绑定同一清洗后 Train/Dev manifest，SHA-256 为 `45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89`。清洗前 manifest、历史调试划分、医生排除样本、Internal-test 和 Gold 一律不得进入训练或开发。完整约束见《PRTA_CXR_后续实验清洗数据统一协议_CN.md》。
 
 ## 3. 正式 Internal-test 主结果
 
@@ -65,11 +71,20 @@ Wave033 在结果揭示前冻结全部九个格子，保持 H0、rank32、EMA0.9
 
 | Scope | Macro-F1 均值 ± 样本标准差 | ODER 均值 ± 样本标准差 | 可训练参数 | 平均壁钟时间 | 结论 |
 |---|---:|---:|---:|---:|---|
+| no-tail | 待运行 | 待运行 | 待测 | 待测 | 新增范围对照 |
+| Tail2 | 待运行 | 待运行 | 待测 | 待测 | 新增浅层adapter对照 |
 | Tail4 | 0.542447 ± 0.000882 | 0.004077 ± 0.000594 | 16,399,630 | 1.146 h | 范围对照 |
 | Tail6 | 0.545286 ± 0.002206 | 0.003690 ± 0.000103 | 16,501,008 | 1.924 h | 优于 Tail4，但低于 Tail8 |
 | **Tail8** | **0.548138 ± 0.001455** | **0.003303 ± 0.000000** | **16,602,386** | **2.019 h** | **最终保留范围** |
+| Tail10 | 待运行 | 待运行 | 待测 | 待测 | 新增深层adapter对照；需Block-2缓存 |
 
-这是一项“条件适配器范围消融”，不是无偏架构搜索。Tail4 依赖 Block-8 缓存边界，Tail6/Tail8 依赖 Block-4 缓存边界，因此范围和必要缓存入口共同变化。
+Wave033 已完成并审计 Tail4/Tail6/Tail8。扩展矩阵新增 no-tail/Tail2/Tail10，
+三者均只在相同清洗后 Train/Dev 上运行；Tail10 需先建立 Block-2 无标签缓存。
+扩展结果只补充 Dev 层范围曲线，不追溯性修改已冻结并完成正式评估的 Tail8。
+
+这是一项“条件适配器范围消融”，不是无偏架构搜索。no-tail/Tail2/Tail4
+依赖 Block-8，Tail6/Tail8 依赖 Block-4，Tail10 依赖 Block-2，因此范围和
+必要缓存入口共同变化，但病例行集合保持一致。
 
 ## 6. 冻结方法配置
 
@@ -141,3 +156,17 @@ Wave033 在结果揭示前冻结全部九个格子，保持 H0、rank32、EMA0.9
 3. 将正式 Internal-test、Gold、条件消融分别写入论文主结果、最终测试和消融章节。
 4. 在限制部分披露：Gold 样本量为175、Seed波动较大、ODER较高但非门槛、医生复核数据的形成过程，以及缺少新的外部队列。
 5. 如果未来新增完全独立的数据，只允许对当前冻结 Tail8 三 Seed 做一次前瞻性验证；不再用现有结果重新调参。
+
+## 11. Wave041 完整消融执行状态
+
+2026-08-10 已冻结并启动完整清洗数据消融。范围轴为 no-tail/tail2/tail4/tail6/tail8/tail10，其中 tail4/tail6/tail8 复用 Wave033，no-tail/tail2/tail10 各运行 Seeds17/28/43。组件轴固定在 Tail8，新增运行 w/o Finding Conditioning、w/o Cross-time Alignment、w/o Dual Branch、w/o Direction Margin、w/o Opposite-direction Cost、w/o State Preservation、Classification-only，各运行 Seeds17/28/43。
+
+Full 方法的 semantic-alignment、CMCP、temporal-inversion 损失权重本来为 0，因此三个对应删除项记录为恒等 `N/A`，不重复训练。Wave041 共 30 个新增训练格、15 个固定阶段；当前仅允许用 Dev 汇总 Macro-F1/ODER、参数量、峰值显存和墙钟时间，不得读取 Internal-test/Gold，也不得根据中间结果改变队列。
+
+| 审计项 | 值 |
+|---|---|
+| 源提交 | `8ccace5b64d3a084f8cd919d2cfc2906d81b4136` |
+| 冻结回执 SHA-256 | `af802481cd5da93f8564f59942cfa1a35a412e2e1fb7a86373d41ea304567ce7` |
+| 冻结控制器 SHA-256 | `c230a772b70ea399995aeb2b40d383d16d2805b192ae0ffb3dae4eeea9b37be8` |
+| 新增/复用/恒等 N/A | 30 / 9 / 3 |
+| 当前状态 | 已启动；固定队列自动运行中 |

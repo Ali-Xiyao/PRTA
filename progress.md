@@ -5827,3 +5827,61 @@
 - Final artifact SHAs are summary Markdown `7c089000...5937a`, formal-results
   CSV `b6ff2f72...2b0ef`, ablation CSV `660d2d98...71a08`, and XLSX
   `0cbbd0e1...ce7c4`.
+
+## 2026-08-10 clean-data-only protocol update
+
+- Confirmed from the immutable Wave033 preparation/terminal records that the
+  completed Tail4/Tail6/Tail8 x Seeds17/28/43 scope ablation used the same
+  physician-cleaned Train 80,402 / Dev 11,201 rows. Tail4 used Block-8 and
+  tail6/tail8 used Block-4 only because of their required cache entry points;
+  no cohort changed across scopes.
+- Added `docs/PRTA_CXR_后续实验清洗数据统一协议_CN.md`. It makes cleaned
+  Train/Dev manifest SHA `45985f4f...e38f89` a fail-closed prerequisite for
+  every future baseline, component ablation, efficiency run, and retraining
+  analysis; it also freezes Internal-test/Gold out of all subsequent method
+  development.
+- Updated the final result summary and cleaned-split authority note to state
+  the same contract and distinguish the official 12,219-row Internal-test
+  from the historical 13,219-row first-stage cleaned cohort. The two existing
+  user-modified paper manuals remain untouched and unstaged.
+- The user expanded the scope ablation to no-tail/tail2/tail4/tail6/tail8/
+  tail10 and requested rerunning every uncertain cell. Source inspection found
+  that tail2 can be a named alias of existing `last2` on Block-8; no-tail needs
+  explicit zero adapter indices on the same Block-8 tail; tail10 requires new
+  Block-2 encoder/cache/tail support. Existing Wave033 tail4/6/8 cells remain
+  reusable because their cleaned data/config identities are already exact.
+  No scientific job or cache build has been launched in this expansion yet.
+## 2026-08-10 Expanded adapter-scope implementation and documentation verification
+
+- Added formal source support for `no_tail`, `tail2`, and `tail10`, including
+  Block-2 cache entry/tail reconstruction for ten adapted ViT blocks while
+  preserving the existing tail4/tail6/tail8 behavior.
+- Added focused unit coverage for the six-scope matrix and Block-2 cache/store
+  identities. The focused test set passed 33 tests and Ruff reported no issues.
+- Updated both active authority documents, the clean-data protocol, the final
+  result summary, and persistent planning records. All new trainable cells are
+  bound to cleaned Train 80,402 / Dev 11,201 manifest SHA-256
+  `45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89`.
+- Reuse boundary is frozen: Wave033 tail4/tail6/tail8 remain valid; only
+  no-tail/tail2/tail10 x Seeds17/28/43 are newly run. Internal-test and Gold
+  remain excluded from this ablation.
+
+## 2026-08-10 Wave041 full ablation frozen and launched
+
+- Deployed immutable source commit `8ccace5b64d3a084f8cd919d2cfc2906d81b4136`
+  to the server source snapshot. Full Ruff/compile/pytest validation passed,
+  including all 217 tests.
+- Preserved the failed server Block-2 attempt without cache bytes; its immutable
+  path-contract failure receipt SHA is `f1defea985fc83c4df374cf9c7f378d643abbbd72d473d6cbf5752c2e8965c3a`.
+  Launched the identity-equivalent local dual-GPU build as PID `5492` with
+  preparation SHA `b4c98f2b...ccc06c`.
+- Froze the full 30-new-cell / 15-stage Wave041 queue before revealing any new
+  result. Preparation SHA is `af802481cd5da93f8564f59942cfa1a35a412e2e1fb7a86373d41ea304567ce7`;
+  frozen controller SHA is `c230a772b70ea399995aeb2b40d383d16d2805b192ae0ffb3dae4eeea9b37be8`.
+- Started detached supervisor PID `3749601`. Stage1 launched no-tail Seed17 on
+  allocation 3066 and tail2 Seed17 on allocation 9929 while keeping telemetry
+  steps 3066.2 and 9929.0 alive. Launch intent SHA is `1271a056...ca3ab` and
+  launch control SHA is `a31a0628...e3ea`; protected-read count is zero.
+- Updated the recurring monitor to continue the full queue and Block-2
+  build/verification/transfer path automatically until the immutable final
+  aggregate is complete or a genuine blocker occurs.
