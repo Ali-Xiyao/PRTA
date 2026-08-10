@@ -2038,6 +2038,16 @@ may start without new explicit authority that also respects this HOLD.
 - [x] Replace only `internal_test_suspect_samples.csv`; do not rerun metrics,
   training, inference, Internal-test joins, or any Gold operation.
 
+## 2026-08-10: annotate opposite-direction errors in the handoff CSV
+
+- [x] Preserve an exact pre-annotation snapshot of the restored 4,528-row CSV.
+- [x] Add one machine-readable `方向相反情况` column. Define exact opposite
+  pairs only as `Improved<->Worse` and `New<->Resolved`, and identify the
+  affected tail8 seeds in each marked row.
+- [x] Verify all 4,528 IDs, common-error semantics, annotation derivation,
+  transition counts, final hash, and snapshot recoverability. Do not alter any
+  sample, label, prediction, or image path.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |

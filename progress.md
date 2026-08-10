@@ -5696,3 +5696,17 @@
 - This operation changed only the physician handoff CSV. It performed no
   protected metric recomputation, training, inference, or Gold access and did
   not reinterpret the formal Wave035 HOLD.
+
+## 2026-08-10 opposite-direction annotation
+
+- Added `方向相反情况` to the 4,528-row physician handoff CSV. A row is marked
+  only when at least one tail8 seed predicts the exact opposite pair
+  `Improved<->Worse` or `New<->Resolved`; the cell names the affected seeds and
+  transition. Existing sample, label, prediction, and path fields are unchanged.
+- Final verification found 541 rows with at least one opposite-direction seed:
+  279 rows have all three seeds opposite and 262 have a partial seed subset.
+  Transition counts are `Improved->Worse` 196, `Worse->Improved` 245,
+  `New->Resolved` 53, and `Resolved->New` 47. Annotation violations are zero.
+- The annotated CSV SHA-256 is `eb8109c7...5c5c7d4`. The exact pre-annotation
+  4,528-row version remains recoverable under the private annotation history
+  with SHA-256 `5ed4ce32...33631e`.

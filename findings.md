@@ -2075,3 +2075,14 @@
   `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`,
   exactly matching the historical pre-deletion artifact. The 3,528-row doctor
   snapshot remains recoverable at SHA-256 `3b4ff868...a59ed`.
+
+# 2026-08-10 opposite-direction annotation finding
+
+- Strict opposite-direction errors are uncommon within the 4,528 common-error
+  rows: 541 rows contain at least one exact opposite prediction, while 3,987
+  contain none. Of the 541, all three seeds are opposite in 279 rows and only a
+  subset is opposite in 262 rows.
+- The dominant exact transition is `Worse->Improved` (245 rows), followed by
+  `Improved->Worse` (196), `New->Resolved` (53), and `Resolved->New` (47).
+  These are descriptive case-table annotations only; they do not alter formal
+  metrics, scientific gates, or the Wave035 HOLD.
