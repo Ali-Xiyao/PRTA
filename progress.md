@@ -5649,3 +5649,34 @@
   inference was needed because the evaluation membership alone changed.
   Terminal receipt SHA is `9fccfa8f...c9ea3b`; zero Gold reads and zero
   temporary fragments were independently confirmed. Formal HOLD remains.
+
+## 2026-08-10 second doctor-filtered Internal-test post-hoc diagnostic
+
+- Opened a new cumulative post-hoc phase after the user reported a second
+  physician review removed about 500 additional unsuitable rows. No label or
+  prediction file has been reopened in this phase. The first gate is an exact
+  artifact-tool diff against the 4,528-row frozen source and immutable
+  4,028-row first-pass snapshot; expected new cohort size is 12,219 only if the
+  delta is exactly 500 deletion-only changes.
+- Completed the second deletion-only gate. Current CSV SHA is
+  `3b4ff868...a59ed`; it contains 3,528 rows, exactly 500 fewer than the first
+  pass and 1,000 fewer than the frozen common-error source. All retained row
+  fields remain byte-equivalent after CSV normalization, so the 12,219-row
+  cumulative keep cohort is eligible to be frozen.
+- Added the separate Wave038 v2 controller without modifying Wave037. After a
+  minimal lint/format correction, Ruff and bundled-Python compilation pass;
+  frozen controller SHA is `f7def704...ded6aa`. No v2 output namespace,
+  protected label read, prediction read, inference, or GPU process exists yet.
+- Wave038 v2 preparation passed and atomically froze the current CSV snapshot,
+  second-round 500-row delta, cumulative 1,000-row exclusion, and 12,219-row
+  outcome-free keep roster. Preparation receipt SHA is
+  `f5060747...342265`; protected label/prediction/Gold reads remain zero.
+- Completed the one-time v2 recomputation after exact reproduction of all
+  original and first-pass metrics. On 12,219 rows, tail8 mean Macro-F1/ODER is
+  `0.5491296437791687 / 0.02627056223913577`; tail4 is
+  `0.5390220496047998 / 0.02717079957443326`. Every tail8 seed now clears the
+  original Macro-F1 threshold, but none clears the ODER ceiling.
+- Terminal receipt SHA is `7cd4c6ac...b21f68`. Independent audit confirms
+  cumulative deletion count 1,000, second-pass count 500, no temporary
+  fragment, one label-manifest read, six prediction reads, zero Gold reads,
+  no GPU/training/inference, and preservation of formal Wave035 HOLD.

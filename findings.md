@@ -2032,3 +2032,34 @@
   one Internal-test label-manifest read, six frozen prediction reads, zero Gold
   reads, zero temporary fragments, no training/inference, and preservation of
   the formal Wave035 `HOLD_INTERNAL_TEST_GATE`.
+
+# 2026-08-10 second doctor-filtered Internal-test post-hoc authority
+
+- The user reports a second physician pass removed another approximately 500
+  unsuitable cases and requests another recomputation. Treat this as a new,
+  cumulative, outcome-adaptive sensitivity diagnostic. It authorizes only an
+  exact deletion audit and one metric recomputation from the same six frozen
+  predictions; it does not authorize model changes, new inference, Gold, or a
+  reversal of the formal Wave035 HOLD.
+- The current CSV must be compared with both immutable baselines: the original
+  4,528-row common-error set and first doctor-edited 4,028-row snapshot. Only
+  if the second delta is exactly 500 deletions with unchanged retained rows may
+  the derived cohort advance from 12,719 to 12,219 samples.
+- The second edited CSV has SHA-256 `3b4ff868...a59ed` and exactly 3,528
+  rows. Artifact-tool comparison against both immutable baselines passed:
+  second-round deletions are exactly 500, cumulative deletions are exactly
+  1,000, and all added/altered/duplicate/outside-source/semantic-violation
+  counts are zero. The next valid cohort size is exactly 12,219.
+- The v2 controller reproduced both the original 13,219-row formal metrics and
+  every first-pass 12,719-row post-hoc confusion matrix exactly before
+  computing the 12,219-row result. Tail8 mean Macro-F1/ODER is now
+  `0.5491296438 / 0.0262705622`; tail4 is
+  `0.5390220496 / 0.0271707996`. All three tail8 seeds exceed the original
+  Macro-F1 threshold and tail8 remains better than tail4, but all three ODER
+  values remain far above the `0.0055352201` ceiling.
+- The second terminal receipt SHA-256 is `7cd4c6ac...b21f68`. Independent
+  audit confirms 12,219 filtered rows, one Internal-test label read, six frozen
+  prediction reads, zero Gold reads, zero temporary fragments, and no new
+  training or inference. This stronger post-hoc result still cannot reverse
+  the formal Wave035 `HOLD_INTERNAL_TEST_GATE` because the exclusions were
+  chosen after observing errors and the ODER condition remains failed.

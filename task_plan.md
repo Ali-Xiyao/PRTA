@@ -2012,6 +2012,21 @@ may start without new explicit authority that also respects this HOLD.
   formal Wave035 `HOLD_INTERNAL_TEST_GATE`; do not reinterpret the filtered
   result as a confirmatory Internal-test pass.
 
+## 2026-08-10: second doctor-filtered Internal-test post-hoc diagnostic
+
+- [x] Validate the newly edited CSV against both the frozen 4,528-case source
+  and the first 4,028-row doctor-edited snapshot. Require exactly 500 further
+  deletions, with zero additions, duplicates, or altered row content.
+- [x] Freeze a new immutable `v2` diagnostic namespace containing the current
+  edited CSV, the cumulative 1,000-row exclusion set, the second-round
+  500-row delta, and the derived 12,219-row outcome-free keep roster.
+- [x] Reproduce the first post-hoc 12,719-row metrics exactly from its frozen
+  receipt, then recompute all six immutable tail8/tail4 cells once on the new
+  12,219-row cohort. Do not retrain, re-infer, use GPUs, or access Gold.
+- [x] Independently audit counts, hashes, metric lineage, temporary fragments,
+  and protected-read fields. Report the second result as another explicitly
+  outcome-adaptive sensitivity analysis while preserving formal Wave035 HOLD.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
@@ -2064,3 +2079,6 @@ may start without new explicit authority that also respects this HOLD.
 | Two read-only remote preflight commands lost quoted `squeue`/base64 arguments through PowerShell-to-SSH parsing | 1 | Neither command reached preparation. Replace pipe-delimited formats with comma-delimited `squeue` output and use stdin for remote Python diagnostics; formal guards still rejected and the outcome namespace remained absent. |
 | Login-shell GPU monitoring assumed `nvidia-smi` was on `PATH`, and a follow-up `sstat` query timed out | 1 | Neither read-only probe changed Slurm or runtime state. Use the frozen controller's step/process/receipt status plus the existing retained telemetry jobs; both scientific workers subsequently completed with valid receipts and no failure. |
 | The controller `start` shell carried a mistyped extra transfer-hash environment value | 1 | The start controller does not consume that extra value: it independently rehashed the canonical transfer receipt, while both generated worker launchers contained the correct frozen `5817af6b...` value. The exact worker receipts and terminal audit confirm no input drift. |
+| A parallel skill/planning/memory read returned failure because the memory-index `rg` branch had no matches | 1 | No project artifact was touched. Re-read the required skills, planning files, and dependency manifest in separate successful calls; no memory-derived fact is used for this phase. |
+| The first PowerShell line-count probe piped directly after a `foreach` block and produced an empty-pipe parser error | 1 | The failed read changed nothing. Accumulate objects into an array and pipe the completed array to `ConvertTo-Json`. |
+| Initial Wave038 v2 controller lint found one unused import, import ordering, four overlength lines, and a pending formatter change | 1 | The v2 namespace did not yet exist. Removed the unused import, wrapped the long expressions, formatted the controller, and repeated Ruff plus bundled-Python compilation successfully before preparation. |
