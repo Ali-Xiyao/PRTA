@@ -2334,3 +2334,12 @@
 - Stage4 runs the frozen no-opposite-direction-cost / no-state Seed17 pair on
   the two retained allocations. Parents, telemetry, and zero-protected-read
   guards remain intact.
+
+# 2026-08-10 Wave041 stage4 transition finding
+
+- Stage4 completed and stage5 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage4 aggregate SHA is
+  `7b7c0e05...9c4837`.
+- Stage5 runs the frozen classification-only Seed17 / no-tail Seed28 pair on
+  the two retained allocations. Parents, telemetry, and zero-protected-read
+  guards remain intact.
