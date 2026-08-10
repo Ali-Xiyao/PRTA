@@ -54,7 +54,9 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--shard-size", type=int, default=256)
-    parser.add_argument("--output-block", type=int, choices=(4, 6, 8), default=8)
+    parser.add_argument(
+        "--output-block", type=int, choices=(2, 4, 6, 8), default=8
+    )
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--synthetic-count", type=int, default=4)
     parser.add_argument("--resume", action="store_true")

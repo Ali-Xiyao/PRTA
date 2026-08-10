@@ -103,6 +103,42 @@ def test_adapter_scope_can_be_limited_to_last_two_tail_blocks():
 
 
 @pytest.mark.parametrize(
+    ("scope", "tail_length", "expected_indices", "entry_block"),
+    (
+        ("no_tail", 4, (), 8),
+        ("tail2", 4, (2, 3), 8),
+        ("tail4", 4, tuple(range(4)), 8),
+        ("tail6", 8, tuple(range(2, 8)), 4),
+        ("tail8", 8, tuple(range(8)), 4),
+        ("tail10", 10, tuple(range(10)), 2),
+    ),
+)
+def test_formal_adapter_scope_matrix(
+    scope, tail_length, expected_indices, entry_block
+):
+    config = {
+        "model": {
+            "family": "prta",
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "adapter_scope": scope,
+            "state_tokens": 4,
+            "transition_tokens": 4,
+            "dropout": 0.0,
+        }
+    }
+    value = build_train_model(
+        [nn.Identity() for _ in range(tail_length)], nn.Identity(), config
+    )
+    assert tuple(value.adapter.tail.adapter_indices) == expected_indices
+    assert set(value.adapter.tail.adapters) == {
+        str(index) for index in expected_indices
+    }
+    assert adapter_scope_cache_entry_block(scope) == entry_block
+
+
+@pytest.mark.parametrize(
     ("scope", "expected_indices"),
     (
         ("tail6", tuple(range(2, 8))),
@@ -153,6 +189,15 @@ def test_block4_tail_exposes_eight_frozen_transformer_blocks():
     visual.norm = nn.Identity()
     blocks, final_norm = tail_modules(visual, start_block=4)
     assert len(blocks) == 8
+    assert final_norm is visual.norm
+
+
+def test_block2_tail_exposes_ten_frozen_transformer_blocks():
+    visual = nn.Module()
+    visual.blocks = nn.ModuleList(nn.Identity() for _ in range(12))
+    visual.norm = nn.Identity()
+    blocks, final_norm = tail_modules(visual, start_block=2)
+    assert len(blocks) == 10
     assert final_norm is visual.norm
 
 

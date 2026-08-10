@@ -14,11 +14,15 @@ VISUAL_PREFIXES = ("visual.trunk.", "module.visual.trunk.")
 
 def adapter_scope_cache_entry_block(scope: object) -> int:
     name = str(scope)
-    if name in {"tail4", "last2"}:
+    if name in {"no_tail", "tail0", "none", "tail2", "last2", "tail4"}:
         return 8
     if name in {"tail6", "tail8"}:
         return 4
-    raise ValueError("adapter_scope must be tail4, last2, tail6, or tail8")
+    if name == "tail10":
+        return 2
+    raise ValueError(
+        "adapter_scope must be no_tail, tail2, tail4, tail6, tail8, or tail10"
+    )
 
 
 def _checkpoint_state(path: Path) -> dict[str, torch.Tensor]:
@@ -77,8 +81,8 @@ class BiomedCLIPIntermediateEncoder(nn.Module):
         super().__init__()
         if len(visual.blocks) != 12:
             raise ValueError("encoder requires a 12-block visual transformer")
-        if output_block not in {4, 6, 8}:
-            raise ValueError("encoder output_block must be 4, 6, or 8")
+        if output_block not in {2, 4, 6, 8}:
+            raise ValueError("encoder output_block must be 2, 4, 6, or 8")
         self.visual = visual.eval().requires_grad_(False)
         self.output_block = int(output_block)
 
@@ -112,8 +116,8 @@ def tail_modules(
 ) -> tuple[list[nn.Module], nn.Module]:
     if len(visual.blocks) != 12:
         raise ValueError("tail extraction requires a 12-block visual transformer")
-    if start_block not in {4, 6, 8}:
-        raise ValueError("tail start_block must be 4, 6, or 8")
+    if start_block not in {2, 4, 6, 8}:
+        raise ValueError("tail start_block must be 2, 4, 6, or 8")
     return list(visual.blocks[start_block:12]), visual.norm
 
 

@@ -86,6 +86,29 @@ def test_block4_cache_has_distinct_identity_and_remains_indexable(tmp_path):
     assert cache.get_many([inventory[0]["image_key"]]).shape == (1, 197, 768)
 
 
+def test_block2_cache_has_distinct_identity_and_remains_indexable(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("mimic", "image.jpg"),
+            "source": "mimic",
+            "image_path": "image.jpg",
+        }
+    ]
+    root = tmp_path / "block2"
+    manifest = write_block8_cache(
+        root,
+        inventory,
+        torch.randn(1, 197, 768),
+        encoder_receipt={"output_block": 2},
+    )
+    assert manifest["schema"] == "prta-cxr.block2-cache.v1"
+    assert manifest["status"] == "PASS_PRTA_CXR_BLOCK2_CACHE"
+    assert manifest["shards"][0]["path"] == "block2_00000.pt"
+    cache = Block8CacheIndex(root)
+    assert cache.cache_entry_block == 2
+    assert cache.get_many([inventory[0]["image_key"]]).shape == (1, 197, 768)
+
+
 def test_streaming_cache_resumes_without_rewriting_completed_shards(tmp_path):
     inventory = [
         {

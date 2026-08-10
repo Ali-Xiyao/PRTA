@@ -44,13 +44,17 @@ def _adapter_indices(
     model: Mapping[str, Any], *, tail_length: int
 ) -> tuple[int, ...]:
     scope = str(model.get("adapter_scope", "tail4"))
+    if scope in {"no_tail", "tail0", "none"}:
+        if tail_length != 4:
+            raise ValueError("no_tail scope requires the Block-8 cache")
+        return ()
     if scope == "tail4":
         if tail_length != 4:
             raise ValueError("tail4 scope requires a four-block cached tail")
         return (0, 1, 2, 3)
-    if scope == "last2":
+    if scope in {"tail2", "last2"}:
         if tail_length != 4:
-            raise ValueError("last2 scope requires a four-block cached tail")
+            raise ValueError("tail2 scope requires the Block-8 cache")
         return (2, 3)
     if scope == "tail6":
         if tail_length != 8:
@@ -60,7 +64,13 @@ def _adapter_indices(
         if tail_length != 8:
             raise ValueError("tail8 scope requires the Block-4 cache")
         return tuple(range(8))
-    raise ValueError("adapter_scope must be tail4, last2, tail6, or tail8")
+    if scope == "tail10":
+        if tail_length != 10:
+            raise ValueError("tail10 scope requires the Block-2 cache")
+        return tuple(range(10))
+    raise ValueError(
+        "adapter_scope must be no_tail, tail2, tail4, tail6, tail8, or tail10"
+    )
 
 
 class PRTATrainModel(nn.Module):

@@ -49,8 +49,10 @@ class FrozenBiomedCLIPDifference(nn.Module):
         final_norm: nn.Module,
     ) -> None:
         super().__init__()
-        if len(frozen_blocks) not in {4, 6, 8}:
-            raise ValueError("A0 requires a 4-, 6-, or 8-block BiomedCLIP tail")
+        if len(frozen_blocks) not in {4, 6, 8, 10}:
+            raise ValueError(
+                "A0 requires a 4-, 6-, 8-, or 10-block BiomedCLIP tail"
+            )
         self.frozen_blocks = nn.ModuleList(frozen_blocks)
         self.final_norm = final_norm
         self.eval().requires_grad_(False)
@@ -115,8 +117,10 @@ class FrozenTailWithAdapters(nn.Module):
         adapter_indices: Sequence[int] | None = None,
     ) -> None:
         super().__init__()
-        if len(frozen_blocks) not in {4, 6, 8}:
-            raise ValueError("PRTA requires a 4-, 6-, or 8-block frozen ViT tail")
+        if len(frozen_blocks) not in {4, 6, 8, 10}:
+            raise ValueError(
+                "PRTA requires a 4-, 6-, 8-, or 10-block frozen ViT tail"
+            )
         self.frozen_blocks = nn.ModuleList(frozen_blocks)
         for block in self.frozen_blocks:
             block.eval().requires_grad_(False)
@@ -127,10 +131,8 @@ class FrozenTailWithAdapters(nn.Module):
             if adapter_indices is None
             else tuple(adapter_indices)
         )
-        if not indices or any(
-            index not in range(len(frozen_blocks)) for index in indices
-        ):
-            raise ValueError("adapter indices must be a non-empty subset of the tail")
+        if any(index not in range(len(frozen_blocks)) for index in indices):
+            raise ValueError("adapter indices must be a subset of the tail")
         if len(indices) != len(set(indices)):
             raise ValueError("adapter indices must be unique")
         self.adapter_indices = indices

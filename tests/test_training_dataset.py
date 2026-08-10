@@ -101,6 +101,27 @@ def test_block4_training_store_uses_distinct_filename_and_status(tmp_path):
     assert Block8CacheIndex(root).cache_entry_block == 4
 
 
+def test_block2_training_store_uses_distinct_filename_and_status(tmp_path):
+    inventory = [
+        {
+            "image_key": image_cache_key("source-a", "image.png"),
+            "source": "source-a",
+            "image_path": "image.png",
+        }
+    ]
+    root = tmp_path / "block2"
+    write_block8_cache(
+        root,
+        inventory,
+        torch.randn(1, 197, 768),
+        encoder_receipt={"output_block": 2},
+    )
+    receipt = build_block8_training_store(root)
+    assert receipt["status"] == "PASS_BLOCK2_TRAINING_STORE"
+    assert receipt["path"] == "block2_features.f16.bin"
+    assert Block8CacheIndex(root).cache_entry_block == 2
+
+
 def test_matched_wrong_prior_comes_from_a_different_patient(tmp_path):
     rows = []
     inventory = []

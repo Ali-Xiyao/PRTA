@@ -59,8 +59,8 @@ def _validate_feature_tensor(
 
 def _entry_block(encoder_receipt: Mapping[str, Any]) -> int:
     value = int(encoder_receipt.get("output_block", 8))
-    if value not in {4, 6, 8}:
-        raise ValueError("cache encoder output_block must be 4, 6, or 8")
+    if value not in {2, 4, 6, 8}:
+        raise ValueError("cache encoder output_block must be 2, 4, 6, or 8")
     return value
 
 
