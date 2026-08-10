@@ -2132,3 +2132,52 @@
   prospective decision rule, not the immutable historical receipts. Under the
   Macro-F1-only rule, tail8 passes in all three seeds and is the retained
   method. ODER remains reported as descriptive safety/error-profile evidence.
+
+# 2026-08-10 Gold authorization finding
+
+- The user states there will be no additional evaluation dataset and explicitly
+  authorizes Gold. The scientifically bounded interpretation is one Gold-only
+  evaluation of the frozen tail8 method across Seeds17/28/43, with no
+  Gold-driven adaptation and no second attempt except an identity-preserving
+  infrastructure retry that fails before outcomes are exposed.
+- The new prospective gate is Macro-F1 only. Historical receipts retain their
+  original ODER condition, while the Gold receipt must report ODER as a
+  descriptive metric without allowing it to alter the pass/fail decision.
+- The frozen Gold cohort contains 250 senior-physician consensus rows. Its
+  outcome-free cache-input audit passes with six safe fields, 250 rows, zero
+  labels/patient identifiers, file SHA `101350de...4e659`, and ID-set SHA
+  `8356d7fb...5d20`. The existing Gold cache is Block-8 only (500 unique
+  images), so the retained tail8 candidate requires a new label-free Block-4
+  cache with the same BiomedCLIP weights SHA `52cc993c...76be`.
+- The server still holds parent allocations `3066` and `9929` plus telemetry
+  steps `3066.2` and `9929.0`; no scientific child was observed in the parent
+  summary. The current tail8 candidate remains all three `best.pt` checkpoints
+  with SHAs `3cc88648...`, `a771b07e...`, and `d4f06667...`, cache entry
+  Block-4, temperature 1.0, and no best-seed selection.
+- Frozen source verification resolved the exact cache writer SHA as
+  `85800c64...f0fa`; token cache and BiomedCLIP source remain
+  `6715b754...9447` and `0b3635c0...9202`. The local CUDA-enabled Python 3.12
+  runtime reports PyTorch `2.5.1+cu121` with CUDA available.
+
+# 2026-08-10 one-time Gold terminal finding
+
+- The only future-use Gold cohort is the physician-cleaned 175-row manifest,
+  not all 250 original senior-panel candidates. The runner therefore produced
+  label-free predictions for the full 250-row candidate superset before any
+  label access, then aligned the already sealed predictions to the exact 175
+  active rows during the single authorized Gold-manifest read.
+- Tail8 Gold Macro-F1 values are Seed17 `0.5399808886765408`, Seed28
+  `0.5694068472731943`, and Seed43 `0.5367374591255187`; three-seed mean and
+  sample standard deviation are `0.548708398358418` and
+  `0.017998591595492035`. The frozen Macro-F1-only gate at
+  `0.5460939600646948` passes.
+- Descriptive ODER is Seed17 `0.05142857142857143`, Seed28 `0.04`, and Seed43
+  `0.045714285714285714`, with mean `0.045714285714285714`. Per the user's
+  prospective rule this does not change the pass decision, but it should remain
+  visible as an error-profile limitation.
+- Terminal receipt SHA is `ba7885b2...6297`; independent audit SHA is
+  `de25ed33...916fc`. Exactly one Gold-manifest read occurred, all predictions
+  preceded it, the auditor did not reopen Gold, and no selection, retuning,
+  second Gold run, or additional scientific queue is authorized. Gold is now
+  exhausted as an evaluation surface; the result is final for the available
+  data rather than evidence of external clinical generalization.

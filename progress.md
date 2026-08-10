@@ -5755,3 +5755,51 @@
   formal receipts keep their original two-metric gate unchanged, but under the
   new prospective Macro-F1-only rule all three tail8 seeds pass the target and
   the tail8 method is the retained candidate for the next untouched validation.
+
+## 2026-08-10 one-time Gold evaluation
+
+- The user explicitly authorized using Gold because no additional evaluation
+  cohort will be added. Interpret this as one Gold-only evaluation of the
+  already frozen tail8 Seeds17/28/43 method, with Macro-F1 as the sole decision
+  metric and ODER retained descriptively. It does not authorize tuning,
+  checkpoint/seed selection, tail4 evaluation, training, or a second Gold run.
+- No Gold row, label, prediction, or cache has been opened in this phase yet.
+  The first phase is a metadata/source/compute preflight that must keep Gold
+  row contents structurally closed.
+- Outcome-free Gold metadata is now audited: 250 samples / 500 images, safe
+  six-field roster, and an existing verified Block-8 cache using the same
+  frozen BiomedCLIP weights as the tail8 program. A Gold Block-4 cache does not
+  yet exist and must be built without labels before inference.
+- The first Wave040 execution preflight failed before namespace creation
+  because it guessed obsolete frozen-source module paths and used a Python
+  runtime without PyTorch. The actual frozen modules and hashes are now bound,
+  and the CUDA-enabled Python 3.12 runtime is available for the cache gate.
+- Wave040 outcome-free preparation passed for the 250-row / 500-image Gold
+  prediction superset with receipt SHA `5aa1f20c...017a9`. The Block-4 cache
+  completed at shape `[500,197,768]`, two shards, and 151,296,000 bytes. Its
+  builder wrote the terminal receipt before a duplicate `status` keyword
+  caused a post-receipt progress-mirror error; the cache was not rebuilt.
+  Separate read-only audit SHA `92d6b814...5cd5d` verified every hash, shape,
+  finite feature probe, zero temporary fragments, and zero Gold-label reads.
+- Transferred only the ten allowlisted outcome-free/cache/control files to the
+  server. Remote verification SHA `031824cb...74d5d` matched all sizes/hashes,
+  250 roster rows, 500 cached images, Block-4 entry, and a real finite feature
+  read. No Gold label was included or opened during transfer.
+- Frozen the Gold parallel runner/controller at SHAs `24c780b3...ec90` and
+  `8ea80c30...fc01`. The active cleaned Gold count was bound from the immutable
+  cleaned-split freeze as 175 rows. To preserve prediction-before-label-open,
+  both GPUs predicted all 250 outcome-free candidates first: Seeds17/43 on
+  allocation 3066 and Seed28 on 9929. All three prediction files completed
+  before the sole Gold-label read.
+- The one-time Gold terminal receipt SHA is `ba7885b2...6297`. Tail8 per-seed
+  Macro-F1 is Seed17 `0.5399808886765408`, Seed28 `0.5694068472731943`, and
+  Seed43 `0.5367374591255187`; mean/sample-std are
+  `0.548708398358418 / 0.017998591595492035`. This passes the sole prospective
+  threshold `0.5460939600646948`. ODER is descriptive only: per-seed
+  `0.05142857142857143 / 0.04 / 0.045714285714285714`, mean
+  `0.045714285714285714`.
+- Independent audit receipt SHA `de25ed33...916fc` recomputed every cell from
+  its confusion matrix, revalidated all prediction hashes/counts, reproduced
+  the aggregate and Macro-F1 gate, confirmed one total Gold-manifest read and
+  zero auditor Gold-manifest reads, found no failure/temp artifacts, and closed
+  the Gold route with no rerun, selection, or retuning authorized.

@@ -1570,6 +1570,8 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Initial Gold cache-manifest comparison piped directly after a `foreach` block and triggered PowerShell's empty-pipe parser error | 1 | The failed read changed no artifact and opened no Gold row. Accumulate manifest summaries into an array before converting to JSON. |
+| Gold allocation-step probe reused unsupported `%t` formatting with `squeue -s` | 1 | Parent allocation and telemetry identities were already confirmed. Use `sstat` or a supported state field for subsequent step checks; no Slurm or Gold state changed. |
 | `rg` received Bash-style `**` globs as literal Windows filenames while listing current symbols | 1 | Use `rg` on directories with `-g '*.py'` or enumerate files first; the rest of the inventory completed. |
 | First data validation passed 18 tests and both synthetic CLIs, but Ruff found import/line formatting and the split audit produced 28/1/1 patients instead of the configured 24/3/3 | 1 | Add exact largest-remainder patient capacities before optimizing strata, patch long lines, and apply safe import formatting. |
 | First label validation reached 22/23 tests; `possible increased ...` escaped the uncertainty filter, and Ruff found import/line/unused-loop formatting | 1 | Add the `possible` lexical form to the uncertainty gate, patch explicit formatting, and apply safe import sorting. |
@@ -2070,6 +2072,22 @@ may start without new explicit authority that also respects this HOLD.
 - [x] Under the prospective Macro-F1-only rule, classify the physician-cleaned
   tail8 result as passing because all three seeds exceed the target.
 
+## 2026-08-10: one-time Gold evaluation
+
+- [x] Audit the frozen tail8 Seeds17/28/43 checkpoints, effective configs,
+  inference source, Gold outcome-free roster, label surface, cache identity,
+  retained compute allocations, and current GPU state without opening Gold
+  rows or labels.
+- [x] Freeze a new private Gold-only controller and preparation receipt. Use
+  the current tail8 method unchanged, treat Macro-F1 as the only pass/fail
+  metric, keep ODER descriptive, and prohibit any Gold-driven tuning or rerun.
+- [x] Build or verify the label-free Gold feature cache, then produce all three
+  frozen prediction files before the single label join. Use both retained GPUs
+  only when allocation and process isolation pass.
+- [x] Compute the three-seed Gold aggregate exactly once, independently audit
+  hashes/counts/confusions/protected reads, preserve all outputs, and close the
+  Gold route after reporting the result and next action.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
@@ -2134,3 +2152,5 @@ may start without new explicit authority that also respects this HOLD.
 | Wave039 attempt2 wrapper passed lint but still had pending Ruff formatter output | 1 | The attempt2 namespace remained absent. Apply the mechanical formatter, then repeat lint, format-check, and compilation. |
 | Initial independent-auditor lint found three 89-95 character lines | 1 | No audit namespace existed. Wrap only those expressions and rerun all auditor gates before execution. |
 | First combined final planning patch matched a level-two heading while `findings.md` uses a level-one heading | 1 | The patch failed atomically and changed no file. Reapply file-local updates with the exact current headings. |
+| Initial Wave040 preflight guessed obsolete `engine/...` frozen-source paths and used the bundled Python without PyTorch | 1 | No Gold namespace or protected read occurred. Resolve the actual `data/cache_writer.py`, `data/token_cache.py`, and `vision/biomedclip.py` paths, bind their exact hashes, and use the installed CUDA-enabled Python 3.12 runtime for controller execution. |
+| Wave040 cache builder wrote a complete terminal cache/build receipt, then raised a duplicate `status` keyword error while updating its progress mirror | 1 | Preserve the completed cache, builder, receipt, and stale `RUNNING` progress exactly. Do not re-encode. Freeze a separate read-only audit namespace that independently verifies all hashes/counts/shape/finiteness, records the post-receipt control error, and authorizes transfer only if it passes. |
