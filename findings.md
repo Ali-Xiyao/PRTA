@@ -2004,3 +2004,31 @@
   failures were removed. The full 6,366-row immutable source table remains
   available for recovery. New SHA-256 is
   `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`.
+
+# 2026-08-10 doctor-filtered Internal-test post-hoc diagnostic authority
+
+- The user reports that the CSV has now been edited by removing approximately
+  500 samples judged unreliable and explicitly requests resynchronization and
+  one new run. Interpret the deleted-row set as the doctor-rejected samples to
+  exclude from a derived Internal-test cohort; do not treat the remaining CSV
+  itself as the keep roster for the full cohort.
+- This authorization permits one outcome-adaptive filtered-cohort diagnostic
+  recomputation using the already-frozen predictions and labels. It does not
+  reopen the formal Wave035 result, authorize tuning/retraining/re-inference,
+  or permit Gold access. The filtered result must be reported as post-hoc.
+- The edited CSV has SHA-256 `70bfafa8...5366b` and exactly 4,028 rows. An
+  artifact-tool parse plus an independent frozen-source comparison confirmed
+  exactly 500 deletions from the 4,528-row common-error set, with zero added,
+  altered, duplicated, or semantically invalid rows. The derived keep cohort
+  is therefore exactly 12,719 of the original 13,219 Internal-test samples.
+- The one-time post-hoc recomputation first reproduced all six original
+  Wave035 confusion matrices and metrics exactly, then reused those immutable
+  per-sample predictions on the 12,719-row keep cohort. Tail8 mean Macro-F1
+  improved from `0.5005043584` to `0.5246022400` and mean ODER fell from
+  `0.0315202865` to `0.0282779044`; tail4 reached `0.5171073889` /
+  `0.0291427523`. Thus the deleted cases explain a material part of the loss,
+  but the filtered tail8 result still misses both original thresholds.
+- The diagnostic terminal receipt SHA-256 is `9fccfa8f...c9ea3b`. It records
+  one Internal-test label-manifest read, six frozen prediction reads, zero Gold
+  reads, zero temporary fragments, no training/inference, and preservation of
+  the formal Wave035 `HOLD_INTERNAL_TEST_GATE`.

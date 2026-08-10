@@ -1992,6 +1992,26 @@ may start without new explicit authority that also respects this HOLD.
   package path. Keep Wave035 terminal HOLD and every original artifact
   immutable.
 
+## 2026-08-10: doctor-filtered Internal-test post-hoc diagnostic
+
+- [x] Validate the user-edited `internal_test_suspect_samples.csv` against the
+  frozen 4,528-case all-three-tail8-error set. Confirm exact row count, schema,
+  uniqueness, membership, source paths, and quantify the removed set.
+- [x] Freeze a new private diagnostic namespace containing the edited CSV,
+  immutable pre-edit reconstruction, exact doctor-removed sample IDs, and a
+  derived Internal-test keep roster. Never mutate the original 13,219-row
+  manifest or any Wave035 artifact.
+- [x] Independently verify that the removed rows are exactly the user/doctor
+  edits, with no additions or altered labels/paths. Confirm the expected new
+  cohort count and zero Gold reachability.
+- [x] Recompute the existing frozen tail8/tail4 Seed17/28/43 metrics once on
+  the derived keep roster by joining the immutable Wave035 predictions to the
+  original labels. Do not retrain, re-infer, use GPUs, or change temperatures.
+- [x] Report the before/after aggregate metrics and exact artifact hashes as
+  an outcome-adaptive, doctor-filtered post-hoc diagnostic only. Preserve the
+  formal Wave035 `HOLD_INTERNAL_TEST_GATE`; do not reinterpret the filtered
+  result as a confirmatory Internal-test pass.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |

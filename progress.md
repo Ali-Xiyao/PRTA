@@ -5630,3 +5630,22 @@
   for only one or two seeds. Verification found zero non-three-seed rows, zero
   missing prior/current paths, no temporary file, and final SHA-256
   `5ed4ce32b6bd23a585a520c829b1ab11be4702cb0f5e9c118a5daf5fdd33631e`.
+
+## 2026-08-10 doctor-filtered Internal-test post-hoc diagnostic
+
+- Opened a new phase after the user reported deleting about 500 unreliable
+  samples from the 4,528-case common-error CSV and requested one synchronized
+  rerun. No data has yet been joined or evaluated in this phase. The first gate
+  is an exact diff against the immutable source table; Gold remains prohibited.
+- Completed the exact diff: the edited CSV contains 4,028 rows and differs
+  solely by 500 deletions. Added/altered/duplicate/semantic-violation counts
+  are all zero. Frozen the 500-row exclusion set and 12,719-row outcome-free
+  keep roster under `formal_internal_test_doctor_filtered_posthoc_v1` with
+  preparation receipt SHA `c4e6fd1c...a6e53`.
+- Completed the single post-hoc metric recomputation after exact reproduction
+  of all original Wave035 cell metrics. Filtered tail8 mean Macro-F1/ODER is
+  `0.524602240004497 / 0.02827790444741463`; filtered tail4 is
+  `0.5171073888791219 / 0.029142752312812853`. No GPU, retraining, or new
+  inference was needed because the evaluation membership alone changed.
+  Terminal receipt SHA is `9fccfa8f...c9ea3b`; zero Gold reads and zero
+  temporary fragments were independently confirmed. Formal HOLD remains.
