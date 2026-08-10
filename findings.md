@@ -1872,3 +1872,79 @@
   `83444681...`; Internal-test-only preregistration SHA is `c59414aa...`.
   Independent audit passed two exact files, six cells, six joint gates, no
   absolute data paths, no temporary fragments, and zero protected reads.
+- The existing evaluation dataset cannot enforce prediction-before-label-open:
+  it requires `progression_label` while constructing each item even though the
+  frozen inference model consumes only prior/current image features and the
+  finding embedding. The authorized runner therefore needs a dedicated
+  label-free prediction dataset and a later one-time label join after all six
+  prediction files are complete; reusing `cli_evaluate.py` would expose labels
+  before predictions and is not acceptable for this preregistration.
+- The verified Block-4 cache contains Train/Dev images only, so a tail8
+  Internal-test run cannot reuse it as an evaluation store. The formal session
+  must first build a new outcome-free Internal-test feature cache using the
+  same frozen BiomedCLIP weights/preprocessing and produce both required entry
+  boundaries, then open labels once. This is an input-location extension, not
+  a model/config change.
+- The frozen split sealing code already provides the required firewall:
+  `cache_input` contains only sample ID, source, finding, two image paths, and
+  split, explicitly excluding progression label, label provenance, tier, and
+  patient hash. The new runner can filter this outcome-free roster to the
+  Internal-test split, build predictions keyed only by sample ID, and defer
+  every target/patient access until the final one-time join.
+- One image pass can safely materialize both evaluation boundaries. The frozen
+  encoder computes patch/position/pre-norm tokens and then sequential ViT
+  blocks; retaining tokens after block 4 and block 8 from the same batch
+  preserves the exact preprocessing/weights while avoiding a second raw-image
+  pass. The existing cache writer supports independently frozen Block-4 and
+  Block-8 manifests with no labels, reports, or patient identifiers.
+- The authorized target is the physician-cleaned Internal-test cohort, not the
+  earlier 13,588-row Sol manifest. The active cleaned freeze removes 369
+  physician-confirmed rows and leaves 13,219 Internal-test samples; its receipt
+  SHA is `aa761c13...`. Any outcome-free feature roster must reproduce exactly
+  those retained sample IDs, so blindly filtering the older cache-input surface
+  by split alone would violate the active cohort contract.
+- The earlier outcome-free cache-input surface is from the pre-Sol split and
+  contains 16,699 Internal-test rows. The active lineage then excluded 3,111
+  Sol-`Unclear` rows to reach 13,588 and removed 369 physician-confirmed rows to
+  reach 13,219. Exact roster reconstruction therefore needs both membership
+  filters while still refusing every target/label field before predictions.
+- A legacy evaluation receipt is not safe metadata for the new session because
+  it embeds protected aggregate metrics, including Gold. It was accidentally
+  printed once during prelaunch investigation; no row-level Gold artifact was
+  opened and the outcome-independent freeze was already immutable. The new
+  controller must count this incident, exclude the receipt as an input, and
+  guarantee Gold-path unreachability rather than claiming zero historical
+  protected aggregate exposure.
+- On this Windows host, `CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW` was not a
+  sufficient durable detachment contract for the cache child, while the
+  earlier successful controls used `DETACHED_PROCESS`. The first child left
+  no bytes or logs, and the new immutable retry uses the proven detached flag.
+- The outcome-free evaluation cache can be built without either protected
+  label surface: retry3 is live with only sample IDs, findings, and image paths,
+  and its progress receipt continues to report Internal-test labels unopened
+  and Gold structurally unreachable.
+- The formal statistical contract does not require serial prediction. The two
+  retained allocations can safely split the six frozen cells by adapter scope
+  because neither prediction worker can resolve the label manifest or compute
+  metrics; the sole coordinator remains gated on all six immutable prediction
+  hashes before the one authorized label read. This reduces wall time without
+  changing model identity, temperature, cohort, gates, or one-session status.
+- The first formal launch failure is strictly pre-outcome: the server had no
+  runner-required BiomedCLIP weight path, so no outcome directory, prediction,
+  label read, or metric exists. Deploying the byte-identical frozen weight and
+  retrying in a new immutable launch-control namespace is therefore an
+  identity-preserving infrastructure retry, not a protected-evaluation rerun.
+- The one-time Internal-test run is methodologically complete but
+  scientifically HOLD. Tail8 retains a consistent relative advantage over
+  tail4 on mean Macro-F1 (`0.50050` vs `0.49508`) and mean ODER (`0.03152` vs
+  `0.03223`), so the expanded scope is directionally better than its matched
+  control. That relative effect is insufficient: absolute Macro-F1 is far
+  below the frozen `0.54609` mean target and ODER is far above the frozen
+  `0.005535` safety ceiling for every tail8 seed. The correct interpretation
+  is bounded evidence of a relative scope benefit inside a failed absolute
+  method gate, not validation of the method.
+- Because the single authorized label read is consumed and the terminal
+  receipt sets `rerun_authorized=false`, neither a rerun nor tuning from these
+  protected outcomes is permissible. Gold remained structurally unreachable
+  and unopened, so the terminal HOLD closes the current route without a Gold
+  result.

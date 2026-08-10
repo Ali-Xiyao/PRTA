@@ -1898,14 +1898,11 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 
 ## Next Step
 
-Stop at the completed Train/Dev-only Wave034 freeze boundary. Do not open,
-list, parse, hash, or evaluate Internal-test/Gold. A future turn may proceed
-only after the user gives the exact separate authorization token
-`AUTHORIZE_TAIL8_INTERNAL_TEST_ONLY_ONCE`; even then, first implement and
-review a tail8/Block-4 Internal-test-only runner whose Gold path is structurally
-unreachable, reverify the frozen candidate/preregistration hashes, and satisfy
-both formal-entry guards. Historical `HOLD_DEVELOPMENT_GATE` and
-`STOP_CURRENT_PRTA_ROUTE` remain preserved.
+Stop at the terminal Wave035 `HOLD_INTERNAL_TEST_GATE`. The one authorized
+Internal-test label read is consumed, no rerun or outcome-adaptive tuning is
+permitted, and the frozen route remains stopped. Gold was never opened and
+remains separately locked; no Gold evaluation or successor scientific queue
+may start without new explicit authority that also respects this HOLD.
 
 ## 2026-08-10: tail8 formal-candidate freeze and protected-evaluation preregistration
 
@@ -1929,6 +1926,38 @@ both formal-entry guards. Historical `HOLD_DEVELOPMENT_GATE` and
   only to the local bare remote.
 - [x] Stop before any protected evaluation and request separate explicit
   authorization for the frozen one-time Internal-test execution.
+
+## 2026-08-10: authorized one-time tail8 Internal-test evaluation
+
+- [x] Receive the exact preregistered authorization token
+  `AUTHORIZE_TAIL8_INTERNAL_TEST_ONLY_ONCE`; Gold remains unauthorized.
+- [x] Reverify the immutable Wave034 candidate/preregistration/controller
+  hashes and confirm the one-time outcome namespace is absent before any
+  protected artifact is opened.
+- [x] Implement and review a source-isolated tail8/Block-4 Internal-test-only
+  runner with Gold structurally unreachable, fixed temperature 1.0, all three
+  tail8 candidate seeds, all three same-matrix tail4 controls, and no partial
+  metric publication or checkpoint substitution.
+- [x] Resolve the Internal-test feature-cache boundary without using labels:
+  preserve the frozen encoder/preprocessing identity, build any required
+  Block-4/Block-8 evaluation features from the outcome-free roster inside the
+  formal session, and keep labels sealed until all six prediction sets exist.
+- [x] Pass compile, Ruff, unit/synthetic smoke, privacy/path scans, formal-entry
+  guard tests, resource/disk checks, and an immutable execution-intent audit.
+- [x] Launch exactly one formal Internal-test session through retained
+  allocations `3066` and `9929` with both `--formal` and the required
+  environment guard. Use the two allocations only to generate the frozen
+  tail8/tail4 predictions in parallel, then run one coordinator for the sole
+  label read; preserve parents/telemetry and never launch or access Gold.
+- [x] After all six cells are terminal, open the frozen Internal-test labels
+  once, compute every preregistered metric/gate together, and write one
+  immutable aggregate without adapting or rerunning from the outcome.
+- [x] Apply the preregistered joint decision: PASS only if all six gates pass;
+  otherwise write `HOLD_INTERNAL_TEST_GATE`. Keep Gold locked in either case
+  pending its own separate explicit authority.
+- [ ] Update aggregate planning files, run full engineering verification,
+  preserve private runtime and user documents outside the commit, and push
+  only intended planning changes to the local bare remote.
 
 ## Errors Encountered
 
@@ -1964,3 +1993,21 @@ both formal-entry guards. Historical `HOLD_DEVELOPMENT_GATE` and
 | Initial formal-outcome source read requested nonexistent `src/prta_cxr/formal_outcome.py` | 1 | The failed read changed nothing. Use the actual `formal_outcome_session.py` module discovered from `cli_formal_outcome.py` and inspect it separately. |
 | First Wave034 aggregate-schema probe embedded a quoted Python command inside PowerShell and SSH, so PowerShell interpreted part of the payload locally | 1 | The probe failed before reading or writing any server artifact. Use a base64 payload passed as a single SSH argument through `--%`-free PowerShell argument construction, then inspect only the already-authorized Wave033 Train/Dev receipts. |
 | Initial local Wave034 controller lint found four overlength JSON-construction lines and a pending formatter change | 1 | The controller had not been deployed or run. Wrapped the four strings, ran the formatter locally, and repeated compile/Ruff checks before any server mutation. |
+| A prelaunch metadata audit printed an old post-hoc evaluation receipt that unexpectedly embedded legacy Gold aggregate metrics | 1 | Stop using that receipt immediately. No Gold manifest, row, or prediction file was opened, and the already-frozen candidate/gates cannot change. Record one unauthorized legacy aggregate exposure, forbid the receipt from every roster/cache/runner input, and require the new formal runner to keep every Gold path structurally unreachable. |
+| The first combined incident-log patch used `Initial` instead of the actual `First` prefix in the Wave034 error row | 1 | The failed patch changed no file. Read the exact matching lines and apply the planning updates with current file-local context. |
+| The first Wave035 roster-controller lint found one 89-character function signature and a pending formatter change | 1 | The formal guard had already failed closed and the namespace remained absent. Wrap the return annotation, then rerun compile, Ruff, format, and guard checks before preparation. |
+| A source-inspection command guessed three nonexistent top-level cache/model module paths | 1 | The missing reads changed nothing. Use the actual `data/cache_writer.py`, `data/token_cache.py`, and `vision/biomedclip.py` modules discovered by `rg`. |
+| Initial Wave035 dual-cache-builder lint imported `Iterable` from `typing` under Python 3.11 | 1 | The builder had not launched and no cache root existed. Import `Iterable` from `collections.abc`, then repeat compile/Ruff/format checks. |
+| The first retained-step status probe used unsupported `%T` formatting for `squeue -s` | 1 | Allocation and telemetry identity were already visible, but the step-state format failed. Use `%t` or `sstat` for later step checks; no Slurm state changed. |
+| Initial Wave035 formal-runner lint preferred the Python 3.11 `datetime.UTC` alias | 1 | The runner had not been deployed or launched. Switch to `UTC`, add frozen-source hashes and attempt-local outcome paths, then repeat compile/Ruff/format checks. |
+| A metric-source inspection guessed a nonexistent `evaluation/metrics.py` module | 1 | The failed read changed nothing. Use the actual `evaluation/progression.py` implementation and bind its exact frozen-source hash. |
+| The first remote runner compile/guard command had an unmatched nested quote after the byte-identical runner was already copied | 1 | Verify the copied SHA separately, then use the direct environment interpreter and quote-free guard matching. Remote compile and formal guard pass; no Wave035 session namespace was created. |
+| The first remote guard grep lost its quoted multiword pattern through SSH argument parsing | 1 | Use a dot-separated regular-expression pattern without spaces. The runner again failed closed with exit code 1 and no protected access. |
+| Initial cache-control `status` used `os.kill(pid, 0)`, which raises WinError 87 on this Windows Python | 1 | Replace status-only liveness detection with Win32 `OpenProcess`/`CloseHandle`, then repeat lint and status. The corrected status showed that the first builder had already exited before creating cache data. |
+| Cache-build attempt1 used `CREATE_NO_WINDOW` without the proven detached-process flag and its child exited immediately after launch with empty logs | 1 | Preserve immutable failure receipt SHA `313291d9...`; it binds the exact launch receipts, dead PID, empty logs, absent cache roots, and zero label/Gold access. Use a new retry namespace with the prior proven `CREATE_NEW_PROCESS_GROUP|DETACHED_PROCESS` mode. |
+| Retry2 called the immutable writer twice for the same launch-intent path while adding retry metadata | 1 | The second write failed closed before any process or cache root existed. Preserve the unstarted intent and failure receipt, then make retry3 assemble each receipt completely before its single atomic write. |
+| The first locally generated parallel launcher separator contained a literal `+` from patch notation | 1 | The scripts were not deployed or launched. Replace the fragile embedded separator with an explicit backslash-plus-newline construction, then rerun Python compile and Ruff before freezing hashes. |
+| First remote compile command hardcoded `/home/.../miniforge3` although this account's home is under `/ipfs/...` | 1 | Both copied script hashes were already exact and no formal artifact existed. Resolve the interpreter through `$HOME/miniforge3/...`; remote compile/import then passed. |
+| Two read-only remote preflight commands lost quoted `squeue`/base64 arguments through PowerShell-to-SSH parsing | 1 | Neither command reached preparation. Replace pipe-delimited formats with comma-delimited `squeue` output and use stdin for remote Python diagnostics; formal guards still rejected and the outcome namespace remained absent. |
+| Login-shell GPU monitoring assumed `nvidia-smi` was on `PATH`, and a follow-up `sstat` query timed out | 1 | Neither read-only probe changed Slurm or runtime state. Use the frozen controller's step/process/receipt status plus the existing retained telemetry jobs; both scientific workers subsequently completed with valid receipts and no failure. |
+| The controller `start` shell carried a mistyped extra transfer-hash environment value | 1 | The start controller does not consume that extra value: it independently rehashed the canonical transfer receipt, while both generated worker launchers contained the correct frozen `5817af6b...` value. The exact worker receipts and terminal audit confirm no input drift. |

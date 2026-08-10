@@ -5468,3 +5468,131 @@
   compileall over the same code surfaces. Only `task_plan.md`, `progress.md`,
   and `findings.md` are intended for the local-bare Git handoff; the two
   user-modified paper documents and private `data/` runtime remain unstaged.
+- The exact Internal-test authorization token was received. Server preflight
+  found the active cleaned-freeze receipt, 13,219-row cleaned Internal-test
+  manifest, and physician-exclusion audit, but no outcome-free
+  `cache_input_v1.jsonl` surface. No protected file content has been opened in
+  this authorized session yet; feature-roster reconstruction is being routed
+  through the existing local outcome-free surface plus exclusion IDs.
+- Prelaunch roster investigation found that the older all-split outcome-free
+  cache input contains 16,699 Internal-test rows, while the active Sol-retained
+  cohort has 13,588 rows and the physician-cleaned cohort has 13,219. Filtering
+  only the 369 physician exclusions is therefore insufficient. The frozen
+  cleaned receipt itself passed SHA/count checks, all 18,379 unique image paths
+  referenced by the older surface exist, and H: has about 294 GB free.
+- A metadata-only diagnostic mistakenly printed a legacy post-hoc evaluation
+  receipt whose JSON embeds historical Gold aggregate metrics. No Gold
+  manifest, row, prediction file, or current formal artifact was opened, and
+  no candidate, comparator, checkpoint, temperature, gate, or queue changed.
+  The incident is nevertheless recorded as one unauthorized protected
+  aggregate exposure; that receipt is now prohibited from further use and the
+  new runner must remain structurally unable to resolve any Gold path.
+- The exact one-time Internal-test authority has now been converted into an
+  outcome-free 13,219-row / 15,846-image roster and a reviewed source-isolated
+  runner. The runner freezes all six tail8/tail4 checkpoints, predicts before
+  a single Internal-test label open, uses fixed temperature 1.0, publishes no
+  partial metrics, and contains no Gold path or Gold outcome branch.
+- Cache-build attempt1 exited immediately after launch because its Windows
+  child was not detached with the previously proven flag. It produced empty
+  logs and no attempt/cache root; immutable infrastructure-failure receipt SHA
+  is `313291d9...`. Retry2 then failed closed while trying to augment an
+  already immutable intent; it launched no process and produced no cache.
+- Retry3 writes complete receipts once and uses
+  `CREATE_NEW_PROCESS_GROUP|DETACHED_PROCESS`. Both physical 3090s were idle
+  except for the Codex display row. Retry3 launched exactly once as PID `4160`
+  on physical GPU0, survived the controller shell, initialized the frozen
+  encoder, and reports `RUNNING` with 15,846 expected images, zero label read,
+  and Gold structurally unreachable. GPU1 remains free.
+
+## 2026-08-10 dual-GPU Internal-test prediction preparation
+
+- Wave035 retry3 completed and was independently audited before transfer: the
+  outcome-free 13,219-row roster maps to 15,846 images, both Block-4 and
+  Block-8 stores contain 62 shards with shape `[15846,197,768]`, full feature
+  finiteness passed, temporary fragments are absent, and Internal-test labels
+  and Gold remained unopened. The two cache manifests are `51f3bbf1...` and
+  `0cc2c621...`; independent-audit receipt SHA is `08d52663...`.
+- The exact fourteen-file evaluation-cache surface was transferred to the
+  server and independently verified by size, SHA-256, count, shape, and real
+  aggregate finite reads. Transfer process-receipt SHA is `e0122da0...` and
+  server-verification receipt SHA is `5817af6b...`; no protected label or Gold
+  artifact was accessed.
+- The first single-GPU formal launch on allocation `3066` failed before the
+  outcome namespace, predictions, labels, or metrics because the frozen
+  BiomedCLIP weight file was not deployed at the runner's required server
+  path. Launch intent/control/log SHAs are `40ed40a8...`, `31490142...`, and
+  `865c6aa2...`; this is an identity-preserving pre-outcome infrastructure
+  failure, not a model result.
+- The exact 783,705,670-byte frozen weight was deployed and verified at SHA
+  `52cc993c...`; deployment receipt SHA is `3a382428...`. Fresh server audit
+  shows retained parents `3066`/`9929` and telemetry `3066.2`/`9929.0` alive,
+  no scientific child, the one-time outcome namespace still absent, and the
+  weight hash exact.
+- The user explicitly authorized both retained GPUs to accelerate the already
+  frozen session. A new parallel wrapper now assigns tail8 Seeds 17/28/43 to
+  `3066` and tail4 Seeds 17/28/43 to `9929`; workers can only create label-free
+  predictions and scope receipts. A separate coordinator is the only code
+  path that may open the Internal-test labels once, and it refuses to run
+  until all six prediction files and both worker receipts pass hash/count
+  checks. Gold remains structurally unreachable.
+- Local compile and Ruff pass for the parallel runner and retry2 controller.
+  Frozen parallel-runner SHA is `2bc4abf8...`; the controller is awaiting
+  byte-identical server deployment, guard/syntax checks, immutable prepare,
+  and dual-allocation launch.
+- Byte-identical server deployment and import checks passed. Exact controller
+  SHA is `c0683c14...`. Full repository verification also passed all 208 tests
+  plus Ruff across `src`, `tests`, `scripts`, and the two new private controls.
+  AST/call-graph smoke confirms worker functions cannot call the label reader
+  or metric calculator, the finalizer contains exactly one label-reader call,
+  and all three generated bash launchers pass syntax checks with the intended
+  allocation mapping.
+- Parallel retry2 preparation completed without labels or metrics. The
+  initialization receipt SHA is `0c4b19e8...`, retry2 intent freezes runner,
+  controller, weight, transfer, cache, allocation, and launcher identities,
+  and the prior pre-outcome failure receipt SHA is `ef0181a2...`. Retained
+  parents/telemetry remain the only Slurm steps, `/ipfs` has about 1.25 PB
+  available, and the initialized outcome namespace contains no predictions.
+- Independent prelaunch audit passed the exact controller/coordination hashes,
+  empty prediction directory, label-read count zero, and Gold-unreachable
+  boundary. Parallel prediction workers then launched exactly once: tail8 on
+  Slurm step `3066.64` with detached PID `3170199`, and tail4 on `9929.54`
+  with detached PID `3170200`. Launch-intent SHA is `4b9ed4ea...`; both workers
+  are alive, no worker/final/session failure exists, and no label or metric has
+  been read or computed.
+
+## 2026-08-10 Wave035 one-time Internal-test terminal result
+
+- Both label-free workers completed without failure. Tail8 worker-receipt SHA
+  is `dd4b8529...`; tail4 is `167942f9...`. An independent pre-label audit
+  verified all six 13,219-row prediction files, exact registered hashes, no
+  unexpected/temporary file, zero label reads, and Gold unreachable before
+  the coordinator was allowed to launch.
+- The sole coordinator opened the frozen Internal-test label manifest exactly
+  once, computed all six cells and all six preregistered gates together, and
+  wrote terminal receipt SHA
+  `7e7940252f7549eb0ae5320621489f3069fcb52faf72c974ba935c135a14a5d6`.
+  No partial metric was published, no selection/retuning occurred, rerun is
+  unauthorized, Gold reads remain zero, and Gold remains locked.
+- Terminal tail8 results are Seed17 `0.4984413762 / 0.03237763825`, Seed28
+  `0.5022251707 / 0.03131855662`, and Seed43
+  `0.5008465281 / 0.03086466450` for Macro-F1 / ODER. Their mean +/- sample
+  std is `0.5005043584 +/- 0.0019149636` Macro-F1 and
+  `0.03152028646 +/- 0.00077639783` ODER.
+- Terminal tail4 control results are Seed17
+  `0.4960702874 / 0.03275588169`, Seed28
+  `0.4937423778 / 0.03116725925`, and Seed43
+  `0.4954164803 / 0.03275588169`. Their mean +/- sample std is
+  `0.4950763818 +/- 0.0012006419` Macro-F1 and
+  `0.03222634087 +/- 0.00091719159` ODER.
+- Tail8 beats tail4 on both preregistered relative mean comparisons, but all
+  four absolute gates fail: every-seed Macro-F1, every-seed ODER, tail8 mean
+  Macro-F1, and tail8 mean ODER. The required joint conclusion is therefore
+  `HOLD_INTERNAL_TEST_GATE`, not a method PASS. The controller finalization
+  closed the session with parents/telemetry preserved and no scientific child;
+  its terminal artifact binding is exact and Gold remains unauthorized.
+- The selected immutable server receipts were mirrored outside Git to
+  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_internal_test_tail8_once_v1\server_terminal_mirror`.
+  Local/server SHA equality passed for terminal receipt `7e794025...` and
+  finalization receipt `118f6825...`. A post-closeout SSH audit confirms both
+  retained parents and telemetry remain alive, no scientific child remains,
+  and the server connection is healthy.
