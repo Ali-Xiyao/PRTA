@@ -2304,3 +2304,13 @@
   `32d37649...251d3`; the exact six-file resumable server transfer is now
   active as PID `23436`, with remote scientific use still locked until the
   complete server verification receipt exists.
+
+# 2026-08-10 Wave041 stage2 transition finding
+
+- Stage2 completed and stage3 launched exactly according to the frozen queue;
+  no terminal outcome was used to select, drop, reorder, or tune a cell.
+  Stage2 aggregate SHA is `3060e45f...00fcfc`, and stage3 runs the frozen
+  no-dual-branch / no-direction-margin Seed17 pair with zero protected reads.
+- The Block-2 transfer is progressing independently of the scientific queue.
+  Its large feature store had reached 15.98 GB remotely while all five small
+  files remained untouched at their pre-created zero-byte resume boundary.

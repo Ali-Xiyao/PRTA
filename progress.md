@@ -5979,3 +5979,17 @@
   A live remote size check observed `block2_features.f16.bin` at 747,929,600
   bytes while the other five pre-created allowlisted destinations remained
   zero bytes. No redundant shard or protected data is being transferred.
+
+## 2026-08-10 Wave041 stage2 terminal and stage3 advance
+
+- The frozen supervisor closed stage2 from both complete terminal receipts
+  and wrote immutable no-selection aggregate SHA
+  `3060e45f96c870071f4b5d3f4f89e2f9e47a14f5637793399dff8b3c7d00fcfc`.
+  It advanced the unchanged queue to stage3: no-dual-branch Seed17 on
+  allocation 3066 step 3066.71 and no-direction-margin Seed17 on allocation
+  9929 step 9929.58. Both telemetry steps remain alive, no failure exists,
+  and protected-read count remains zero.
+- The six-file Block-2 transfer remains healthy. A live remote size check
+  observed `block2_features.f16.bin` at 15,979,008,000 / 44,211,717,120
+  bytes; the other five exact allowlisted destinations remain pre-created at
+  zero bytes until the large file completes.
