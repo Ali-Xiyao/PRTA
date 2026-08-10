@@ -6048,3 +6048,13 @@
   allocation 3066 step 3066.75 and no-dual-branch Seed28 on allocation 9929
   step 9929.62. Both parent allocations and telemetry steps remain alive, no
   failure exists, and protected-read count remains zero.
+
+## 2026-08-10 Wave041 stage7 terminal and stage8 advance
+
+- The frozen supervisor closed stage7 from both complete terminal receipts
+  and wrote immutable no-selection aggregate SHA
+  `faeaa621d7aa6a2bbaf6ce4233cc8144543c406c3aefade507d147300c577353`.
+- It advanced the unchanged queue to stage8: no-direction-margin Seed28 on
+  allocation 3066 step 3066.76 and no-opposite-direction-cost Seed28 on
+  allocation 9929 step 9929.63. Both parent allocations and telemetry steps
+  remain alive, no failure exists, and protected-read count remains zero.

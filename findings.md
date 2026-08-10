@@ -2361,3 +2361,12 @@
 - Stage7 runs the frozen no-cross-time-alignment / no-dual-branch Seed28 pair
   on the two retained allocations. Parents, telemetry, and zero-protected-
   read guards remain intact.
+
+# 2026-08-10 Wave041 stage7 transition finding
+
+- Stage7 completed and stage8 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage7 aggregate SHA is
+  `faeaa621...c577353`.
+- Stage8 runs the frozen no-direction-margin / no-opposite-direction-cost
+  Seed28 pair on the two retained allocations. Parents, telemetry, and zero-
+  protected-read guards remain intact.
