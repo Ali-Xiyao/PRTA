@@ -2281,7 +2281,8 @@
   progress receipt confirms 146110 starting/completed images, 571 starting/
   completed shards, `reencoding_performed=false`, GPU1 hidden, and zero
   Internal-test/Gold reads.
-- The attempt3 build is now terminal-complete. Its manifest and contiguous
-  store hashes are `c522f5dc...84112` and `73a2ce7e...f3183`; the immutable
-  build receipt SHA is `42b3ff7f...5115d`. Controller finalization is still
-  performing its independent full-store hash, so transfer remains locked.
+- The attempt3 build and controller finalization are terminal-complete. Its
+  manifest/store hashes are `c522f5dc...84112` and `73a2ce7e...f3183`;
+  build/finalization receipt SHAs are `42b3ff7f...5115d` and
+  `070c5526...bed3`. Transfer remains locked only until the separate local
+  shard/finiteness audit passes.

@@ -5940,6 +5940,8 @@
   the 44,211,717,120-byte training-store SHA is
   `73a2ce7e70bfedc68c7d5df4b7cdd9a9e68d81e7ece288cda0b973ef636f3183`;
   text-cache SHA remains `1846e3d9...1a3fd`.
-- The exact controller finalization call is active as PID `22112`; it is
-  independently rehashing the 44.2-GB store before writing the immutable
-  finalization receipt. No duplicate finalization invocation was made.
+- The exact controller finalization call completed without a duplicate
+  invocation. Finalization receipt SHA is
+  `070c5526293c7d94ab3d3efb7bb08efa39ab7bb4fd6d1ab1e95316c6ae02bed3`;
+  it binds the manifest/store hashes, 146110 images, 571 shards, zero
+  temporary fragments, no re-encoding, GPU1 hidden, and zero protected reads.
