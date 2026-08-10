@@ -2343,3 +2343,12 @@
 - Stage5 runs the frozen classification-only Seed17 / no-tail Seed28 pair on
   the two retained allocations. Parents, telemetry, and zero-protected-read
   guards remain intact.
+
+# 2026-08-10 Wave041 stage5 transition finding
+
+- Stage5 completed and stage6 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage5 aggregate SHA is
+  `45ad1588...88573f`.
+- Stage6 runs the frozen tail2 Seed28 / no-finding Seed28 pair on the two
+  retained allocations. Parents, telemetry, and zero-protected-read guards
+  remain intact.

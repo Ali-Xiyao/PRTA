@@ -6028,3 +6028,13 @@
   allocation 3066 step 3066.73 and scope no-tail Seed28 on allocation 9929
   step 9929.60. Both parent allocations and telemetry steps remain alive, no
   failure exists, and protected-read count remains zero.
+
+## 2026-08-10 Wave041 stage5 terminal and stage6 advance
+
+- The frozen supervisor closed stage5 from both complete terminal receipts
+  and wrote immutable no-selection aggregate SHA
+  `45ad1588c1a33fd9a6705f9c249590224b01d96cc7d8fcb5cca776746d88573f`.
+- It advanced the unchanged queue to stage6: scope tail2 Seed28 on allocation
+  3066 step 3066.74 and no-finding Seed28 on allocation 9929 step 9929.61.
+  Both parent allocations and telemetry steps remain alive, no failure exists,
+  and protected-read count remains zero.
