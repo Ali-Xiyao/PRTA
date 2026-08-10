@@ -5961,3 +5961,21 @@
   before preparation. Wave041 remains at frozen stage2 on steps 3066.70 and
   9929.57 with both telemetry steps alive, no failure, and zero protected
   reads.
+
+## 2026-08-10 Wave041 Block-2 audit PASS and transfer start
+
+- The independent CPU/disk audit completed all 571 registered shard hash,
+  shape, and finiteness checks for 146,110 images, then rehashed the frozen
+  six-file transfer surface. Audit receipt SHA is
+  `32d3764973a41606a50bcd7aa93b3567b3ac96275aa40ded625cbeccaf0251d3`;
+  preparation receipt SHA is
+  `8b7c0f8e2c3f5b549d29cd3979cc6a7ab800977751787946d146696ab00ec813`.
+  No temporary fragment or protected read was observed.
+- Started the exact frozen six-file transfer as detached PID `23436` at
+  200 Mbit/s. Transfer-manifest SHA is
+  `d31b0094149bf3af9352c20fdce419394021c6dda578afff581c5def3c08963b`;
+  launch-intent SHA is
+  `7a64fac37ab60f1116a67c2f0df4968a75537f15306df33e1349ad8e9ab85a70`.
+  A live remote size check observed `block2_features.f16.bin` at 747,929,600
+  bytes while the other five pre-created allowlisted destinations remained
+  zero bytes. No redundant shard or protected data is being transferred.

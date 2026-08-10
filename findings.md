@@ -2298,3 +2298,9 @@
   child is PID `14960` with launch-intent SHA `c34feeb5...dab8`. The first
   progress receipt is healthy and transfer remains fail-closed until a
   complete independent audit receipt exists.
+- The independent audit subsequently passed all 571 shards / 146,110 images,
+  Block-2 shape and finiteness checks, transfer-surface hashes, temporary-file
+  guard, and zero-protected-read guard. Audit receipt SHA is
+  `32d37649...251d3`; the exact six-file resumable server transfer is now
+  active as PID `23436`, with remote scientific use still locked until the
+  complete server verification receipt exists.

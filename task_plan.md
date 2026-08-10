@@ -2151,7 +2151,7 @@ may start without new explicit authority that also respects this HOLD.
   contracts, generic Block-2 cache support, tests, and configuration audits.
 - [x] Update all Git-safe experiment protocol/result documents with the six-
   scope matrix and the cleaned Train 80,402 / Dev 11,201 hard requirement.
-- [ ] Build and independently verify the label-free Block-2 Train/Dev cache
+- [x] Build and independently verify the label-free Block-2 Train/Dev cache
   without opening Internal-test or Gold.
 - [x] Reuse Wave033 tail4/tail6/tail8 only after exact source/config/data/budget
   reconstruction; freeze and launch no-tail/tail2/tail10 x Seeds17/28/43 in a
@@ -2168,9 +2168,9 @@ may start without new explicit authority that also respects this HOLD.
   structurally prohibited.
 - [x] Complete attempt3 terminal shard validation/store consolidation and
   controller finalization without re-encoding.
-- [ ] Complete the independently frozen Block-2 shard/finiteness audit, then
-  transfer and verify only its six-file Train/Dev runtime surface on the
-  server.
+- [x] Complete the independently frozen Block-2 shard/finiteness audit.
+- [ ] Transfer and verify only the Block-2 cache's six-file Train/Dev runtime
+  surface on the server.
 
 ## Errors Encountered
 
@@ -2254,3 +2254,4 @@ may start without new explicit authority that also respects this HOLD.
 | The first remote Block-2 target probe embedded `$(dirname ...)` in a PowerShell-to-SSH command, so PowerShell interpreted the substitution locally | 1 | The probe failed before remote mutation. Reissued the read-only check with the explicit frozen parent path; the canonical target is absent and the server filesystem has sufficient space. |
 | The new Block-2 audit/transfer controller passed compilation and Ruff lint but had pending formatter output | 1 | The transfer namespace was still absent. Applied only Ruff's mechanical formatting and repeated compilation, lint, and format checks successfully before preparation. |
 | A server status probe used the nonexistent SSH alias `server` | 1 | The read-only call never reached the server. Resolved the configured `sues-hpc` alias and reran the frozen server controller status successfully; no runtime state changed. |
+| Two read-only remote transfer-size probes were corrupted by nested PowerShell/SSH Python quoting | 2 | Neither probe changed local or remote state. Replaced the embedded Python with a direct `ssh sues-hpc ls -l` against the exact allowlisted cache target and confirmed only the six expected files exist. |
