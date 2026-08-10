@@ -2086,3 +2086,49 @@
   `Improved->Worse` (196), `New->Resolved` (53), and `Resolved->New` (47).
   These are descriptive case-table annotations only; they do not alter formal
   metrics, scientific gates, or the Wave035 HOLD.
+
+# 2026-08-10 third physician-cleanup audit finding
+
+- The newly edited annotated CSV has SHA-256 `639f7358...ca070` and exactly
+  3,528 rows. Artifact-tool reconstruction of the immutable annotated 4,528-row
+  source reproduced SHA-256 `eb8109c7...5c5c7d4`; the edit is exactly 1,000
+  deletions with zero additions, duplicates, altered retained rows, semantic
+  violations, or annotation violations.
+- Of the 1,000 newly selected exclusions, 317 contain at least one strict
+  opposite-direction seed and 279 contain all three seeds in the opposite
+  direction. The valid derived Internal-test cohort size is therefore 12,219
+  if the new deletion set is frozen as a separate v3 sensitivity analysis.
+- The new 3,528-row keep set is not the prior v2 keep set: they overlap on
+  2,756 rows and each contains 772 rows absent from the other. Equivalently,
+  the two 1,000-row deletion sets overlap on only 228 samples. V3 must therefore
+  be framed as a separate physician re-review sensitivity analysis, not a
+  cumulative extension or replacement of v2.
+
+# 2026-08-10 third physician re-review post-hoc result
+
+- The corrected Wave039 attempt2 completed on 12,219 Internal-test rows using
+  only frozen predictions. Tail8 per-seed Macro-F1/ODER values are Seed17
+  `0.5542012507019569 / 0.010475488992552582`, Seed28
+  `0.5576798931735671 / 0.00998445044602668`, and Seed43
+  `0.5566828888102636 / 0.009002373352974876`. Mean/std are Macro-F1
+  `0.5561880108952626 / 0.0017913448786845809` and ODER
+  `0.009820770930518046 / 0.0007500737695320134`.
+- Tail4 per-seed Macro-F1/ODER values are Seed17
+  `0.5472002474291792 / 0.013749079302725264`, Seed28
+  `0.5431912430003791 / 0.011948604632130289`, and Seed43
+  `0.5447037269982581 / 0.013749079302725264`. Mean/std are Macro-F1
+  `0.5450317391426055 / 0.0020245303412554957` and ODER
+  `0.013148921079193606 / 0.0010395045357371117`.
+- Every tail8 seed clears the Macro-F1 target `0.5460939600646948`, but none
+  clears the ODER ceiling `0.00553522006963664`. This is post-hoc sensitivity
+  evidence because physician review was restricted to common model failures;
+  it cannot reverse formal HOLD or serve as a fresh confirmatory test.
+- The next valid step is not another deletion/rerun cycle on this same test.
+  Freeze the physician decisions into an outcome-independent data-quality
+  rule, apply that rule without model-error visibility to a fresh held-out
+  cohort (or a complete all-row re-review), and evaluate exactly once.
+  Development aimed at lowering ODER must return to Train/Dev only.
+- The user subsequently declared ODER non-binding. This changes the
+  prospective decision rule, not the immutable historical receipts. Under the
+  Macro-F1-only rule, tail8 passes in all three seeds and is the retained
+  method. ODER remains reported as descriptive safety/error-profile evidence.

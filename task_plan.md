@@ -2048,6 +2048,28 @@ may start without new explicit authority that also respects this HOLD.
   transition counts, final hash, and snapshot recoverability. Do not alter any
   sample, label, prediction, or image path.
 
+## 2026-08-10: third physician-cleaned post-hoc diagnostic
+
+- [x] Compare the newly doctor-edited annotated CSV against the immutable
+  4,528-row pre-edit table. Require deletion-only membership changes with no
+  added, duplicated, or altered retained rows.
+- [x] Freeze a new private v3 diagnostic namespace containing the edited CSV,
+  exact newly removed IDs, cumulative exclusion IDs, and derived keep roster.
+- [x] Recompute all six frozen tail8/tail4 metrics once on the derived cohort
+  using existing predictions only. Do not retrain, re-infer, use GPUs, or read
+  Gold; reproduce the prior formal/v1/v2 metrics before computing v3.
+- [x] Independently verify counts, hashes, confusion matrices, protected-read
+  fields, and temporary fragments. Report the result as outcome-adaptive
+  sensitivity evidence and recommend the next methodologically valid step.
+
+## 2026-08-10: prospective decision-rule update
+
+- [x] Record the user's explicit direction that ODER is descriptive and no
+  longer a pass/fail gate for subsequent decisions. Preserve all historical
+  frozen receipts and their original thresholds without reinterpretation.
+- [x] Under the prospective Macro-F1-only rule, classify the physician-cleaned
+  tail8 result as passing because all three seeds exceed the target.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
@@ -2103,3 +2125,12 @@ may start without new explicit authority that also respects this HOLD.
 | A parallel skill/planning/memory read returned failure because the memory-index `rg` branch had no matches | 1 | No project artifact was touched. Re-read the required skills, planning files, and dependency manifest in separate successful calls; no memory-derived fact is used for this phase. |
 | The first PowerShell line-count probe piped directly after a `foreach` block and produced an empty-pipe parser error | 1 | The failed read changed nothing. Accumulate objects into an array and pipe the completed array to `ConvertTo-Json`. |
 | Initial Wave038 v2 controller lint found one unused import, import ordering, four overlength lines, and a pending formatter change | 1 | The v2 namespace did not yet exist. Removed the unused import, wrapped the long expressions, formatted the controller, and repeated Ruff plus bundled-Python compilation successfully before preparation. |
+| Bundled workspace Python did not include the Ruff module for the new v3 controller gate | 1 | Python compilation had already passed. Use the installed standalone Ruff executable for lint/format checks, then repeat bundled-Python compilation before any v3 namespace is created. |
+| Initial v3 controller Ruff gate found import ordering and formatter drift | 1 | The v3 namespace was still absent. Apply only Ruff's mechanical import/format fixes, then rerun Ruff and bundled-Python compilation before preparation. |
+| First v3 preparation audit looked for the receipt at the namespace root instead of its `preparation/` subdirectory | 1 | Controller status independently confirmed the receipt exists with the expected SHA. Reissue the read against the frozen subdirectory paths; the failed read changed no artifact. |
+| First failed-run roster diagnostic referenced a nonexistent `FROZEN_FULL_CASE_TABLE` symbol in the base controller | 1 | The read-only probe changed nothing. Diagnose the guard from the three frozen roster files and deleted-ID roster directly, without reopening labels or predictions. |
+| Wave039 v3 attempt1 confused the 2,756-ID overlap of retained rows inside the 4,528-row suspect table with the overlap of the two 12,219-row filtered Internal-test cohorts | 1 | The run failed closed after one label-manifest read and before any prediction read or metric computation. Preserve failure receipt SHA `8b771e4f...e0c49`; use a new attempt2 namespace with separate assertions for suspect-table overlap `2,756`, deletion overlap `228`, and full-cohort overlap `11,447`. |
+| Initial Wave039 attempt2 wrapper lint found three 89-93 character lines | 1 | The attempt2 namespace did not exist. Wrap only those expressions and rerun Ruff plus bundled-Python compilation before preparation. |
+| Wave039 attempt2 wrapper passed lint but still had pending Ruff formatter output | 1 | The attempt2 namespace remained absent. Apply the mechanical formatter, then repeat lint, format-check, and compilation. |
+| Initial independent-auditor lint found three 89-95 character lines | 1 | No audit namespace existed. Wrap only those expressions and rerun all auditor gates before execution. |
+| First combined final planning patch matched a level-two heading while `findings.md` uses a level-one heading | 1 | The patch failed atomically and changed no file. Reapply file-local updates with the exact current headings. |

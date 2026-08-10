@@ -5710,3 +5710,48 @@
 - The annotated CSV SHA-256 is `eb8109c7...5c5c7d4`. The exact pre-annotation
   4,528-row version remains recoverable under the private annotation history
   with SHA-256 `5ed4ce32...33631e`.
+
+## 2026-08-10 third physician-cleaned post-hoc diagnostic
+
+- Opened a new bounded v3 diagnostic after the user reported completing
+  another physician cleanup and requested a rerun. The first gate is an exact
+  artifact-tool comparison against the immutable annotated 4,528-row source.
+  No metric, label manifest, prediction, inference, GPU, or Gold operation has
+  been performed in this phase yet.
+- The deletion-only gate passed. The current CSV contains 3,528 rows and SHA
+  `639f7358...ca070`; it removes exactly 1,000 of the immutable annotated 4,528
+  rows. Added/altered/duplicate/semantic/annotation violation counts are all
+  zero. The prospective v3 filtered cohort is 12,219 rows.
+- Compared with the immutable v2 3,528-row keep table, the new table has 2,756
+  retained IDs in common and 772 IDs swapped in each direction; the two
+  deletion sets overlap on only 228 rows. V3 will remain a separate immutable
+  re-review namespace and will not mutate or reinterpret v2.
+- Bundled Python compiled the frozen v3 controller successfully, but its
+  environment does not include Ruff. No v3 output namespace exists yet; use
+  the installed standalone Ruff executable for the remaining preflight gate.
+- Wave039 v3 preparation passed with receipt SHA `7d48e70a...478e73` and
+  froze the exact 1,000 deleted IDs plus 12,219-row outcome-free roster with
+  zero protected reads. Attempt1 run then failed closed at its roster guard:
+  it compared the full filtered cohort overlap to the suspect-table overlap.
+  One label-manifest read occurred, but prediction reads and metric computation
+  remained zero. Immutable failure receipt SHA is `8b771e4f...e0c49`; retry
+  only in a separate attempt2 namespace with the corrected `11,447` full
+  cohort overlap contract.
+- Wave039 attempt2 froze the corrected overlap contract in a new namespace:
+  suspect-table overlap `2,756`, deletion overlap `228`, and complete
+  12,219-row filtered-cohort overlap with v2 `11,447`. Preparation receipt SHA
+  is `0073f1cd...03e95`; protected reads were zero at preparation.
+- Completed the one-time attempt2 recomputation from the six immutable
+  prediction files. Tail8 mean Macro-F1/ODER is
+  `0.5561880108952626 / 0.009820770930518046`; tail4 is
+  `0.5450317391426055 / 0.013148921079193606`. Every tail8 seed exceeds the
+  Macro-F1 target, but every tail8 seed remains above the ODER ceiling.
+- Terminal receipt SHA is `32c59e49...423e9`. Independent audit receipt SHA
+  is `8ceb92c5...b3846`: six expected cells, 12,219 confusion entries per
+  cell, finite metrics, recomputed means/stds, exact v1/v2 reproduction, zero
+  temporary fragments, one label-manifest read, six prediction reads, zero
+  Gold reads, and no training/inference/GPU work. Formal Wave035 HOLD remains.
+- The user explicitly made ODER non-binding for future decisions. Historical
+  formal receipts keep their original two-metric gate unchanged, but under the
+  new prospective Macro-F1-only rule all three tail8 seeds pass the target and
+  the tail8 method is the retained candidate for the next untouched validation.
