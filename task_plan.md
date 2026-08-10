@@ -2171,7 +2171,7 @@ may start without new explicit authority that also respects this HOLD.
 - [x] Complete attempt3 terminal shard validation/store consolidation and
   controller finalization without re-encoding.
 - [x] Complete the independently frozen Block-2 shard/finiteness audit.
-- [ ] Transfer and verify only the Block-2 cache's six-file Train/Dev runtime
+- [x] Transfer and verify only the Block-2 cache's six-file Train/Dev runtime
   surface on the server.
 
 ## Errors Encountered

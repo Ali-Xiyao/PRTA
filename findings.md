@@ -2314,3 +2314,14 @@
 - The Block-2 transfer is progressing independently of the scientific queue.
   Its large feature store had reached 15.98 GB remotely while all five small
   files remained untouched at their pre-created zero-byte resume boundary.
+
+# 2026-08-10 verified server Block-2 cache finding
+
+- The canonical server now has a byte-identical, independently verified
+  six-file Block-2 Train/Dev cache. Remote semantic validation confirms
+  146,110 images, cache entry block 2, feature shape `[*,197,768]`, and a
+  finite aggregate-only read under source commit `8ccace5b...b4136`.
+- Transfer-process/server-verification receipt SHAs are
+  `436b6041...ade7e1` and `af6adf4e...1d789b`. Zero protected reads were
+  recorded, and the cache is now immutable and eligible for the already-
+  frozen Tail10 cells; no cache construction or transfer work remains.

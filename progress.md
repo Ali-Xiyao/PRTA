@@ -5993,3 +5993,18 @@
   observed `block2_features.f16.bin` at 15,979,008,000 / 44,211,717,120
   bytes; the other five exact allowlisted destinations remain pre-created at
   zero bytes until the large file completes.
+
+## 2026-08-10 Wave041 Block-2 server verification PASS
+
+- The exact six-file resumable transfer completed without failure. Immutable
+  transfer-process receipt SHA is
+  `436b60412c02415d709cab47675e5052dfa4d64d4e6ce2e85e5af1ecc2ade7e1`.
+- Ran the frozen server verification exactly once. All six remote sizes and
+  SHA-256 identities match the independently audited local surface, including
+  the 44,211,717,120-byte store SHA `73a2ce7e...f3183`, manifest SHA
+  `c522f5dc...84112`, and text-cache SHA `1846e3d9...1a3fd`.
+- The server reported 146,110 cached images at Block-2 and a real aggregate-
+  only finite feature read with shape `[2,197,768]`. Final verification receipt
+  SHA is `af6adf4e12d69ab7dd141d459c467e58a8f3893ff7805b0d7ee7997fd71d789b`;
+  status is `PASS_BLOCK2_CACHE_TRANSFER_AND_SERVER_VERIFICATION_COMPLETE`,
+  with zero Internal-test/Gold reads. Tail10 stages are now unblocked.
