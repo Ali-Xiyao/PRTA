@@ -2286,3 +2286,15 @@
   build/finalization receipt SHAs are `42b3ff7f...5115d` and
   `070c5526...bed3`. Transfer remains locked only until the separate local
   shard/finiteness audit passes.
+
+# 2026-08-10 Block-2 independent-audit finding
+
+- The local GPU phase is fully finished; the remaining local gate is an
+  independent CPU/disk audit over all 571 registered shards and the 44.2-GB
+  contiguous store. It rechecks hashes, shape, finiteness, total count,
+  text-cache identity, temporary fragments, and protected-read state without
+  opening Internal-test or Gold.
+- The frozen audit/transfer controller is SHA `5559f800...97529`; its audit
+  child is PID `14960` with launch-intent SHA `c34feeb5...dab8`. The first
+  progress receipt is healthy and transfer remains fail-closed until a
+  complete independent audit receipt exists.

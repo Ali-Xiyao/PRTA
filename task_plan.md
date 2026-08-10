@@ -2166,9 +2166,11 @@ may start without new explicit authority that also respects this HOLD.
   user's explicit GPU0-only authorization, freeze and launch immutable
   attempt3 with `CUDA_VISIBLE_DEVICES=0`, GPU1 hidden, and re-encoding
   structurally prohibited.
-- [ ] Complete attempt3 terminal shard validation/store consolidation,
-  finalize and independently verify the Block-2 cache, then transfer and
-  verify only its six-file Train/Dev runtime surface on the server.
+- [x] Complete attempt3 terminal shard validation/store consolidation and
+  controller finalization without re-encoding.
+- [ ] Complete the independently frozen Block-2 shard/finiteness audit, then
+  transfer and verify only its six-file Train/Dev runtime surface on the
+  server.
 
 ## Errors Encountered
 
@@ -2249,3 +2251,6 @@ may start without new explicit authority that also respects this HOLD.
 | The first attempt3 finalization shell wrapper timed out after 64 seconds while hashing the 44.2-GB training store | 1 | The Python finalizer remained alive as PID `22112`; the receipt was still absent, so no immutable artifact was partially written. Do not launch a duplicate. Monitor the existing process until it atomically writes the finalization receipt or terminally fails. |
 | The first combined attempt3 milestone planning patch omitted `the` from an exact progress-file context line | 1 | The patch failed atomically and changed no file. Reapply the three file-local updates with exact current context. |
 | The first attempt3-finalization planning patch mixed a `findings.md` paragraph into the `progress.md` context | 1 | The patch failed atomically and changed no file. Split the update by file and apply each exact current paragraph separately. |
+| The first remote Block-2 target probe embedded `$(dirname ...)` in a PowerShell-to-SSH command, so PowerShell interpreted the substitution locally | 1 | The probe failed before remote mutation. Reissued the read-only check with the explicit frozen parent path; the canonical target is absent and the server filesystem has sufficient space. |
+| The new Block-2 audit/transfer controller passed compilation and Ruff lint but had pending formatter output | 1 | The transfer namespace was still absent. Applied only Ruff's mechanical formatting and repeated compilation, lint, and format checks successfully before preparation. |
+| A server status probe used the nonexistent SSH alias `server` | 1 | The read-only call never reached the server. Resolved the configured `sues-hpc` alias and reran the frozen server controller status successfully; no runtime state changed. |

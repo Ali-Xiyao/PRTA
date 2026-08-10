@@ -5945,3 +5945,19 @@
   `070c5526293c7d94ab3d3efb7bb08efa39ab7bb4fd6d1ab1e95316c6ae02bed3`;
   it binds the manifest/store hashes, 146110 images, 571 shards, zero
   temporary fragments, no re-encoding, GPU1 hidden, and zero protected reads.
+
+## 2026-08-10 Wave041 Block-2 independent audit launch
+
+- Froze private `cache_transfer_attempt1_block2_verified` controller SHA
+  `5559f8006d46513f082eeaf5ca89236a0300fddeddeb253bbe816896aef97529`,
+  bound to the exact attempt3 build/finalization/manifest/store/text hashes.
+- Launched the CPU/disk-only independent audit as detached PID `14960` with
+  launch-intent SHA
+  `c34feeb5080640efacea7a9efd46612d9481d16af013c3f91505d4bb0507dab8`.
+  The first live progress record reached 10/571 shards and 2,560/146,110
+  images with zero protected reads; no GPU is used and transfer remains
+  locked until the full audit passes.
+- The canonical server transfer target was independently confirmed absent
+  before preparation. Wave041 remains at frozen stage2 on steps 3066.70 and
+  9929.57 with both telemetry steps alive, no failure, and zero protected
+  reads.
