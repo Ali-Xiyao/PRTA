@@ -2325,3 +2325,12 @@
   `436b6041...ade7e1` and `af6adf4e...1d789b`. Zero protected reads were
   recorded, and the cache is now immutable and eligible for the already-
   frozen Tail10 cells; no cache construction or transfer work remains.
+
+# 2026-08-10 Wave041 stage3 transition finding
+
+- Stage3 completed and stage4 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage3 aggregate SHA is
+  `5bcb62cb...3cf7e8`.
+- Stage4 runs the frozen no-opposite-direction-cost / no-state Seed17 pair on
+  the two retained allocations. Parents, telemetry, and zero-protected-read
+  guards remain intact.

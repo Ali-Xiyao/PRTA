@@ -6008,3 +6008,13 @@
   SHA is `af6adf4e12d69ab7dd141d459c467e58a8f3893ff7805b0d7ee7997fd71d789b`;
   status is `PASS_BLOCK2_CACHE_TRANSFER_AND_SERVER_VERIFICATION_COMPLETE`,
   with zero Internal-test/Gold reads. Tail10 stages are now unblocked.
+
+## 2026-08-10 Wave041 stage3 terminal and stage4 advance
+
+- The frozen supervisor closed stage3 from both complete terminal receipts
+  and wrote immutable no-selection aggregate SHA
+  `5bcb62cb9db4ef295a7d852d4427ee6f3568b5a7f9cacfc57f5690e5cd3cf7e8`.
+- It advanced the unchanged queue to stage4: no-opposite-direction-cost Seed17
+  on allocation 3066 step 3066.72 and no-state Seed17 on allocation 9929 step
+  9929.59. Both parent allocations and telemetry steps remain alive, no
+  failure exists, and protected-read count remains zero.
