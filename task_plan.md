@@ -2108,7 +2108,7 @@ may start without new explicit authority that also respects this HOLD.
   final reporting hierarchy must treat the 12,219-row physician-reviewed set
   as the official Internal-test and the 13,219-row set only as a pre-review
   data-quality baseline.
-- [ ] Commit only the new Git-safe result package plus aggregate planning files
+- [x] Commit only the new Git-safe result package plus aggregate planning files
   and push only to the local bare remote. Keep private runtime and the two
   user-modified paper documents unstaged.
 
