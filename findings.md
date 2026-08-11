@@ -2493,6 +2493,12 @@
 - Four GPUs may be used only with hardware identity retained per cell. Wall
   time and peak-memory summaries must be stratified by hardware; protected
   evaluation data remains closed.
+- The minimal complete repaired-method matrix has 13 variants x three seeds:
+  11 newly trained variants plus Wave042 repaired-dual/state0 as `no_state`
+  and Wave042 transition-only as `no_dual`. The 33 new cells are full,
+  no-finding, no-cross-time-alignment, no-direction-margin,
+  no-opposite-direction-cost, classification-only, and five non-tail8 scope
+  variants. Tail8 is the full parent and is not duplicated as a scope row.
 
 # 2026-08-11 Wave041 stage10 transition finding
 

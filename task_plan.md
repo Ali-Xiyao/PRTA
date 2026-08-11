@@ -50,6 +50,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Initial repaired-ablation lint found one 89-character experiment-ID line and pending formatter changes | 1 | Split the slug construction from the f-string, run Ruff formatting once, then repeat tests and lint before freezing any queue. |
 | Broad `rg` diagnosis exceeded output and included a nonexistent `experiments` path | 1 | Narrowed inspection to exact model/head/engine files and line ranges |
 | Initial three-file planning patch used the wrong progress heading | 1 | Verified exact headings and reapplied with the correct context |
 | Ruff import-format check found one extra blank line | 1 | Inspected Ruff's proposed diff and removed only that line |

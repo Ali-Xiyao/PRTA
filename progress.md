@@ -6246,6 +6246,10 @@
 - Both local RTX3090 GPUs were observed at 0% utilization and 0 MiB compute
   memory with no compute applications. The user explicitly authorized using
   them together with both server A800s to accelerate the replacement queue.
+- Added the outcome-independent repaired-ablation builder and focused tests.
+  The frozen new matrix contains 33 new cells across 11 unique variants and
+  Seeds17/28/43; Wave042 supplies the six already-valid no-state/no-dual cells.
+  All seven focused tests plus Ruff lint/format checks pass.
 
 ## 2026-08-11 Wave041 stage10 terminal and stage11 advance
 
