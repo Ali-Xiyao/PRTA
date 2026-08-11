@@ -3,7 +3,6 @@ from copy import deepcopy
 import pytest
 
 from prta_cxr.dual_branch_repair import (
-    BRANCH_DECORRELATION_WEIGHT,
     build_dual_branch_repair_configs,
     evaluate_dual_branch_gate,
 )
@@ -55,16 +54,12 @@ def test_repair_matrix_is_frozen_paired_and_parent_is_unchanged():
         assert config["model"]["adapter_scope"] == "tail8"
         assert config["loss_weights"]["direction_margin"] == 0.01
         assert config["loss_weights"]["opposite_direction_cost"] == 0.05
+        assert config["loss_weights"]["state"] == 0.0
+        assert config["loss_weights"]["branch_decorrelation"] == 0.0
         if config["repair_variant"] == "transition_only":
             assert config["model"]["native_head"] == "H0"
-            assert config["loss_weights"]["state"] == 0.0
-            assert config["loss_weights"]["branch_decorrelation"] == 0.0
         else:
             assert config["model"]["native_head"] == "H4"
-            assert config["loss_weights"]["state"] == 0.025
-            assert config["loss_weights"]["branch_decorrelation"] == (
-                BRANCH_DECORRELATION_WEIGHT
-            )
 
 
 def test_repair_parent_contract_rejects_method_drift():

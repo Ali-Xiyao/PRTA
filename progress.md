@@ -96,6 +96,13 @@
   `111511450637adf4e0b4954157077b57898704f1692db9716c6584d3ab018051`.
   It reports `WAITING_FOR_WAVE041_TERMINAL`, zero scientific child starts and
   zero protected reads while Wave041 remains at stage10/15.
+- Pre-launch causal-isolation review found that attempt1's repaired arm also
+  enabled state preservation and a new decorrelation penalty. No scientific
+  child had started. Marked this as a mixed-change design that must remain
+  unrun; changed the matrix builder so both arms have state/decorrelation
+  weights exactly zero. The later auxiliary-loss rescue remains separate.
+- The corrected architecture-only matrix passed all 225 tests, repository-wide
+  Ruff, and compileall before any new source deployment.
 - Logged two recoverable setup errors: an overly broad `rg` inspection and an
   initial planning patch with the wrong progress-file heading.
 

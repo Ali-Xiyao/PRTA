@@ -61,6 +61,13 @@
   share either allocation with the current queue. Auxiliary-loss rescue stays
   locked until the repaired-dual versus transition-only three-seed gate is
   terminal, avoiding simultaneous mechanism and loss changes.
+- A final pre-launch audit showed the first frozen Wave042 attempt did not yet
+  satisfy that separation: its H4 arm also carried state preservation and a
+  new branch-decorrelation term. Because it had launched no scientific child,
+  it can be preserved as an unrun design receipt while an immutable attempt2
+  tests H0 transition-only versus H4 repaired dual with both state and
+  decorrelation weights fixed to zero. This makes the first result an
+  architecture test; loss rescue can follow without ambiguity.
 - Only the isolated repair snapshot and new Wave042 waiting namespace were
   created. The active Wave041 queue, allocations, caches, primary worktree,
   Internal-test, and Gold surfaces were not modified or opened.

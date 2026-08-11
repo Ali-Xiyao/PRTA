@@ -7,7 +7,6 @@ from typing import Any
 
 SEEDS = (17, 28, 43)
 VARIANTS = ("transition_only", "repaired_dual")
-BRANCH_DECORRELATION_WEIGHT = 0.01
 PRACTICAL_MACRO_F1_MARGIN = 0.002
 
 
@@ -50,19 +49,21 @@ def build_dual_branch_repair_configs(
             model["adapter_scope"] = "tail8"
             components = dict(model["components"])
             weights = dict(config["loss_weights"])
+            # The mechanism gate isolates architecture. State preservation and
+            # branch decorrelation are reserved for the later auxiliary-loss
+            # rescue, so both arms receive identical auxiliary-loss weights.
+            weights["state"] = 0.0
+            weights["branch_decorrelation"] = 0.0
             if variant == "transition_only":
                 model["native_head"] = "H0"
                 components["dual_branch"] = False
                 components["branch_mode"] = "transition_only"
                 components["bounded_state_anchor"] = False
-                weights["state"] = 0.0
-                weights["branch_decorrelation"] = 0.0
             else:
                 model["native_head"] = "H4"
                 components["dual_branch"] = True
                 components["branch_mode"] = "repaired_dual"
                 components["bounded_state_anchor"] = True
-                weights["branch_decorrelation"] = BRANCH_DECORRELATION_WEIGHT
             model["components"] = components
             config["model"] = model
             config["loss_weights"] = weights
