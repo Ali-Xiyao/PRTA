@@ -17,7 +17,7 @@ def _parent() -> dict[str, object]:
         "model": {
             "family": "prta",
             "native_head": "H0",
-            "adapter_scope": "tail8",
+            "adapter_scope": "tail4",
             "components": {
                 "finding_conditioning": True,
                 "cross_time_alignment": True,

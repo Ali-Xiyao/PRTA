@@ -50,6 +50,9 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| First Wave043 freeze rejected the exact Wave029 parent because the new validator incorrectly required its post-transform tail8 scope instead of its immutable source tail4 scope | 1 | The failure occurred before any staging namespace was created. Validate the exact tail4 source parent, transform it to repaired tail8 inside the builder, update the focused fixture, and rerun all gates before freezing. |
+| Initial Wave043 private controller lint found one 89-character reused-cell mapping line and pending formatter changes | 1 | Name the mapped final variant before constructing the receipt row, format only the new controller, then rerun compile/lint/format gates. |
+| First remote deployment-receipt writer was corrupted by nested PowerShell/SSH quoting before Python ran | 1 | Preserve the already verified snapshot/archive, create a fixed local Python writer with `apply_patch`, transfer it as a file, and execute that exact script remotely instead of repeating inline quoting. |
 | Repository-wide Ruff format check reported 91 pre-existing files that current Ruff would reformat after all 228 tests and Ruff lint passed | 1 | Do not bulk-format unrelated historical files. Keep the focused repaired files format-clean and record the repository-wide format baseline separately. |
 | Initial repaired-ablation lint found one 89-character experiment-ID line and pending formatter changes | 1 | Split the slug construction from the f-string, run Ruff formatting once, then repeat tests and lint before freezing any queue. |
 | Broad `rg` diagnosis exceeded output and included a nonexistent `experiments` path | 1 | Narrowed inspection to exact model/head/engine files and line ranges |

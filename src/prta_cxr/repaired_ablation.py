@@ -41,8 +41,8 @@ def _validate_legacy_parent(parent: Mapping[str, Any]) -> None:
         raise ValueError("repaired ablation parent must be PRTA")
     if model.get("native_head") != "H0":
         raise ValueError("repaired ablation source parent must use native_head=H0")
-    if model.get("adapter_scope") != "tail8":
-        raise ValueError("repaired ablation source parent must use tail8")
+    if model.get("adapter_scope") != "tail4":
+        raise ValueError("repaired ablation source parent must use tail4")
     for name in ("finding_conditioning", "cross_time_alignment", "dual_branch"):
         if not bool(components.get(name, False)):
             raise ValueError(f"repaired ablation source parent requires {name}=true")
