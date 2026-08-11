@@ -2493,3 +2493,12 @@
 - Four GPUs may be used only with hardware identity retained per cell. Wall
   time and peak-memory summaries must be stratified by hardware; protected
   evaluation data remains closed.
+
+# 2026-08-11 Wave041 stage10 transition finding
+
+- Stage10 completed and stage11 launched exactly according to the frozen
+  queue; no terminal outcome changed any later cell. Stage10 aggregate SHA is
+  `5507acf3...319caa`.
+- Stage11 runs the frozen no-finding / no-cross-time-alignment Seed43 pair on
+  the two retained allocations. Parents, telemetry, and zero-protected-read
+  guards remain intact.

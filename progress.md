@@ -6246,3 +6246,13 @@
 - Both local RTX3090 GPUs were observed at 0% utilization and 0 MiB compute
   memory with no compute applications. The user explicitly authorized using
   them together with both server A800s to accelerate the replacement queue.
+
+## 2026-08-11 Wave041 stage10 terminal and stage11 advance
+
+- The frozen supervisor closed stage10 from both complete terminal receipts
+  and wrote immutable no-selection aggregate SHA
+  `5507acf3ae4d4634f19bd5553d60f4cae84c6dccc4d65486009c76dad0319caa`.
+- It advanced the unchanged queue to stage11: no-finding Seed43 on allocation
+  3066 step 3066.79 and no-cross-time-alignment Seed43 on allocation 9929 step
+  9929.66. Both parent allocations and telemetry steps remain alive, no
+  failure exists, and protected-read count remains zero.
