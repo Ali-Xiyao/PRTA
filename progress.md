@@ -51,6 +51,51 @@
 - A review command using `git diff --no-index` returned exit code 1 because
   differences were present; this is Git's expected diff status, not a failed
   verification.
+- Committed the isolated repair as `b804050` and pushed only branch
+  `codex/dual-branch-repair-v1` to the local bare remote. Nothing was pushed to
+  the cloud `origin`.
+- Read-only server status confirmed Wave041 remains healthy and frozen at
+  stage10/15 with both allocations occupied by the exact stage10 pair. The
+  repair queue was not inserted or launched; it remains next-priority work
+  after Wave041 releases both allocations.
+- A read-only `squeue` probe used `%T`, which this Slurm version rejected as a
+  step format token while still returning rows. Future probes will use the
+  controller's normalized status or supported step fields.
+- Packaged committed repair source `b804050ed91f2f2e29ab79ffd876974471183686`
+  into a 1,326,408-byte archive with SHA256
+  `666e48df96a67c7e7404b6206cf6ed7b7349247b995d5fca35da1da38fc446ad`.
+  The unique remote snapshot/archive targets were confirmed absent before
+  transfer. No standard project-local Python 3.11 path was found by the first
+  probe, so deployment validation will reuse the exact environment from the
+  active launch contract rather than guess.
+- Deployed that exact archive to the unique server source snapshot
+  `PRTA-CXR-source-snapshots/b804050ed91f2f2e29ab79ffd876974471183686`.
+  Server-side focused pytest (30), Ruff, and compileall passed. Immutable
+  deployment receipt SHA is
+  `99ff1a87b6302d72767530158ecd0cec71d3aa4487c4a6e30f0af9b1c9d15382`;
+  it records zero protected reads and no formal training start.
+- Inspected the active Wave041 controller/launcher contract only (no outcome
+  reads). The next queue can safely use the same retained allocations, Block-4
+  Tail8 cache, formal launcher, terminal-receipt verification, and paired-stage
+  aggregation after an explicit Wave041-terminal prerequisite.
+- Added an isolated Wave042 controller that freezes six paired cells and can
+  run a detached wait-only supervisor; it cannot launch scientific work before
+  Wave041's exact terminal aggregate and free-allocation checks. Initial Ruff
+  validation found an unused import, one blank line, and one overlong line;
+  corrected all three based on Ruff's diff.
+- Strengthened the controller with exact hashes for the repaired model, head,
+  engine, repair-matrix module, and server launcher. Local and remote Ruff plus
+  compile checks passed; final controller SHA is
+  `bca187ea50f4622b893b8a71100b918cc676f4d0c7455f67c5792aee2434e25d`.
+- Froze Wave042 as the next-priority Train/Dev queue without modifying Wave041.
+  Preparation receipt SHA is
+  `506feed2af46720993b678445e80c6ab9fa6e020533eb111be42128029bf1242`.
+  The six mandatory cells compare clean transition-only and repaired H4 dual
+  branch at Seeds 17/28/43 in three balanced paired stages.
+- Started only the detached wait supervisor, PID `2524288`; its control SHA is
+  `111511450637adf4e0b4954157077b57898704f1692db9716c6584d3ab018051`.
+  It reports `WAITING_FOR_WAVE041_TERMINAL`, zero scientific child starts and
+  zero protected reads while Wave041 remains at stage10/15.
 - Logged two recoverable setup errors: an overly broad `rg` inspection and an
   initial planning patch with the wrong progress-file heading.
 

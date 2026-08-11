@@ -31,8 +31,8 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Freeze repair design and acceptance rule | complete | paired three-seed Tail8 matrix; mean delta >=0.002 and >=2 seed wins |
 | Implement clean transition-only and repaired dual branch | complete | focused pytest 26 passed; focused Ruff passed |
 | Engineering verification | complete | 225 pytest; Ruff; compileall; four preflights; synthetic smoke PASS |
-| Prepare immutable Train/Dev three-seed queue | in progress | `dual_branch_repair.py` six-cell matrix; server controller pending |
-| Run repaired dual-branch gate | blocked | requires free retained allocation without disturbing Wave041 |
+| Prepare immutable Train/Dev three-seed queue | complete | Wave042 preparation SHA `506feed2...1242`; wait-only supervisor PID `2524288` |
+| Run repaired dual-branch gate | waiting | first-priority after Wave041 terminal; no scientific child started |
 | Auxiliary-loss rescue | blocked | requires dual-branch gate decision |
 
 ## Stop rules
@@ -52,6 +52,8 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Initial three-file planning patch used the wrong progress heading | 1 | Verified exact headings and reapplied with the correct context |
 | Ruff import-format check found one extra blank line | 1 | Inspected Ruff's proposed diff and removed only that line |
 | `git diff --no-index` returned status 1 while reviewing new files | 1 | Confirmed status 1 means differences found; no retry required |
+| Slurm step format rejected `%T` in a read-only probe | 1 | Use frozen controller status or supported `squeue -s` fields |
+| Wave042 controller Ruff found unused import/format/line length | 1 | Removed unused import/blank and split the status comparison |
 
 # PRTA-CXR full-data training pipeline implementation
 

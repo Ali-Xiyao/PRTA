@@ -51,8 +51,19 @@
   query and state appear only in the gated joint expert. This prevents a direct
   query/extra-MLP confound when comparing H4 with the clean H0 transition-only
   control.
-- No code, queue, allocation, runtime artifact, cache, Internal-test, or Gold
-  surface has been mutated or opened by this isolated task.
+- The active Wave041 supervisor launches immutable two-cell stages and writes
+  terminal per-stage aggregates before advancing. Wave042 can preserve this
+  execution contract with three paired stages, but its supervisor must remain
+  in a wait-only state until Wave041's final aggregate exists and both retained
+  allocations have no scientific child.
+- Wave042 is now frozen and waiting under that exact contract. It is the first
+  queued scientific work after Wave041, but it cannot preempt, reorder, or
+  share either allocation with the current queue. Auxiliary-loss rescue stays
+  locked until the repaired-dual versus transition-only three-seed gate is
+  terminal, avoiding simultaneous mechanism and loss changes.
+- Only the isolated repair snapshot and new Wave042 waiting namespace were
+  created. The active Wave041 queue, allocations, caches, primary worktree,
+  Internal-test, and Gold surfaces were not modified or opened.
 
 # Findings - full-data training pipeline
 
