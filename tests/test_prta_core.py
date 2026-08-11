@@ -7,9 +7,11 @@ from prta_cxr.models.heads import (
     NativeH1Head,
     NativeH2Head,
     NativeH3StateAnchoredHead,
+    NativeH4TransitionPrimaryGatedHead,
 )
 from prta_cxr.models.prta import (
     PRTATemporalAdapter,
+    branch_decorrelation_loss,
     cmcp_margin_loss,
     invert_progression_logits,
     opposite_direction_cost_loss,
@@ -226,6 +228,106 @@ def test_state_anchor_gate_is_bounded_and_zero_for_identical_pair():
         parameter.grad is not None
         for parameter in adapter.change_gate_projection.parameters()
     )
+
+
+def test_h4_is_transition_primary_and_trains_both_branches_when_changed():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        bounded_state_anchor=True,
+    )
+    head = NativeH4TransitionPrimaryGatedHead(16, hidden_width=16)
+    current = torch.randn(3, 9, 16)
+    query = torch.randn(3, 16)
+
+    identical = adapter(current, current, query)
+    transition = identical.transition_tokens.mean(dim=1)
+    expected = head.transition_head(transition)
+    assert torch.allclose(head(identical, query), expected)
+
+    changed = adapter(torch.zeros_like(current), current, query)
+    logits = head(changed, query)
+    logits.sum().backward()
+    assert any(
+        parameter.grad is not None
+        for parameter in adapter.state_resampler.parameters()
+    )
+    assert any(
+        parameter.grad is not None
+        for parameter in adapter.transition_resampler.parameters()
+    )
+
+
+def test_clean_transition_only_omits_state_branch_parameters():
+    config = {
+        "model": {
+            "family": "prta",
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "adapter_scope": "tail4",
+            "state_tokens": 4,
+            "transition_tokens": 4,
+            "dropout": 0.0,
+            "native_head": "H0",
+            "components": {
+                "dual_branch": False,
+                "branch_mode": "transition_only",
+            },
+        }
+    }
+    value = build_train_model(
+        [nn.Identity() for _ in range(4)], nn.Identity(), config
+    )
+    output, logits, _ = value(
+        torch.randn(2, 9, 16),
+        torch.randn(2, 9, 16),
+        torch.randn(2, 512),
+    )
+    assert value.adapter.state_resampler is None
+    assert value.adapter.state_norm is None
+    assert output.state_tokens is output.transition_tokens
+    assert output.state_embedding is output.transition_embedding
+    assert logits.shape == (2, 5)
+    assert not any("state_resampler" in name for name, _ in value.named_parameters())
+
+
+def test_branch_decorrelation_penalizes_collapsed_embeddings():
+    state = torch.eye(4)
+    orthogonal = state.roll(1, dims=1)
+    collapsed = branch_decorrelation_loss(state, state)
+    separated = branch_decorrelation_loss(state, orthogonal)
+    assert collapsed == pytest.approx(1.0)
+    assert separated == pytest.approx(0.0)
+
+
+def test_repaired_dual_requires_h4_and_bounded_gate():
+    base = {
+        "family": "prta",
+        "width": 16,
+        "heads": 4,
+        "adapter_rank": 4,
+        "adapter_scope": "tail4",
+        "state_tokens": 4,
+        "transition_tokens": 4,
+        "dropout": 0.0,
+        "native_head": "H4",
+        "components": {
+            "dual_branch": True,
+            "branch_mode": "repaired_dual",
+            "bounded_state_anchor": False,
+        },
+    }
+    with pytest.raises(ValueError, match="bounded_state_anchor=true"):
+        build_train_model(
+            [nn.Identity() for _ in range(4)],
+            nn.Identity(),
+            {"model": base},
+        )
 
 
 def test_direction_margin_penalizes_opposite_more_than_target():

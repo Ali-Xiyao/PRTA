@@ -1,3 +1,59 @@
+# Active findings: dual-branch repair v1
+
+- Wave041 Seed17/28 indicates `no_dual_branch` mean Macro-F1 about 0.55210,
+  above the reused full Tail8 mean about 0.54898; `classification_only` is
+  about 0.54989. Seed43 remains necessary before scientific interpretation.
+- The current `dual_branch=false` implementation is not a clean one-branch
+  model. `PRTATemporalAdapter` computes state and transition resamplers, then
+  `PRTATrainingModule.forward` replaces state tensors with transition tensors.
+  Native H1 therefore receives `[t, t, t*t, query]`. The result can reflect
+  representation tying/regularization rather than evidence against the
+  state/transition concept.
+- Both branches currently receive the same finding query and only the final
+  five-class objective distinguishes them. State preservation is a weak
+  frozen-current anchor, not explicit branch-identifiability supervision.
+- Likely failure mechanisms are redundant branch representations, a current
+  image shortcut through state, excess head capacity, and gradient conflict
+  between focal classification and auxiliary direction/state objectives.
+- Repair should preserve transition as the primary predictive feature, permit
+  state only as a bounded gated residual, and explicitly discourage state and
+  transition collapse. The clean transition-only control must be implemented
+  fairly before judging the repaired dual branch.
+- The repository already contains an untested-for-this-wave H3 bounded
+  state-anchor head. It predicts from a state expert and a temporal expert,
+  with a change-energy gate that is exactly zero for identical pairs. This is
+  a strong existing repair primitive and should be evaluated before inventing
+  a second overlapping head.
+- Wave041 inherits the Wave029 parent and changes `dual_branch=false` only by
+  aliasing the output state to transition. If the inherited native head is H0,
+  the classifier itself consumes transition only, and the no-dual effect is
+  mediated primarily through the nonzero state-preservation loss rather than
+  removal of a predictive state branch. The exact parent `native_head` must be
+  verified before freezing the repair matrix.
+- Remote parent-config inspection confirmed `native_head=H0`, Tail4 in the
+  stored parent (Wave041 changes normal component variants to Tail8), and a
+  nonzero state-preservation weight of 0.025. H0 consumes only transition
+  tokens. Therefore the current Wave041 no-dual result is not evidence that a
+  predictive state/transition fusion head is worse; it primarily tests whether
+  the state-preservation target is applied to a separate state embedding or to
+  the aliased transition embedding.
+- H3 was already run in Wave027 and failed badly on Seed17: Macro-F1
+  0.41317 without direct cost and 0.41345 with direct cost, versus its H0
+  parent 0.54287. H3 anchors on the current-state expert when its change gate
+  is zero, which is the wrong primary inductive bias for progression. H3 must
+  not be recycled as the repair.
+- The new repair should invert H3's priority: transition-only logits are the
+  base prediction; state may enter only through a bounded gated joint residual.
+  It also needs an explicit clean transition-only execution path so unused
+  state parameters are not counted or trained.
+- H4's base expert is intentionally parameter-identical in shape and input to
+  H0 (`LayerNorm(width) -> Linear(5)` on mean transition tokens). The finding
+  query and state appear only in the gated joint expert. This prevents a direct
+  query/extra-MLP confound when comparing H4 with the clean H0 transition-only
+  control.
+- No code, queue, allocation, runtime artifact, cache, Internal-test, or Gold
+  surface has been mutated or opened by this isolated task.
+
 # Findings - full-data training pipeline
 
 ## 2026-08-04 Sol all-risk rerun initial boundary

@@ -229,6 +229,7 @@ class PRTATemporalAdapter(nn.Module):
         frozen_final_norm: nn.Module | None = None,
         cross_time_alignment: bool = True,
         bounded_state_anchor: bool = False,
+        state_branch: bool = True,
         adapter_indices: Sequence[int] | None = None,
     ) -> None:
         super().__init__()
@@ -244,6 +245,7 @@ class PRTATemporalAdapter(nn.Module):
         )
         self.cross_time_alignment = bool(cross_time_alignment)
         self.bounded_state_anchor = bool(bounded_state_anchor)
+        self.state_branch = bool(state_branch)
         self.query_projection = nn.Sequential(
             nn.LayerNorm(width),
             nn.Linear(width, width),
@@ -261,11 +263,15 @@ class PRTATemporalAdapter(nn.Module):
             nn.Dropout(dropout),
             nn.Linear(width * 2, width),
         )
-        self.state_resampler = QueryResampler(
-            width=width,
-            heads=heads,
-            output_tokens=state_tokens,
-            dropout=dropout,
+        self.state_resampler = (
+            QueryResampler(
+                width=width,
+                heads=heads,
+                output_tokens=state_tokens,
+                dropout=dropout,
+            )
+            if self.state_branch
+            else None
         )
         self.transition_resampler = QueryResampler(
             width=width,
@@ -273,7 +279,7 @@ class PRTATemporalAdapter(nn.Module):
             output_tokens=transition_tokens,
             dropout=dropout,
         )
-        self.state_norm = nn.LayerNorm(width)
+        self.state_norm = nn.LayerNorm(width) if self.state_branch else None
         self.transition_norm = nn.LayerNorm(width)
         self.change_gate_projection = (
             nn.Sequential(
@@ -327,16 +333,22 @@ class PRTATemporalAdapter(nn.Module):
             dim=-1,
         )
         transition_source = current + self.relation_projection(relation)
-        state_tokens = self.state_resampler(current, query_condition)
         transition_tokens = self.transition_resampler(
             transition_source, query_condition
-        )
-        state_embedding = F.normalize(
-            self.state_norm(state_tokens.mean(dim=1)), dim=-1
         )
         transition_embedding = F.normalize(
             self.transition_norm(transition_tokens.mean(dim=1)), dim=-1
         )
+        if self.state_resampler is None:
+            state_tokens = transition_tokens
+            state_embedding = transition_embedding
+        else:
+            state_tokens = self.state_resampler(current, query_condition)
+            if self.state_norm is None:  # pragma: no cover - constructor invariant
+                raise RuntimeError("state norm missing for enabled state branch")
+            state_embedding = F.normalize(
+                self.state_norm(state_tokens.mean(dim=1)), dim=-1
+            )
         frozen_current_embedding = F.normalize(
             self.tail.forward_frozen(current_block8).mean(dim=1), dim=-1
         )
@@ -526,3 +538,17 @@ def state_preservation_loss(
             adapted_state, frozen_current_state.detach(), dim=-1
         )
     ).mean()
+
+
+def branch_decorrelation_loss(
+    state_embedding: torch.Tensor, transition_embedding: torch.Tensor
+) -> torch.Tensor:
+    """Discourage per-sample state/transition collapse without fixing direction."""
+    if state_embedding.shape != transition_embedding.shape:
+        raise ValueError("state/transition embedding shapes differ")
+    cosine = F.cosine_similarity(
+        state_embedding,
+        transition_embedding,
+        dim=-1,
+    )
+    return cosine.square().mean()

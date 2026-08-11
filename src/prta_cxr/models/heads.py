@@ -115,3 +115,44 @@ class NativeH3StateAnchoredHead(nn.Module):
         )
         temporal_logits = self.temporal_head(temporal_features)
         return state_logits + output.change_gate * (temporal_logits - state_logits)
+
+
+class NativeH4TransitionPrimaryGatedHead(nn.Module):
+    """Transition prediction with a bounded, change-gated dual-branch repair."""
+
+    def __init__(
+        self, width: int = 768, *, hidden_width: int | None = None, dropout: float = 0.0
+    ) -> None:
+        super().__init__()
+        hidden = width if hidden_width is None else hidden_width
+        self.transition_head = nn.Sequential(
+            nn.LayerNorm(width),
+            nn.Linear(width, len(PROGRESSION_LABELS)),
+        )
+        self.joint_head = nn.Sequential(
+            nn.LayerNorm(width * 4),
+            nn.Linear(width * 4, hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, output: PRTAOutput, query: torch.Tensor) -> torch.Tensor:
+        if output.change_gate is None:
+            raise ValueError("H4 requires bounded_state_anchor=true")
+        state = output.state_tokens.mean(dim=1)
+        transition = output.transition_tokens.mean(dim=1)
+        transition_logits = self.transition_head(transition)
+        joint_features = torch.cat(
+            (
+                state,
+                transition,
+                state * transition,
+                query,
+            ),
+            dim=-1,
+        )
+        joint_logits = self.joint_head(joint_features)
+        return transition_logits + output.change_gate * (
+            joint_logits - transition_logits
+        )

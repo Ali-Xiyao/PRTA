@@ -25,11 +25,13 @@ from prta_cxr.models.heads import (
     NativeH1Head,
     NativeH2Head,
     NativeH3StateAnchoredHead,
+    NativeH4TransitionPrimaryGatedHead,
 )
 from prta_cxr.models.prta import (
     FrozenTailWithAdapters,
     PRTATemporalAdapter,
     PRTATrainingHeads,
+    branch_decorrelation_loss,
     cmcp_margin_loss,
     opposite_direction_cost_loss,
     opposite_direction_margin_loss,
@@ -87,6 +89,16 @@ class PRTATrainModel(nn.Module):
         width = int(model.get("width", 768))
         self.finding_conditioning = bool(components.get("finding_conditioning", True))
         self.dual_branch = bool(components.get("dual_branch", True))
+        self.branch_mode = str(components.get("branch_mode", "legacy"))
+        if self.branch_mode not in {"legacy", "transition_only", "repaired_dual"}:
+            raise ValueError(
+                "model.components.branch_mode must be legacy, transition_only, "
+                "or repaired_dual"
+            )
+        if self.branch_mode == "transition_only" and self.dual_branch:
+            raise ValueError("transition_only branch mode requires dual_branch=false")
+        if self.branch_mode == "repaired_dual" and not self.dual_branch:
+            raise ValueError("repaired_dual branch mode requires dual_branch=true")
         self.adapter = PRTATemporalAdapter(
             frozen_tail,
             width=width,
@@ -98,6 +110,7 @@ class PRTATrainModel(nn.Module):
             frozen_final_norm=final_norm,
             cross_time_alignment=bool(components.get("cross_time_alignment", True)),
             bounded_state_anchor=bool(components.get("bounded_state_anchor", False)),
+            state_branch=self.branch_mode != "transition_only",
             adapter_indices=_adapter_indices(model, tail_length=len(frozen_tail)),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
@@ -116,8 +129,21 @@ class PRTATrainModel(nn.Module):
             self.native_head = NativeH3StateAnchoredHead(
                 width, dropout=float(model.get("dropout", 0.0))
             )
+        elif head_name == "H4":
+            self.native_head = NativeH4TransitionPrimaryGatedHead(
+                width, dropout=float(model.get("dropout", 0.0))
+            )
         else:
-            raise ValueError("native_head must be H0, H1, H2, or H3")
+            raise ValueError("native_head must be H0, H1, H2, H3, or H4")
+        if self.branch_mode == "transition_only" and head_name != "H0":
+            raise ValueError("transition_only branch mode requires native_head=H0")
+        if self.branch_mode == "repaired_dual":
+            if head_name != "H4":
+                raise ValueError("repaired_dual branch mode requires native_head=H4")
+            if not bool(components.get("bounded_state_anchor", False)):
+                raise ValueError(
+                    "repaired_dual branch mode requires bounded_state_anchor=true"
+                )
 
     def forward(
         self, prior: torch.Tensor, current: torch.Tensor, finding_text: torch.Tensor
@@ -126,7 +152,7 @@ class PRTATrainModel(nn.Module):
         if not self.finding_conditioning:
             query = torch.zeros_like(query)
         output = self.adapter(prior, current, query)
-        if not self.dual_branch:
+        if self.branch_mode == "legacy" and not self.dual_branch:
             output = replace(
                 output,
                 state_tokens=output.transition_tokens,
@@ -307,7 +333,13 @@ def _loss(
         )
     auxiliary_requested = any(
         float(weights.get(name, 0.0))
-        for name in ("alignment", "state", "inversion", "cmcp")
+        for name in (
+            "alignment",
+            "state",
+            "inversion",
+            "cmcp",
+            "branch_decorrelation",
+        )
     )
     if output is None:
         if auxiliary_requested:
@@ -319,6 +351,12 @@ def _loss(
     )
     total = total + float(weights.get("state", 0.0)) * state_preservation_loss(
         output.state_embedding, output.frozen_current_embedding
+    )
+    total = total + float(
+        weights.get("branch_decorrelation", 0.0)
+    ) * branch_decorrelation_loss(
+        output.state_embedding,
+        output.transition_embedding,
     )
     inversion_weight = float(weights.get("inversion", 0.0))
     if inversion_weight:

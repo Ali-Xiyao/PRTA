@@ -1,3 +1,59 @@
+# Active progress: dual-branch repair v1
+
+## 2026-08-11 isolated repair start
+
+- User authorized a dual-branch repair before deletion and requested that the
+  main Wave041 process remain unaffected.
+- Preserved the dirty primary worktree and created an isolated worktree at
+  `E:\Xiyaowang\050_VisualVIT\PRTA-CXR-dual-branch-repair` on branch
+  `codex/dual-branch-repair-v1`, based on commit
+  `d14d14270428a0a5f4bba42f7642d9d9c28c9f8d`.
+- Read repository rules and the gated-HPC planning reference. Formal remote
+  training stays blocked until an allocation is free without interrupting the
+  frozen Wave041 queue.
+- Read-only code inspection confirmed the current no-dual aliasing behavior
+  and the likely branch-identifiability issue. No protected outcomes opened.
+- Found the existing H3 bounded state-anchor implementation and identified a
+  critical interpretation check: Wave041 may use H0, in which case the current
+  no-dual ablation changes the state loss but not the classification features.
+- Verified the frozen parent remotely without accessing protected outcomes:
+  it uses H0. Located Wave027 terminal evidence showing H3 failed around
+  Macro-F1 0.413, so the repair will use a transition-primary rather than
+  state-primary gate.
+- Implemented the first isolated repair draft: explicit `transition_only`
+  execution omits state-resampler parameters; `repaired_dual` uses a new H4
+  transition-primary bounded joint expert; and an optional squared-cosine
+  branch-decorrelation loss discourages representation collapse. Added focused
+  tests for routing, gating, gradients, and decorrelation. No active runtime or
+  main-worktree files changed.
+- Focused verification passed: `python -m pytest tests/test_prta_core.py -q`
+  completed 26 tests, and focused Ruff checks passed for all edited source and
+  test files.
+- Added a frozen six-cell Train/Dev repair matrix builder: clean
+  transition-only versus repaired H4 on Seeds 17/28/43, all Tail8. Added a
+  no-selection contribution gate requiring mean paired Macro-F1 improvement
+  of at least 0.002 and wins on at least two of three seeds. Auxiliary-loss
+  rescue remains outside this matrix.
+- Focused repair tests passed (30 total). Ruff found one extra blank line in
+  the new module; removed it instead of repeating the same failing check
+  unchanged.
+- Re-ran the focused repair suite after the formatting correction: all 30
+  tests and Ruff now pass.
+- Full engineering verification passed on the isolated branch: 225 pytest
+  tests, repository-wide Ruff, compileall, repository/cache/training/evaluation
+  preflights, and the three-step synthetic smoke. The smoke opened no real or
+  protected data and wrote its checkpoint only under the Windows temp folder.
+- Code review caught a possible H4 confound: its first draft gave the base
+  transition expert an MLP and direct finding query unlike H0. Revised H4 so
+  the ungated base is exactly H0-shaped and all state/query fusion is confined
+  to the bounded joint expert.
+- Focused tests (30) and Ruff passed after the H0-parity correction.
+- A review command using `git diff --no-index` returned exit code 1 because
+  differences were present; this is Git's expected diff status, not a failed
+  verification.
+- Logged two recoverable setup errors: an overly broad `rg` inspection and an
+  initial planning patch with the wrong progress-file heading.
+
 # Progress - full-data training pipeline
 
 ## 2026-08-04 Sol all-risk Train/Dev rerun authorization

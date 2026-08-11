@@ -1,3 +1,58 @@
+# Active isolated task: dual-branch repair v1
+
+## Goal
+
+Repair the state/transition dual-branch mechanism before deciding whether to
+remove it. Work in the isolated `codex/dual-branch-repair-v1` worktree and do
+not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
+15-stage queue.
+
+## Method boundary
+
+- Development uses Train/Dev only; never open Internal-test or Gold.
+- Preserve all Wave041 artifacts and the verified Block-2/4/8 caches.
+- First establish a clean transition-only control because the current
+  `dual_branch=false` path aliases state to transition after both resamplers
+  have already run.
+- Repair specialization with the smallest mechanism change: keep current-only
+  state and relation-derived transition, add an explicit configurable
+  decorrelation loss, and use a transition-primary gated joint residual. Do
+  not reuse the previously failed state-primary H3 head.
+- Run engineering tests and synthetic smoke before any remote sync.
+- Do not launch formal training until the current Wave041 queue releases a GPU;
+  then use a new immutable namespace and frozen three-seed Train/Dev queue.
+- Auxiliary-loss rescue remains locked until the dual-branch gate is resolved.
+
+## Phases
+
+| Phase | Status | Evidence |
+|---|---|---|
+| Isolated worktree and diagnosis | complete | branch `codex/dual-branch-repair-v1`; exact model/head/engine code paths |
+| Freeze repair design and acceptance rule | complete | paired three-seed Tail8 matrix; mean delta >=0.002 and >=2 seed wins |
+| Implement clean transition-only and repaired dual branch | complete | focused pytest 26 passed; focused Ruff passed |
+| Engineering verification | complete | 225 pytest; Ruff; compileall; four preflights; synthetic smoke PASS |
+| Prepare immutable Train/Dev three-seed queue | in progress | `dual_branch_repair.py` six-cell matrix; server controller pending |
+| Run repaired dual-branch gate | blocked | requires free retained allocation without disturbing Wave041 |
+| Auxiliary-loss rescue | blocked | requires dual-branch gate decision |
+
+## Stop rules
+
+- Any protected-data read, cache-identity mismatch, or overlap with the active
+  scientific child is HOLD.
+- A failed engineering check blocks remote sync and training.
+- The repaired branch must beat the clean transition-only control by a frozen
+  practical margin across three seeds; otherwise simplify rather than tune
+  repeatedly on the same Dev outcomes.
+
+## Errors encountered
+
+| Error | Attempt | Resolution |
+|---|---:|---|
+| Broad `rg` diagnosis exceeded output and included a nonexistent `experiments` path | 1 | Narrowed inspection to exact model/head/engine files and line ranges |
+| Initial three-file planning patch used the wrong progress heading | 1 | Verified exact headings and reapplied with the correct context |
+| Ruff import-format check found one extra blank line | 1 | Inspected Ruff's proposed diff and removed only that line |
+| `git diff --no-index` returned status 1 while reviewing new files | 1 | Confirmed status 1 means differences found; no retry required |
+
 # PRTA-CXR full-data training pipeline implementation
 
 ## Goal
