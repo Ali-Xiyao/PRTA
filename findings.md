@@ -56,11 +56,17 @@
   execution contract with three paired stages, but its supervisor must remain
   in a wait-only state until Wave041's final aggregate exists and both retained
   allocations have no scientific child.
-- Wave042 attempt2 is now frozen and waiting under that exact contract. It is
-  the first queued scientific work after Wave041, but it cannot preempt,
-  reorder, or share either allocation with the current queue. Auxiliary-loss
-  rescue stays locked until the repaired-dual versus transition-only
-  three-seed gate is terminal.
+- Wave042 attempt2 was frozen under the wait-until-Wave041-terminal contract
+  and was later preserved unstarted when the user explicitly reprioritized the
+  server queue. Auxiliary-loss rescue stays locked until the repaired-dual
+  versus transition-only three-seed gate is terminal.
+- The later user priority instruction supersedes only attempt2's wait-until-
+  Wave041-terminal scheduling. Attempt3 inserts the repair after Wave041
+  stage11 without changing either scientific queue: the Wave041 supervisor is
+  paused while its two stage11 children finish naturally, Wave042 runs only
+  after both allocations are free, and a Python `finally` plus shell exit trap
+  resumes Wave041 afterward. This changes timing/order only, not any cell,
+  outcome, checkpoint, or protected-data boundary.
 - A final pre-launch audit showed the first frozen Wave042 attempt did not yet
   satisfy that separation: its H4 arm also carried state preservation and a
   new branch-decorrelation term. Because it had launched no scientific child,

@@ -119,6 +119,22 @@
 - Started attempt2's detached wait-only supervisor as PID `2543730`, control
   SHA `027e80d1...0b14`. It is `WAITING_FOR_WAVE041_TERMINAL`, has launched no
   scientific child, and records zero protected reads.
+- User reprioritized the server queue. Preserved attempt2 unstarted and stopped
+  only its wait process; supersede receipt SHA is `bcf5f86f...607a6`.
+- Froze a stage-boundary handoff intent (SHA `50cc9e05...e2233`) and sent
+  `SIGSTOP` only to Wave041 supervisor PID `3749601` while stage11 children
+  continued normally. Both child `srun` processes remained live; no training
+  child was canceled, stopped, or signaled.
+- Deployed and froze priority attempt3. Controller SHA is `04d25e10...7825e`,
+  preparation SHA is `05a2f9f1...2c30a`, and all six configs retain the
+  architecture-only `state=0` / `branch_decorrelation=0` contract.
+- Priority supervisor PID `2586539` is active with control SHA
+  `e54b1a29...a2a34`. It reports
+  `WAITING_FOR_WAVE041_STAGE11_CHILDREN`; after both allocations are free it
+  will run the three repair stages, then resume Wave041 even if repair fails.
+- The first attempt3 freeze audit lost a quoted Python string through the SSH
+  command layer and raised a SyntaxError. The read-only audit was split into
+  structural JSON checks plus fixed-string shell checks; both passed.
 - Logged two recoverable setup errors: an overly broad `rg` inspection and an
   initial planning patch with the wrong progress-file heading.
 

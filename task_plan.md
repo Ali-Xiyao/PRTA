@@ -31,8 +31,8 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Freeze repair design and acceptance rule | complete | paired three-seed Tail8 matrix; mean delta >=0.002 and >=2 seed wins |
 | Implement clean transition-only and repaired dual branch | complete | focused pytest 26 passed; focused Ruff passed |
 | Engineering verification | complete | 225 pytest; Ruff; compileall; four preflights; synthetic smoke PASS |
-| Prepare immutable Train/Dev three-seed queue | complete | architecture-only attempt2 preparation SHA `89db4ed5...71ee7`; waiter PID `2543730` |
-| Run repaired dual-branch gate | waiting | first-priority after Wave041 terminal; zero scientific children started |
+| Prepare immutable Train/Dev three-seed queue | complete | priority attempt3 preparation SHA `05a2f9f1...2c30a`; supervisor PID `2586539` |
+| Run repaired dual-branch gate | waiting | Wave041 paused at stage11 boundary; active children finish naturally, then repair starts |
 | Auxiliary-loss rescue | blocked | requires dual-branch gate decision |
 
 ## Stop rules
@@ -56,6 +56,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Wave042 controller Ruff found unused import/format/line length | 1 | Removed unused import/blank and split the status comparison |
 | Attempt1 mixed the structural H4 repair with new decorrelation/state-loss differences | 1 | Preserve it unstarted; replace it with an immutable architecture-only attempt2 before any GPU launch |
 | Attempt1 stop precheck grepped pretty JSON with an invalid single-line assumption | 1 | Parsed queue progress structurally, confirmed zero runs, then stopped only the wait supervisor |
+| Attempt3 freeze audit embedded a quoted shell string in an SSH here-document and lost the quotes | 1 | Kept the failed read-only audit, reran JSON and wrapper checks separately with structural parsing plus fixed-string grep |
 
 # PRTA-CXR full-data training pipeline implementation
 
