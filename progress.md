@@ -6299,3 +6299,32 @@
 - Updated heartbeat automation `prta-cxr-15` in place to monitor Wave043 every
   30 minutes, keep Wave041 stopped, and finalize only after all four immutable
   worker queues are terminal.
+
+## 2026-08-12 Wave043 seed-phase execution-order amendment
+
+- The user explicitly changed execution order before any Wave043 cell was
+  terminal: finish all Seed17 and Seed28 cells first, then run every Seed43
+  cell. No metric or outcome was read or used for this scheduling change.
+- Froze immutable amendment `seed17_seed28_then_seed43_v1`. Preparation receipt
+  SHA is `6e0513470f6db9579224c1197de7205c9cbf0fd14a86cae9728338e41b101bc0`;
+  control source SHA is
+  `63941b31156193f55f2e7fc9b0e841acb2c416d4fa59b367dcd6c6613d22e431`.
+- Administratively stopped original Seed43 worker PID `151061` and Slurm step
+  `9929.71` at `W043-FULL-S43`, after zero completed Seed43 cells. The partial
+  run directory and original worker failure receipt SHA
+  `cb1508af5a9e667903b066df1de3f1dea012ca4028fb2673b846e0a2aa6da2d7`
+  are preserved but superseded and cannot enter the final aggregate. Stop
+  control SHA is
+  `d1e63f86721c9127c2b57d27607443dbf9116df90416e5fe2725e780f6154044`.
+- Phase1 continues unchanged on three workers: all Seed17 cells on A800/3066
+  PID `151060`, and all Seed28 cells on RTX3090 PIDs `25268`/`20836`.
+  Allocation 9929 is now free except for its parent and telemetry.
+- Phase2 assignments are already frozen independently of phase1 outcomes. In
+  new namespace `seed43_phase2_attempt1`, A800/3066 receives full, no-finding,
+  no-cross-time-alignment, no-direction-margin, no-opposite-direction-cost,
+  and classification-only; A800/9929 receives no-tail, tail2, tail4, tail6,
+  and tail10. Launch is structurally blocked until all 22 phase1 cells are
+  terminal.
+- Updated the 30-minute heartbeat in place to treat the original Seed43
+  failure as expected administrative closure, never restart it, enforce the
+  phase gate, and launch only the predeclared phase2 split.

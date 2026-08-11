@@ -2525,3 +2525,19 @@
 - All four workers are live under the frozen preparation and repaired source.
   The old Wave041 supervisor is still stopped, so invalidated legacy outcomes
   cannot race into the replacement queue or final aggregate.
+
+# 2026-08-12 Wave043 seed-phase ordering finding
+
+- The initial four-worker concurrency statement above is superseded only for
+  execution order. Scientific configs, the 39-cell matrix, caches, budgets,
+  and final reporting contract remain unchanged.
+- Phase1 is now exactly Seeds17/28. The Seed43 lane was stopped before any cell
+  completed and its partial full-parent attempt is audit-only. This avoids
+  mixing a partially executed third seed into the first-two-seed phase.
+- Phase2 is not an adaptive continuation: its 11 Seed43 configs, new namespace,
+  order, and 6/5 split across the two identical A800 allocations were frozen
+  at amendment time. Only the presence of all phase1 terminal receipts may
+  unlock it; phase1 metric values cannot change or suppress any phase2 cell.
+- The sequential seed phase increases expected wall-clock time but gives the
+  requested reporting boundary: complete two-seed coverage for every variant
+  first, followed by the third seed for every variant.

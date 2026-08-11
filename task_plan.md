@@ -2273,6 +2273,15 @@ may start without new explicit authority that also respects this HOLD.
   keep each configuration/seed/budget/data/cache contract identical.
 - [x] Launch the four-worker queue only after local/server source, cache, GPU,
   process, disk, and zero-protected-read audits pass.
+- [x] Supersede the initial concurrent Seed43 lane before any Wave043 cell
+  completed, preserve its partial output, and freeze the user-requested
+  Seed17/Seed28-then-Seed43 execution order without changing any scientific
+  config or using an outcome.
+- [ ] Complete all 11 Seed17 cells and all 11 Seed28 cells before allowing any
+  Seed43 phase2 launch.
+- [ ] Launch the exact frozen Seed43 phase2 split only after the 22-cell phase1
+  terminal gate: six cells on A800/3066 and five cells on A800/9929 in a new
+  immutable namespace.
 - [ ] Complete immutable stage/final aggregates and update paper-ready result
   surfaces without using legacy-H0 results as evidence for the repaired method.
 
