@@ -2388,3 +2388,12 @@
 - Stage10 runs the frozen no-tail / tail2 Seed43 scope pair on the two retained
   allocations. Parents, telemetry, and zero-protected-read guards remain
   intact.
+
+# 2026-08-11 Wave041 stage10 transition finding
+
+- Stage10 completed and stage11 launched exactly according to the frozen
+  queue; no terminal outcome changed any later cell. Stage10 aggregate SHA is
+  `5507acf3...319caa`.
+- Stage11 runs the frozen no-finding / no-cross-time-alignment Seed43 pair on
+  the two retained allocations. Parents, telemetry, and zero-protected-read
+  guards remain intact.
