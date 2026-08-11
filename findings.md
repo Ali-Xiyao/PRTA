@@ -2508,3 +2508,20 @@
 - Stage11 runs the frozen no-finding / no-cross-time-alignment Seed43 pair on
   the two retained allocations. Parents, telemetry, and zero-protected-read
   guards remain intact.
+
+# 2026-08-11 Wave043 hardware-weighted repaired rerun finding
+
+- The repaired final matrix is frozen before outcomes at 13 variants x three
+  seeds. Thirty-three cells are newly trained; the six Wave042 mechanism-gate
+  cells are reused only as the exact no-state/no-dual rows.
+- Hardware allocation is deliberately asymmetric because the local RTX3090s
+  are slower: A800 allocations 3066/9929 receive 22/33 new cells, while local
+  GPUs 0/1 receive 6 and 5 cells. This accelerates completion without treating
+  hardware throughput as a scientific variable.
+- Cross-hardware seed mixing is prohibited. Seed17 is bound to A800/3066,
+  Seed43 to A800/9929, and Seed28 to the identical RTX3090 class. Accuracy
+  aggregation therefore remains by variant and seed, while wall time and peak
+  memory must be reported with hardware class rather than directly pooled.
+- All four workers are live under the frozen preparation and repaired source.
+  The old Wave041 supervisor is still stopped, so invalidated legacy outcomes
+  cannot race into the replacement queue or final aggregate.

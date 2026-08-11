@@ -6264,3 +6264,38 @@
   3066 step 3066.79 and no-cross-time-alignment Seed43 on allocation 9929 step
   9929.66. Both parent allocations and telemetry steps remain alive, no
   failure exists, and protected-read count remains zero.
+
+## 2026-08-11 Wave043 repaired queue frozen and launched
+
+- Froze the 39-cell repaired-method matrix: 33 new Train/Dev cells plus the six
+  valid Wave042 no-state/no-dual cells. Preparation SHA is
+  `6447355d263e9b3a1cccd40fad2e08482657535c0b27a6bdfe8a09b09eb4d334`;
+  invalidation receipt SHA is
+  `e171e32cd35fab1ec387bec6052a3dd3e8106d6b5368c5f63cc6feabb7a08a2b`.
+- Bound every new cell to repaired source commit
+  `789ad8437c15f9a009decf7c0b4d77f2d659b3b2`, deployment receipt SHA
+  `ddb244845f093d9f2c7c71827e2b9c37a60d6656f8a8f747bab6ccd41f628ccc`,
+  and the verified Block-8/Block-4/Block-2 cache boundaries. Three independent
+  representative preflights passed before any worker launch.
+- The frozen repaired controller SHA is
+  `7e28eaf0085f0b152ce7fbfdf80f0e11a66affb8faeb6e5cf6eb1dd590d7da75`;
+  the four-worker launch controller SHA is
+  `b37aae4de3a36a9942da87cc65164964a36658f378eeb040b615a9682b41289b`.
+- Launched local RTX3090 workers `local0` PID `25268` with six cells and
+  `local1` PID `20836` with five cells. Launch intent/control SHAs are
+  `099e7c8b02986e046745ec7cce38b1be91f2774a799d79d9b9b7dffada4ac028`
+  and `a03797524e69b1a4116eda58a98e60bd321c85e96c3167f82a68b550a86efbc0`.
+  Both GPUs show the expected Python compute process and allocated memory.
+- Launched server A800 workers `server3066` PID `151060` and `server9929` PID
+  `151061`, each with 11 cells. Launch intent/control SHAs are
+  `15d578c4ccc32778fd4481aa8a9d1f7d71047f1637c3791f190b75645a187975`
+  and `2a089f1d1ac27cfaa41c364908d899df24a2c18f96ea88764440403c0a263bd4`.
+  Their first exact children run in Slurm steps `3066.84` and `9929.71`.
+- The slower RTX3090s intentionally carry only 11/33 new cells, while the
+  A800s carry 22/33. Seed17 stays entirely on A800/3066, Seed43 stays entirely
+  on A800/9929, and Seed28 stays entirely on RTX3090 hardware. Wave041
+  supervisor PID `3749601` remains stopped in state `Ts`; zero protected reads
+  are recorded everywhere.
+- Updated heartbeat automation `prta-cxr-15` in place to monitor Wave043 every
+  30 minutes, keep Wave041 stopped, and finalize only after all four immutable
+  worker queues are terminal.

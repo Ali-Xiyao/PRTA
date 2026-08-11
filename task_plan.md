@@ -2263,15 +2263,15 @@ may start without new explicit authority that also respects this HOLD.
   invalidate every legacy-H0 result affected by the dual-branch repair.
 - [x] Pause Wave041 supervisor PID `3749601` at the stage12 boundary without
   cancelling its active children, parent allocations, or telemetry.
-- [ ] Write immutable invalidation/supersession receipts for Wave041 and all
+- [x] Write immutable invalidation/supersession receipts for Wave041 and all
   legacy Wave033/Wave041 ablation rows; preserve every artifact as audit history.
-- [ ] Freeze the final repaired-dual/H4 parent and the complete unique Train/Dev
+- [x] Freeze the final repaired-dual/H4 parent and the complete unique Train/Dev
   component plus no-tail/tail2/tail4/tail6/tail8/tail10 scope matrix before
   reading any new outcome.
-- [ ] Partition the frozen queue across retained A800 allocations 3066/9929 and
+- [x] Partition the frozen queue across retained A800 allocations 3066/9929 and
   the two authorized local RTX3090 GPUs with hardware identity recorded per cell;
   keep each configuration/seed/budget/data/cache contract identical.
-- [ ] Launch the four-worker queue only after local/server source, cache, GPU,
+- [x] Launch the four-worker queue only after local/server source, cache, GPU,
   process, disk, and zero-protected-read audits pass.
 - [ ] Complete immutable stage/final aggregates and update paper-ready result
   surfaces without using legacy-H0 results as evidence for the repaired method.
@@ -2367,3 +2367,7 @@ Stop rules:
 | The new Block-2 audit/transfer controller passed compilation and Ruff lint but had pending formatter output | 1 | The transfer namespace was still absent. Applied only Ruff's mechanical formatting and repeated compilation, lint, and format checks successfully before preparation. |
 | A server status probe used the nonexistent SSH alias `server` | 1 | The read-only call never reached the server. Resolved the configured `sues-hpc` alias and reran the frozen server controller status successfully; no runtime state changed. |
 | Two read-only remote transfer-size probes were corrupted by nested PowerShell/SSH Python quoting | 2 | Neither probe changed local or remote state. Replaced the embedded Python with a direct `ssh sues-hpc ls -l` against the exact allowlisted cache target and confirmed only the six expected files exist. |
+| The first Wave043 server extraction command let PowerShell expand a remote shell variable before SSH | 1 | Verified the frozen server target was still absent, then repeated the exact transfer/extraction with explicit absolute paths. Local and server preparation/controller/config identities subsequently matched; no experiment had launched during the failed attempt. |
+| The first Wave043 launch-controller gate reported Python-3.9-compatible `timezone.utc` under UP017 plus formatter drift | 1 | Added a documented file-local UP017 exemption for the server Python 3.9 constraint, applied Ruff formatting, and repeated compile/lint/format gates before copying or launching the controller. |
+| A local Wave043 status call guessed mode `status` instead of the frozen controller's `status-local`/`status-server` modes | 1 | The read-only command changed no state. Reissued the exact local/server status modes and verified all four frozen workers, hardware assignments, and zero protected reads. |
+| A post-launch Slurm step probe reused unsupported `%T` formatting and a remote hash probe lost `$ROOT` through PowerShell expansion | 1 | Both were read-only and the running worker identities were already confirmed. Reissued `squeue --steps` without the unsupported formatter and hashed the two exact absolute receipt paths; no job or artifact changed. |
