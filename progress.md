@@ -6250,6 +6250,10 @@
   The frozen new matrix contains 33 new cells across 11 unique variants and
   Seeds17/28/43; Wave042 supplies the six already-valid no-state/no-dual cells.
   All seven focused tests plus Ruff lint/format checks pass.
+- The complete repository test suite passes all 228 tests and repository-wide
+  Ruff lint passes. A global format-only check reports 91 historical files that
+  current Ruff would reformat; no unrelated bulk formatting was applied, while
+  both new repaired-ablation files pass their focused format check.
 
 ## 2026-08-11 Wave041 stage10 terminal and stage11 advance
 

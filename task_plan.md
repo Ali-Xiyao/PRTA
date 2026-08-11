@@ -50,6 +50,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Repository-wide Ruff format check reported 91 pre-existing files that current Ruff would reformat after all 228 tests and Ruff lint passed | 1 | Do not bulk-format unrelated historical files. Keep the focused repaired files format-clean and record the repository-wide format baseline separately. |
 | Initial repaired-ablation lint found one 89-character experiment-ID line and pending formatter changes | 1 | Split the slug construction from the f-string, run Ruff formatting once, then repeat tests and lint before freezing any queue. |
 | Broad `rg` diagnosis exceeded output and included a nonexistent `experiments` path | 1 | Narrowed inspection to exact model/head/engine files and line ranges |
 | Initial three-file planning patch used the wrong progress heading | 1 | Verified exact headings and reapplied with the correct context |
