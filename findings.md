@@ -2370,3 +2370,12 @@
 - Stage8 runs the frozen no-direction-margin / no-opposite-direction-cost
   Seed28 pair on the two retained allocations. Parents, telemetry, and zero-
   protected-read guards remain intact.
+
+# 2026-08-11 Wave041 stage8 transition finding
+
+- Stage8 completed and stage9 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage8 aggregate SHA is
+  `93eb09d5...ba41f1`.
+- Stage9 runs the frozen no-state / classification-only Seed28 pair on the two
+  retained allocations. Parents, telemetry, and zero-protected-read guards
+  remain intact.
