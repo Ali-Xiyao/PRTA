@@ -2379,3 +2379,12 @@
 - Stage9 runs the frozen no-state / classification-only Seed28 pair on the two
   retained allocations. Parents, telemetry, and zero-protected-read guards
   remain intact.
+
+# 2026-08-11 Wave041 stage9 transition finding
+
+- Stage9 completed and stage10 launched exactly according to the frozen queue;
+  no terminal outcome changed any later cell. Stage9 aggregate SHA is
+  `4bfe23a6...380809`.
+- Stage10 runs the frozen no-tail / tail2 Seed43 scope pair on the two retained
+  allocations. Parents, telemetry, and zero-protected-read guards remain
+  intact.
