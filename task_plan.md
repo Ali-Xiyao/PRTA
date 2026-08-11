@@ -31,8 +31,8 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Freeze repair design and acceptance rule | complete | paired three-seed Tail8 matrix; mean delta >=0.002 and >=2 seed wins |
 | Implement clean transition-only and repaired dual branch | complete | focused pytest 26 passed; focused Ruff passed |
 | Engineering verification | complete | 225 pytest; Ruff; compileall; four preflights; synthetic smoke PASS |
-| Prepare immutable Train/Dev three-seed queue | in progress | preserve mixed-change attempt1 unstarted; freeze architecture-only attempt2 |
-| Run repaired dual-branch gate | blocked | attempt2 source/controller deployment pending; Wave041 remains active |
+| Prepare immutable Train/Dev three-seed queue | complete | architecture-only attempt2 preparation SHA `89db4ed5...71ee7`; waiter PID `2543730` |
+| Run repaired dual-branch gate | waiting | first-priority after Wave041 terminal; zero scientific children started |
 | Auxiliary-loss rescue | blocked | requires dual-branch gate decision |
 
 ## Stop rules
@@ -55,6 +55,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Slurm step format rejected `%T` in a read-only probe | 1 | Use frozen controller status or supported `squeue -s` fields |
 | Wave042 controller Ruff found unused import/format/line length | 1 | Removed unused import/blank and split the status comparison |
 | Attempt1 mixed the structural H4 repair with new decorrelation/state-loss differences | 1 | Preserve it unstarted; replace it with an immutable architecture-only attempt2 before any GPU launch |
+| Attempt1 stop precheck grepped pretty JSON with an invalid single-line assumption | 1 | Parsed queue progress structurally, confirmed zero runs, then stopped only the wait supervisor |
 
 # PRTA-CXR full-data training pipeline implementation
 

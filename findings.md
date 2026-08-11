@@ -56,11 +56,11 @@
   execution contract with three paired stages, but its supervisor must remain
   in a wait-only state until Wave041's final aggregate exists and both retained
   allocations have no scientific child.
-- Wave042 is now frozen and waiting under that exact contract. It is the first
-  queued scientific work after Wave041, but it cannot preempt, reorder, or
-  share either allocation with the current queue. Auxiliary-loss rescue stays
-  locked until the repaired-dual versus transition-only three-seed gate is
-  terminal, avoiding simultaneous mechanism and loss changes.
+- Wave042 attempt2 is now frozen and waiting under that exact contract. It is
+  the first queued scientific work after Wave041, but it cannot preempt,
+  reorder, or share either allocation with the current queue. Auxiliary-loss
+  rescue stays locked until the repaired-dual versus transition-only
+  three-seed gate is terminal.
 - A final pre-launch audit showed the first frozen Wave042 attempt did not yet
   satisfy that separation: its H4 arm also carried state preservation and a
   new branch-decorrelation term. Because it had launched no scientific child,

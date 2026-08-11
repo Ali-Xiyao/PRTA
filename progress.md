@@ -103,6 +103,22 @@
   weights exactly zero. The later auxiliary-loss rescue remains separate.
 - The corrected architecture-only matrix passed all 225 tests, repository-wide
   Ruff, and compileall before any new source deployment.
+- Preserved attempt1 with zero run outputs and stopped only its non-GPU wait
+  supervisor. Immutable prelaunch stop receipt SHA is
+  `a37aec6266889d1f9812f14e2c02245071ce5aa9002cea73ab9370b4a8f5133b`.
+  The first stop precheck incorrectly assumed pretty JSON fields remained on
+  one line; a structural JSON check replaced it and verified the same state.
+- Committed the architecture-only correction as `bc39438`, pushed it only to
+  the local bare remote, and deployed its unique server source snapshot.
+  Archive SHA is `b9cd9554...6281c`; deployment receipt SHA is
+  `27c3ddc9...64509`; remote focused tests (30), Ruff, and compileall passed.
+- Froze corrected Wave042 attempt2 with preparation SHA
+  `89db4ed5aa5e67cb7765e9c4b62dfc5e4282579991b5284603214d9957b71ee7`
+  and controller SHA `8024ecfd...a0391`. Independent config inspection
+  confirmed all six cells use state/decorrelation weights `0.0/0.0`.
+- Started attempt2's detached wait-only supervisor as PID `2543730`, control
+  SHA `027e80d1...0b14`. It is `WAITING_FOR_WAVE041_TERMINAL`, has launched no
+  scientific child, and records zero protected reads.
 - Logged two recoverable setup errors: an overly broad `rg` inspection and an
   initial planning patch with the wrong progress-file heading.
 
