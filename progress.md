@@ -6231,3 +6231,18 @@
   allocation 3066 step 3066.78 and scope tail2 Seed43 on allocation 9929 step
   9929.65. Both parent allocations and telemetry steps remain alive, no
   failure exists, and protected-read count remains zero.
+
+## 2026-08-11 repaired-method queue replacement authorized
+
+- The user authorized modifying the queue, rerunning all affected experiments,
+  and marking every problematic legacy-H0 result invalid for final use.
+- Wave042 attempt3 is terminal with final aggregate SHA
+  `d48f80ce7ba33bc53fb49a10fe906b0532681c33e5c9e4522bc48163799c6e71`.
+  Repaired-dual exceeds transition-only by mean Dev Macro-F1
+  `0.0022984521436418457` and wins 2/3 paired seeds, satisfying the frozen gate.
+- Paused Wave041 supervisor PID `3749601` with `SIGSTOP`; its state is `Ts`.
+  Stage12 children on steps `3066.83` and `9929.70` were left untouched to
+  finish naturally. Parent allocations and telemetry remain alive.
+- Both local RTX3090 GPUs were observed at 0% utilization and 0 MiB compute
+  memory with no compute applications. The user explicitly authorized using
+  them together with both server A800s to accelerate the replacement queue.

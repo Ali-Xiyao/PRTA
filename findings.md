@@ -2477,3 +2477,19 @@
 - Stage10 runs the frozen no-tail / tail2 Seed43 scope pair on the two retained
   allocations. Parents, telemetry, and zero-protected-read guards remain
   intact.
+
+# 2026-08-11 repaired-dual invalidation and rerun finding
+
+- The accepted repair is a method-architecture change, not a bit-identical bug
+  fix: it introduces `branch_mode=repaired_dual`, the H4 transition-primary
+  gated head, a bounded change gate, and a true transition-only control.
+- Therefore legacy-H0 component/scope results cannot be combined with the
+  repaired method. They must remain immutable audit history but be explicitly
+  superseded for final tables and claims.
+- Wave042's architecture-only gate used state preservation and branch
+  decorrelation weights of zero in both arms. It proves contribution of the
+  repaired dual mechanism, but does not by itself replace the full repaired
+  parent with state weight `0.025` or its complete component/scope ablations.
+- Four GPUs may be used only with hardware identity retained per cell. Wall
+  time and peak-memory summaries must be stratified by hardware; protected
+  evaluation data remains closed.

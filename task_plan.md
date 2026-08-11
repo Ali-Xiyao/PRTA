@@ -2250,6 +2250,33 @@ may start without new explicit authority that also respects this HOLD.
 - [x] Transfer and verify only the Block-2 cache's six-file Train/Dev runtime
   surface on the server.
 
+## 2026-08-11: repaired-dual final-method ablation replacement
+
+- [x] Confirm Wave042 attempt3 terminal mechanism gate and the user decision to
+  invalidate every legacy-H0 result affected by the dual-branch repair.
+- [x] Pause Wave041 supervisor PID `3749601` at the stage12 boundary without
+  cancelling its active children, parent allocations, or telemetry.
+- [ ] Write immutable invalidation/supersession receipts for Wave041 and all
+  legacy Wave033/Wave041 ablation rows; preserve every artifact as audit history.
+- [ ] Freeze the final repaired-dual/H4 parent and the complete unique Train/Dev
+  component plus no-tail/tail2/tail4/tail6/tail8/tail10 scope matrix before
+  reading any new outcome.
+- [ ] Partition the frozen queue across retained A800 allocations 3066/9929 and
+  the two authorized local RTX3090 GPUs with hardware identity recorded per cell;
+  keep each configuration/seed/budget/data/cache contract identical.
+- [ ] Launch the four-worker queue only after local/server source, cache, GPU,
+  process, disk, and zero-protected-read audits pass.
+- [ ] Complete immutable stage/final aggregates and update paper-ready result
+  surfaces without using legacy-H0 results as evidence for the repaired method.
+
+Stop rules:
+
+- Internal-test and Gold remain structurally unreachable and must not be read.
+- Wave041 must never resume or launch stage13 after the invalidation decision.
+- Do not delete or mutate any Wave033/Wave041/Wave042 artifact.
+- Retry only identity-preserving infrastructure failures in new namespaces;
+  otherwise HOLD.
+
 ## Errors Encountered
 
 | Error | Attempt | Resolution |
