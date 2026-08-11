@@ -1,5 +1,18 @@
 # Active progress: dual-branch repair v1
 
+## 2026-08-11 dual-branch terminal result and reliability record
+
+- Architecture-only Wave042 attempt3 completed all six cells. Repaired H4
+  averaged Macro-F1 `0.5484006753` versus transition-only H0 `0.5461022231`,
+  a paired mean gain of `0.0022984521` with wins on Seeds 28 and 43.
+- The frozen mechanism gate passed. Wave041 resumed automatically at stage12;
+  no Internal-test/Gold surface was opened.
+- Added a dedicated Chinese record for the result and the proposed second
+  advantage: branch-disagreement uncertainty, selective referral, correction
+  auditing, and exploratory temporal counterfactual consistency. The document
+  explicitly marks reliability as unverified until its preset Train/Dev-only
+  rules pass.
+
 ## 2026-08-11 isolated repair start
 
 - User authorized a dual-branch repair before deletion and requested that the

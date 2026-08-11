@@ -32,8 +32,10 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 | Implement clean transition-only and repaired dual branch | complete | focused pytest 26 passed; focused Ruff passed |
 | Engineering verification | complete | 225 pytest; Ruff; compileall; four preflights; synthetic smoke PASS |
 | Prepare immutable Train/Dev three-seed queue | complete | priority attempt3 preparation SHA `05a2f9f1...2c30a`; supervisor PID `2586539` |
-| Run repaired dual-branch gate | waiting | Wave041 paused at stage11 boundary; active children finish naturally, then repair starts |
-| Auxiliary-loss rescue | blocked | requires dual-branch gate decision |
+| Run repaired dual-branch gate | complete | Wave042 attempt3 PASS; repaired mean `0.5484006753`, transition-only mean `0.5461022231`, paired delta `+0.0022984521`, wins 2/3 seeds |
+| Document branch-disagreement reliability hypothesis | complete | dedicated Chinese plan records selective referral, correction audit, baselines, limits, and preset success rules |
+| Evaluate branch-disagreement reliability | pending | reuse frozen Train/Dev checkpoints without retraining; no Internal-test/Gold access |
+| Auxiliary-loss rescue | deferred | structural repair passed; evaluate reliability signal before deciding whether auxiliary-loss tuning is scientifically necessary |
 
 ## Stop rules
 

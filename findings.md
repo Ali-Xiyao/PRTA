@@ -1,5 +1,14 @@
 # Active findings: dual-branch repair v1
 
+- The architecture-only repair passed its frozen gate: mean paired Macro-F1
+  delta is `+0.0022984521` and repaired H4 wins 2/3 seeds. This supports a
+  modest structural contribution, not a large accuracy claim.
+- The most defensible candidate for a second dual-branch advantage is
+  branch-disagreement uncertainty for selective referral. It is not yet an
+  observed result. It must outperform softmax entropy on AURC in at least 2/3
+  seeds, improve the 10% referral operating point, and retain a positive net
+  correction rate before entering the paper as an advantage.
+
 - Wave041 Seed17/28 indicates `no_dual_branch` mean Macro-F1 about 0.55210,
   above the reused full Tail8 mean about 0.54898; `classification_only` is
   about 0.54989. Seed43 remains necessary before scientific interpretation.
