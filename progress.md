@@ -6417,3 +6417,15 @@
 - Phase1 is 17/22 terminal with four cells active and one fixed cell queued.
   Timing-only extrapolation puts phase1 completion about 2-4 hours away and
   the full phase2-plus-aggregation completion about 15-19 hours away.
+
+## 2026-08-12 Wave043 A800/9929 final phase1 cell advance
+
+- `W043-SCOPE-TAIL6-S17` completed in 147.5 minutes. Its terminal
+  receipt/progress SHAs are
+  `cfdbb22bb41d03321ef0811f72852b3ed3c03625ee1ba822bf27521f4add21c3`
+  and `bc9ce7b531020625352aa8f0ca6032a8c60b34c26ea4f0d5068afdcf9d524ef9`;
+  both protected-read fields remain false.
+- A800/9929 advanced exactly to its last frozen phase1 cell,
+  `W043-SCOPE-TAIL2-S17`, in Slurm step `9929.74`. Phase1 is 18/22 terminal;
+  all four remaining cells are active, no lane failure exists, and Seed43
+  phase2 remains blocked.
