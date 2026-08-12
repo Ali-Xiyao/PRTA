@@ -2290,6 +2290,10 @@ may start without new explicit authority that also respects this HOLD.
   A800 phase1 lane receipts verify: six cells on A800/3066 and five cells on
   A800/9929 in a new immutable namespace. Do not wait for the independent local
   GPU1 Seed28 cell; it must continue unchanged to natural terminal state.
+- [x] Use the newly idle local GPU0 without touching any active child: freeze
+  `W043-CLASSIFICATION-ONLY-S43` onto RTX3090/GPU0, suspend only the A800/3066
+  queue parent while its active Full-S43 child drains, and continue the other
+  four predeclared 3066 cells in their original order after that receipt.
 - [ ] Independently verify all 22 Seed17/Seed28 cells before final aggregation,
   even though Seed43 execution may overlap the last local Seed28 cell.
 - [ ] Complete immutable stage/final aggregates and update paper-ready result

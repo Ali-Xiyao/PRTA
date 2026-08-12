@@ -6495,6 +6495,29 @@
   watcher `14588`. It was not cancelled, restarted, duplicated, or used to
   alter Seed43; all 22 phase1 cells remain mandatory before final aggregation.
 
+## 2026-08-12 Wave043 local GPU0 Seed43 acceleration
+
+- Before any Seed43 cell completed, the user authorized the newly idle local
+  GPU0. The outcome-independent amendment moves only the last not-yet-started
+  A800/3066 cell, `W043-CLASSIFICATION-ONLY-S43`, to RTX3090/GPU0. A800/3066
+  retains Full followed by no-finding, no-cross-time-alignment, no-direction-
+  margin, and no-opposite-direction-cost; A800/9929 is unchanged.
+- Immutable preparation/controller SHAs are
+  `e24d078c82d48f58cf05f08620e5eeee07fdf1d2365e5b9267abc39941c92a4c`
+  and `841fc1c10ce74cceb538aefd32fd40ced3951894081e1fde900aece82773f8d9`.
+  Server/local activation SHAs are
+  `fab9da143aa9e241db4db2bb506ea4d59b4642106edd0a50dc1fe8d47bf820c1`
+  and `09629a95c6a58709562feeeea27b69fcec08824d7ffd2387a80783794d50e2c4`.
+- Local watcher `19684` launched classification-only-S43 on GPU0; its child is
+  alive and GPU memory allocation has begun. The old 3066 queue parent
+  `3226088` is stopped in `Ts`, but Full-S43 continues unchanged in `3066.93`.
+  Continuation watcher `3285978` waits for its terminal receipt before closing
+  only that parent and launching the four remaining 3066 cells.
+- Four scientific cells now run concurrently: local Seed28 tail6, local Seed43
+  classification-only, server Full-S43, and server no-tail-S43. Eight Seed43
+  cells remain queued. No failure receipt exists and protected reads remain
+  zero.
+
 ## 2026-08-12 Wave043 two-seed partial ablation result record
 
 - This is a terminal-receipt-only Train/Dev snapshot, not the final Wave043

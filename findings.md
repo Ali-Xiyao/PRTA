@@ -2571,6 +2571,20 @@
   Full-S43 restarts from scratch under `seed43_phase2_attempt1`, while the old
   partial progress and failure receipt remain immutable audit history.
 
+# 2026-08-12 Wave043 GPU0 Seed43 acceleration finding
+
+- Assigning one Seed43 cell to the slower idle RTX3090 balances the remaining
+  work without making a metric-dependent choice: classification-only was the
+  final queued item on the longer six-cell 3066 lane, so moving it leaves five
+  total Seed43 cells per A800 lane and one independent local cell.
+- The active Full-S43 child is preserved on 3066. Suspending only its queue
+  parent prevents the original controller from later duplicating the migrated
+  classification-only cell; a new continuation watcher waits for Full-S43's
+  terminal receipt and then runs the exact other four cells in original order.
+- Hardware identity is explicit in the final matrix. Accuracy remains grouped
+  by variant and seed, while wall-clock and peak-memory reporting must remain
+  hardware-stratified; no intermediate metric informed this redistribution.
+
 # 2026-08-12 Wave043 partial-result optimization finding
 
 - The completed Seed17/28 terminal receipts give three directionally
