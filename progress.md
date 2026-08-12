@@ -6375,3 +6375,18 @@
   observed terminal A800 mean is about 133.6 minutes per cell and the observed
   RTX3090 mean is about 172.4 minutes per cell; these timing-only observations
   imply roughly 20-25 hours remain through Seed43 phase2 and final aggregation.
+
+## 2026-08-12 Wave043 server3066 preserved-cell drain transition
+
+- Preserved `W043-CLASSIFICATION-ONLY-S17` completed naturally in 116.4
+  minutes. Its training-receipt/progress SHAs are
+  `a62aef324812687e205341207db51e6e61d32ca14bf6cadf2369d2a0915795c2`
+  and `e0974d40ba06f1ac4614170b82bf9f76ed563485abe02565a93991501b776c21`;
+  both terminal records confirm zero protected reads.
+- The intentionally suspended old server3066 parent `151060` was closed only
+  after that terminal receipt appeared. Redistributed supervisor `1866357`
+  immediately advanced the exact frozen lane to
+  `W043-SCOPE-NO-TAIL-S17` in Slurm step `3066.90`.
+- Both A800 lanes, both RTX3090 lanes, parent allocations, and telemetry remain
+  active with no redistributed failure receipt. Phase1 is now 14/22 terminal;
+  Seed43 phase2 remains blocked until all eight remaining phase1 cells finish.
