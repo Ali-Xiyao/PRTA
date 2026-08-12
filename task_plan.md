@@ -1,5 +1,17 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave043 Seed43 9929 lane completion
+
+- `W043-NO-OPPOSITE-DIRECTION-COST-S43` is terminal PASS on A800/9929 with
+  training-receipt SHA `08fd09db...850b`, config-file SHA
+  `4909ca96...c449`, and lane-completion SHA `aa03e608...c0435`.
+- Both server scientific lanes are now terminal. Seed43 is 9/11 terminal with
+  only no-direction-margin-S43 on local GPU0 and tail10-S43 on local GPU1
+  still active; no scientific cell is queued.
+- Continue monitoring the two local RTX3090 lanes and keep server allocations
+  plus telemetry alive. Begin final verification/aggregation only after both
+  local terminal receipts exist and every 39-cell identity is verified.
+
 ## 2026-08-13 Wave043 Seed43 local GPU0 transition
 
 - `W043-CLASSIFICATION-ONLY-S43` is terminal PASS on RTX3090/GPU0 with

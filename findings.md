@@ -2677,3 +2677,14 @@
 - The newly started RTX3090 no-margin cell is likely the critical path. Using
   terminal wall time only, final verification is now conservatively expected
   around 08:30-10:00 CST rather than the earlier 03:30-05:30 estimate.
+# 2026-08-13 Wave043 Seed43 9929 terminal finding
+
+- No-opposite-direction-cost-S43 completed formal PASS on A800/9929 with
+  receipt SHA `08fd09db...850b`, config-file SHA `4909ca96...c449`, and zero
+  protected reads.
+- The 9929 lane is terminal with completion SHA `aa03e608...c0435`; both A800
+  lanes are now scientifically free. Only the two previously assigned local
+  RTX3090 cells remain, with no queue change or outcome-based adaptation.
+- Seed43 now has nine terminal cells and two active cells. Final aggregation
+  remains locked until both local receipts and all 39 final-matrix identities
+  verify.

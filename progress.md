@@ -6719,3 +6719,18 @@
   RTX3090 terminal wall time, no-margin is now the likely critical path; the
   conservative final verification/aggregation window shifts to approximately
   08:30-10:00 CST if infrastructure stays healthy.
+# 2026-08-13 03:11 CST - Wave043 9929 lane terminal
+
+- Independently verified `W043-NO-OPPOSITE-DIRECTION-COST-S43` as formal PASS
+  with exact frozen inputs, training-receipt SHA
+  `08fd09db3163421c215ff984fd819933b7298c4024f5d9d0062711170017850b`,
+  config-file SHA
+  `4909ca96d9e597dca9ca997d778f5abb7e3799a39eb373b325c63b050d44c449`,
+  and 9929 lane-completion SHA
+  `aa03e608c686f632f5e3472ae1863c749d9122aa27abc457f157552291dc0435`.
+- Receipt and completion record confirm zero protected reads. Both A800
+  scientific lanes are terminal and free; no failure receipt is present.
+- Seed43 is 9 terminal, 2 active, 0 queued. Remaining work is local no-margin
+  on GPU0 and tail10 on GPU1, then independent 39-cell verification and final
+  immutable aggregation. The conservative 08:30-10:00 CST final window is
+  unchanged.
