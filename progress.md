@@ -6653,3 +6653,21 @@
 - The fixed 9929 watcher launched the exact next cell tail4-S43 on step
   `9929.77`. Seed43 is now 3 terminal, 4 active, and 4 queued; no failure
   receipt exists on any lane and no assignment changed.
+
+## 2026-08-12 14:38 Wave043 tail4-S43 lane advance and refreshed ETA
+
+- Tail4-S43 reached formal terminal PASS with training-receipt SHA
+  `65c807bda3603a16dec5395d4cbb5a82824e17d6c55a17aa64cd696988191dab`
+  and exact config-file SHA
+  `cc5444b02a53bb609912d18ab43e20e4c6beaf9b4108b4dd88b182335406020c`.
+  Terminal wall clock is `4,528.185505` seconds; frozen input identities match
+  and Internal-test/protected-outcome flags remain false.
+- The fixed 9929 watcher launched exact next cell tail6-S43 on step `9929.78`.
+  Seed43 is now 4 terminal, 4 active, and 3 queued. The other active cells are
+  no-finding-S43 on 3066, classification-only-S43 on local GPU0, and
+  tail10-S43 on local GPU1; no failure receipt exists.
+- ETA is refreshed using only terminal wall-clock history and current process
+  start times. The likely critical path is local RTX3090 tail10 or the 9929
+  tail6/no-ODC chain. From 22:38 China time, scientific completion plus final
+  verification/aggregation is estimated at roughly 5-7 hours, retaining the
+  expected handoff window of approximately 03:30-05:30 on August 13.
