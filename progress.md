@@ -6457,3 +6457,19 @@
 - Phase1 is 20/22 terminal. Only local `W043-SCOPE-TAIL4-S28` and
   `W043-SCOPE-TAIL6-S28` remain active; the Seed43 phase2 launch remains blocked
   until both complete and the full 22-cell identity audit passes.
+
+## 2026-08-12 Wave043 local GPU0 phase1 lane terminal
+
+- `W043-SCOPE-TAIL4-S28` completed naturally in 420.1 minutes with terminal
+  receipt/progress SHAs
+  `e119d4ac628c7de9a90bcaaf946e8683f7d2b5e56cfca6381d50d40a7723cfb5`
+  and `dd8f17acdbabfd0c7165323a0efb6166f99705b80d42939a9d4a0871c21fc99a`;
+  its protected-read fields remain zero/false.
+- The redistributed local GPU0 lane is terminal with immutable completion
+  receipt SHA
+  `a336ec9cbabc09cda76147f7afc5065549696f3918144d01ff3cb1559e2e7623`.
+  Watcher `23724` exited normally and GPU0 is scientifically free.
+- Phase1 is 21/22 terminal. Only `W043-SCOPE-TAIL6-S28` remains active on local
+  GPU1 under watcher `14588`; both A800s and local GPU0 stay scientifically
+  idle until that final receipt completes and the independent 22-cell identity
+  audit opens the frozen Seed43 phase2 gate.
