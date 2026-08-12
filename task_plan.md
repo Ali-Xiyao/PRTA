@@ -2299,6 +2299,12 @@ may start without new explicit authority that also respects this HOLD.
   gets tail2/tail4/tail6/no-ODC; local GPU1 gets tail10 after its active Seed28
   cell; local GPU0 completes classification-only. Preserve every active child
   and prevent all superseded queue parents from duplicating a migrated cell.
+- [x] Before any of the three queued 3066 continuation cells started, freeze
+  the user-requested second GPU0 assignment by moving only the last queued
+  `W043-NO-DIRECTION-MARGIN-S43` cell behind the already-active local
+  classification-only cell. Replace only the idle 3066 continuation watcher,
+  retain no-finding then no-cross on 3066, and leave all active children plus
+  the 9929/GPU1 queues unchanged.
 - [ ] Independently verify all 22 Seed17/Seed28 cells before final aggregation,
   even though Seed43 execution may overlap the last local Seed28 cell.
 - [ ] Complete immutable stage/final aggregates and update paper-ready result
@@ -2316,6 +2322,9 @@ Stop rules:
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| A post-activation monitoring command used a malformed nested PowerShell/SSH loop and the remote half exited with an unmatched shell construct | 1 | The local status checks had already passed and no process was changed. Reissued the server read-only checks with explicit absolute paths; the replacement watcher, retained parents/children, and zero protected reads all verified. |
+| A broad recursive local `*progress.json` monitor also matched one active run's `training_progress.json` and printed intermediate fields after the new schedule had already been frozen and activated | 1 | Do not use or cite any emitted intermediate value. The immutable preparation/controller/activation receipts predate the read, so no assignment can adapt to it. Restrict future monitoring to exact allowlisted lane progress and terminal receipt paths. |
+| The first post-activation retained-step check repeated unsupported `%T` formatting for `squeue --steps` | 1 | Parent and exact active step identities were already returned. Use the supported abbreviated state field or the frozen controller/progress surfaces on later checks; no Slurm state changed. |
 | The first four-GPU balanced freeze precheck used a 61-character transcription of the prior server-activation SHA and rejected the actual immutable receipt before creating a namespace | 1 | Confirmed the balanced namespace remained absent, obtained the exact 64-character SHA directly from `sha256sum`, corrected only the constant, and repeated all controller checks before retrying. |
 | The first lane-independent Seed43 controller lint found one unused `time` import after formatting | 1 | Removed only the unused import, then repeated compile, Ruff lint, Ruff format, local/remote hash, and remote compile checks before freezing or launching. |
 | The planning-with-files session-catchup and memory-index probes were issued together; the combined call exited nonzero without returning a usable catchup report | 1 | Do not repeat the combined call. Read the current planning files and Git status directly; the memory search has no known PRTA-CXR entry, so use the workspace planning records and frozen receipts as authority. |

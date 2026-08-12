@@ -6576,3 +6576,32 @@
   opposite-direction-cost weights both set to zero. It is a proposed later
   optimization wave and has not been frozen or launched; active Wave043 remains
   unchanged and must complete first.
+
+## 2026-08-12 Wave043 GPU0 no-margin continuation
+
+- Before no-finding, no-cross-time-alignment, or no-direction-margin started,
+  the user moved one of those three queued 3066 cells to local RTX3090/GPU0.
+  The frozen choice is the last queued cell,
+  `W043-NO-DIRECTION-MARGIN-S43`, which will start only after the active
+  `W043-CLASSIFICATION-ONLY-S43` terminal receipt and GPU0 release.
+- Immutable preparation/controller SHAs are
+  `61efbdcd783836f66da2af0aa153653fc909d460698ad524dac438416e694f3a`
+  and `3a8c977ea18876384b3024eb3ccb89ea67d20b56ec638a618e240ee7ca7dfb2f`.
+  Server/local activation receipt SHAs are
+  `07cfa11c3f7079ba788700adf5cb160098203d450ee91238507360f95cfbc444`
+  and `f481e4351b2b07ee37b3936d688071eef740e6119c7f3c438e4fb293b184b17b`.
+- Replacement server watcher `3370476` waits for the preserved Full-S43
+  receipt, closes only stopped parent `3226088`, and then runs exact 3066 order
+  no-finding followed by no-cross-time-alignment. Old balanced watcher
+  `3308012` was closed before it launched a child. Local watcher `17772` waits
+  behind classification-only and owns only no-direction-margin.
+- Phase1 reached 22/22 terminal when local GPU1 tail6-S28 completed; its lane
+  completion receipt SHA is
+  `a33188508a19f5d7a71e9be827da918f3cefdaf577c0d5afc7d24f8e4fcab950`.
+  The predeclared GPU1 watcher then launched Tail10-S43. Current Seed43 state
+  is four active cells plus seven queued cells, with no failure receipt and
+  zero protected reads.
+- One post-freeze broad local monitor accidentally displayed fields from the
+  active Tail10 training-progress file. No value from that display is used or
+  cited, and it cannot influence the already-immutable allocation. Future
+  monitoring is restricted to exact lane-progress and terminal-receipt paths.

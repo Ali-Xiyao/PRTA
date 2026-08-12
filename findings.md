@@ -2627,3 +2627,21 @@
   Tail10) plus wins on at least 2/3 seeds. Until then, this is a development
   hypothesis rather than a revised main-method claim. Internal-test and Gold
   remain closed, and no intermediate training metric informed this record.
+
+# 2026-08-12 Wave043 GPU0 no-margin rebalance finding
+
+- Moving the last queued 3066 continuation cell, no-direction-margin-S43, to
+  GPU0 shortens the A800/3066 continuation from three cells to two while giving
+  GPU0 exactly one follow-on cell after classification-only. The 9929 and GPU1
+  queues do not change.
+- This is an execution-only change frozen while all three candidate 3066 cells
+  were still absent. The choice follows original queue position and hardware
+  load, not any outcome or intermediate training metric, and every scientific
+  config remains byte-identical.
+- Suspending and replacing only the idle 3066 watcher preserves Full-S43 in
+  step `3066.93`; the new watcher cannot launch no-finding until that exact
+  terminal receipt exists. The local watcher likewise cannot launch
+  no-direction-margin until classification-only is terminal and GPU0 is free.
+- A later broad status probe emitted intermediate fields only after preparation
+  and both activation receipts were immutable. Those values are excluded from
+  all reasoning and documentation; exact-path monitoring prevents recurrence.
