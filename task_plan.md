@@ -1,5 +1,17 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave043 Seed43 local GPU0 transition
+
+- `W043-CLASSIFICATION-ONLY-S43` is terminal PASS on RTX3090/GPU0 with
+  training-receipt SHA `0a236351...bc813`, config-file SHA
+  `c7bae073...fe295`, and lane-completion SHA `398a7e1f...040fe`.
+- The frozen GPU0 watcher advanced exactly to
+  `W043-NO-DIRECTION-MARGIN-S43`. Seed43 is now 8/11 terminal with the final
+  three cells all active and no scientific cell left queued.
+- Continue monitoring no-opposite-direction-cost on 9929, no-margin on local
+  GPU0, and tail10 on local GPU1. The critical path is now likely the newly
+  started RTX3090 no-margin cell; zero protected reads remain required.
+
 ## 2026-08-13 Wave043 Seed43 dual server transition
 
 - `W043-NO-CROSS-TIME-ALIGNMENT-S43` and `W043-SCOPE-TAIL6-S43` are terminal

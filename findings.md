@@ -2666,3 +2666,14 @@
   no outcome changed the remaining assignments.
 - Seed43 now has seven terminal cells, three active cells, and one queued cell;
   no failure receipt is present.
+# 2026-08-13 Wave043 Seed43 GPU0 transition finding
+
+- Classification-only-S43 completed formal PASS on RTX3090/GPU0 with receipt
+  SHA `0a236351...bc813`, config-file SHA `c7bae073...fe295`, and zero
+  protected reads.
+- The frozen local watcher advanced to no-direction-margin-S43 exactly as
+  preregistered. All three remaining Seed43 cells are now active and none are
+  queued; no outcome changed their assignments.
+- The newly started RTX3090 no-margin cell is likely the critical path. Using
+  terminal wall time only, final verification is now conservatively expected
+  around 08:30-10:00 CST rather than the earlier 03:30-05:30 estimate.

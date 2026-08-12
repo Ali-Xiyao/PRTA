@@ -6703,3 +6703,19 @@
   9929 advanced to no-opposite-direction-cost in `9929.79`.
 - Seed43 is 7 terminal, 3 active, 1 queued. The expected final window remains
   approximately 03:30-05:30 CST if infrastructure stays healthy.
+# 2026-08-13 02:11 CST - Wave043 classification-only terminal
+
+- Independently verified `W043-CLASSIFICATION-ONLY-S43` as formal PASS on
+  RTX3090/GPU0 with exact frozen inputs, training-receipt SHA
+  `0a23635102ce09775b22789a6267f3fb636cfe2c80c531b9950c9788ed9bc813`,
+  config-file SHA
+  `c7bae07347de5ca4112640ceb7e9d508984ba9dc0c8fa9330d8fb784e01fe295`,
+  and lane-completion SHA
+  `398a7e1ff78582f1a24256562bfea6f840b64fec2abda209a27c7aa78c7040fe`.
+- The receipt and completion record both confirm no Internal-test/Gold read.
+  Watcher `17772` advanced exactly to `W043-NO-DIRECTION-MARGIN-S43` on local
+  GPU0; no failure receipt is present.
+- Seed43 is 8 terminal, 3 active, 0 queued. Based only on the just-completed
+  RTX3090 terminal wall time, no-margin is now the likely critical path; the
+  conservative final verification/aggregation window shifts to approximately
+  08:30-10:00 CST if infrastructure stays healthy.
