@@ -6429,3 +6429,17 @@
   `W043-SCOPE-TAIL2-S17`, in Slurm step `9929.74`. Phase1 is 18/22 terminal;
   all four remaining cells are active, no lane failure exists, and Seed43
   phase2 remains blocked.
+
+## 2026-08-12 Wave043 A800/9929 phase1 lane terminal
+
+- `W043-SCOPE-TAIL2-S17` completed in 64.3 minutes with terminal receipt SHA
+  `d5c2837483b227ddd0e7e5d058d8904a86187e03bead58135db36eb33112b3d6`;
+  its protected-read fields remain false.
+- The entire redistributed A800/9929 phase1 lane is terminal. Immutable lane
+  completion receipt SHA is
+  `002d651dfdad65cd810e473c8e643ffcaece46921770b470618a5df1af50f5f2`;
+  all three predeclared cells and checkpoint/progress hashes are present.
+- Phase1 is 19/22 terminal. Allocation 9929 is scientifically free with its
+  parent and telemetry preserved, but Seed43 phase2 remains structurally
+  blocked until the active 3066 tail10-S17 and both local Seed28 scope cells
+  are terminal. No failure receipt exists.
