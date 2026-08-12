@@ -6390,3 +6390,15 @@
 - Both A800 lanes, both RTX3090 lanes, parent allocations, and telemetry remain
   active with no redistributed failure receipt. Phase1 is now 14/22 terminal;
   Seed43 phase2 remains blocked until all eight remaining phase1 cells finish.
+
+## 2026-08-12 Wave043 redistributed A800 lane advances
+
+- `W043-SCOPE-NO-TAIL-S17` completed in 57.6 minutes with terminal receipt SHA
+  `186df1adfd3ec89a511a8f44dee72a1ca93fa14337b2b623e5c3464bbd074033`;
+  A800/3066 advanced exactly to `W043-SCOPE-TAIL4-S17` in step `3066.91`.
+- `W043-SCOPE-TAIL10-S28` completed in 160.1 minutes with terminal receipt SHA
+  `d88d30d1fb9420edb6743dd34d45d27897c775f4a7cdc63486ad136737a9e9e0`;
+  A800/9929 advanced exactly to `W043-SCOPE-TAIL6-S17` in step `9929.73`.
+- Both terminal receipts record zero protected reads. Phase1 is 16/22 terminal;
+  both local scope cells remain active, no redistributed failure exists, and
+  the frozen Seed43 phase2 gate remains closed.
