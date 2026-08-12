@@ -6355,3 +6355,23 @@
   Wave041 remains stopped, parent allocations and telemetry remain alive, and
   protected reads remain zero. Seed43 phase2 stays blocked until all 22
   Seed17/Seed28 cells are terminal.
+
+## 2026-08-12 Wave043 local preserved-cell drain transition
+
+- Preserved `W043-SCOPE-NO-TAIL-S28` completed naturally in 145.1 minutes;
+  training-receipt SHA is
+  `ce3ba7cc72f5b81db08660b8bb02e38088a923bfa73fba92652e27ddd7348c54`.
+  Preserved `W043-SCOPE-TAIL2-S28` completed naturally in 130.2 minutes;
+  training-receipt SHA is
+  `d608f78359c11c362836edc68ee3847e2d6194acaf6e73fe4a141c616896cdfd`.
+- Their intentionally suspended old parents `25268` and `20836` were closed
+  only after the complete terminal receipts appeared. No active child was
+  interrupted and no output was deleted.
+- Redistributed local supervisors `23724` and `14588` are live. GPU0 now runs
+  the exact frozen `W043-SCOPE-TAIL4-S28`; GPU1 now runs the exact frozen
+  `W043-SCOPE-TAIL6-S28`. Both redistributed failure receipts remain absent,
+  both GPUs show active compute, and protected reads remain zero.
+- Phase1 has 13/22 verified terminal cells and nine active/queued cells. The
+  observed terminal A800 mean is about 133.6 minutes per cell and the observed
+  RTX3090 mean is about 172.4 minutes per cell; these timing-only observations
+  imply roughly 20-25 hours remain through Seed43 phase2 and final aggregation.
