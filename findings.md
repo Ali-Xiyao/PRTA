@@ -2541,3 +2541,18 @@
 - The sequential seed phase increases expected wall-clock time but gives the
   requested reporting boundary: complete two-seed coverage for every variant
   first, followed by the third seed for every variant.
+
+# 2026-08-12 Wave043 four-GPU phase1 redistribution finding
+
+- The earlier cross-hardware prohibition is superseded by the user's explicit
+  scheduling authorization, but scientific configs and the Seed43 phase gate
+  are unchanged. Hardware identity remains mandatory per cell and performance
+  resource summaries must remain hardware-stratified.
+- The frozen split minimizes hardware mixing: every Seed17 cell still runs on
+  A800, ten Seed28 cells run on RTX3090, and only Seed28 tail10 runs on A800.
+  Accuracy aggregation remains by variant and seed; hardware is not treated as
+  a tuned factor and no outcome informed the assignment.
+- Suspending only the old queue parents lets the three active scientific
+  children finish normally while preventing duplicate or stale launches. The
+  idle 9929 lane can begin immediately, so phase1 now uses both A800s and both
+  RTX3090s concurrently without deleting or restarting any partial output.

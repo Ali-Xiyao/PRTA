@@ -2277,6 +2277,11 @@ may start without new explicit authority that also respects this HOLD.
   completed, preserve its partial output, and freeze the user-requested
   Seed17/Seed28-then-Seed43 execution order without changing any scientific
   config or using an outcome.
+- [x] Freeze and activate the user-authorized phase1 four-GPU redistribution:
+  preserve the three already-active cells to natural terminal state, suspend
+  only their old parent queues, immediately use free A800/9929, and distribute
+  the eight remaining Seed17/Seed28 cells across A800/3066, A800/9929, and the
+  two RTX3090s without outcome-adaptive scheduling.
 - [ ] Complete all 11 Seed17 cells and all 11 Seed28 cells before allowing any
   Seed43 phase2 launch.
 - [ ] Launch the exact frozen Seed43 phase2 split only after the 22-cell phase1

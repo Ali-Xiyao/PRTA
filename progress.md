@@ -6328,3 +6328,30 @@
 - Updated the 30-minute heartbeat in place to treat the original Seed43
   failure as expected administrative closure, never restart it, enforce the
   phase gate, and launch only the predeclared phase2 split.
+
+## 2026-08-12 Wave043 phase1 four-GPU redistribution
+
+- The user authorized moving some remaining Seed17 and Seed28 work onto idle
+  A800 allocation 9929 so all four GPUs participate in phase1. The change was
+  frozen before reading any additional terminal outcome. Preparation SHA is
+  `ac5479f13f999b427564ceea142cb95636fc7edcd73102778373ab81f350ca7e`;
+  controller SHA is
+  `c682a4b61b130e1c3d74706aefeb897a558353a656c96c09a939431b76d586c7`.
+- The three already-active cells remain unchanged and continue naturally:
+  classification-only Seed17 on `3066.89`, scope no-tail Seed28 on local GPU0,
+  and scope tail2 Seed28 on local GPU1. Only their old queue parents were
+  suspended, preventing them from launching now-superseded remaining orders.
+- The eight remaining cells are immutable: A800/3066 gets Seed17 no-tail,
+  tail4, and tail10; A800/9929 gets Seed28 tail10 followed by Seed17 tail6 and
+  tail2; local GPU0 gets Seed28 tail4; local GPU1 gets Seed28 tail6. This keeps
+  all Seed17 cells on A800 and moves only one Seed28 cell across hardware.
+- A800/9929 immediately launched Seed28 tail10 in step `9929.72`; the other
+  three redistributed lanes wait only for their preserved current cells to
+  become terminal, then close the suspended old parents and continue on the
+  same GPUs. Local/server activation receipt SHAs are
+  `ad509e64e4ee1d9a2dbfd0b3bbb3730da60fafefcfa2359f56dd527fba1f23e5`
+  and `7a98e0695821985ebfb7595ed2731486d60033f75cbb9257cfb2d63e1a7522a8`.
+- All four GPUs show scientific activity, no redistributed-lane failure exists,
+  Wave041 remains stopped, parent allocations and telemetry remain alive, and
+  protected reads remain zero. Seed43 phase2 stays blocked until all 22
+  Seed17/Seed28 cells are terminal.
