@@ -2645,3 +2645,14 @@
 - A later broad status probe emitted intermediate fields only after preparation
   and both activation receipts were immutable. Those values are excluded from
   all reasoning and documentation; exact-path monitoring prevents recurrence.
+
+# 2026-08-12 Wave043 Seed43 no-finding transition finding
+
+- The 3066 lane completed `W043-NO-FINDING-S43` and advanced to the exact next
+  frozen cell, `W043-NO-CROSS-TIME-ALIGNMENT-S43`; no outcome was used to
+  alter assignment or order.
+- The terminal receipt is formal PASS under the exact frozen inputs, with
+  training-receipt SHA `cf730a25...7d481`, config-file SHA
+  `3fc07d75...fea51`, and zero Internal-test/Gold reads.
+- Seed43 now has five terminal cells, four active cells, and two queued cells.
+  All four scientific lanes remain live without failure receipts.

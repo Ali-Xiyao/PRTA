@@ -6671,3 +6671,19 @@
   tail6/no-ODC chain. From 22:38 China time, scientific completion plus final
   verification/aggregation is estimated at roughly 5-7 hours, retaining the
   expected handoff window of approximately 03:30-05:30 on August 13.
+
+# 2026-08-12 23:10 CST - Wave043 Seed43 no-finding terminal
+
+- Independently verified terminal `W043-NO-FINDING-S43`: formal PASS,
+  Seed43, exact input identities, `internal_test_opened=false`,
+  `protected_outcomes_opened=false`, training-receipt SHA
+  `cf730a253e1b57c994a19826968e30f6ceda0461d2cb72ddf31343bd9307d481`,
+  config-file SHA
+  `3fc07d75b2bc862e83d82066ed902300ef4bb4dc5c340468fdc2ce731e1fea51`.
+- Frozen watcher `3370476` advanced exactly to
+  `W043-NO-CROSS-TIME-ALIGNMENT-S43` in `3066.95`. The other active cells are
+  tail6-S43 on `9929.78`, classification-only-S43 on local GPU0, and
+  tail10-S43 on local GPU1. No failure receipt is present.
+- Seed43 status is 5 terminal, 4 active, 2 queued. The expected final window
+  remains approximately 2026-08-13 03:30-05:30 CST if infrastructure stays
+  healthy, including terminal verification and aggregation.

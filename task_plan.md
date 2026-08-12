@@ -1,5 +1,18 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-12 Wave043 Seed43 no-finding lane transition
+
+- `W043-NO-FINDING-S43` is terminal PASS on A800/3066 with training-receipt
+  SHA `cf730a253e1b57c994a19826968e30f6ceda0461d2cb72ddf31343bd9307d481`
+  and config-file SHA
+  `3fc07d75b2bc862e83d82066ed902300ef4bb4dc5c340468fdc2ce731e1fea51`.
+- The frozen 3066 lane advanced to `W043-NO-CROSS-TIME-ALIGNMENT-S43` in
+  step `3066.95`. Seed43 is now 5/11 terminal, four active, and two queued;
+  no queue assignment changed.
+- Continue monitoring no-cross on 3066, tail6 then no-opposite-direction-cost
+  on 9929, classification-only then no-margin on local GPU0, and tail10 on
+  local GPU1. Protected-read counters remain zero.
+
 ## Goal
 
 Repair the state/transition dual-branch mechanism before deciding whether to
