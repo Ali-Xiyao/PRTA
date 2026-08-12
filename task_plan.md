@@ -1,5 +1,16 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave043 Seed43 tail10 completion
+
+- `W043-SCOPE-TAIL10-S43` is terminal PASS on RTX3090/GPU1 with
+  training-receipt SHA `99b11495...d54fe`, config-file SHA
+  `8518a627...b519d`, and lane-completion SHA `726825f6...71675`.
+- Seed43 is now 10/11 terminal. Only `W043-NO-DIRECTION-MARGIN-S43` remains
+  active on local GPU0; GPU1 and both A800 scientific lanes are free.
+- Keep all completed artifacts immutable and monitor only the final GPU0 cell.
+  When it becomes terminal, independently verify all 39 final-matrix cells
+  before writing the immutable no-selection aggregate.
+
 ## 2026-08-13 Wave043 Seed43 9929 lane completion
 
 - `W043-NO-OPPOSITE-DIRECTION-COST-S43` is terminal PASS on A800/9929 with

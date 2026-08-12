@@ -6734,3 +6734,17 @@
   on GPU0 and tail10 on GPU1, then independent 39-cell verification and final
   immutable aggregation. The conservative 08:30-10:00 CST final window is
   unchanged.
+# 2026-08-13 06:11 CST - Wave043 tail10 terminal
+
+- Independently verified `W043-SCOPE-TAIL10-S43` as formal PASS on
+  RTX3090/GPU1 with exact frozen inputs, training-receipt SHA
+  `99b11495598981d390741c46367a201fd76dc5cfea1a80d0bf6ff7c818ed54fe`,
+  config-file SHA
+  `8518a6275878b5e8157eb2027df8b59eda92d4f381fa7ecae002b2663b6b519d`,
+  and lane-completion SHA
+  `726825f6f5d070440d424ce5b03b5d58228dc7f595b1a54dee08e8107dd71675`.
+- Receipt and completion record confirm zero Internal-test/Gold read. GPU1 is
+  free and no failure receipt is present.
+- Seed43 is 10 terminal, 1 active, 0 queued. Only local GPU0 no-margin remains,
+  followed by independent 39-cell verification and final aggregation. The
+  conservative 08:30-10:00 CST final window is unchanged.

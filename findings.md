@@ -2688,3 +2688,13 @@
 - Seed43 now has nine terminal cells and two active cells. Final aggregation
   remains locked until both local receipts and all 39 final-matrix identities
   verify.
+# 2026-08-13 Wave043 Seed43 tail10 terminal finding
+
+- Tail10-S43 completed formal PASS on RTX3090/GPU1 with receipt SHA
+  `99b11495...d54fe`, config-file SHA `8518a627...b519d`, and zero protected
+  reads.
+- GPU1 is terminal with completion SHA `726825f6...71675`. The only remaining
+  Seed43 cell is no-direction-margin-S43 on local GPU0; no queue or assignment
+  change occurred.
+- Seed43 now has ten terminal cells and one active cell. Final aggregation
+  remains locked until the last receipt and every final-matrix identity verify.
