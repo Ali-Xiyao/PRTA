@@ -2556,3 +2556,17 @@
   children finish normally while preventing duplicate or stale launches. The
   idle 9929 lane can begin immediately, so phase1 now uses both A800s and both
   RTX3090s concurrently without deleting or restarting any partial output.
+
+# 2026-08-12 Wave043 lane-independent Seed43 overlap finding
+
+- The user explicitly replaced the global all-card Seed17/28 completion gate
+  with lane-local scheduling. This is an execution-order change only: the
+  Seed43 matrix, exact configs, 6/5 A800 allocation, queue order, and final
+  no-selection aggregate are unchanged.
+- Both A800 phase1 lanes were already terminal before the new amendment, so
+  their exact Seed43 queues could start immediately without waiting for the
+  scientifically independent local GPU1 Seed28 tail6 cell. That local cell
+  continues unchanged and is still required for the final 39-cell audit.
+- The new namespace never touches the superseded partial `W043-FULL-S43`.
+  Full-S43 restarts from scratch under `seed43_phase2_attempt1`, while the old
+  partial progress and failure receipt remain immutable audit history.

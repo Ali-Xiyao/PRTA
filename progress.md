@@ -6473,3 +6473,24 @@
   GPU1 under watcher `14588`; both A800s and local GPU0 stay scientifically
   idle until that final receipt completes and the independent 22-cell identity
   audit opens the frozen Seed43 phase2 gate.
+
+## 2026-08-12 Wave043 lane-independent Seed43 phase2 launch
+
+- The user superseded only the global cross-card launch barrier: each GPU lane
+  may advance after its own frozen phase1 work is terminal. Scientific configs,
+  the 11 Seed43 cells, the A800 6/5 split, per-lane order, budgets, source,
+  caches, and final requirement to verify every Seed17/28 cell remain unchanged.
+- Both A800 phase1 completion receipts independently reverified at SHAs
+  `173bf3540acf4503de8637aa82761947ca941af88d346bfdb76ffd030509c0be`
+  and `002d651dfdad65cd810e473c8e643ffcaece46921770b470618a5df1af50f5f2`.
+  The new immutable `seed43_phase2_attempt1` preparation/controller SHAs are
+  `0a422580574b3fb90347bc17b863ba7dd5c8f0519034355a6f411b0a60e51591`
+  and `599a765a2a378ed874a53adbd888c005c8c998d6a616ab7d63ebdb244cc7f203`.
+- Activation receipt SHA is
+  `aaf7c29fe5287e88a3625a8e2e0e72df6a6b0c6b8c38bd063405a9faf5d87f7b`.
+  Watchers `3226088` and `3226089` launched the exact first cells
+  `W043-FULL-S43` on step `3066.93` and `W043-SCOPE-NO-TAIL-S43` on step
+  `9929.75`; both report zero protected reads and no failure receipt.
+- The independent local GPU1 `W043-SCOPE-TAIL6-S28` remains unchanged under
+  watcher `14588`. It was not cancelled, restarted, duplicated, or used to
+  alter Seed43; all 22 phase1 cells remain mandatory before final aggregation.
