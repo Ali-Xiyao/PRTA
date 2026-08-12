@@ -6605,3 +6605,21 @@
   active Tail10 training-progress file. No value from that display is used or
   cited, and it cannot influence the already-immutable allocation. Future
   monitoring is restricted to exact lane-progress and terminal-receipt paths.
+
+## 2026-08-12 12:07 Wave043 9929 lane advance
+
+- The frozen 9929 continuation advanced from the preserved no-tail-S43 cell to
+  exact next cell tail2-S43 on Slurm step `9929.76`; no queue choice or metric
+  informed the transition. The predecessor training-receipt SHA is
+  `68e5e675606bb98e302923f6cde7e21fcc6c62cd25d58abc6a9b1fda6955edac`;
+  its exact config-file SHA is
+  `a0befeef37a05acc5a980034e4138029fdf953a20982f30f48f4fb0f2687e65f`.
+  The terminal receipt reports Seed43, formal PASS, `4,246.728824` seconds,
+  exact frozen input identities, and zero Internal-test/protected-outcome
+  reads. The independently verified controller launched only the predeclared
+  tail2 successor.
+- A800/3066 remains on preserved Full-S43 step `3066.93`. Local GPU0 remains
+  on classification-only-S43 with the no-margin watcher waiting, and local
+  GPU1 remains on tail10-S43. All exact lane progress surfaces report zero
+  protected reads and no failure receipt exists. Seed43 is now one terminal,
+  four active, and six queued cells.
