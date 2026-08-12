@@ -6402,3 +6402,18 @@
 - Both terminal receipts record zero protected reads. Phase1 is 16/22 terminal;
   both local scope cells remain active, no redistributed failure exists, and
   the frozen Seed43 phase2 gate remains closed.
+
+## 2026-08-12 Wave043 A800/3066 final phase1 cell advance
+
+- `W043-SCOPE-TAIL4-S17` completed in 66.9 minutes. Its terminal
+  receipt/progress SHAs are
+  `c28cbf79bd72799c40009fc990e1f84942fafa49fbaa15a4d8ba335a23dffb65`
+  and `7f03211d26af0ddba7cfbb13a7eab5228dd9ea86bbaab056c6f70553c2cedea6`;
+  protected-read fields remain zero.
+- Redistributed A800/3066 advanced exactly to its last phase1 cell,
+  `W043-SCOPE-TAIL10-S17`, in Slurm step `3066.92`. A800/9929 continues
+  `W043-SCOPE-TAIL6-S17`, both RTX3090 scope cells remain active, and no lane
+  failure exists.
+- Phase1 is 17/22 terminal with four cells active and one fixed cell queued.
+  Timing-only extrapolation puts phase1 completion about 2-4 hours away and
+  the full phase2-plus-aggregation completion about 15-19 hours away.
