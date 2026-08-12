@@ -2585,6 +2585,21 @@
   by variant and seed, while wall-clock and peak-memory reporting must remain
   hardware-stratified; no intermediate metric informed this redistribution.
 
+# 2026-08-12 Wave043 balanced-finish scheduling finding
+
+- The final fixed schedule uses the slow RTX3090s sparingly: GPU0 keeps only
+  its already-active classification-only cell, while GPU1 receives one long
+  tail10 cell after its nearly drained Seed28 work. The seven other queued
+  cells stay on A800s, split three on 3066 and four on 9929.
+- The split uses only previously recorded terminal wall-clock behavior and
+  queue lengths. It does not use Dev values, change a config, drop a cell, or
+  alter any scientific conclusion. Exact hardware remains a required field in
+  receipts and resource summaries.
+- Estimated completion alignment is approximate rather than guaranteed because
+  per-variant runtime varies. The chosen 3/4/1 continuation minimizes the
+  expected makespan without burdening either slower 3090 with a second new
+  queued job beyond the work already active there.
+
 # 2026-08-12 Wave043 partial-result optimization finding
 
 - The completed Seed17/28 terminal receipts give three directionally

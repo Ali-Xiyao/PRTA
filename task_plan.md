@@ -2294,6 +2294,11 @@ may start without new explicit authority that also respects this HOLD.
   `W043-CLASSIFICATION-ONLY-S43` onto RTX3090/GPU0, suspend only the A800/3066
   queue parent while its active Full-S43 child drains, and continue the other
   four predeclared 3066 cells in their original order after that receipt.
+- [x] Freeze the final four-GPU, wall-time-balanced continuation before any
+  active Seed43 cell completes: 3066 gets no-finding/no-cross/no-margin; 9929
+  gets tail2/tail4/tail6/no-ODC; local GPU1 gets tail10 after its active Seed28
+  cell; local GPU0 completes classification-only. Preserve every active child
+  and prevent all superseded queue parents from duplicating a migrated cell.
 - [ ] Independently verify all 22 Seed17/Seed28 cells before final aggregation,
   even though Seed43 execution may overlap the last local Seed28 cell.
 - [ ] Complete immutable stage/final aggregates and update paper-ready result
@@ -2311,6 +2316,7 @@ Stop rules:
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| The first four-GPU balanced freeze precheck used a 61-character transcription of the prior server-activation SHA and rejected the actual immutable receipt before creating a namespace | 1 | Confirmed the balanced namespace remained absent, obtained the exact 64-character SHA directly from `sha256sum`, corrected only the constant, and repeated all controller checks before retrying. |
 | The first lane-independent Seed43 controller lint found one unused `time` import after formatting | 1 | Removed only the unused import, then repeated compile, Ruff lint, Ruff format, local/remote hash, and remote compile checks before freezing or launching. |
 | The planning-with-files session-catchup and memory-index probes were issued together; the combined call exited nonzero without returning a usable catchup report | 1 | Do not repeat the combined call. Read the current planning files and Git status directly; the memory search has no known PRTA-CXR entry, so use the workspace planning records and frozen receipts as authority. |
 | The organization-phase memory-index `rg` search returned no matches, which made the combined read command exit nonzero | 1 | No workspace or memory artifact was changed. Treat this as a clean no-memory-hit result and derive all current facts from frozen workspace/server receipts instead. |

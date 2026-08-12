@@ -6518,6 +6518,30 @@
   cells remain queued. No failure receipt exists and protected reads remain
   zero.
 
+## 2026-08-12 Wave043 final four-GPU balanced continuation
+
+- Before any active Seed43 cell completed, the final remaining eight cells
+  were frozen by hardware-stratified terminal wall time only. A800/3066 gets
+  no-finding, no-cross-time-alignment, and no-direction-margin; A800/9929 gets
+  tail2, tail4, tail6, and no-opposite-direction-cost; local GPU1 gets tail10
+  after its active Seed28 tail6; local GPU0 completes classification-only with
+  no additional queue. No intermediate metric informed the assignment.
+- Immutable preparation/controller SHAs are
+  `8d290a431a2a313dc477c7159fa09af1aa5d8dff23988b0556f2fad19f545300`
+  and `8f3132e1bd522ffd5aaa1e7541556ce810064e39bf990adabcf0b32e59fe82a6`.
+  Server/local activation receipt SHAs are
+  `3da096ea43acc77526976bc28d37c97279743dbcf2d8d2879e18a1340a3a88fb`
+  and `e1ff137fc849db779200055840b9826201aa2de165a7005fde5b382a4b09b9a0`.
+- Superseded idle continuation `3285978` was administratively closed with no
+  scientific child. Old queue parents `3226088` and `3226089` are stopped in
+  `Ts`, while their active children Full-S43 and no-tail-S43 continue unchanged
+  in `3066.93` and `9929.75`. Replacement watchers `3308012` and `3308013`
+  wait for those exact terminal receipts before starting their frozen queues.
+- Local watcher `20464` waits for the active Seed28 tail6 receipt and will then
+  launch tail10-S43 on GPU1. Both RTX3090s currently show active compute from
+  the preserved Seed28 tail6 and Seed43 classification-only cells. No failure
+  receipt exists and all protected-read counters remain zero.
+
 ## 2026-08-12 Wave043 two-seed partial ablation result record
 
 - This is a terminal-receipt-only Train/Dev snapshot, not the final Wave043
