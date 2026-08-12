@@ -6623,3 +6623,21 @@
   GPU1 remains on tail10-S43. All exact lane progress surfaces report zero
   protected reads and no failure receipt exists. Seed43 is now one terminal,
   four active, and six queued cells.
+
+## 2026-08-12 13:08 Wave043 Full-S43 lane advance and ETA
+
+- Full-S43 reached formal terminal PASS with training-receipt SHA
+  `e796917f91fcd3fa0142724732049172416f3cdf5b8649704e170e07f3754ab9`
+  and exact config-file SHA
+  `00910047b5badd91f20b1ab1656f977bd47bad2ebb43445fc203d76e14e57dd0`.
+  Its terminal wall clock is `7,904.513774` seconds, input identities match the
+  frozen Train/Dev contract, and Internal-test/protected-outcome reads are zero.
+- The immutable 3066 replacement watcher closed only the stopped old parent
+  and launched exact successor no-finding-S43 in step `3066.94`. Other active
+  cells remain tail2-S43 on 9929, classification-only-S43 on local GPU0, and
+  tail10-S43 on local GPU1. Seed43 is now 2 terminal, 4 active, 5 queued.
+- ETA uses terminal wall-clock history only, stratified by A800 versus RTX3090;
+  no active progress or metric file is consulted. At 21:08 China time, the
+  remaining nine scientific cells are estimated to need about 6-8 hours, with
+  final receipt verification and immutable aggregation adding roughly 0.5
+  hour. Expected handoff window is approximately 03:30-05:30 on August 13.
