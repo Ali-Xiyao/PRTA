@@ -6443,3 +6443,17 @@
   parent and telemetry preserved, but Seed43 phase2 remains structurally
   blocked until the active 3066 tail10-S17 and both local Seed28 scope cells
   are terminal. No failure receipt exists.
+
+## 2026-08-12 Wave043 both A800 phase1 lanes terminal
+
+- `W043-SCOPE-TAIL10-S17` completed in 159.9 minutes with terminal receipt SHA
+  `fb7c464c9aff974ff2f32900ef0fe143a24af409341dc49b6813fa0dacc4bfab`;
+  protected-read fields remain false.
+- The redistributed A800/3066 phase1 lane is terminal with immutable completion
+  receipt SHA
+  `173bf3540acf4503de8637aa82761947ca941af88d346bfdb76ffd030509c0be`.
+  Both A800 allocations are now scientifically free while parents and telemetry
+  remain alive.
+- Phase1 is 20/22 terminal. Only local `W043-SCOPE-TAIL4-S28` and
+  `W043-SCOPE-TAIL6-S28` remain active; the Seed43 phase2 launch remains blocked
+  until both complete and the full 22-cell identity audit passes.
