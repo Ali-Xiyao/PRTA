@@ -1,5 +1,18 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave043 Seed43 dual server transition
+
+- `W043-NO-CROSS-TIME-ALIGNMENT-S43` and `W043-SCOPE-TAIL6-S43` are terminal
+  PASS with training-receipt SHAs `d5135c5e...3ef1e` and
+  `9466fbe7...3f4961`; both retain exact frozen inputs and zero protected
+  reads.
+- The 3066 continuation is terminal with completion SHA `bd6e8e7a...3a7db`.
+  The 9929 lane advanced exactly to `W043-NO-OPPOSITE-DIRECTION-COST-S43` in
+  step `9929.79`.
+- Seed43 is now 7/11 terminal, three active, and one queued. Continue monitoring
+  no-opposite-direction-cost on 9929, classification-only then no-margin on
+  local GPU0, and tail10 on local GPU1; keep 3066 scientifically free.
+
 ## 2026-08-12 Wave043 Seed43 no-finding lane transition
 
 - `W043-NO-FINDING-S43` is terminal PASS on A800/3066 with training-receipt

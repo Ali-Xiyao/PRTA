@@ -2656,3 +2656,13 @@
   `3fc07d75...fea51`, and zero Internal-test/Gold reads.
 - Seed43 now has five terminal cells, four active cells, and two queued cells.
   All four scientific lanes remain live without failure receipts.
+# 2026-08-13 Wave043 Seed43 dual server transition finding
+
+- No-cross-time-alignment-S43 and tail6-S43 completed formal PASS under the
+  exact frozen identities, with receipt SHAs `d5135c5e...3ef1e` and
+  `9466fbe7...3f4961` and zero protected reads.
+- The 3066 continuation is fully terminal and remains scientifically free.
+  The 9929 watcher advanced in fixed order to no-opposite-direction-cost-S43;
+  no outcome changed the remaining assignments.
+- Seed43 now has seven terminal cells, three active cells, and one queued cell;
+  no failure receipt is present.

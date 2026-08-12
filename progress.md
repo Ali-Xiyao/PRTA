@@ -6687,3 +6687,19 @@
 - Seed43 status is 5 terminal, 4 active, 2 queued. The expected final window
   remains approximately 2026-08-13 03:30-05:30 CST if infrastructure stays
   healthy, including terminal verification and aggregation.
+# 2026-08-13 01:11 CST - Wave043 two Seed43 cells terminal
+
+- Independently verified `W043-NO-CROSS-TIME-ALIGNMENT-S43` as formal PASS,
+  receipt SHA `d5135c5e47482aedc1915488da68bf09e628df23eb740ddc0f51250213e3ef1e`,
+  config-file SHA
+  `86046c01ebb506176c4f278572c5e9546f52e660ca8612d6f1ed5c242fadb6b3`.
+- Independently verified `W043-SCOPE-TAIL6-S43` as formal PASS, receipt SHA
+  `9466fbe70be7f702f4710a4e06c87119e25fdfe55b67b3d773d24e1c5d3f4961`,
+  config-file SHA
+  `90e87eeee2b47cc3aec81eaa4fd7a256107a5380b3136c8f7056912ca9f215fe`.
+- Both receipts bind the exact frozen inputs and report no Internal-test/Gold
+  read. The 3066 lane is terminal with completion SHA
+  `bd6e8e7aae0385b58b3a3c534085f7d9e30075de8f27e8fc1d2be4cb68f3a7db`;
+  9929 advanced to no-opposite-direction-cost in `9929.79`.
+- Seed43 is 7 terminal, 3 active, 1 queued. The expected final window remains
+  approximately 03:30-05:30 CST if infrastructure stays healthy.
