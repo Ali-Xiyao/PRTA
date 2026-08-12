@@ -6641,3 +6641,15 @@
   remaining nine scientific cells are estimated to need about 6-8 hours, with
   final receipt verification and immutable aggregation adding roughly 0.5
   hour. Expected handoff window is approximately 03:30-05:30 on August 13.
+
+## 2026-08-12 13:10 Wave043 tail2-S43 lane advance
+
+- Tail2-S43 reached formal terminal PASS with training-receipt SHA
+  `7afb5af34ea7aad0053f7377b16594999f9f4273094059b97588146b262cb5b1`
+  and exact config-file SHA
+  `ba165d8d91475a582e352ee874e8a889e45718c9847e1ff3332e89b3542768b7`.
+  Terminal wall clock is `4,701.048549` seconds; frozen inputs match and both
+  Internal-test/protected-outcome flags remain false.
+- The fixed 9929 watcher launched the exact next cell tail4-S43 on step
+  `9929.77`. Seed43 is now 3 terminal, 4 active, and 4 queued; no failure
+  receipt exists on any lane and no assignment changed.
