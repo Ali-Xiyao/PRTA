@@ -2570,3 +2570,31 @@
 - The new namespace never touches the superseded partial `W043-FULL-S43`.
   Full-S43 restarts from scratch under `seed43_phase2_attempt1`, while the old
   partial progress and failure receipt remain immutable audit history.
+
+# 2026-08-12 Wave043 partial-result optimization finding
+
+- The completed Seed17/28 terminal receipts give three directionally
+  consistent simplification signals relative to the repaired-dual Tail8 full
+  parent: Tail10 is `+0.004587` in two-seed mean Macro-F1, removing
+  opposite-direction cost is `+0.004219`, and removing direction margin is
+  `+0.003990`. Each change wins on both completed seeds.
+- Adapter depth has a coherent pattern: no-tail, Tail2, and Tail4 remain below
+  full Tail8, while Tail10 is above it on both seeds. Finding-conditioning
+  removal loses `0.096647` mean Macro-F1, so finding conditioning is a core
+  mechanism rather than an optional regularizer.
+- The repaired dual branch should remain. Its separate architecture-only
+  Wave042 gate already beat clean transition-only by `+0.002298` over three
+  seeds with 2/3 wins. The current no-state/no-dual reused rows and the
+  classification-only row are not evidence for deleting the repaired branch;
+  their Seed17/28 effects are mixed and their loss contracts differ.
+- The narrow next candidate is therefore Tail10 plus removal of both
+  direction-margin and opposite-direction-cost losses, while retaining H4,
+  finding conditioning, cross-time alignment, and state weight `0.025`.
+  Because the two individual loss removals may interact, their gains must not
+  be assumed additive. Test exactly this combined candidate once across three
+  seeds, in a new immutable Train/Dev namespace, after Wave043 finishes.
+- A defensible frozen replacement rule is a mean Macro-F1 gain of at least
+  `0.002` over the stronger completed reference (full Tail8 or original
+  Tail10) plus wins on at least 2/3 seeds. Until then, this is a development
+  hypothesis rather than a revised main-method claim. Internal-test and Gold
+  remain closed, and no intermediate training metric informed this record.

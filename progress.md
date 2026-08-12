@@ -6494,3 +6494,38 @@
 - The independent local GPU1 `W043-SCOPE-TAIL6-S28` remains unchanged under
   watcher `14588`. It was not cancelled, restarted, duplicated, or used to
   alter Seed43; all 22 phase1 cells remain mandatory before final aggregation.
+
+## 2026-08-12 Wave043 two-seed partial ablation result record
+
+- This is a terminal-receipt-only Train/Dev snapshot, not the final Wave043
+  aggregate. Seed17 is complete, Seed28 is complete except scope-tail6, and
+  both Seed43 lanes have started but have no terminal cell yet. The active
+  cells remain `W043-SCOPE-TAIL6-S28`, `W043-FULL-S43`, and
+  `W043-SCOPE-NO-TAIL-S43`; no failure receipt or protected read exists.
+- Completed Seed17/28 Dev Macro-F1 values and unweighted two-seed means are:
+
+  | variant | Seed17 | Seed28 | mean | delta vs full |
+  |---|---:|---:|---:|---:|
+  | full Tail8 | 0.549108 | 0.545931 | 0.547520 | 0.000000 |
+  | scope Tail10 | 0.551977 | 0.552236 | 0.552106 | +0.004587 |
+  | no opposite-direction cost | 0.555312 | 0.548166 | 0.551739 | +0.004219 |
+  | no direction margin | 0.550485 | 0.552534 | 0.551509 | +0.003990 |
+  | classification only | 0.546088 | 0.552887 | 0.549488 | +0.001968 |
+  | no state, reused Wave042 | 0.546364 | 0.550423 | 0.548394 | +0.000874 |
+  | no cross-time alignment | 0.547973 | 0.547826 | 0.547899 | +0.000379 |
+  | no dual, reused Wave042 | 0.546704 | 0.546451 | 0.546578 | -0.000942 |
+  | scope Tail4 | 0.545267 | 0.544852 | 0.545060 | -0.002460 |
+  | scope Tail2 | 0.543956 | 0.542040 | 0.542998 | -0.004522 |
+  | scope no-tail | 0.541713 | 0.539966 | 0.540840 | -0.006680 |
+  | no finding conditioning | 0.451577 | 0.450168 | 0.450872 | -0.096647 |
+
+- Tail10, removal of direction margin, and removal of opposite-direction cost
+  each beat the full parent on both completed seeds. Finding conditioning is
+  indispensable. Classification-only, no-state, and no-cross-time results are
+  seed-inconsistent and do not justify removing those mechanisms yet.
+- The accepted bounded follow-up candidate is one new three-seed Train/Dev-only
+  variant: Tail10 repaired-dual H4 with finding conditioning, cross-time
+  alignment, and state weight `0.025` retained, but direction-margin and
+  opposite-direction-cost weights both set to zero. It is a proposed later
+  optimization wave and has not been frozen or launched; active Wave043 remains
+  unchanged and must complete first.
