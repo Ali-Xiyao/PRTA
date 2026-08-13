@@ -26,11 +26,11 @@ part of every receipt; no queue may be adapted from intermediate metrics.
 - [x] Add focused tests for prototype targets, matched-prior indexing, residual
   initialization, reliability gating, selective state weighting, gradients,
   and legacy behavior.
-- [ ] Run focused/full engineering verification, then create an immutable source
+- [x] Run focused/full engineering verification, then create an immutable source
   snapshot and exact 18-cell config/controller package.
-- [ ] Verify four idle scientific lanes, source/config/cache/data hashes, disk,
+- [x] Verify four idle scientific lanes, source/config/cache/data hashes, disk,
   GPU/process state, and zero protected reads before launch.
-- [ ] Launch fixed 6/6/3/3 queues on 3066/9929/local0/local1 and monitor only
+- [x] Launch fixed 6/6/3/3 queues on 3066/9929/local0/local1 and monitor only
   allowlisted queue/terminal/resource surfaces, never intermediate metrics.
 - [ ] After 18/18 terminal, independently aggregate every cell with no selection
   and report paired three-seed V0-V5 results plus resource accounting.

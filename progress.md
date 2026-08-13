@@ -20,6 +20,18 @@
   identifying a non-scientific performance issue. Attempt2 uses the identical
   matching contract with batched tensorized constraints; no scientific cell
   has launched and protected-read counters remain zero.
+- Matched-hard attempt2 completed with exact 91,603/91,603 Train/Dev coverage,
+  zero contract violations, all five prototypes present for all 12 findings,
+  and map SHA `276f1d4d...23924e`. The 42,363,246-byte map is hash-identical on
+  local and server storage.
+- Froze Wave045 preparation SHA `0c53524c...8616a5` and controller SHA
+  `b225b2b8...6c184` against source commit `e4788f0`, Block-4 cache SHA
+  `c541ec8c...1ac81`, text-cache SHA `1846e3d9...1a3fd`, and zero protected
+  reads. The exact 18 cells remain V0-V5 x Seeds 17/28/43 with no selection.
+- All four workers started successfully: local supervisors 20716/21648 run
+  V0-S28/V1-S28 on RTX3090 GPU0/GPU1, while server supervisors
+  2325375/2325376 run V0-S17/V0-S43 in Slurm steps 3066.96/9929.80. No worker
+  failure receipt exists; Wave041 remains stopped and telemetry remains alive.
 
 ## 2026-08-11 dual-branch terminal result and reliability record
 

@@ -17,6 +17,15 @@
   to current tokens. V3-V5 must keep the exact legacy computation when disabled
   and, when enabled, scale only that relation residual. The reliability gate
   must also act only on the residual, never on current tokens or the H0 head.
+- Exact offline matching achieved full coverage for all 91,603 Train/Dev rows
+  across 12 findings while enforcing same split/finding and different
+  patient/label. This removes the batch-composition dependence of `roll(1)`;
+  the map is a frozen input shared by V2-V5 on all hardware classes.
+- Terminal Wave043 hardware timings support the frozen 6/6/3/3 assignment:
+  the RTX3090 Tail8 wall time was roughly 1.3-1.5x the comparable A800 run,
+  while V2-V5 add a counterfactual forward pass on every hardware class. The
+  two three-cell RTX3090 lanes therefore remain proportionate to the two
+  six-cell A800 lanes without using outcome metrics.
 
 - The architecture-only repair passed its frozen gate: mean paired Macro-F1
   delta is `+0.0022984521` and repaired H4 wins 2/3 seeds. This supports a
