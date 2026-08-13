@@ -10,18 +10,18 @@ the later seeds would destroy the paired three-seed contract.
 
 - [x] Audit the four exact worker queues and classify every Wave045 cell as
   terminal, active, or queued without reading intermediate metrics.
-- [ ] Add fail-closed matched-hard map/split/cache identity validation to the
+- [x] Add fail-closed matched-hard map/split/cache identity validation to the
   reusable code path, with focused tests, without redeploying it into an
   already-running Wave045 cell.
-- [ ] Freeze a separately named post-Wave045 diagnostic supplement for the
+- [x] Freeze a separately named post-Wave045 diagnostic supplement for the
   review's mechanism claims: residual coefficient, prior-gate distribution,
   selective-state weights, and preregistered prior interventions. Reuse
   terminal checkpoints where possible; retrain only when a required diagnostic
   was not retained and the exact cell is explicitly appended at queue tail.
-- [ ] Append any required supplement cells only after each lane's original
+- [x] Append any required supplement cells only after each lane's original
   frozen queue, preserving all original order/identities and forbidding
   outcome-adaptive selection.
-- [ ] Update runtime directories, immutable receipts, planning documents, and
+- [x] Update runtime directories, immutable receipts, planning documents, and
   the recurring monitor to cover the original matrix plus the supplement.
 - [ ] After original and supplementary work is terminal, write separate
   no-selection progressive-build and mechanism-diagnostic reports. Do not
@@ -254,6 +254,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| A manual server diagnostic-help probe hardcoded `/home/dqxy/dqxy11` instead of the cluster account's IPFS-backed HOME; a follow-up combined quoting probe also malformed the `python -c` fragment | 2 | Neither command changed runtime state and the controller was not affected because it resolves `Path.home()` at runtime. Verified the exact `$HOME/miniforge3/envs/prta-cxr311/bin/python` path and reran the deployed diagnostic `--help` directly; it passed. |
 | Wave045 post-review repo-wide Ruff format check reported 97 pre-existing files that current Ruff would reformat, after compileall and repo-wide lint passed | 1 | Do not bulk-format historical files. Format/check only the seven touched source/script/test files, retain the existing repository-format baseline, and run focused plus full tests before deployment. |
 | First Wave043 freeze rejected the exact Wave029 parent because the new validator incorrectly required its post-transform tail8 scope instead of its immutable source tail4 scope | 1 | The failure occurred before any staging namespace was created. Validate the exact tail4 source parent, transform it to repaired tail8 inside the builder, update the focused fixture, and rerun all gates before freezing. |
 | Initial Wave043 private controller lint found one 89-character reused-cell mapping line and pending formatter changes | 1 | Name the mapped final variant before constructing the receipt row, format only the new controller, then rerun compile/lint/format gates. |

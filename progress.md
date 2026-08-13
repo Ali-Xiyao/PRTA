@@ -6885,3 +6885,29 @@
   three-seed prior-intervention and mechanism diagnostics, appended after each
   original lane. This adds no outcome-selected training and preserves the
   original 18-cell matrix byte-for-byte.
+- Implemented reusable fail-closed matched-hard map validation against the
+  actual split-manifest SHA, cache-manifest SHA, and Block-4 cache boundary.
+  Added the explicit `matched_hard` Dev intervention and an aggregate-only
+  diagnostic entry point for true/matched-hard/null/reversed PRIOR.
+- Engineering gates passed: compileall, repository-wide Ruff lint, focused
+  Ruff/format, 43 focused tests, and all 239 repository tests. The known
+  repo-wide formatting baseline remains 97 historical files and was not
+  changed wholesale.
+- Committed diagnostic source as
+  `5eb2c7220fa49c6f60814c9c40defac76c09bddb`; source archive SHA is
+  `de908e41ce21b21a00630e95bcc3be3d1ec41301422120aad15ff09fa224ed72`.
+  Local and server source snapshots plus diagnostic-script SHA
+  `ae457f375df0c209464d29f5dde572771095dcac87f02f27913f1f0af3238db0`
+  match exactly.
+- Prepared immutable runtime
+  `wave045_postreview_mechanism_diagnostics_v1`. Preparation SHA is
+  `03561df7fdb455b76368452e09d830a9a416499327801e2903459b7db340c468`,
+  controller SHA is
+  `f9d34e416aa303fbd8d5c2c3f48a5559c0090f7af7ffa0c90e4d3fe8f2e6208e`,
+  and server-package SHA is
+  `4d464fc2a993cdae6ca70af9ce8407f7e497b6de324813e3b9234c206029af7e`.
+- Activated four waiting supplement workers without touching original jobs:
+  server PIDs 2572625/2572626 and local PIDs 24756/16876. Each reports
+  `WAITING_FOR_ORIGINAL_FROZEN_QUEUE`, no failure receipt, and zero protected
+  reads. Activation-receipt SHA is
+  `8d6d75e53abce584c1385188bda4c5b9319cf7a801cdde894f2551198fc6579c`.

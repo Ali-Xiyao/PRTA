@@ -2815,3 +2815,18 @@
   and reversed PRIOR. It directly separates constant attenuation from
   reliability-sensitive gating and captures the signed/unbounded residual
   coefficient without confounding the progressive training matrix.
+- The supplement needs no new training cell. Every V3/V4/V5 best checkpoint
+  retains the evaluation-model residual coefficient; V4/V5 forward passes
+  expose per-sample reliability, and V5 exposes detached change energy from
+  which selective-state weights are reconstructed exactly. The training-time
+  coefficient trajectory was not retained and is reported as unavailable
+  rather than inferred.
+- The explicit `matched_hard` intervention uses the same frozen offline map's
+  counterfactual patient's PRIOR while preserving the target CURRENT. This is
+  distinct from the older deterministic `matched_wrong` audit and directly
+  tests the review's hard-prior reliability claim.
+- Four independent supplement supervisors can safely wait alongside the
+  original workers because they launch no GPU child until the corresponding
+  original lane completion receipt passes. This preserves one scientific
+  child per allocation/GPU and makes the diagnostic work a literal queue-tail
+  continuation.
