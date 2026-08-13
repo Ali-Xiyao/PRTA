@@ -6951,3 +6951,8 @@
   and advanced only to `W045-V3-S43`. Both formal PASS receipts preserve exact
   identities and zero protected reads. The original matrix is 8/18 terminal;
   no failure or outcome-adaptive change occurred.
+- Local RTX3090 GPU1 completed `W045-V3-S28` with terminal receipt SHA
+  `fb8ef4e88e0cf5fa612c4887707081a1ffc8f6c8bcf3e5b1d946663a17ac4572`
+  and advanced only to its frozen final original item `W045-V5-S28`. The
+  formal PASS receipt preserves exact inputs and zero protected reads. The
+  original matrix is now 9/18 terminal; all remaining queues are unchanged.
