@@ -33,6 +33,7 @@ from prta_cxr.models.prta import (
     PRTATrainingHeads,
     branch_decorrelation_loss,
     cmcp_margin_loss,
+    finding_conditioned_prototype_alignment_loss,
     opposite_direction_cost_loss,
     opposite_direction_margin_loss,
     state_preservation_loss,
@@ -112,6 +113,15 @@ class PRTATrainModel(nn.Module):
             bounded_state_anchor=bool(components.get("bounded_state_anchor", False)),
             state_branch=self.branch_mode != "transition_only",
             adapter_indices=_adapter_indices(model, tail_length=len(frozen_tail)),
+            learned_relation_residual_scale=bool(
+                components.get("learned_relation_residual_scale", False)
+            ),
+            relation_residual_initial_scale=float(
+                components.get("relation_residual_initial_scale", 1e-3)
+            ),
+            prior_reliability_gate=bool(
+                components.get("prior_reliability_gate", False)
+            ),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
         head_name = str(model.get("native_head", "H0"))
@@ -338,6 +348,7 @@ def _loss(
             "state",
             "inversion",
             "cmcp",
+            "prototype_alignment",
             "branch_decorrelation",
         )
     )
@@ -349,8 +360,35 @@ def _loss(
     total = total + float(weights.get("alignment", 0.0)) * transition_alignment_loss(
         output.transition_embedding, projected_text
     )
+    prototype_weight = float(weights.get("prototype_alignment", 0.0))
+    if prototype_weight:
+        if "transition_prototypes" not in batch:
+            raise ValueError("prototype alignment requires transition prototypes")
+        projected_prototypes = model.training_heads.transition_text(
+            batch["transition_prototypes"].to(device)
+        )
+        prototype_spec = dict(model.config.get("prototype_alignment", {}))
+        total = total + prototype_weight * (
+            finding_conditioned_prototype_alignment_loss(
+                output.transition_embedding,
+                projected_prototypes,
+                target,
+                temperature=float(prototype_spec.get("temperature", 0.07)),
+            )
+        )
+    components = dict(model.config["model"].get("components", {}))
+    state_weights = None
+    if bool(components.get("selective_state_anchor", False)):
+        if output.change_energy is None:
+            raise ValueError("selective state anchor requires change energy")
+        beta = float(components.get("selective_state_beta", 1.0))
+        if beta <= 0:
+            raise ValueError("selective state beta must be positive")
+        state_weights = torch.exp(-beta * output.change_energy.detach())
     total = total + float(weights.get("state", 0.0)) * state_preservation_loss(
-        output.state_embedding, output.frozen_current_embedding
+        output.state_embedding,
+        output.frozen_current_embedding,
+        sample_weights=state_weights,
     )
     total = total + float(
         weights.get("branch_decorrelation", 0.0)
@@ -365,13 +403,27 @@ def _loss(
             logits, reverse_logits
         )
     cmcp_weight = float(weights.get("cmcp", 0.0))
-    if cmcp_weight and prior.shape[0] > 1:
-        counterfactual, _, _ = model(prior.roll(1, dims=0), current, finding)
-        total = total + cmcp_weight * cmcp_margin_loss(
-            output.transition_embedding,
-            counterfactual.transition_embedding,
-            projected_text,
-        )
+    if cmcp_weight:
+        matched_hard = bool(components.get("matched_hard_cmcp", False))
+        if matched_hard:
+            if "counterfactual_prior" not in batch:
+                raise ValueError("matched-hard CMCP requires counterfactual priors")
+            counterfactual_prior = batch["counterfactual_prior"].to(device)
+        elif prior.shape[0] > 1:
+            counterfactual_prior = prior.roll(1, dims=0)
+        else:
+            counterfactual_prior = None
+        if counterfactual_prior is not None:
+            counterfactual, _, _ = model(
+                counterfactual_prior, current, finding
+            )
+            cmcp_spec = dict(model.config.get("cmcp", {}))
+            total = total + cmcp_weight * cmcp_margin_loss(
+                output.transition_embedding,
+                counterfactual.transition_embedding,
+                projected_text,
+                margin=float(cmcp_spec.get("margin", 0.2)),
+            )
     return total, logits
 
 

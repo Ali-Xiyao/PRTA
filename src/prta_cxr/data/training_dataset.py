@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +29,8 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         prior_intervention: str = "true",
         wrong_finding_query: bool = False,
         label_key: str = "progression_label",
+        include_transition_prototypes: bool = False,
+        matched_hard_prior_map: Mapping[str, str] | None = None,
     ) -> None:
         self.rows = [dict(row) for row in rows if row.get("split") == split]
         if not self.rows:
@@ -46,6 +48,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         self.prior_intervention = prior_intervention
         self.wrong_finding_query = bool(wrong_finding_query)
         self.label_key = str(label_key)
+        self.include_transition_prototypes = bool(include_transition_prototypes)
         value = torch.load(text_cache_path, map_location="cpu", weights_only=True)
         if not isinstance(value, dict):
             raise ContractError("text cache must be a dictionary")
@@ -84,6 +87,40 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
                 )
             if row[self.label_key] not in self.label_index:
                 raise ContractError("training row has an unknown progression label")
+            if self.include_transition_prototypes:
+                missing_prototypes = [
+                    label
+                    for label in PROGRESSION_LABELS
+                    if f"{row['finding']}|{label}"
+                    not in self.transition_prototypes
+                ]
+                if missing_prototypes:
+                    raise ContractError(
+                        "missing finding-conditioned transition prototypes: "
+                        f"{row['finding']} {missing_prototypes}"
+                    )
+        self.sample_indices = {
+            str(row["sample_id"]): index for index, row in enumerate(self.rows)
+        }
+        self.matched_hard_prior_indices: list[int] | None = None
+        if matched_hard_prior_map is not None:
+            hard_indices = []
+            for row in self.rows:
+                sample_id = str(row["sample_id"])
+                candidate_id = matched_hard_prior_map.get(sample_id)
+                if candidate_id is None or str(candidate_id) not in self.sample_indices:
+                    raise ContractError(
+                        f"missing matched-hard prior for sample: {sample_id}"
+                    )
+                candidate = self.rows[self.sample_indices[str(candidate_id)]]
+                if str(candidate["patient_id_hash"]) == str(row["patient_id_hash"]):
+                    raise ContractError("matched-hard prior must use another patient")
+                if str(candidate[self.label_key]) == str(row[self.label_key]):
+                    raise ContractError("matched-hard prior must use another label")
+                if str(candidate["finding"]) != str(row["finding"]):
+                    raise ContractError("matched-hard prior must preserve finding")
+                hard_indices.append(self.sample_indices[str(candidate_id)])
+            self.matched_hard_prior_indices = hard_indices
         self.wrong_prior_indices = (
             self._wrong_prior_indices(
                 matched=self.prior_intervention == "matched_wrong"
@@ -178,6 +215,14 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             image_cache_key(prior_source, prior_path),
             image_cache_key(current_source, current_path),
         ]
+        if self.matched_hard_prior_indices is not None:
+            counterfactual = self.rows[self.matched_hard_prior_indices[index]]
+            keys.append(
+                image_cache_key(
+                    str(counterfactual["source"]),
+                    str(counterfactual["prior_image_path"]),
+                )
+            )
         features = self.cache.get_many(keys).float()
         if self.prior_intervention == "null":
             features[0].zero_()
@@ -197,7 +242,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         transition = torch.as_tensor(transition_value, dtype=torch.float32)
         if finding.shape != (512,) or transition.shape != (512,):
             raise ContractError("text embeddings must be 512-dimensional")
-        return {
+        item = {
             "sample_id": str(row["sample_id"]),
             "patient_id_hash": str(row["patient_id_hash"]),
             "prior": features[0],
@@ -220,3 +265,21 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
                 self.rows[self.wrong_prior_indices[index]]["sample_id"]
             ),
         }
+        if self.include_transition_prototypes:
+            prototypes = torch.stack(
+                [
+                    torch.as_tensor(
+                        self.transition_prototypes[f"{row['finding']}|{label}"],
+                        dtype=torch.float32,
+                    )
+                    for label in PROGRESSION_LABELS
+                ]
+            )
+            if prototypes.shape != (len(PROGRESSION_LABELS), 512):
+                raise ContractError("transition prototypes must have shape [5, 512]")
+            item["transition_prototypes"] = prototypes
+        if self.matched_hard_prior_indices is not None:
+            candidate = self.rows[self.matched_hard_prior_indices[index]]
+            item["counterfactual_prior"] = features[2]
+            item["counterfactual_sample_id"] = str(candidate["sample_id"])
+        return item

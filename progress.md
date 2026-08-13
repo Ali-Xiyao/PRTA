@@ -1,5 +1,26 @@
 # Active progress: dual-branch repair v1
 
+## 2026-08-13 Wave045 implementation start
+
+- Confirmed the exact Tail8/H0 parent contract and existing code paths. V0 is
+  behavior-compatible; V1-V5 will be opt-in only.
+- Frozen `prototype_alignment=0.01` for V1+ and `matched_hard_cmcp=0.01` for
+  V2+, because the current reference has both legacy auxiliary weights at zero.
+- Located the five-class transition prototypes in the immutable text cache and
+  the legacy batch-roll CMCP implementation that must be replaced. Engineering
+  work is active; no Wave045 scientific cell has launched yet.
+- Implemented all V1-V5 mechanisms behind opt-in config flags, the exact
+  18-cell builder, and an offline Train/Dev matched-hard prior-map builder.
+  Legacy configs retain their direct relation residual and batch-roll behavior.
+- Focused verification passed (40 tests). Full repository pytest passed all
+  236 tests; Ruff passed over `src`, `scripts`, and `tests`; compileall passed.
+  Repository-wide Ruff only reports pre-existing private `data/runtime`
+  controller formatting and those artifacts were not modified.
+- Preserved matched-hard preprocessing attempt1 as stopped before output after
+  identifying a non-scientific performance issue. Attempt2 uses the identical
+  matching contract with batched tensorized constraints; no scientific cell
+  has launched and protected-read counters remain zero.
+
 ## 2026-08-11 dual-branch terminal result and reliability record
 
 - Architecture-only Wave042 attempt3 completed all six cells. Repaired H4
@@ -6820,3 +6841,15 @@
 - Frozen hardware classes: all Seed17 cells on A800/3066, all Seed43 cells on
   A800/9929, and all Seed28 cells on RTX3090, split two on GPU0 and one on GPU1.
   No Internal-test/Gold access or protected evaluation is authorized.
+
+# 2026-08-13 Wave045 PRTA-v2 protocol supersedes Wave044 before launch
+
+- Parsed the newer attachment and superseded Wave044 before any implementation,
+  config freeze, runtime namespace, or training output. The new authoritative
+  method boundary preserves Tail8/H0 and modifies only auxiliary supervision
+  and relation-residual control.
+- Predeclared the complete V0-V5 x Seeds17/28/43 matrix (18 mandatory cells)
+  rather than selecting on a screening seed. Four fixed queues use A800/3066,
+  A800/9929, and both RTX3090s with a 6/6/3/3 split and no outcome adaptation.
+- Internal-test/Gold remain forbidden. Historical protected-set statements in
+  the attachment are not treated as evidence for configuration choice.

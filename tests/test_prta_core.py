@@ -13,6 +13,7 @@ from prta_cxr.models.prta import (
     PRTATemporalAdapter,
     branch_decorrelation_loss,
     cmcp_margin_loss,
+    finding_conditioned_prototype_alignment_loss,
     invert_progression_logits,
     opposite_direction_cost_loss,
     opposite_direction_margin_loss,
@@ -64,6 +65,80 @@ def test_losses_and_inversion_are_finite():
     assert torch.isfinite(state_preservation_loss(first, second))
     logits = torch.arange(5.0).unsqueeze(0)
     assert invert_progression_logits(logits).tolist() == [[0.0, 2.0, 1.0, 4.0, 3.0]]
+
+
+def test_finding_conditioned_prototype_alignment_uses_five_class_target():
+    visual = torch.tensor([[1.0, 0.0], [0.0, 1.0]], requires_grad=True)
+    prototypes = torch.zeros(2, 5, 2)
+    prototypes[0, 1] = torch.tensor([1.0, 0.0])
+    prototypes[1, 3] = torch.tensor([0.0, 1.0])
+    loss = finding_conditioned_prototype_alignment_loss(
+        visual, prototypes, torch.tensor([1, 3])
+    )
+    loss.backward()
+    assert torch.isfinite(loss)
+    assert visual.grad is not None
+
+
+def test_relation_residual_scale_is_near_zero_and_receives_gradient():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        learned_relation_residual_scale=True,
+        relation_residual_initial_scale=1e-3,
+    )
+    assert adapter.relation_residual_scale is not None
+    assert adapter.relation_residual_scale.item() == pytest.approx(1e-3)
+    output = adapter(
+        torch.randn(2, 9, 16),
+        torch.randn(2, 9, 16),
+        torch.randn(2, 16),
+    )
+    output.transition_embedding.sum().backward()
+    assert adapter.relation_residual_scale.grad is not None
+
+
+def test_prior_reliability_gate_is_bounded_and_residual_only():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        learned_relation_residual_scale=True,
+        prior_reliability_gate=True,
+    )
+    output = adapter(
+        torch.randn(2, 9, 16),
+        torch.randn(2, 9, 16),
+        torch.randn(2, 16),
+    )
+    assert output.prior_reliability is not None
+    assert output.prior_reliability.shape == (2, 1)
+    assert bool((output.prior_reliability >= 0).all())
+    assert bool((output.prior_reliability <= 1).all())
+    output.transition_embedding.sum().backward()
+    assert any(
+        parameter.grad is not None
+        for parameter in adapter.prior_reliability_projection.parameters()
+    )
+
+
+def test_selective_state_preservation_downweights_large_change():
+    adapted = torch.tensor([[1.0, 0.0], [0.0, 1.0]], requires_grad=True)
+    frozen = torch.tensor([[1.0, 0.0], [1.0, 0.0]])
+    unweighted = state_preservation_loss(adapted, frozen)
+    weighted = state_preservation_loss(
+        adapted, frozen, sample_weights=torch.tensor([1.0, 0.01])
+    )
+    assert weighted < unweighted
+    weighted.backward()
+    assert adapted.grad is not None
 
 
 @pytest.mark.parametrize("family", ("current_only", "siamese_diff", "tila"))

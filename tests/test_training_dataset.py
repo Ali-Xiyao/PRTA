@@ -175,3 +175,61 @@ def test_matched_wrong_prior_comes_from_a_different_patient(tmp_path):
     assert item["matched_wrong_sample_id"] != item["sample_id"]
     wrong = rows[dataset.wrong_prior_indices[0]]
     assert wrong["patient_id_hash"] != rows[0]["patient_id_hash"]
+
+
+def test_feature_dataset_exposes_five_prototypes_and_matched_hard_prior(tmp_path):
+    rows = []
+    inventory = []
+    labels = ("Stable", "Improved")
+    for index, label in enumerate(labels):
+        for kind in ("prior", "current"):
+            path = f"{kind}-{index}.png"
+            inventory.append(
+                {
+                    "image_key": image_cache_key("source-a", path),
+                    "source": "source-a",
+                    "image_path": path,
+                }
+            )
+        rows.append(
+            {
+                "sample_id": f"sample-{index}",
+                "patient_id_hash": f"patient-{index}",
+                "source": "source-a",
+                "prior_image_path": f"prior-{index}.png",
+                "current_image_path": f"current-{index}.png",
+                "finding": "Edema",
+                "progression_label": label,
+                "split": "train",
+            }
+        )
+    root = tmp_path / "cache"
+    features = torch.arange(4, dtype=torch.float32).reshape(4, 1, 1).expand(
+        4, 197, 768
+    )
+    write_block8_cache(root, inventory, features, shard_size=4)
+    text = tmp_path / "text.pt"
+    from prta_cxr.contracts import PROGRESSION_LABELS
+
+    torch.save(
+        {
+            "finding_embeddings": {"Edema": torch.zeros(512)},
+            "transition_prototypes": {
+                f"Edema|{label}": torch.full((512,), float(index))
+                for index, label in enumerate(PROGRESSION_LABELS)
+            },
+        },
+        text,
+    )
+    dataset = PRTAFeatureDataset(
+        rows,
+        cache=Block8CacheIndex(root),
+        text_cache_path=text,
+        split="train",
+        include_transition_prototypes=True,
+        matched_hard_prior_map={"sample-0": "sample-1", "sample-1": "sample-0"},
+    )
+    item = dataset[0]
+    assert item["transition_prototypes"].shape == (5, 512)
+    assert item["counterfactual_sample_id"] == "sample-1"
+    assert torch.equal(item["counterfactual_prior"], features[2])

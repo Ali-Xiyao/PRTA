@@ -1,6 +1,49 @@
 # Active isolated task: dual-branch repair v1
 
-## 2026-08-13 Wave044 simplified/reliability-gated main-model experiment
+## 2026-08-13 Wave045 PRTA-v2 Tail8/H0 mechanism study
+
+The newer user attachment supersedes the unstarted Wave044 Tail10/H4 plan.
+Wave044 has no code, config, namespace, or training output and is retained below
+only as planning history. The active experiment keeps the frozen backbone and
+Tail8/H0 mainline and runs a non-adaptive 6-variant x 3-seed matrix:
+
+| ID | Only cumulative change from V0 | Seeds |
+|---|---|---|
+| V0 | Current Tail8/H0 final reference | 17/28/43 |
+| V1 | Replace batch InfoNCE with finding-conditioned five-class prototype alignment | 17/28/43 |
+| V2 | V1 + replace batch-roll CMCP with matched hard counterfactual prior | 17/28/43 |
+| V3 | V2 + learned relation-residual scale initialized to 1e-3 | 17/28/43 |
+| V4 | V3 + prior-reliability gate applied only to the relation residual | 17/28/43 |
+| V5 | V4 + change-energy selective state anchor | 17/28/43 |
+
+Execution is frozen before outcomes as 18 mandatory Train/Dev cells. A800/3066
+owns all six Seed17 cells, A800/9929 owns all six Seed43 cells, RTX3090/GPU0
+owns V0/V2/V4 Seed28, and RTX3090/GPU1 owns V1/V3/V5 Seed28. Hardware class is
+part of every receipt; no queue may be adapted from intermediate metrics.
+
+- [x] Implement V1-V5 as explicit opt-in configuration contracts while keeping
+  V0 and all historical configs behavior-compatible.
+- [x] Add focused tests for prototype targets, matched-prior indexing, residual
+  initialization, reliability gating, selective state weighting, gradients,
+  and legacy behavior.
+- [ ] Run focused/full engineering verification, then create an immutable source
+  snapshot and exact 18-cell config/controller package.
+- [ ] Verify four idle scientific lanes, source/config/cache/data hashes, disk,
+  GPU/process state, and zero protected reads before launch.
+- [ ] Launch fixed 6/6/3/3 queues on 3066/9929/local0/local1 and monitor only
+  allowlisted queue/terminal/resource surfaces, never intermediate metrics.
+- [ ] After 18/18 terminal, independently aggregate every cell with no selection
+  and report paired three-seed V0-V5 results plus resource accounting.
+
+Hard boundaries: Train/Dev only; never access Internal-test or Gold; do not use
+the attachment's historical protected numbers as a development input; never
+change backbone, Tail8 scope, H0 head, seed set, budgets, optimizer, or data
+split; never retry a scientific failure under a changed identity.
+
+## 2026-08-13 superseded unstarted Wave044 plan
+
+Status: superseded by the later user-provided Tail8/H0 PRTA-v2 protocol before
+implementation, namespace creation, or launch. Nothing below is eligible to run.
 
 Goal: implement and freeze the attachment's smallest decisive follow-up without
 reopening Wave043 or any protected cohort. Reuse immutable Wave043 E0/E1

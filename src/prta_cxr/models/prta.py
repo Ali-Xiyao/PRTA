@@ -213,6 +213,8 @@ class PRTAOutput:
     aligned_prior_tokens: torch.Tensor
     frozen_current_embedding: torch.Tensor
     change_gate: torch.Tensor | None = None
+    change_energy: torch.Tensor | None = None
+    prior_reliability: torch.Tensor | None = None
 
 
 class PRTATemporalAdapter(nn.Module):
@@ -231,6 +233,9 @@ class PRTATemporalAdapter(nn.Module):
         bounded_state_anchor: bool = False,
         state_branch: bool = True,
         adapter_indices: Sequence[int] | None = None,
+        learned_relation_residual_scale: bool = False,
+        relation_residual_initial_scale: float = 1e-3,
+        prior_reliability_gate: bool = False,
     ) -> None:
         super().__init__()
         if width % heads:
@@ -246,6 +251,16 @@ class PRTATemporalAdapter(nn.Module):
         self.cross_time_alignment = bool(cross_time_alignment)
         self.bounded_state_anchor = bool(bounded_state_anchor)
         self.state_branch = bool(state_branch)
+        self.learned_relation_residual_scale = bool(
+            learned_relation_residual_scale
+        )
+        self.prior_reliability_gate = bool(prior_reliability_gate)
+        if self.prior_reliability_gate and not self.learned_relation_residual_scale:
+            raise ValueError(
+                "prior reliability gate requires learned relation residual scale"
+            )
+        if relation_residual_initial_scale < 0:
+            raise ValueError("relation residual initial scale must be non-negative")
         self.query_projection = nn.Sequential(
             nn.LayerNorm(width),
             nn.Linear(width, width),
@@ -262,6 +277,21 @@ class PRTATemporalAdapter(nn.Module):
             nn.GELU(),
             nn.Dropout(dropout),
             nn.Linear(width * 2, width),
+        )
+        self.relation_residual_scale = (
+            nn.Parameter(torch.tensor(float(relation_residual_initial_scale)))
+            if self.learned_relation_residual_scale
+            else None
+        )
+        self.prior_reliability_projection = (
+            nn.Sequential(
+                nn.LayerNorm(width * 4),
+                nn.Linear(width * 4, width),
+                nn.GELU(),
+                nn.Linear(width, 1),
+            )
+            if self.prior_reliability_gate
+            else None
         )
         self.state_resampler = (
             QueryResampler(
@@ -332,7 +362,28 @@ class PRTATemporalAdapter(nn.Module):
             ),
             dim=-1,
         )
-        transition_source = current + self.relation_projection(relation)
+        relation_residual = self.relation_projection(relation)
+        prior_reliability = None
+        if self.prior_reliability_projection is not None:
+            reliability_context = torch.cat(
+                (
+                    current.mean(dim=1),
+                    aligned_prior.mean(dim=1),
+                    (current - aligned_prior).abs().mean(dim=1),
+                    query_condition,
+                ),
+                dim=-1,
+            )
+            prior_reliability = torch.sigmoid(
+                self.prior_reliability_projection(reliability_context)
+            )
+            relation_residual = relation_residual * prior_reliability.unsqueeze(1)
+        if self.relation_residual_scale is None:
+            transition_source = current + relation_residual
+        else:
+            transition_source = (
+                current + self.relation_residual_scale * relation_residual
+            )
         transition_tokens = self.transition_resampler(
             transition_source, query_condition
         )
@@ -352,10 +403,10 @@ class PRTATemporalAdapter(nn.Module):
         frozen_current_embedding = F.normalize(
             self.tail.forward_frozen(current_block8).mean(dim=1), dim=-1
         )
+        difference = current - prior
+        change_energy = difference.square().mean(dim=(1, 2), keepdim=False)
         change_gate = None
         if self.change_gate_projection is not None:
-            difference = current - prior
-            change_energy = difference.square().mean(dim=(1, 2), keepdim=False)
             change_signal = 1 - torch.exp(-change_energy)
             gate_context = torch.cat(
                 (difference.abs().mean(dim=1), query_condition), dim=-1
@@ -370,6 +421,8 @@ class PRTATemporalAdapter(nn.Module):
             aligned_prior_tokens=aligned_prior,
             frozen_current_embedding=frozen_current_embedding,
             change_gate=change_gate,
+            change_energy=change_energy,
+            prior_reliability=prior_reliability,
         )
 
 
@@ -424,6 +477,32 @@ def transition_alignment_loss(
         F.cross_entropy(logits, targets)
         + F.cross_entropy(logits.transpose(0, 1), targets)
     )
+
+
+def finding_conditioned_prototype_alignment_loss(
+    transition_embeddings: torch.Tensor,
+    prototype_embeddings: torch.Tensor,
+    target: torch.Tensor,
+    *,
+    temperature: float = 0.07,
+) -> torch.Tensor:
+    if transition_embeddings.ndim != 2:
+        raise ValueError("transition embeddings must have shape [B, D]")
+    expected = (
+        transition_embeddings.shape[0],
+        len(PROGRESSION_LABELS),
+        transition_embeddings.shape[1],
+    )
+    if prototype_embeddings.shape != expected:
+        raise ValueError("prototype embeddings must have shape [B, 5, D]")
+    if target.shape != (transition_embeddings.shape[0],):
+        raise ValueError("prototype target must have shape [B]")
+    if temperature <= 0:
+        raise ValueError("temperature must be positive")
+    visual = F.normalize(transition_embeddings, dim=-1)
+    prototypes = F.normalize(prototype_embeddings, dim=-1)
+    logits = torch.einsum("bd,bkd->bk", visual, prototypes) / temperature
+    return F.cross_entropy(logits, target)
 
 
 def cmcp_margin_loss(
@@ -528,16 +607,27 @@ def opposite_direction_cost_loss(
 
 
 def state_preservation_loss(
-    adapted_state: torch.Tensor, frozen_current_state: torch.Tensor
+    adapted_state: torch.Tensor,
+    frozen_current_state: torch.Tensor,
+    *,
+    sample_weights: torch.Tensor | None = None,
 ) -> torch.Tensor:
     if adapted_state.shape != frozen_current_state.shape:
         raise ValueError("state-preservation embedding shapes differ")
-    return (
+    losses = (
         1
         - F.cosine_similarity(
             adapted_state, frozen_current_state.detach(), dim=-1
         )
-    ).mean()
+    )
+    if sample_weights is None:
+        return losses.mean()
+    if sample_weights.shape != losses.shape:
+        raise ValueError("state-preservation sample weights must have shape [B]")
+    if bool((sample_weights < 0).any()):
+        raise ValueError("state-preservation sample weights must be non-negative")
+    denominator = sample_weights.sum().clamp_min(torch.finfo(losses.dtype).eps)
+    return (losses * sample_weights).sum() / denominator
 
 
 def branch_decorrelation_loss(

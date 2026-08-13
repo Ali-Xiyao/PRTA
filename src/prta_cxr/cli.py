@@ -42,6 +42,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--cleaned-split-platform-root", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
+    parser.add_argument("--matched-hard-prior-map", type=Path)
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--label-quality-audit", type=Path)
     parser.add_argument("--run-registry", type=Path)
@@ -98,6 +99,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         from torch.utils.data import DataLoader
 
         from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
+        from prta_cxr.data.hard_cmcp import read_matched_hard_prior_map
         from prta_cxr.data.token_cache import Block8CacheIndex
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
         from prta_cxr.experiments import (
@@ -118,6 +120,19 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         )
 
         config = load_training_config(args.config)
+        components = dict(config["model"].get("components", {}))
+        weights = dict(config.get("loss_weights", {}))
+        use_prototypes = float(weights.get("prototype_alignment", 0.0)) > 0
+        use_matched_hard = bool(components.get("matched_hard_cmcp", False))
+        if use_matched_hard and args.matched_hard_prior_map is None:
+            parser.error(
+                "--matched-hard-prior-map is required for matched-hard CMCP"
+            )
+        matched_hard_prior_map = (
+            read_matched_hard_prior_map(args.matched_hard_prior_map)
+            if use_matched_hard
+            else None
+        )
         load_completed_human_silver_audit(args.label_quality_audit)
         require_cleaned_manifest(
             args.split_manifest,
@@ -156,10 +171,20 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             )
         cache = Block8CacheIndex(args.cache_root)
         train_dataset = PRTAFeatureDataset(
-            rows, cache=cache, text_cache_path=args.text_cache, split="train"
+            rows,
+            cache=cache,
+            text_cache_path=args.text_cache,
+            split="train",
+            include_transition_prototypes=use_prototypes,
+            matched_hard_prior_map=matched_hard_prior_map,
         )
         dev_dataset = PRTAFeatureDataset(
-            rows, cache=cache, text_cache_path=args.text_cache, split="dev"
+            rows,
+            cache=cache,
+            text_cache_path=args.text_cache,
+            split="dev",
+            include_transition_prototypes=use_prototypes,
+            matched_hard_prior_map=matched_hard_prior_map,
         )
         wrong_prior_dev_dataset = PRTAFeatureDataset(
             rows,
@@ -167,6 +192,8 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             text_cache_path=args.text_cache,
             split="dev",
             prior_intervention="matched_wrong",
+            include_transition_prototypes=use_prototypes,
+            matched_hard_prior_map=matched_hard_prior_map,
         )
         batch_size = int(config["optimization"]["batch_size"])
         workers = int(config["optimization"].get("num_workers", 0))
@@ -201,6 +228,10 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "label_quality_audit": sha256_file(args.label_quality_audit),
             "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
         }
+        if args.matched_hard_prior_map is not None:
+            input_hashes["matched_hard_prior_map"] = sha256_file(
+                args.matched_hard_prior_map
+            )
         started = datetime.now(UTC).isoformat()
         git_commit = resolve_source_commit(Path(__file__).resolve().parents[2])
         registry_row = {

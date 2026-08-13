@@ -1,5 +1,23 @@
 # Active findings: dual-branch repair v1
 
+## 2026-08-13 Wave045 implementation decisions
+
+- The exact current Tail8/H0 parent has auxiliary weights
+  `alignment=0`, `cmcp=0`, `state=0.025`, `direction_margin=0.01`, and
+  `opposite_direction_cost=0.05`. Therefore a literal implementation swap
+  would make V1/V2 inert. Freeze the attachment's first bounded prototype
+  weight at `0.01`, and freeze matched-hard CMCP at `0.01`; do not tune either
+  from outcomes.
+- The existing text cache already contains five transition prototypes per
+  finding, while the training engine still uses per-sample batch InfoNCE and
+  batch `roll(1)` counterfactual priors. Wave045 must expose all five prototypes
+  in each batch and replace the roll path with a precomputed different-patient,
+  different-label, finding-matched hard-prior index.
+- The existing temporal adapter adds its learned relation projection directly
+  to current tokens. V3-V5 must keep the exact legacy computation when disabled
+  and, when enabled, scale only that relation residual. The reliability gate
+  must also act only on the residual, never on current tokens or the H0 head.
+
 - The architecture-only repair passed its frozen gate: mean paired Macro-F1
   delta is `+0.0022984521` and repaired H4 wins 2/3 seeds. This supports a
   modest structural contribution, not a large accuracy claim.
@@ -2743,3 +2761,19 @@
   (`sigmoid(-2)`), so legacy hard alignment and no-alignment paths stay exact.
   This makes E3 a bounded structural change rather than a silent replacement
   of all prior experiments.
+
+# 2026-08-13 Wave045 PRTA-v2 design interpretation
+
+- The newer attachment changes the active hypothesis from Tail10/H4 objective
+  simplification to Tail8/H0 mechanism repair. Because Wave044 never launched,
+  the clean boundary is to supersede it rather than mix the two designs.
+- V1-V5 are cumulative by the attachment's table. Running all six variants at
+  all three seeds prevents a metric-selected second phase and gives paired
+  evidence for every mechanism. Four-card execution is balanced by fixed seed
+  hardware class, with the identical RTX3090 pair sharing Seed28.
+- Prototype alignment must compare each visual transition only against the
+  five prototypes for its own finding. Matched CMCP must use a frozen offline
+  match/index contract rather than `prior.roll(1)`. Residual scale and prior
+  reliability must affect only the relation residual, leaving H0 logits and
+  the no-feature legacy path unchanged. Selective state anchoring must derive
+  its weight from detached, label-free change energy.
