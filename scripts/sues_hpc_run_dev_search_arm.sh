@@ -21,8 +21,9 @@ SPLIT_MANIFEST=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/manifests/train_dev_cle
 CLEANED_SPLIT_FREEZE=${RUNTIME_ROOT}/formal_cleaned_split_v1_1/cleaned_split_freeze_receipt.json
 WEIGHTS=/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/model/biomedclip/open_clip_pytorch_model.bin
 QUALITY_AUDIT=${RUNTIME_ROOT}/server_runs/continuous_lightweight_dev_search_v1/inputs/human_silver_accuracy_audit.json
+MATCHED_HARD_PRIOR_MAP=${PRTA_CXR_MATCHED_HARD_PRIOR_MAP:-}
 
-for VALUE in "${CONFIG}" "${OUTPUT}" "${RUN_REGISTRY}" "${SPLIT_MANIFEST}"; do
+for VALUE in "${CONFIG}" "${OUTPUT}" "${RUN_REGISTRY}" "${SPLIT_MANIFEST}" "${MATCHED_HARD_PRIOR_MAP}"; do
   LOWER=$(printf '%s' "${VALUE}" | tr '[:upper:]' '[:lower:]')
   if [[ "${LOWER}" == *internal_test* || "${LOWER}" == *gold* ]]; then
     echo "protected path marker rejected: ${VALUE}" >&2
@@ -55,6 +56,14 @@ if [[ ! "${PRTA_CXR_SOURCE_COMMIT:-}" =~ ^[0-9a-f]{40,64}$ ]]; then
   echo "PRTA_CXR_SOURCE_COMMIT is not an exact commit hash" >&2
   exit 9
 fi
+EXTRA_ARGS=()
+if [[ -n "${MATCHED_HARD_PRIOR_MAP}" ]]; then
+  if [[ ! -f "${MATCHED_HARD_PRIOR_MAP}" ]]; then
+    echo "missing matched-hard prior map" >&2
+    exit 10
+  fi
+  EXTRA_ARGS+=(--matched-hard-prior-map "${MATCHED_HARD_PRIOR_MAP}")
+fi
 
 source "${HOME}/miniforge3/etc/profile.d/conda.sh"
 conda activate prta-cxr311
@@ -71,6 +80,7 @@ python scripts/07_train.py \
   --cleaned-split-platform-root "${RUNTIME_ROOT}/formal_cleaned_split_v1_1" \
   --cache-root "${CACHE_ROOT}" \
   --text-cache "${TEXT_CACHE}" \
+  "${EXTRA_ARGS[@]}" \
   --weights "${WEIGHTS}" \
   --label-quality-audit "${QUALITY_AUDIT}" \
   --run-registry "${RUN_REGISTRY}" \
