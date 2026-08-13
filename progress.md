@@ -6961,3 +6961,9 @@
   and advanced only to frozen `W045-V3-S17`. Its formal PASS receipt reports
   exact frozen inputs and zero protected reads. The original matrix is now
   10/18 terminal, with no failure or outcome-adaptive modification.
+- A800/9929 completed `W045-V3-S43` with terminal receipt SHA
+  `29a34dff661ba13ab5cc247e121ed6e3b833bba535ca26aacb0f7472000b507b`
+  and advanced only to frozen `W045-V4-S43`. Its terminal record retains the
+  original preparation identity and zero protected reads. The original matrix
+  is now 11/18 terminal; all diagnostic supervisors remain correctly waiting
+  for their corresponding original worker completion receipts.
