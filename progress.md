@@ -6985,3 +6985,9 @@
   followed by `W045D-V5-S28` receipt
   `f998aeed1e0b89c874f6ea6382122048096d46d2b5700f2d755e9dac87c5f114`.
   No training queue was altered and all receipts report zero protected reads.
+- A800/3066 completed `W045-V3-S17` with terminal receipt SHA
+  `41738c3043170a1efde7fa04ccbb2fe26df13a04bb8b521555e34ae31f6fcda9`
+  and advanced only to frozen `W045-V4-S17`. The terminal record confirms the
+  immutable preparation identity and zero protected reads. The original
+  training matrix is now 14/18 terminal; its checkpoint-only supplement
+  remains gated until the complete original Seed17 worker receipt exists.
