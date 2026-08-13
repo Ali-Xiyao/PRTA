@@ -6991,3 +6991,9 @@
   immutable preparation identity and zero protected reads. The original
   training matrix is now 14/18 terminal; its checkpoint-only supplement
   remains gated until the complete original Seed17 worker receipt exists.
+- A800/3066 completed `W045-V4-S17` with terminal receipt SHA
+  `77dd79af672928b8bd0739dcf289a65a91a12388d36e0232bdfa317df13e39b8`
+  and advanced only to final frozen `W045-V5-S17`. The formal terminal record
+  retains the original preparation identity and zero protected reads. The
+  original matrix is now 15/18 terminal; all Seed17 diagnostics remain
+  correctly gated on the worker's complete terminal receipt.
