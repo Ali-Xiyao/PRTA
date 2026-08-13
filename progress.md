@@ -6937,3 +6937,9 @@
   and advanced only to frozen `W045-V2-S43`. This formal PASS receipt retains
   exact input/config identities and zero protected reads. The original matrix
   is now 5/18 terminal, with no failures or queue adaptation.
+- A800/3066 completed `W045-V1-S17` with terminal receipt SHA
+  `a2465c39424943b579846e676d2138f200c849d575e1182af1ce9aeffff8c085`
+  and advanced only to frozen `W045-V2-S17`. The formal PASS receipt confirms
+  zero protected reads and exact frozen identities. The original matrix is now
+  6/18 terminal; all nonterminal original cells and the diagnostic supplement
+  remain in their predeclared order.
