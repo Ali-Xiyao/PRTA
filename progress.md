@@ -6926,3 +6926,9 @@
   inputs and zero protected reads. This makes three of eighteen original
   training cells terminal; all remaining original and diagnostic queues retain
   their frozen identities and order.
+- Local RTX3090 GPU1 completed `W045-V1-S28` with terminal receipt SHA
+  `847dee958e95a1a30640bf30598334c6fae2ddec416751b1d10a15c4c77c66f5`
+  and advanced only to frozen `W045-V3-S28`. The terminal record is formal
+  PASS with `protected_outcomes_opened=false`. The original matrix is now
+  4/18 terminal: V0 for Seeds17/28/43 and V1 for Seed28. All four active
+  training lanes and the four waiting diagnostic supervisors remain healthy.
