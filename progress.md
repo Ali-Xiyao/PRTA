@@ -6967,3 +6967,11 @@
   original preparation identity and zero protected reads. The original matrix
   is now 11/18 terminal; all diagnostic supervisors remain correctly waiting
   for their corresponding original worker completion receipts.
+- Local RTX3090 GPU0 completed its original frozen lane with `W045-V4-S28`
+  terminal receipt SHA
+  `34c18b9721265f1a973d853d2faabc2e132b9c2b8475974d1552c3f801a4ee12`.
+  The formal completion reports zero protected reads, taking the immutable
+  original matrix to 12/18. Its preregistered checkpoint-only `W045D-V4-S28`
+  supplement then ran after the completion gate and passed with diagnostic
+  receipt SHA `b26a49dbdb4bd7bf65bfc18ac79a79f7b60d3399992ab7ca91e93fe33d6d3f9d`;
+  no new training cell or outcome-driven decision was introduced.
