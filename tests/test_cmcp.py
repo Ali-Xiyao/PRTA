@@ -1,7 +1,14 @@
+import json
+
+import pytest
 import torch
 
+from prta_cxr.contracts import ContractError
 from prta_cxr.data.cmcp import build_cmcp_matches, transition_examples
-from prta_cxr.data.hard_cmcp import build_matched_hard_prior_entries
+from prta_cxr.data.hard_cmcp import (
+    build_matched_hard_prior_entries,
+    read_matched_hard_prior_map,
+)
 
 
 def test_cmcp_is_cross_patient_and_opposite_label():
@@ -32,8 +39,7 @@ def test_cmcp_is_cross_patient_and_opposite_label():
     assert len(matches) == 2
     assert audit["coverage"] == 1.0
     assert all(
-        row["target_patient_id"] != row["counterfactual_patient_id"]
-        for row in matches
+        row["target_patient_id"] != row["counterfactual_patient_id"] for row in matches
     )
     assert all(row["target_label"] != row["counterfactual_label"] for row in matches)
 
@@ -85,3 +91,42 @@ def test_training_hard_cmcp_is_finding_matched_and_cosine_hard():
     assert match["finding"] == "Edema"
     assert match["target_label"] != match["counterfactual_label"]
     assert audit["coverage"] == 1.0
+
+
+def test_matched_hard_map_fails_closed_on_input_identity_drift(tmp_path):
+    path = tmp_path / "map.json"
+    path.write_text(
+        json.dumps(
+            {
+                "schema": "prta-cxr.matched-hard-prior-map.v1",
+                "split_manifest_sha256": "split-a",
+                "cache_manifest_sha256": "cache-a",
+                "cache_entry_block": 4,
+                "entries": [
+                    {
+                        "target_sample_id": "target",
+                        "counterfactual_sample_id": "candidate",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert read_matched_hard_prior_map(
+        path,
+        expected_split_manifest_sha256="split-a",
+        expected_cache_manifest_sha256="cache-a",
+        expected_cache_entry_block=4,
+    ) == {"target": "candidate"}
+    with pytest.raises(ContractError, match="split_manifest_sha256 mismatch"):
+        read_matched_hard_prior_map(
+            path,
+            expected_split_manifest_sha256="split-b",
+        )
+    with pytest.raises(ContractError, match="cache_manifest_sha256 mismatch"):
+        read_matched_hard_prior_map(
+            path,
+            expected_cache_manifest_sha256="cache-b",
+        )
+    with pytest.raises(ContractError, match="cache_entry_block mismatch"):
+        read_matched_hard_prior_map(path, expected_cache_entry_block=8)

@@ -12,10 +12,37 @@ import torch.nn.functional as F
 from prta_cxr.contracts import ContractError
 
 
-def read_matched_hard_prior_map(path: Path) -> dict[str, str]:
+def read_matched_hard_prior_map(
+    path: Path,
+    *,
+    expected_split_manifest_sha256: str | None = None,
+    expected_cache_manifest_sha256: str | None = None,
+    expected_cache_entry_block: int | None = None,
+) -> dict[str, str]:
     value = json.loads(Path(path).read_text(encoding="utf-8"))
     if value.get("schema") != "prta-cxr.matched-hard-prior-map.v1":
         raise ContractError("unsupported matched-hard prior map schema")
+    expected_metadata = {
+        "split_manifest_sha256": expected_split_manifest_sha256,
+        "cache_manifest_sha256": expected_cache_manifest_sha256,
+        "cache_entry_block": expected_cache_entry_block,
+    }
+    for name, expected in expected_metadata.items():
+        if expected is None:
+            continue
+        actual = value.get(name)
+        if name == "cache_entry_block":
+            try:
+                actual = int(actual)
+            except (TypeError, ValueError) as error:
+                raise ContractError(
+                    "matched-hard prior map cache entry block is missing"
+                ) from error
+            expected = int(expected)
+        if actual != expected:
+            raise ContractError(
+                f"matched-hard prior map {name} mismatch: {actual} != {expected}"
+            )
     entries = value.get("entries")
     if not isinstance(entries, list):
         raise ContractError("matched-hard prior map entries are missing")
@@ -66,9 +93,7 @@ def build_matched_hard_prior_entries(
         }
         missing = required - set(row)
         if missing:
-            raise ContractError(
-                f"hard-CMCP row fields missing: {sorted(missing)}"
-            )
+            raise ContractError(f"hard-CMCP row fields missing: {sorted(missing)}")
         groups[(split, str(row["finding"]))].append(row)
 
     selected_device = torch.device(device)
@@ -105,8 +130,7 @@ def build_matched_hard_prior_entries(
 
         def codes(values: list[str]) -> torch.Tensor:
             vocabulary = {
-                value: index
-                for index, value in enumerate(sorted(set(values)))
+                value: index for index, value in enumerate(sorted(set(values)))
             }
             return torch.tensor(
                 [vocabulary[value] for value in values],
@@ -134,10 +158,9 @@ def build_matched_hard_prior_entries(
                     "no different-patient/different-label hard-CMCP candidate "
                     f"for {group[failed]['sample_id']}"
                 )
-            same_source = (
-                source_codes[start:end].unsqueeze(1)
-                == source_codes.unsqueeze(0)
-            )
+            same_source = source_codes[start:end].unsqueeze(
+                1
+            ) == source_codes.unsqueeze(0)
             same_view = view_codes[start:end].unsqueeze(1) == view_codes.unsqueeze(0)
             # A tier gap greater than the full cosine range makes the metadata
             # preference lexicographic; cosine selects the hard example only

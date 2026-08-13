@@ -42,6 +42,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             "null",
             "random",
             "matched_wrong",
+            "matched_hard",
             "reversed",
         }:
             raise ContractError("unsupported dataset prior intervention")
@@ -55,9 +56,11 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         self.finding_embeddings = value.get("finding_embeddings", {})
         self.transition_embeddings = value.get("transition_embeddings", {})
         self.transition_prototypes = value.get("transition_prototypes", {})
-        if not isinstance(self.finding_embeddings, dict) or not isinstance(
-            self.transition_embeddings, dict
-        ) or not isinstance(self.transition_prototypes, dict):
+        if (
+            not isinstance(self.finding_embeddings, dict)
+            or not isinstance(self.transition_embeddings, dict)
+            or not isinstance(self.transition_prototypes, dict)
+        ):
             raise ContractError("text cache dictionaries are missing")
         self.label_index = {
             label: index for index, label in enumerate(PROGRESSION_LABELS)
@@ -91,8 +94,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
                 missing_prototypes = [
                     label
                     for label in PROGRESSION_LABELS
-                    if f"{row['finding']}|{label}"
-                    not in self.transition_prototypes
+                    if f"{row['finding']}|{label}" not in self.transition_prototypes
                 ]
                 if missing_prototypes:
                     raise ContractError(
@@ -207,6 +209,14 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             prior_row = self.rows[self.wrong_prior_indices[index]]
             prior_source = str(prior_row["source"])
             prior_path = str(prior_row["prior_image_path"])
+        elif self.prior_intervention == "matched_hard":
+            if self.matched_hard_prior_indices is None:
+                raise ContractError(
+                    "matched_hard intervention requires a matched-hard prior map"
+                )
+            prior_row = self.rows[self.matched_hard_prior_indices[index]]
+            prior_source = str(prior_row["source"])
+            prior_path = str(prior_row["prior_image_path"])
         elif self.prior_intervention == "reversed":
             prior_path, current_path = current_path, prior_path
         elif self.prior_intervention in {"current_only", "null"}:
@@ -215,7 +225,10 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             image_cache_key(prior_source, prior_path),
             image_cache_key(current_source, current_path),
         ]
-        if self.matched_hard_prior_indices is not None:
+        if (
+            self.matched_hard_prior_indices is not None
+            and self.prior_intervention != "matched_hard"
+        ):
             counterfactual = self.rows[self.matched_hard_prior_indices[index]]
             keys.append(
                 image_cache_key(
@@ -278,7 +291,10 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             if prototypes.shape != (len(PROGRESSION_LABELS), 512):
                 raise ContractError("transition prototypes must have shape [5, 512]")
             item["transition_prototypes"] = prototypes
-        if self.matched_hard_prior_indices is not None:
+        if (
+            self.matched_hard_prior_indices is not None
+            and self.prior_intervention != "matched_hard"
+        ):
             candidate = self.rows[self.matched_hard_prior_indices[index]]
             item["counterfactual_prior"] = features[2]
             item["counterfactual_sample_id"] = str(candidate["sample_id"])

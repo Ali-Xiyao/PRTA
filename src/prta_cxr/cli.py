@@ -124,12 +124,28 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         weights = dict(config.get("loss_weights", {}))
         use_prototypes = float(weights.get("prototype_alignment", 0.0)) > 0
         use_matched_hard = bool(components.get("matched_hard_cmcp", False))
-        if use_matched_hard and args.matched_hard_prior_map is None:
-            parser.error(
-                "--matched-hard-prior-map is required for matched-hard CMCP"
+        adapter_scope = str(config["model"].get("adapter_scope", "tail4"))
+        cache_entry_block = adapter_scope_cache_entry_block(adapter_scope)
+        cache_manifest_path = args.cache_root / "cache_manifest.json"
+        cache_manifest = json.loads(cache_manifest_path.read_text(encoding="utf-8"))
+        recorded_entry_block = int(
+            dict(cache_manifest.get("encoder", {})).get("output_block", 8)
+        )
+        if recorded_entry_block != cache_entry_block:
+            raise ValueError(
+                "adapter scope/cache entry mismatch: "
+                f"scope={adapter_scope}, expected Block-{cache_entry_block}, "
+                f"cache is Block-{recorded_entry_block}"
             )
+        if use_matched_hard and args.matched_hard_prior_map is None:
+            parser.error("--matched-hard-prior-map is required for matched-hard CMCP")
         matched_hard_prior_map = (
-            read_matched_hard_prior_map(args.matched_hard_prior_map)
+            read_matched_hard_prior_map(
+                args.matched_hard_prior_map,
+                expected_split_manifest_sha256=sha256_file(args.split_manifest),
+                expected_cache_manifest_sha256=sha256_file(cache_manifest_path),
+                expected_cache_entry_block=cache_entry_block,
+            )
             if use_matched_hard
             else None
         )
@@ -146,29 +162,13 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             rows,
             fraction=float(data_config.get("train_fraction", 1.0)),
             salt=str(
-                data_config.get(
-                    "fraction_salt", "prta-cxr-luna-primary-scaling-v1"
-                )
+                data_config.get("fraction_salt", "prta-cxr-luna-primary-scaling-v1")
             ),
         )
         config = materialize_classification_counts(config, rows)
         experiment_id = str(config.get("experiment_id", ""))
         if not experiment_id:
             raise ValueError("formal training config requires experiment_id")
-        adapter_scope = str(config["model"].get("adapter_scope", "tail4"))
-        cache_entry_block = adapter_scope_cache_entry_block(adapter_scope)
-        cache_manifest = json.loads(
-            (args.cache_root / "cache_manifest.json").read_text(encoding="utf-8")
-        )
-        recorded_entry_block = int(
-            dict(cache_manifest.get("encoder", {})).get("output_block", 8)
-        )
-        if recorded_entry_block != cache_entry_block:
-            raise ValueError(
-                "adapter scope/cache entry mismatch: "
-                f"scope={adapter_scope}, expected Block-{cache_entry_block}, "
-                f"cache is Block-{recorded_entry_block}"
-            )
         cache = Block8CacheIndex(args.cache_root)
         train_dataset = PRTAFeatureDataset(
             rows,
@@ -224,7 +224,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "split_manifest": sha256_file(args.split_manifest),
             "text_cache": sha256_file(args.text_cache),
             "weights": sha256_file(args.weights),
-            "cache_manifest": sha256_file(args.cache_root / "cache_manifest.json"),
+            "cache_manifest": sha256_file(cache_manifest_path),
             "label_quality_audit": sha256_file(args.label_quality_audit),
             "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
         }

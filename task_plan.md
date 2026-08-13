@@ -1,5 +1,44 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave045 post-review amendment
+
+The latest user-provided review confirms that the frozen Wave045 V0-V5
+implementation is scientifically valid and must not be changed in place. The
+current 18-cell progressive matrix therefore remains immutable, including
+cells that have not yet started. Mixing a new source/config identity into only
+the later seeds would destroy the paired three-seed contract.
+
+- [x] Audit the four exact worker queues and classify every Wave045 cell as
+  terminal, active, or queued without reading intermediate metrics.
+- [ ] Add fail-closed matched-hard map/split/cache identity validation to the
+  reusable code path, with focused tests, without redeploying it into an
+  already-running Wave045 cell.
+- [ ] Freeze a separately named post-Wave045 diagnostic supplement for the
+  review's mechanism claims: residual coefficient, prior-gate distribution,
+  selective-state weights, and preregistered prior interventions. Reuse
+  terminal checkpoints where possible; retrain only when a required diagnostic
+  was not retained and the exact cell is explicitly appended at queue tail.
+- [ ] Append any required supplement cells only after each lane's original
+  frozen queue, preserving all original order/identities and forbidding
+  outcome-adaptive selection.
+- [ ] Update runtime directories, immutable receipts, planning documents, and
+  the recurring monitor to cover the original matrix plus the supplement.
+- [ ] After original and supplementary work is terminal, write separate
+  no-selection progressive-build and mechanism-diagnostic reports. Do not
+  label the progressive table as leave-one-out ablation.
+
+Hard boundary: V4 gate initialization and V3 residual-scale parameterization
+are not changed inside Wave045. Any alternative initialization or bounded
+coefficient study requires a new named experiment family and all three seeds.
+
+Frozen supplement scope before outcomes: nine checkpoint-only diagnostic jobs,
+V3/V4/V5 x Seeds17/28/43. Each job evaluates the same checkpoint under true,
+matched-wrong, null, and reversed PRIOR; records prediction flips and metric
+deltas plus residual coefficient; V4/V5 also record gate distributions and V5
+records selective-state weight distributions. The jobs remain on the same
+seed/hardware lanes as their source checkpoints and start only after the
+original lane is terminal.
+
 ## 2026-08-13 Wave045 PRTA-v2 Tail8/H0 mechanism study
 
 The newer user attachment supersedes the unstarted Wave044 Tail10/H4 plan.
@@ -215,6 +254,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Wave045 post-review repo-wide Ruff format check reported 97 pre-existing files that current Ruff would reformat, after compileall and repo-wide lint passed | 1 | Do not bulk-format historical files. Format/check only the seven touched source/script/test files, retain the existing repository-format baseline, and run focused plus full tests before deployment. |
 | First Wave043 freeze rejected the exact Wave029 parent because the new validator incorrectly required its post-transform tail8 scope instead of its immutable source tail4 scope | 1 | The failure occurred before any staging namespace was created. Validate the exact tail4 source parent, transform it to repaired tail8 inside the builder, update the focused fixture, and rerun all gates before freezing. |
 | Initial Wave043 private controller lint found one 89-character reused-cell mapping line and pending formatter changes | 1 | Name the mapped final variant before constructing the receipt row, format only the new controller, then rerun compile/lint/format gates. |
 | First remote deployment-receipt writer was corrupted by nested PowerShell/SSH quoting before Python ran | 1 | Preserve the already verified snapshot/archive, create a fixed local Python writer with `apply_patch`, transfer it as a file, and execute that exact script remotely instead of repeating inline quoting. |

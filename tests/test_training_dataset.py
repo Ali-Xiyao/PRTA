@@ -19,9 +19,7 @@ def test_feature_dataset_joins_cache_text_and_label(tmp_path):
             }
         )
     cache_root = tmp_path / "cache"
-    write_block8_cache(
-        cache_root, inventory, torch.randn(2, 197, 768), shard_size=2
-    )
+    write_block8_cache(cache_root, inventory, torch.randn(2, 197, 768), shard_size=2)
     text_path = tmp_path / "text.pt"
     torch.save(
         {
@@ -67,8 +65,7 @@ def test_feature_dataset_prefers_contiguous_training_store(tmp_path):
         for index in range(3)
     ]
     expected = (
-        torch.arange(3 * 197 * 768, dtype=torch.float32).reshape(3, 197, 768)
-        / 10_000
+        torch.arange(3 * 197 * 768, dtype=torch.float32).reshape(3, 197, 768) / 10_000
     )
     root = tmp_path / "cache"
     write_block8_cache(root, inventory, expected, shard_size=2)
@@ -152,9 +149,7 @@ def test_matched_wrong_prior_comes_from_a_different_patient(tmp_path):
             }
         )
     root = tmp_path / "cache"
-    features = torch.arange(6, dtype=torch.float32).reshape(6, 1, 1).expand(
-        6, 197, 768
-    )
+    features = torch.arange(6, dtype=torch.float32).reshape(6, 1, 1).expand(6, 197, 768)
     write_block8_cache(root, inventory, features, shard_size=6)
     text = tmp_path / "text.pt"
     torch.save(
@@ -204,9 +199,7 @@ def test_feature_dataset_exposes_five_prototypes_and_matched_hard_prior(tmp_path
             }
         )
     root = tmp_path / "cache"
-    features = torch.arange(4, dtype=torch.float32).reshape(4, 1, 1).expand(
-        4, 197, 768
-    )
+    features = torch.arange(4, dtype=torch.float32).reshape(4, 1, 1).expand(4, 197, 768)
     write_block8_cache(root, inventory, features, shard_size=4)
     text = tmp_path / "text.pt"
     from prta_cxr.contracts import PROGRESSION_LABELS
@@ -233,3 +226,15 @@ def test_feature_dataset_exposes_five_prototypes_and_matched_hard_prior(tmp_path
     assert item["transition_prototypes"].shape == (5, 512)
     assert item["counterfactual_sample_id"] == "sample-1"
     assert torch.equal(item["counterfactual_prior"], features[2])
+
+    diagnostic = PRTAFeatureDataset(
+        rows,
+        cache=Block8CacheIndex(root),
+        text_cache_path=text,
+        split="train",
+        prior_intervention="matched_hard",
+        matched_hard_prior_map={"sample-0": "sample-1", "sample-1": "sample-0"},
+    )
+    diagnostic_item = diagnostic[0]
+    assert torch.equal(diagnostic_item["prior"], features[2])
+    assert "counterfactual_prior" not in diagnostic_item

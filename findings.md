@@ -2786,3 +2786,32 @@
   reliability must affect only the relation residual, leaving H0 logits and
   the no-feature legacy path unchanged. Selective state anchoring must derive
   its weight from detached, label-free change energy.
+# 2026-08-13 Wave045 post-review interpretation
+
+- The review confirms the five implemented mechanisms and the full 18-cell
+  progressive matrix are valid; there is no scientific reason to stop or
+  mutate Wave045.
+- Changing only not-yet-started cells would make same-named variants differ by
+  source/config across seeds. The correct response is to preserve Wave045 and
+  use separately named, queue-tail supplements for any new semantic study.
+- The immediate reusable-code fix is fail-closed cross-validation of the
+  matched-hard map's embedded split SHA, cache SHA, and cache block against the
+  actual training inputs. This is an integrity improvement, not a reason to
+  rerun already valid Wave045 cells.
+- Required interpretation diagnostics are: V3-V5 residual coefficient, gate
+  distributions under true/wrong/null/reversed prior, selective-state weight
+  distributions, paired seed deltas, and intervention effects. A checkpoint
+  audit should determine which can be recovered without retraining before any
+  supplementary queue is frozen.
+- V0-V5 must be reported as progressive component build-up. Standard
+  leave-one-out experiments should be considered only as a new, fully frozen
+  three-seed family after the final method claim is known; they must not be
+  selected from intermediate Wave045 outcomes.
+- At audit time, none of the 18 cells was terminal and exactly four first cells
+  were active. Therefore the supplement can be preregistered without seeing an
+  outcome, while keeping all original workers and queues unchanged.
+- The smallest sufficient supplement is nine checkpoint evaluations rather
+  than retraining: V3/V4/V5 at Seeds17/28/43 under true, matched-wrong, null,
+  and reversed PRIOR. It directly separates constant attenuation from
+  reliability-sensitive gating and captures the signed/unbounded residual
+  coefficient without confounding the progressive training matrix.

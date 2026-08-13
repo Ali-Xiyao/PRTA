@@ -6865,3 +6865,23 @@
   A800/9929, and both RTX3090s with a 6/6/3/3 split and no outcome adaptation.
 - Internal-test/Gold remain forbidden. Historical protected-set statements in
   the attachment are not treated as evidence for configuration choice.
+# 2026-08-13 Wave045 post-review amendment requested
+
+- Parsed the independent review of source commit `e4788f02` and the frozen
+  18-cell Wave045 protocol. It found no blocker and explicitly advised against
+  changing the current matrix in place.
+- Reconciled the user's request to adjust unrun work with the paired-seed
+  contract: all original V0-V5 cells remain immutable, while safe code
+  hardening and mechanism diagnostics will use separate identities and be
+  appended after original lane queues.
+- Next action is a metrics-blind audit of the four worker/controller surfaces,
+  followed by a frozen minimal supplement roster derived from actual retained
+  terminal artifacts rather than outcomes.
+- The audit found all four workers healthy at their first cell: server3066
+  `W045-V0-S17`, server9929 `W045-V0-S43`, local0 `W045-V0-S28`, and local1
+  `W045-V1-S28`. No original cell is terminal; all four failure guards are
+  absent and protected-read counters are zero.
+- Froze the supplement concept before any outcome: checkpoint-only V3/V4/V5 x
+  three-seed prior-intervention and mechanism diagnostics, appended after each
+  original lane. This adds no outcome-selected training and preserves the
+  original 18-cell matrix byte-for-byte.
