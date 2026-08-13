@@ -2698,3 +2698,32 @@
   change occurred.
 - Seed43 now has ten terminal cells and one active cell. Final aggregation
   remains locked until the last receipt and every final-matrix identity verify.
+
+# 2026-08-13 Wave043 final repaired-ablation finding
+
+- Wave043 is scientifically closed as a complete, immutable 39-cell matrix:
+  33 newly trained repaired-dual/H4 cells plus six exact Wave042 no-state and
+  no-dual cells. Every one of 13 variants has Seeds 17, 28, and 43. Final
+  aggregate SHA is `e2c558b1...56433`; independent verification SHA is
+  `5cfa5113...6d804`.
+- Tail10 has the largest reported three-seed Macro-F1 mean (`0.551317`), while
+  no-opposite-direction-cost has the lowest reported ODER mean (`0.003541`).
+  These are descriptive no-selection observations only: the frozen aggregate
+  explicitly sets selection, winner choice, queue adaptation, and protected
+  evaluation to false.
+- Finding conditioning is structurally indispensable in this matrix: removing
+  it lowers mean Macro-F1 from `0.548278` to `0.451100`. Shallow adapter scopes
+  no-tail/tail2/tail4 also trail the full Tail8 reference, while tail6 nearly
+  closes the gap and tail10 exceeds it. Removing direction margin or opposite-
+  direction cost is favorable on mean Macro-F1, but their interaction is not
+  identified by this one-factor ablation and must not be inferred as additive.
+- The repaired dual mechanism remains justified by the separate immutable
+  Wave042 comparison: reused no-state repaired-dual mean is `0.548401` versus
+  no-dual transition-only `0.546102`. Wave043 does not select a replacement or
+  authorize protected evaluation; `HOLD_DEVELOPMENT_GATE` and
+  `STOP_CURRENT_PRTA_ROUTE` remain preserved.
+- Finalization v1-v3 were identity-preserving infrastructure failures rather
+  than scientific failures. Each namespace and failure receipt is immutable;
+  only v4 contains an aggregate. Local and canonical-server v4 files match
+  exactly, with replication receipt SHA `0994e69e...4b5e9`, and all protected-
+  read counters remain zero.

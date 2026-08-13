@@ -1,5 +1,23 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave043 final 39-cell closure
+
+- All 33 new Wave043 cells and all six immutable Wave042 reused cells are
+  independently verified terminal under the frozen 13-variant x three-seed
+  matrix. The final GPU0 no-margin receipt SHA is
+  `2f2bc299...29876`; its lane-completion SHA is `c7d3a6bf...f47e3`.
+- Immutable no-selection finalization v4 is complete. Final aggregate SHA is
+  `e2c558b1...56433`, verification-receipt SHA is `5cfa5113...6d804`,
+  finalization preparation SHA is `7eeba1cf...5aaba`, and controller SHA is
+  `789d3407...56492`. The exact artifacts were replicated to the canonical
+  server and hash-verified; replication-receipt SHA is `0994e69e...4b5e9`.
+- The aggregate contains 39 unique cells, 13 complete three-seed variants,
+  hardware-stratified resource accounting, no selection, no winner, no
+  protected evaluation, and zero Internal-test/Gold/protected-outcome reads.
+- Preserve v1-v3 finalization attempts immutably as infrastructure audit
+  history. They failed before aggregate creation because of controller
+  transport/parse/path serialization defects; v4 is the only final aggregate.
+
 ## 2026-08-13 Wave043 Seed43 tail10 completion
 
 - `W043-SCOPE-TAIL10-S43` is terminal PASS on RTX3090/GPU1 with
@@ -2366,9 +2384,9 @@ may start without new explicit authority that also respects this HOLD.
   classification-only cell. Replace only the idle 3066 continuation watcher,
   retain no-finding then no-cross on 3066, and leave all active children plus
   the 9929/GPU1 queues unchanged.
-- [ ] Independently verify all 22 Seed17/Seed28 cells before final aggregation,
+- [x] Independently verify all 22 Seed17/Seed28 cells before final aggregation,
   even though Seed43 execution may overlap the last local Seed28 cell.
-- [ ] Complete immutable stage/final aggregates and update paper-ready result
+- [x] Complete immutable stage/final aggregates and update paper-ready result
   surfaces without using legacy-H0 results as evidence for the repaired method.
 
 Stop rules:

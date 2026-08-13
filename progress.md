@@ -6748,3 +6748,60 @@
 - Seed43 is 10 terminal, 1 active, 0 queued. Only local GPU0 no-margin remains,
   followed by independent 39-cell verification and final aggregation. The
   conservative 08:30-10:00 CST final window is unchanged.
+
+# 2026-08-13 11:53 CST - Wave043 final 39-cell aggregate complete
+
+- The final local GPU0 cell, `W043-NO-DIRECTION-MARGIN-S43`, completed formal
+  PASS with training-receipt SHA
+  `2f2bc2993be68c86ddc54ab2bbd97eb53b2cab32cf464737197fb65ffe929876`,
+  exact config-file SHA
+  `df6150d199d4bd7f135edcbe4de08af938ff258392b20b7a9dc7e32c918cd64d`,
+  and lane-completion SHA
+  `c7d3a6bf87da504e2a82500d4c6672016aaf0bd52effff8877f0ea0e2eef47e3`.
+  It reports zero Internal-test/Gold/protected-outcome reads. Seed43 and all
+  33 new cells are terminal.
+- Independently verified all 33 new terminal receipts, progress identities,
+  config/effective-config hashes, cache identities, best/last checkpoint
+  hashes, seeds, compute fields, and protected-read flags. Independently bound
+  the six reused Wave042 cells to immutable source aggregate SHA
+  `d48f80ce7ba33bc53fb49a10fe906b0532681c33e5c9e4522bc48163799c6e71`.
+- Finalization v1-v3 were preserved as failed infrastructure attempts. They
+  respectively exposed a helper-transport defect, a compile-time f-string
+  brace defect, and Windows-to-POSIX path serialization drift. Each failed
+  before aggregate creation, changed no scientific artifact, and recorded
+  zero protected reads. Identity-preserving v4 then passed.
+- Immutable v4 finalization identities are: controller
+  `789d34071af0f04c673879783a107a2761ac913bef7010eaedebca2848656492`,
+  preparation
+  `7eeba1cf73017f7935bd490ade84c22ee34130438374f215ca3adbf3fab5aaba`,
+  final 39-cell aggregate
+  `e2c558b1ed77aba55543f75df233e79582fc3ee83a7f3a9bed8460cec6056433`,
+  and independent verification receipt
+  `5cfa5113bb246a9a94fbb47894805075a0aaf5b80007731f146b183f2b86d804`.
+- Replicated the exact four v4 finalization artifacts to the canonical server
+  and independently matched every SHA/byte count. Replication-receipt SHA is
+  `0994e69e85f25d8d1d220be5e615dc875601757acefc07c20017ca8a1384b5e9`.
+  Final status is `PASS_WAVE043_ALL_39_CELLS_COMPLETE_NO_SELECTION`: 39 cells,
+  13 variants, no selection/winner/protected evaluation, and zero protected
+  reads. Both A800 allocations and telemetry remain alive, while Wave041 PID
+  3749601 remains stopped in `Ts`.
+- Three-seed population-mean +/- population-std results are:
+
+  | Variant | Macro-F1 | ODER |
+  |---|---:|---:|
+  | classification-only | 0.549567 +/- 0.002778 | 0.003779 +/- 0.000427 |
+  | full | 0.548278 +/- 0.001683 | 0.003779 +/- 0.000344 |
+  | no cross-time alignment | 0.550157 +/- 0.003194 | 0.004404 +/- 0.000276 |
+  | no direction margin | 0.550903 +/- 0.001198 | 0.004017 +/- 0.000656 |
+  | no dual, reused Wave042 | 0.546102 +/- 0.000680 | 0.003839 +/- 0.000443 |
+  | no finding | 0.451100 +/- 0.000659 | 0.005654 +/- 0.000329 |
+  | no opposite-direction cost | 0.551113 +/- 0.003049 | 0.003541 +/- 0.000111 |
+  | no state, reused Wave042 | 0.548401 +/- 0.001657 | 0.003928 +/- 0.000219 |
+  | scope no-tail | 0.539283 +/- 0.002315 | 0.005505 +/- 0.000414 |
+  | scope tail10 | 0.551317 +/- 0.001121 | 0.004226 +/- 0.000256 |
+  | scope tail2 | 0.543201 +/- 0.000834 | 0.004702 +/- 0.000256 |
+  | scope tail4 | 0.545175 +/- 0.000235 | 0.004315 +/- 0.000168 |
+  | scope tail6 | 0.547666 +/- 0.001905 | 0.004107 +/- 0.000510 |
+
+- These rows are a no-selection report, not a winner decision. No protected
+  evaluation was launched and the development HOLD gates remain in force.
