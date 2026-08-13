@@ -6975,3 +6975,13 @@
   supplement then ran after the completion gate and passed with diagnostic
   receipt SHA `b26a49dbdb4bd7bf65bfc18ac79a79f7b60d3399992ab7ca91e93fe33d6d3f9d`;
   no new training cell or outcome-driven decision was introduced.
+- Local RTX3090 GPU1 completed its original frozen lane with `W045-V5-S28`
+  terminal receipt SHA
+  `3cabff797b5f775938db43f1853b799a8c68e06f0a3821ff61793d514a6c236c`.
+  The formal completion is zero-protected-read, bringing the original matrix
+  to 13/18. Its gated checkpoint-only diagnostics then passed in their fixed
+  order: `W045D-V3-S28` receipt
+  `1bfd1185b7a787cafd69a0ccf884b62b177c6d4abf790690447199d498c9371c`,
+  followed by `W045D-V5-S28` receipt
+  `f998aeed1e0b89c874f6ea6382122048096d46d2b5700f2d755e9dac87c5f114`.
+  No training queue was altered and all receipts report zero protected reads.
