@@ -6932,3 +6932,8 @@
   PASS with `protected_outcomes_opened=false`. The original matrix is now
   4/18 terminal: V0 for Seeds17/28/43 and V1 for Seed28. All four active
   training lanes and the four waiting diagnostic supervisors remain healthy.
+- A800/9929 completed `W045-V1-S43` with terminal receipt SHA
+  `7d7875ef75b246a0ae9b15a6e104ce64cd89e9b5ede6d9fdcb1225e4c67c54bc`
+  and advanced only to frozen `W045-V2-S43`. This formal PASS receipt retains
+  exact input/config identities and zero protected reads. The original matrix
+  is now 5/18 terminal, with no failures or queue adaptation.
