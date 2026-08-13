@@ -6943,3 +6943,11 @@
   zero protected reads and exact frozen identities. The original matrix is now
   6/18 terminal; all nonterminal original cells and the diagnostic supplement
   remain in their predeclared order.
+- Local RTX3090 GPU0 completed `W045-V2-S28` with terminal receipt SHA
+  `0b2213d3c2b1494d22d57fe9f0b19b89f605655d6f654a81afbde148eadd6361`
+  and advanced only to frozen `W045-V4-S28`. A800/9929 completed
+  `W045-V2-S43` with terminal receipt SHA
+  `680db0d8c45aa49bcb41ddbe4501d97a9cbb57168eeba01254c00b79a751d022`
+  and advanced only to `W045-V3-S43`. Both formal PASS receipts preserve exact
+  identities and zero protected reads. The original matrix is 8/18 terminal;
+  no failure or outcome-adaptive change occurred.
