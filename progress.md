@@ -6805,3 +6805,18 @@
 
 - These rows are a no-selection report, not a winner decision. No protected
   evaluation was launched and the development HOLD gates remain in force.
+
+# 2026-08-13 Wave044 experiment requested and scoped
+
+- Parsed the user-provided UTF-8 experiment recommendation and reconciled it
+  against the completed Wave043 three-seed aggregate rather than its older
+  Seed17/28 snapshot. The decisive new batch is E2/E3/E4 only; E0/E1 are reused
+  immutable references and E5/E6/training-schedule/prior-robustness studies
+  remain locked for later gates.
+- Frozen nine new Train/Dev cells before implementation or outcome access:
+  E2 simplifies Tail10 by setting direction-margin and opposite-direction-cost
+  weights to zero; E3 adds a bias-minus-two residual prior reliability gate;
+  E4 changes only E3's state weight from 0.025 to zero.
+- Frozen hardware classes: all Seed17 cells on A800/3066, all Seed43 cells on
+  A800/9929, and all Seed28 cells on RTX3090, split two on GPU0 and one on GPU1.
+  No Internal-test/Gold access or protected evaluation is authorized.

@@ -2727,3 +2727,19 @@
   only v4 contains an aggregate. Local and canonical-server v4 files match
   exactly, with replication receipt SHA `0994e69e...4b5e9`, and all protected-
   read counters remain zero.
+
+# 2026-08-13 Wave044 recommendation interpretation
+
+- The attachment's first-stage design is scientifically separable only if E2,
+  E3, and E4 are frozen together before new outcomes: E2 isolates removal of
+  both redundant direction objectives, E3 isolates residual-gated alignment,
+  and E4 isolates the fixed state-preservation objective. Adding adaptive state
+  loss or finding-responsive adapters now would confound this sequence.
+- Wave043's completed three-seed evidence strengthens, but does not prove, the
+  proposed E2 interaction: Tail10 has the highest Macro-F1 mean, and individual
+  DMW/ODC removals improve mean Macro-F1, but their joint effect is unknown and
+  cannot be assumed additive. E2 is therefore required.
+- Residual-gated alignment must be opt-in and initialized near identity
+  (`sigmoid(-2)`), so legacy hard alignment and no-alignment paths stay exact.
+  This makes E3 a bounded structural change rather than a silent replacement
+  of all prior experiments.

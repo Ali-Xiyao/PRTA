@@ -1,5 +1,48 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-13 Wave044 simplified/reliability-gated main-model experiment
+
+Goal: implement and freeze the attachment's smallest decisive follow-up without
+reopening Wave043 or any protected cohort. Reuse immutable Wave043 E0/E1
+references and run exactly nine new Train/Dev cells:
+
+| ID | Frozen configuration | Seeds | Purpose |
+|---|---|---|---|
+| E2 | Tail10 repaired-dual H4, finding + hard alignment retained, state weight 0.025, DMW=0, ODC=0 | 17/28/43 | Test objective simplification |
+| E3 | E2 + residual-gated prior alignment, gate bias -2 | 17/28/43 | Test reliability-gated alignment |
+| E4 | E3 + state weight 0 | 17/28/43 | Isolate state-preservation objective |
+
+Execution is frozen before any new outcome: Seed17 remains on A800/3066,
+Seed43 remains on A800/9929, and all Seed28 cells remain on the RTX3090 class,
+split 2/1 across local GPU0/GPU1. E0 repaired-dual Tail8 Full and E1 Tail10
+with the old losses are immutable Wave043 references and must not be rerun.
+
+- [ ] Implement residual-gated prior alignment behind an explicit config flag,
+  preserving hard/no-alignment behavior byte-for-byte when disabled.
+- [ ] Add focused unit tests for identity fallback, gate initialization,
+  gradients, shapes, and unchanged legacy paths.
+- [ ] Build E2/E3/E4 configs from the exact Wave043 Tail10 contract, freeze all
+  source/config/cache/data identities and the fixed 3/3/2/1 worker queues.
+- [ ] Run compile/lint/focused tests, local/server preflight, GPU/process/disk
+  checks, and confirm zero protected reads before launch.
+- [ ] Launch all four fixed workers and monitor only queue/receipt/process/GPU
+  state; do not use intermediate metrics or adapt assignments.
+- [ ] After all nine cells are terminal, independently verify and write an
+  immutable no-selection aggregate against the stronger Wave043 E0/E1
+  reference. Apply the frozen replacement rule only then.
+
+Frozen scientific rules:
+
+- Train/Dev only; Internal-test and Gold remain structurally unreachable.
+- No LR/schedule search, no finding-responsive adapter gate, no adaptive-state
+  E5, and no prior-robustness audit in this wave.
+- Replacement requires mean Macro-F1 gain >=0.002 over the stronger immutable
+  E0/E1 reference, at least 2/3 paired seed wins, and no material minimum-class
+  recall regression. If absolute gain is <0.001, prefer the simpler objective.
+- Preserve Wave041 stopped, Wave043 final artifacts immutable, retained parent
+  allocations/telemetry alive, and retry only identity-preserving
+  infrastructure failures in new namespaces; otherwise HOLD.
+
 ## 2026-08-13 Wave043 final 39-cell closure
 
 - All 33 new Wave043 cells and all six immutable Wave042 reused cells are
