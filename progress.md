@@ -6911,3 +6911,12 @@
   `WAITING_FOR_ORIGINAL_FROZEN_QUEUE`, no failure receipt, and zero protected
   reads. Activation-receipt SHA is
   `8d6d75e53abce584c1385188bda4c5b9319cf7a801cdde894f2551198fc6579c`.
+- First original Wave045 terminal transitions were verified without reading
+  metrics. Local RTX3090 GPU0 completed `W045-V0-S28` with terminal receipt
+  SHA `59135d42e6ef04408bbafba815eb21eb186ca0f23048db09cd060c4a5001899c`
+  and advanced only to its frozen next item `W045-V2-S28`. A800/9929 completed
+  `W045-V0-S43` with terminal receipt SHA
+  `9a0b8c4f406a93bc62951df93b16a51f56289fb280916a95a433784228bb60e2`
+  and advanced only to `W045-V1-S43`. Both terminal records report zero
+  protected reads; the other two original lanes and all four diagnostic
+  supervisors remain healthy and unchanged.
