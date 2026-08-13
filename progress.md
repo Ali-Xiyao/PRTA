@@ -6920,3 +6920,9 @@
   and advanced only to `W045-V1-S43`. Both terminal records report zero
   protected reads; the other two original lanes and all four diagnostic
   supervisors remain healthy and unchanged.
+- A800/3066 then completed `W045-V0-S17` with terminal receipt SHA
+  `a6a56518610c72f00bce81b06b81ae6fe4da316dd063a60235fdd50c7f0ad4ef`
+  and advanced only to frozen `W045-V1-S17`. The receipt reports exact frozen
+  inputs and zero protected reads. This makes three of eighteen original
+  training cells terminal; all remaining original and diagnostic queues retain
+  their frozen identities and order.
