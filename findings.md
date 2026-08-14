@@ -3105,3 +3105,13 @@
   six-key historical contract or the seven-key V2 contract, compare every
   shared byte hash, and separately require checkpoint/receipt equality. The
   already prepared v1 namespace must never be launched after this finding.
+- The narrow provenance repair is now fully verified: checkpoint inputs may be
+  exactly the six-key historical V0/V1 contract or the seven-key V2 contract;
+  every present value must match the diagnostic input, and the terminal
+  training receipt must exactly equal the checkpoint input map. No arbitrary
+  missing/extra key or hash drift is accepted.
+- Wave047 v2 is the only authoritative confirmation execution. It preserves
+  the same nine diagnostic and three Tail8-TILA scientific identities while
+  pinning corrected source `384ecc1`. Its manifest SHAs are `cebed907...dc13c`
+  for 3066 and `9a38ba21...d871` for 9929. Both lanes launched only after a
+  fresh hash/occupancy gate, with v1 retained unstarted and immutable.

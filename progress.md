@@ -7301,3 +7301,26 @@
   validator is being corrected to accept only those two exact historical key
   sets while preserving byte equality and checkpoint/receipt identity; launch
   is deferred to a fresh v2 namespace after complete reverification.
+- Corrected the candidate diagnostic provenance validator and added focused
+  base/full-contract plus drift-rejection tests. Focused gates pass 7/7; full
+  Ruff, compileall, diff checks, and all 255 pytest tests pass. Committed source
+  as `384ecc19645edaf799da62594ee4294a693754f6` and pushed it to the local bare
+  branch; no cloud push was performed.
+- The first v2 preparation command was blocked before output because the formal
+  authorization environment value was absent despite `--formal`. The target
+  remained absent. Repeating the same frozen inputs with the explicit existing
+  user authorization created `wave047_v2_candidate_confirmation_v2`; its
+  preparation SHA is `b0b6e816...7218b`, and v1 remains unstarted history.
+- Deployed the exact 345-file `384ecc1` source archive and v2 root package.
+  Seed28 inputs were copied server-side from the immutable v1 transfer and
+  independently rehashed; all three checkpoint SHAs are unchanged. Both v2
+  controller preparations PASS with receipts `f6e45434...fcb92` (3066) and
+  `bff94ccc...b5fbf` (9929), zero protected reads.
+- Reconfirmed both A800s at 10 MiB and 0% utilization with only parent batch
+  and telemetry steps. Started the immutable v2 queues under controller PIDs
+  2527156/2527157. First diagnostic steps are 3066.109 (`W047D-V0-S17`) and
+  9929.91 (`W047D-V0-S43`); both progress surfaces report RUNNING, no failure
+  or completion surface exists, and Wave046 was not moved or duplicated.
+- Updated heartbeat automation `prta-cxr-15` to monitor Wave046 plus the new
+  authoritative Wave047 v2 queues and to continue bootstrap/final aggregation
+  only after the relevant immutable PASS receipts exist.

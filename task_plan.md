@@ -31,7 +31,7 @@ its existing local workers.
 - [x] Freeze a Tail8/rank32/H0 TILA three-seed fairness matrix with the same
   cleaned split, head/loss/budget/data/cache/weights contract as the candidate
   comparison. Pass source/config/hash/compute gates before launch.
-- [ ] Use only scientifically free GPUs without moving or duplicating active
+- [x] Use only scientifically free GPUs without moving or duplicating active
   Wave046 cells. On the retained server, keep parents/telemetry alive, use
   `srun --jobid=<id> --overlap`, and permit at most one scientific child per
   allocation; otherwise HOLD.
@@ -53,6 +53,7 @@ Errors encountered:
 | Initial focused gate found one import-order issue, one unused synthetic-test variable, and a test expectation that assumed class index 0 was `Improved` although the frozen order starts with `Stable` | 1 | No runtime experiment was started. Correct the test/formatting issues explicitly, then rerun focused lint and tests before continuing. |
 | Repository-wide `ruff format --check src scripts tests` reports 91 historical files that predate the current formatter | 1 | Do not reformat unrelated user/project code. Keep the focused format gate on all touched files; repository-wide Ruff check, full pytest, compileall, and diff check remain the substantive engineering gates. |
 | Wave047 v1 prelaunch identity audit found that V0/V1 checkpoint receipts correctly omit the matched-hard map they did not use during training, while the new PRIOR diagnostic requires that additional immutable input | 1 | Keep v1 permanently unstarted and immutable. Permit exactly the historical base hash set or the full V2 hash set, require all shared hashes and the checkpoint/training-receipt identity to match, rerun all gates, and deploy only a newly frozen v2 namespace. |
+| First Wave047 v2 preparation invocation supplied `--formal` but omitted the required explicit authorization environment value | 1 | Authorization failed before the new output namespace was created. Confirm the target remained absent, set the exact user-authorized formal value, and repeat the identical frozen preparation without changing any scientific input. |
 
 ## 2026-08-14 comprehensive documented-baseline inventory
 
