@@ -1,5 +1,36 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 independent formal-baseline launch amendment
+
+The user explicitly authorizes using currently idle local GPUs for comparison
+experiments and other still-missing experiments whose scientific identity is
+independent of the evolving PRTA main method. The cleaned Train/Dev dataset,
+patient-disjoint split, caches, label authority, seed set, and training budget
+remain locked. Wave045 and its post-review diagnostics remain immutable and
+must not be modified, delayed, or used for outcome-adaptive baseline choices.
+
+- [x] Recover the exact previously registered formal-baseline/minimum remaining
+  matrix and classify entries as main-method-independent or method-dependent.
+- [x] Resolve the legacy 17/29/43 versus current 17/28/43 seed-contract drift
+  from the latest cleaned-data receipts; never mix both under one matrix.
+- [x] Verify local GPU0/GPU1 are scientifically idle and that all Wave045 local
+  worker and diagnostic completion receipts remain PASS.
+- [x] Independently verify whether cleaned B403 S17/S28/S43 and B402-S17 can be
+  reused under one exact formal-baseline identity; if so, schedule only the
+  missing B401 three seeds and B402 seeds 28/43.
+- [ ] Freeze a new immutable Train/Dev-only baseline namespace, exact configs,
+  source/data/cache hashes, fixed seeds, hardware identities, controller, and
+  no-selection aggregate contract before reading any new outcome.
+- [ ] Run engineering/preflight gates and launch only the independent baseline
+  cells on idle local GPUs; do not access Internal-test or Gold.
+- [ ] Monitor terminal receipts and aggregate the complete frozen matrix with
+  resource accounting, without selecting or changing the PRTA main method.
+
+Hard boundary: historical diagnostic baselines or pre-review results are not
+silently promoted into the formal matrix. Any optional or method-dependent
+experiment remains pending unless its exact frozen contract is recoverable and
+compatible with the final cleaned Train/Dev data identity.
+
 ## 2026-08-13 Wave045 post-review amendment
 
 The latest user-provided review confirms that the frozen Wave045 V0-V5
@@ -254,6 +285,10 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| First Wave046 focused test rejected the synthetic B402 parent because its fixture used placeholder class counts while the drift allowlist assumed the real cleaned parent | 1 | Make the builder accept an exact deterministic class-count rematerialization for either native parent, while removing that allowed path when the parent already has the cleaned counts; rerun all focused gates. |
+| Baseline runner search returned exit 1 after useful matches because a second `rg` used a Windows wildcard path that did not expand | 1 | Use `rg --files` or exact source paths; the read-only search changed nothing. |
+| Runner inspection guessed nonexistent wrapper `scripts/08_run_development_queue.py` | 1 | Use the actual wrapper discovered from `rg --files` or invoke the existing CLI dispatch module; do not repeat the guessed path. |
+| Baseline resource audit returned exit 1 after successful controller/GPU output because optional `Get-Process` queried already-exited Wave045 local PIDs | 1 | Treat missing completed-worker processes as expected; use controller completion receipts plus `nvidia-smi` for the resource gate and omit the stale-PID lookup next time. |
 | Two remote, read-only attempts to calculate terminal receipt wall time used PowerShell/SSH quoting that stripped embedded Python/jq expressions | 2 | Neither command changed runtime state or read metrics. Use already verified terminal timestamps from local receipts and controller progress for estimates; do not retry the malformed nested-quote form. |
 | A manual server diagnostic-help probe hardcoded `/home/dqxy/dqxy11` instead of the cluster account's IPFS-backed HOME; a follow-up combined quoting probe also malformed the `python -c` fragment | 2 | Neither command changed runtime state and the controller was not affected because it resolves `Path.home()` at runtime. Verified the exact `$HOME/miniforge3/envs/prta-cxr311/bin/python` path and reran the deployed diagnostic `--help` directly; it passed. |
 | Wave045 post-review repo-wide Ruff format check reported 97 pre-existing files that current Ruff would reformat, after compileall and repo-wide lint passed | 1 | Do not bulk-format historical files. Format/check only the seven touched source/script/test files, retain the existing repository-format baseline, and run focused plus full tests before deployment. |

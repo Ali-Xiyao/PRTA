@@ -2830,3 +2830,80 @@
   original lane completion receipt passes. This preserves one scientific
   child per allocation/GPU and makes the diagnostic work a literal queue-tail
   continuation.
+# 2026-08-14 independent-baseline launch interpretation
+
+- The user's new authorization applies to formal comparison experiments whose
+  model/data contract is independent of the evolving PRTA main method. It does
+  not authorize mutation or resource preemption of Wave045, outcome-adaptive
+  selection, or any Internal-test/Gold access.
+- The existing planning/manual surfaces contain a previously unstarted formal
+  baseline phase and distinguish it from historical Seed17 diagnostic
+  baselines. The exact formal matrix, native heads, seed contract, and locked
+  cleaned Train/Dev identities must be recovered and frozen before launch.
+- A new immutable namespace is required so that baseline work remains
+  auditable and cannot be confused with Wave045 progressive components or its
+  checkpoint-only mechanism diagnostics.
+- The registered mandatory native baselines are B401 Current-only BiomedCLIP,
+  B402 shared-ViT Siamese signed/absolute difference, and B403 TILA/strong
+  temporal attention. B404 is the evolving PRTA main method and is excluded
+  from this independent launch; B405 BioViL-T is optional and cannot be added
+  unless its code/weights/data contract is already stable and reproducible.
+- The older formal-protocol document lists seeds 17/29/43, whereas the current
+  cleaned program and Wave045 use 17/28/43. This identity conflict must be
+  resolved from the latest immutable cleaned-data receipts rather than by
+  silently inheriting the stale protocol seed 29.
+- Native implementations for `current_only`, `siamese_diff`, and `tila` exist
+  in the current training engine. Existing cleaned/minimum-wave artifacts may
+  already satisfy part of B402/B403, so the launch audit must deduplicate by
+  exact data/config/source identity before scheduling new cells.
+- The later physician-cleaned authority explicitly superseded the stale seed
+  29 with seeds 17/28/43. It binds Train 80,402 / Dev 11,201 to active manifest
+  SHA `45985f4f...e38f89` and cleaned-freeze SHA
+  `aa761c13...3cd069`, with protected reads zero.
+- B403 already has an exact cleaned three-seed set: `CLN1-B403-S17` plus
+  `B403-S28` and `B403-S43`. B402 has only `CLN1-B402-S17` under that cleaned
+  authority. No cleaned B401 run is recorded. Subject to receipt/config/hash
+  verification, the minimal non-duplicate independent training remainder is
+  therefore five cells: B401-S17/S28/S43 and B402-S28/S43.
+- The already completed B403 results and B402-S17 must be reused only if their
+  immutable configs differ from the new formal IDs solely in permitted
+  identity/seed fields and bind the same cleaned manifest/cache/weights and
+  budget. Otherwise a new full three-seed family is required rather than
+  mixing identities.
+- Local Wave045 and local post-review queues are fully terminal; both RTX3090s
+  are idle. This clears the resource gate for a separate baseline namespace
+  without preempting or modifying Wave045.
+- Historical cleaned baseline artifacts are not stored in an obvious
+  top-level `cleaned_rerun` directory. Planning evidence identifies
+  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_program_v1` as the
+  relevant formal-program root and `poststop_reruns` as a separate later root.
+  Continue with exact allowlisted subpaths only; do not broadly enumerate any
+  protected evaluation surface.
+- Exact Train/Dev-only historical roots are now resolved without touching any
+  protected cohort: cleaned seed-17 baselines live under
+  `poststop_reruns/physician_cleaned_dev_v1`, and B403 seed replications under
+  `poststop_reruns/minimum_contribution_wave_v1`. These are the allowlisted
+  sources for reuse verification.
+- Both historical preparations bind exactly the same cleaned data/cache/model
+  identities: split `45985f4f...e38f89`, cleaned freeze
+  `aa761c13...3cd069`, cache manifest `7bec0eb4...57d5`, training store
+  `050a4837...e540`, text cache `1846e3d9...a3fd`, and BiomedCLIP weights
+  `52cc993c...576be`; both record zero protected reads and closed
+  Internal-test/Gold.
+- The cleaned B402-S17 and B403-S17 runs and the B403-S28/S43 replications all
+  have terminal `training_receipt.json` files and retained checkpoints. Their
+  preparations prove seeds 17/28/43 are the current cleaned authority. The
+  five-cell remainder hypothesis is now supported by concrete immutable
+  artifacts; the remaining gate is config-diff/receipt verification plus a
+  frozen new controller.
+- The repository already has a generic fail-closed two-device Train/Dev queue
+  runner. It launches only frozen configs through the formal training CLI,
+  writes scheduler/terminal receipts, stops on a missing receipt, and records
+  Internal-test/Gold as closed. A new preparation builder can reuse this
+  runner rather than inventing a second training implementation.
+- B401 and B402 share the same native-baseline budget: tail4/rank32/H0,
+  batch16, LR 1e-4, weight decay 0.01, 20-epoch maximum, 6-epoch minimum,
+  patience4, class-balanced focal loss, and all PRTA auxiliary loss weights
+  zero. B401 uses family `current_only`; B402 uses `siamese_diff`. The only
+  cleaned-data update needed for B401 is the exact cleaned class-count vector
+  `[39126,11010,13884,14534,1848]` plus new identity/seed fields.

@@ -7003,3 +7003,38 @@
   preserves the original preparation identity and zero protected reads. The
   original matrix is now 16/18 terminal; all Seed43 diagnostics remain gated
   until the complete immutable original worker receipt exists.
+# 2026-08-14 independent formal-baseline authorization
+
+- The user authorized starting main-method-independent comparison and other
+  still-missing experiments on idle local GPUs while Wave045 finishes on the
+  server. Began a fail-closed recovery of the registered formal-baseline
+  matrix and locked Train/Dev identities. No GPU job, namespace, config, or
+  source was changed at this point; Wave045 remains immutable and protected
+  reads remain zero.
+- Verified both local Wave045 training workers are terminal
+  `PASS_WAVE045_WORKER_COMPLETE` and both post-review diagnostic workers are
+  terminal `PASS_WAVE045_POSTREVIEW_WORKER_COMPLETE`, with no failures and
+  protected-read counters zero. Local RTX3090 GPU0/GPU1 each report 13 MiB
+  used, 24,314 MiB free, and 0% utilization, so both are scientifically idle.
+- A combined read-only status command returned exit 1 only because its final
+  optional `Get-Process` lookup targeted already-exited worker PIDs. Controller
+  status and GPU queries completed successfully; no runtime state changed.
+- Located and read only terminal Train/Dev preparations for the cleaned
+  baseline roots. They bind the same cleaned split/cache/weights and zero
+  protected reads. Confirmed B403 S17/S28/S43 and B402-S17 have immutable
+  terminal receipts/checkpoints, leaving B401 S17/S28/S43 plus B402-S28/S43
+  as the provisional non-duplicate training remainder.
+- Implemented a dedicated Wave046 native-baseline completion builder and
+  focused tests. It freezes exactly five new cells, verifies four reused
+  terminal baseline runs/config/checkpoints, binds the cleaned manifest/cache/
+  weights, rejects budget or identity drift, and writes a no-selection
+  preparation receipt outside Git. No job has been launched yet pending
+  formatting/tests and the formal preparation preflight.
+- First focused run found one fail-closed test-fixture mismatch in the B402
+  class-count drift allowlist. Updated the builder so deterministic cleaned
+  class-count rematerialization is allowed only when needed; no runtime
+  namespace existed and no training was started.
+- Wave046 engineering gates now pass: focused Ruff/format/compile checks,
+  10 related tests, full repository pytest, and `git diff --check`. The exact
+  five-cell queue and four reused terminal identities are ready for immutable
+  preparation. No protected surface was opened.
