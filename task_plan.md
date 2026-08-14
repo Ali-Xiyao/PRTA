@@ -1,5 +1,58 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 V2 candidate-freeze confirmation program
+
+The user accepts the post-Wave045 review direction and authorizes the minimal
+confirmation program. Close broad architecture search and record the method
+identities without claiming a final winner:
+
+- `V2 = FROZEN_MAIN_CANDIDATE_PENDING_CONFIRMATION`
+- `V1 = FROZEN_FALLBACK`
+- `V0 = CORE_REFERENCE`
+- `V3/V4/V5 = REJECTED_NO_FURTHER_SEARCH`
+- `H4 = APPENDIX_ONLY_NOT_COMBINED`
+- `STOP_NEW_ARCHITECTURE_SEARCH = true`
+
+Only three confirmation families are authorized: frozen-checkpoint V0/V1/V2
+PRIOR interventions, patient-cluster paired Dev bootstrap, and a scope-matched
+Tail8 TILA three-seed comparator. Wave046 remains immutable and continues on
+its existing local workers.
+
+- [ ] Audit the exact V0/V1/V2 terminal checkpoint/prediction identities and
+  existing mechanism-diagnostic/bootstrap implementations. Prove that every
+  required input is cleaned Train/Dev-only and that no protected path is read.
+- [ ] Freeze a separate no-training V0/V1/V2 diagnostic namespace covering
+  seeds 17/28/43 and true/matched-hard/null/reversed PRIOR, with fixed metrics,
+  class tables, prediction flips, gaps, receipts, and zero protected reads.
+- [ ] Implement and run patient-cluster paired Dev bootstrap for V2-V0,
+  V2-V1, and V1-V0, including Macro-F1, balanced accuracy, ODER, class recall/
+  F1, and exclusive-correct/exclusive-wrong counts. No seed or class may be
+  dropped after results are observed.
+- [ ] Freeze a Tail8/rank32/H0 TILA three-seed fairness matrix with the same
+  cleaned split, head/loss/budget/data/cache/weights contract as the candidate
+  comparison. Pass source/config/hash/compute gates before launch.
+- [ ] Use only scientifically free GPUs without moving or duplicating active
+  Wave046 cells. On the retained server, keep parents/telemetry alive, use
+  `srun --jobid=<id> --overlap`, and permit at most one scientific child per
+  allocation; otherwise HOLD.
+- [ ] After Wave046 and all three confirmation families are terminal, verify
+  every receipt/hash/identity and write a no-selection confirmation aggregate.
+  Apply the preregistered V2/V1/V0 decision rule without protected evaluation.
+- [ ] Update tracked documentation and push only intended planning/source/
+  summary files; private checkpoints, predictions, and runtime aggregates stay
+  outside Git.
+
+Hard boundary: never create V6/V7, rescue V3-V5, tune from confirmation
+outcomes, combine H4 with V2, access/list/hash/parse/infer Internal-test or
+Gold, or call V2 the final validated method before all confirmation gates pass.
+
+Errors encountered:
+
+| Error | Attempt | Resolution |
+|---|---:|---|
+| Initial focused gate found one import-order issue, one unused synthetic-test variable, and a test expectation that assumed class index 0 was `Improved` although the frozen order starts with `Stable` | 1 | No runtime experiment was started. Correct the test/formatting issues explicitly, then rerun focused lint and tests before continuing. |
+| Repository-wide `ruff format --check src scripts tests` reports 91 historical files that predate the current formatter | 1 | Do not reformat unrelated user/project code. Keep the focused format gate on all touched files; repository-wide Ruff check, full pytest, compileall, and diff check remain the substantive engineering gates. |
+
 ## 2026-08-14 comprehensive documented-baseline inventory
 
 The user remembers a broader historical baseline plan and asks whether the

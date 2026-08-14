@@ -3010,3 +3010,67 @@
   PRTA, exact A500-A506 final-method ablations, then final-checkpoint T601-T614
   and branch-disagreement versus max-softmax/entropy reliability comparisons.
   B405 remains optional and unavailable; A507 is permanently retired.
+- 2026-08-14 V2 confirmation audit started from the user's attached review.
+  The repository already contains the frozen-checkpoint mechanism evaluator
+  (`scripts/45_evaluate_prta_v2_mechanisms.py` and
+  `src/prta_cxr/prta_v2_diagnostics.py`) plus terminal Wave045 receipt
+  verification in `src/prta_cxr/wave045_finalization.py`. Patient-cluster
+  evaluation utilities exist under `src/prta_cxr/evaluation/`, but the exact
+  V0/V1/V2 paired-bootstrap input/receipt path still requires audit before use.
+- The confirmation program is deliberately separate from Wave045 finalization
+  and Wave046 baseline completion. Existing terminal checkpoints may be read
+  only through their frozen Train/Dev identities; active Wave046 progress and
+  all Internal-test/Gold surfaces remain out of scope.
+- The existing mechanism evaluator currently hard-rejects every variant except
+  V3/V4/V5 and discards per-observation prediction rows after aggregate metric
+  computation. V0/V1/V2 confirmation therefore needs an explicitly versioned
+  extension that retains a private hashed-patient Dev prediction block for the
+  paired bootstrap while leaving the old Wave045 diagnostic receipts untouched.
+- The local Wave045 runtime contains the complete Seed28 V0-V5 training runs
+  and V3-V5 diagnostics. Seeds17/43 were executed in the canonical server
+  runtime. Confirmation must preserve this provenance and either evaluate each
+  terminal checkpoint in place or transfer it under a separately hashed,
+  immutable input snapshot; it must not silently mix checkpoint identities.
+- The existing `hierarchical_patient_bootstrap` is strictly patient/seed/
+  derangement crossed and currently returns only Macro-F1 contrasts. The V2
+  confirmation contract additionally requires balanced accuracy, ODER,
+  per-class recall/F1, and exclusive-correct/exclusive-wrong counts, so a new
+  confirmation-specific paired bootstrap layer is required rather than
+  relabeling the existing single-metric output.
+- Wave046's immutable preparation identifies the exact cleaned TILA evidence:
+  CLN1-B403-S17 plus B403-S28/S43, all `family=tila`, terminal PASS, zero
+  protected reads, with retained config/checkpoint/receipt hashes. These are
+  the correct scientific parents for a Tail8-only scope-matched config freeze;
+  outcomes must not be used to alter any other hyperparameter.
+- Wave045's frozen preparation maps V0/V1/V2 Seeds17 and 43 to server
+  allocations3066/9929 and Seed28 to the local RTX3090 runtime. It binds source
+  `e4788f0`, the exact config/effective-config hashes, Tail8 scope, and zero
+  protected reads. The six server terminal checkpoint/receipt pairs all exist;
+  checkpoint SHAs are V0-S17 `5a7f9016...452c`, V1-S17
+  `ab0f051a...2061`, V2-S17 `d83eb8d2...61e6`, V0-S43
+  `747dfe6e...2b39`, V1-S43 `dc65c714...537d`, and V2-S43
+  `7eef6c89...ec35`.
+- Slurm still reports parent allocations3066 and 9929 RUNNING. No scientific
+  step was shown by the initial occupancy query, but retained telemetry/parent
+  step identity and GPU idleness must be verified separately before launching
+  a confirmation child.
+- The existing diagnostic unit tests exercise aggregate collection only and do
+  not constrain the variant allowlist or forbid additional private prediction
+  blocks. A backward-compatible extension can therefore keep the old receipt
+  fields while adding V0/V1/V2 eligibility and hashed JSONL prediction blocks,
+  with focused tests for row identity and immutability.
+- The prior Wave045 supplement controller was generated into its private
+  runtime rather than retained as tracked source. The confirmation program
+  needs a new tracked, testable preparation/controller implementation; copying
+  the private controller ad hoc would weaken reproducibility.
+- The proven server execution pattern is reusable without changing parent
+  allocations: a blocking `srun --jobid=<allocation> --overlap --ntasks=1`
+  child, exact source snapshot, explicit formal authorization/source commit,
+  byte-hashed inputs/config, and receipt verification before advancing the
+  fixed queue. The new controller can support both diagnostic and training job
+  types while maintaining one scientific child per allocation.
+- The private Wave045 diagnostic controller confirms the canonical Tail8 cache
+  and matched-hard-map locations and already executes diagnostics in place on
+  the server. The new candidate mode only needs the new source snapshot and
+  output namespace for Seeds17/43; Seed28 can be transferred as an immutable
+  three-checkpoint input snapshot and evaluated against the same server inputs.

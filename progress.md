@@ -7237,3 +7237,35 @@
   final-method ablations, and frozen-checkpoint T601-T614 plus reliability
   comparisons. B405 remains optional/unavailable, A507 remains retired, and no
   extra experiment is scientifically eligible for the idle 9929 allocation.
+- 2026-08-14 accepted the post-Wave045 minimal-confirmation direction. Broad
+  architecture search is now closed in the active plan: V2 is only a frozen
+  main candidate pending confirmation, V1 is fallback, V0 is core reference,
+  V3-V5 are rejected, and H4 remains appendix-only. The authorized next work is
+  limited to no-training V0/V1/V2 PRIOR diagnostics, patient-cluster paired Dev
+  bootstrap, and a Tail8 TILA three-seed fairness comparator. No new structure,
+  protected evaluation, or final-winner claim is authorized.
+- Implemented the first confirmation code layer. Candidate diagnostic mode now
+  accepts only V0/V1/V2, keeps legacy V3-V5 behavior separate, and atomically
+  publishes four hashed private Dev prediction blocks plus a terminal receipt.
+  Added a dedicated patient-cluster paired bootstrap that validates the fully
+  crossed V0/V1/V2 x seeds17/28/43 layout and reports Macro-F1, balanced
+  accuracy, ODER, every class recall/F1, and exclusive-correct/wrong counts.
+- The first focused gate found only import/test-fixture issues and started no
+  runtime work. After explicit correction, focused Ruff, four tests, and
+  compileall all pass. No checkpoint, queue, GPU assignment, or protected
+  surface was touched by this engineering phase.
+- Added a fail-closed Wave047 preparation builder and two-allocation server
+  controller. The frozen 12-job matrix contains exactly nine V0/V1/V2
+  checkpoint diagnostics and three Tail8-TILA seeds, with no duplicates. Each
+  lane runs only one blocking `srun --overlap` child at a time, verifies all
+  checkpoint/config/source/data/cache/map hashes, and stops on any missing or
+  non-PASS receipt.
+- Tail8-TILA config construction accepts only the terminal native TILA parent
+  contract and changes only experiment identity/development axis/seed plus
+  `adapter_scope: tail4 -> tail8`; family, rank32, H0, loss, optimizer, and
+  budget stay unchanged. Focused Ruff, seven tests, and compileall pass after
+  formatting. Runtime preparation/transfer/launch has not started yet.
+- Full repository verification passed Ruff check and all 253 pytest tests,
+  compileall, and `git diff --check`. The repository-wide formatter check
+  reports 91 pre-existing files outside this change set; touched-file format
+  checks remain PASS and unrelated files were preserved.

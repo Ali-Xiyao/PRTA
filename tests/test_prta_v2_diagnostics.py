@@ -61,3 +61,9 @@ def test_evaluate_intervention_collects_aggregate_mechanism_statistics():
     assert result["change_energy"]["count"] == 5
     assert result["selective_state_weight"]["count"] == 5
     assert result["predictions"] == {f"sample-{index}": index for index in range(5)}
+    assert result["prediction_rows"][0] == {
+        "patient_id": "patient-0",
+        "observation_id": "sample-0",
+        "target": "Stable",
+        "prediction": "Stable",
+    }

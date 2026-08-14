@@ -11,6 +11,7 @@ from typing import Any
 import torch
 from torch.utils.data import DataLoader
 
+from prta_cxr.artifacts import write_jsonl_atomic
 from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
 from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256, sha256_file
@@ -27,7 +28,8 @@ from prta_cxr.vision.biomedclip import (
 )
 
 INTERVENTIONS = ("true", "matched_hard", "null", "reversed")
-DIAGNOSTIC_VARIANTS = {"V3", "V4", "V5"}
+LEGACY_DIAGNOSTIC_VARIANTS = {"V3", "V4", "V5"}
+CANDIDATE_CONFIRMATION_VARIANTS = {"V0", "V1", "V2"}
 
 
 def _write_new_json(path: Path, value: object) -> None:
@@ -120,6 +122,7 @@ def _evaluate_intervention(
     return {
         "metrics": metrics,
         "predictions": predictions,
+        "prediction_rows": rows,
         "prior_reliability": _distribution(reliability_values),
         "change_energy": _distribution(change_energy_values),
         "selective_state_weight": _distribution(state_weight_values),
@@ -156,6 +159,11 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--formal", action="store_true")
+    parser.add_argument(
+        "--diagnostic-scope",
+        choices=("legacy_v3_v5", "candidate_v0_v2"),
+        default="legacy_v3_v5",
+    )
     args = parser.parse_args(argv)
     require_formal_authorization(formal_flag=args.formal)
     if args.output.exists():
@@ -174,8 +182,15 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         raise ValueError("unsupported checkpoint schema")
     config = dict(checkpoint["config"])
     variant = str(config.get("prta_v2_variant", ""))
-    if variant not in DIAGNOSTIC_VARIANTS:
-        raise ValueError("mechanism diagnostics require Wave045 V3, V4, or V5")
+    allowed_variants = (
+        CANDIDATE_CONFIRMATION_VARIANTS
+        if args.diagnostic_scope == "candidate_v0_v2"
+        else LEGACY_DIAGNOSTIC_VARIANTS
+    )
+    if variant not in allowed_variants:
+        raise ValueError(
+            f"{args.diagnostic_scope} does not permit Wave045 variant {variant!r}"
+        )
     experiment_id = str(config.get("experiment_id", ""))
     if not experiment_id.startswith(f"W045-{variant}-S"):
         raise ValueError("checkpoint experiment identity is not Wave045")
@@ -216,6 +231,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     )
 
     intervention_results: dict[str, Any] = {}
+    prediction_rows: dict[str, list[dict[str, str]]] = {}
     for intervention in INTERVENTIONS:
         dataset = PRTAFeatureDataset(
             rows,
@@ -231,12 +247,14 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
             shuffle=False,
             num_workers=0,
         )
-        intervention_results[intervention] = _evaluate_intervention(
+        result = _evaluate_intervention(
             model,
             loader,
             device=device,
             selective_state_beta=beta,
         )
+        prediction_rows[intervention] = result.pop("prediction_rows")
+        intervention_results[intervention] = result
 
     true_predictions = intervention_results["true"]["predictions"]
     true_ordinary = intervention_results["true"]["metrics"]["ordinary"]
@@ -270,9 +288,18 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         checkpoint.get("training_model_state"),
         "adapter.relation_residual_scale",
     )
+    candidate_mode = args.diagnostic_scope == "candidate_v0_v2"
     receipt = {
-        "schema": "prta-cxr.wave045-mechanism-diagnostic.v1",
-        "status": "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC",
+        "schema": (
+            "prta-cxr.wave047-candidate-prior-diagnostic.v1"
+            if candidate_mode
+            else "prta-cxr.wave045-mechanism-diagnostic.v1"
+        ),
+        "status": (
+            "PASS_WAVE047_CANDIDATE_TRAIN_DEV_PRIOR_DIAGNOSTIC"
+            if candidate_mode
+            else "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC"
+        ),
         "created_at": datetime.now(UTC).isoformat(),
         "experiment_id": experiment_id,
         "variant": variant,
@@ -298,7 +325,37 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "gold_opened": False,
         "protected_outcome_read_count": 0,
     }
-    args.output.mkdir(parents=True, exist_ok=False)
-    _write_new_json(args.output / "mechanism_diagnostic_receipt.json", receipt)
+    if candidate_mode:
+        staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
+        if staging.exists():
+            raise FileExistsError(f"candidate diagnostic staging exists: {staging}")
+        staging.mkdir(parents=True, exist_ok=False)
+        prediction_blocks = {}
+        for intervention in INTERVENTIONS:
+            block = [
+                {
+                    **row,
+                    "system": variant,
+                    "training_seed": int(config["seed"]),
+                    "cohort": "dev",
+                    "prior_intervention": intervention,
+                }
+                for row in prediction_rows[intervention]
+            ]
+            path = staging / f"{intervention}.predictions.jsonl"
+            write_jsonl_atomic(path, block)
+            prediction_blocks[intervention] = {
+                "path": path.name,
+                "rows": len(block),
+                "sha256": sha256_file(path),
+            }
+        receipt["prediction_blocks"] = prediction_blocks
+        receipt["checkpoint_only"] = True
+        receipt["candidate_status"] = "PENDING_CONFIRMATION"
+        _write_new_json(staging / "candidate_prior_diagnostic_receipt.json", receipt)
+        staging.replace(args.output)
+    else:
+        args.output.mkdir(parents=True, exist_ok=False)
+        _write_new_json(args.output / "mechanism_diagnostic_receipt.json", receipt)
     print(json.dumps(receipt, indent=2, sort_keys=True))
     return 0
