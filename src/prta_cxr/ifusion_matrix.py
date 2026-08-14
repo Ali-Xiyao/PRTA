@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 from collections.abc import Mapping, Sequence
 from copy import deepcopy
 from datetime import UTC, datetime
@@ -16,6 +15,7 @@ from prta_cxr.data.hard_cmcp import (
     read_matched_hard_prior_map,
 )
 from prta_cxr.data.training_dataset import read_jsonl
+from prta_cxr.provenance import resolve_source_commit
 
 BASE_MAIN_COMMIT = "f4218064d76e6d53e154f1cc1204ba425d95b3ab"
 SEEDS = (17, 28, 43)
@@ -63,16 +63,6 @@ LANES = (
         "device_index": 1,
     },
 )
-
-
-def _git_commit(repo_root: Path) -> str:
-    return subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=repo_root,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
 
 
 def _normalized_parent(config: Mapping[str, Any]) -> dict[str, Any]:
@@ -423,7 +413,7 @@ def prepare_ifusion_matrix_main(argv: Sequence[str] | None = None) -> int:
         "schema": "prta-cxr.ifusion-final-evidence-preparation.v1",
         "status": "PASS_IFUSION_CORE_MATRIX_FROZEN",
         "created_at": datetime.now(UTC).isoformat(),
-        "repository_commit": _git_commit(repo_root),
+        "repository_commit": resolve_source_commit(repo_root),
         "base_main_commit": BASE_MAIN_COMMIT,
         "seed_set": list(SEEDS),
         "input_sha256": input_sha256,
