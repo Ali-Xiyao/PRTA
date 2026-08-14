@@ -6,7 +6,7 @@ import shutil
 import subprocess
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from prta_cxr.artifacts import replace_json_atomic, write_json_atomic
@@ -37,13 +37,13 @@ RUNTIME_FIELDS = {
     "stderr_path",
     "stdout_path",
 }
-SERVER_BASE = Path(
+SERVER_BASE = PurePosixPath(
     "/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT"
 )
 SERVER_LIVE = SERVER_BASE / "PRTA-CXR"
 SERVER_RUNTIME = SERVER_LIVE / "data/runtime"
 SERVER_SEARCH = SERVER_RUNTIME / "server_runs/continuous_lightweight_dev_search_v1"
-SERVER_ROOT = SERVER_SEARCH / "wave046_native_baseline_3066_amendment_attempt2_v1"
+SERVER_ROOT = SERVER_SEARCH / "wave046_native_baseline_3066_server_attempt3_v1"
 SERVER_SOURCE = SERVER_BASE / "PRTA-CXR-source-snapshots" / SOURCE_COMMIT
 
 
