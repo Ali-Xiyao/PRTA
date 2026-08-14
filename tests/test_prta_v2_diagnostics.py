@@ -9,6 +9,7 @@ from prta_cxr.prta_v2_diagnostics import (
     _distribution,
     _evaluate_intervention,
     _state_value,
+    _validate_checkpoint_input_hashes,
 )
 
 
@@ -67,3 +68,43 @@ def test_evaluate_intervention_collects_aggregate_mechanism_statistics():
         "target": "Stable",
         "prediction": "Stable",
     }
+
+
+def test_checkpoint_input_hashes_accept_base_or_full_diagnostic_contract():
+    diagnostic = {
+        "split_manifest": "split",
+        "text_cache": "text",
+        "weights": "weights",
+        "cache_manifest": "cache",
+        "label_quality_audit": "quality",
+        "cleaned_split_freeze": "freeze",
+        "matched_hard_prior_map": "map",
+    }
+    base = {
+        key: value
+        for key, value in diagnostic.items()
+        if key != "matched_hard_prior_map"
+    }
+    _validate_checkpoint_input_hashes(base, diagnostic)
+    _validate_checkpoint_input_hashes(diagnostic, diagnostic)
+
+
+def test_checkpoint_input_hashes_reject_unsupported_key_sets_and_hash_drift():
+    diagnostic = {
+        "split_manifest": "split",
+        "text_cache": "text",
+        "weights": "weights",
+        "cache_manifest": "cache",
+        "label_quality_audit": "quality",
+        "cleaned_split_freeze": "freeze",
+        "matched_hard_prior_map": "map",
+    }
+    unsupported = dict(diagnostic)
+    unsupported.pop("weights")
+    with pytest.raises(ValueError, match="unsupported checkpoint input-hash key set"):
+        _validate_checkpoint_input_hashes(unsupported, diagnostic)
+
+    drifted = dict(diagnostic)
+    drifted["weights"] = "wrong"
+    with pytest.raises(ValueError, match="diagnostic input hash mismatch for weights"):
+        _validate_checkpoint_input_hashes(drifted, diagnostic)

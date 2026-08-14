@@ -3074,3 +3074,34 @@
   the server. The new candidate mode only needs the new source snapshot and
   output namespace for Seeds17/43; Seed28 can be transferred as an immutable
   three-checkpoint input snapshot and evaluated against the same server inputs.
+- Formal server preflight rehashed the exact cleaned Train/Dev manifest,
+  cleaned freeze, Tail8 cache manifest/text cache, BiomedCLIP weights, quality
+  audit, and matched-hard map; all match the frozen Wave045 identities. Both
+  A800s reported 10 MiB/0% utilization, and the only persistent steps are
+  parent batches plus telemetry3066.2/9929.0. The `%T` formatter requested for
+  `squeue --steps` is unsupported on this Slurm version, but step identities and
+  GPU evidence returned correctly; future probes should omit that formatter.
+- The committed source identity is
+  `c418aab28c89b45e7d9fff60ee08daec202aa542`. Its local source-snapshot target
+  and the Wave047 runtime target are both absent, satisfying new-namespace
+  creation gates. Wave045/Wave046 preparation SHAs independently rehash to
+  their expected frozen values.
+- Wave047 preparation now proves the full candidate-confirmation matrix before
+  execution. The server queues are immutable and nonoverlapping: allocation
+  3066 owns five diagnostics then TILA8-S17/S28; allocation9929 owns four
+  diagnostics then TILA8-S43. All Seed28 checkpoint transfers are read-only
+  copies with source hashes, while Seeds17/43 remain in their original server
+  Wave045 namespaces.
+- Deployment remains identity-preserving: source archive SHA
+  `07fe5071...a059`, root package `80d544d6...22ba`, Seed28 package
+  `72097711...0c15`, preparation `79b2f23a...19b2`, and server manifests
+  `1fece3fc...3c4a`/`1abb99a8...5ee0`. Both controller preparations rehashed
+  every deployed input before allowing a run command.
+- The final v1 prelaunch audit found an important provenance distinction, not
+  a scientific-config drift: V0/V1 checkpoint and terminal receipt input maps
+  contain the six inputs actually used by training, while V2 additionally
+  contains `matched_hard_prior_map`. A candidate diagnostic legitimately adds
+  that map for all three variants. Validation must therefore allow exactly the
+  six-key historical contract or the seven-key V2 contract, compare every
+  shared byte hash, and separately require checkpoint/receipt equality. The
+  already prepared v1 namespace must never be launched after this finding.

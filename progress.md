@@ -7269,3 +7269,35 @@
   compileall, and `git diff --check`. The repository-wide formatter check
   reports 91 pre-existing files outside this change set; touched-file format
   checks remain PASS and unrelated files were preserved.
+- Committed the confirmation implementation as `c418aab` and pushed it to the
+  local bare branch. Private runtime remains outside Git; the pre-existing
+  untracked `data/` mirror is untouched.
+- Server preflight passed all scientific input hashes and confirmed both A800
+  allocations scientifically free with retained parents/telemetry only. A
+  nonfatal Slurm step-format warning was recorded and will not be repeated.
+- Materialized an exact 345-file source snapshot for commit `c418aab` and
+  prepared private immutable namespace `wave047_v2_candidate_confirmation_v1`.
+  Preparation status is `PASS_WAVE047_CANDIDATE_CONFIRMATION_FROZEN`; it binds
+  all nine terminal V0/V1/V2 checkpoints, the four fixed PRIOR interventions,
+  the exact 12-job two-allocation queue, three Tail8-TILA configs, zero
+  protected reads, and no selection.
+- Packaged only the frozen preparation/manifests/configs plus the three Seed28
+  checkpoint/receipt pairs needed for in-place server diagnostics. Package
+  contents were enumerated and the Seed28 input tar is 2,158,553,600 bytes;
+  no active Wave046 artifact or protected path is included. No Wave047 child
+  has started yet.
+- Transferred the exact source/root/Seed28 packages to absent server targets.
+  Server-side tar SHAs match local values, the source snapshot contains exactly
+  345 files, and deployed preparation/manifest/checkpoint hashes match the
+  frozen transfer contract.
+- Both server controllers independently passed `prepare`. Preparation receipt
+  SHAs are `e69262c0...01c5a` for allocation3066 and
+  `575870ae...a078c` for allocation9929. Status is prelaunch with the exact
+  seven-job/five-job queues, no progress/completion/failure file, and zero
+  protected reads. No scientific child has started yet.
+- Final prelaunch receipt inspection caught a fail-closed compatibility issue:
+  V0/V1 training never consumed matched-hard PRIOR and correctly omit that one
+  hash, whereas V2 binds it. Wave047 v1 remains immutable and unstarted. The
+  validator is being corrected to accept only those two exact historical key
+  sets while preserving byte equality and checkpoint/receipt identity; launch
+  is deferred to a fresh v2 namespace after complete reverification.

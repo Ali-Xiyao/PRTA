@@ -141,6 +141,25 @@ def _input_hashes(args: argparse.Namespace) -> dict[str, str]:
     }
 
 
+def _validate_checkpoint_input_hashes(
+    checkpoint_hashes: Mapping[str, str], diagnostic_hashes: Mapping[str, str]
+) -> None:
+    """Validate an immutable checkpoint against the diagnostic input contract.
+
+    V0/V1 checkpoints predate matched-hard PRIOR use and therefore omit only
+    that hash. V2 checkpoints used the map during training and bind the full
+    diagnostic input set. No other key-set difference is allowed.
+    """
+    diagnostic_keys = set(diagnostic_hashes)
+    base_keys = diagnostic_keys - {"matched_hard_prior_map"}
+    checkpoint_keys = set(checkpoint_hashes)
+    if checkpoint_keys not in (base_keys, diagnostic_keys):
+        raise ValueError("unsupported checkpoint input-hash key set")
+    for key, value in checkpoint_hashes.items():
+        if diagnostic_hashes.get(key) != value:
+            raise ValueError(f"diagnostic input hash mismatch for {key}")
+
+
 def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Run aggregate-only Wave045 Train/Dev mechanism diagnostics"
@@ -205,8 +224,10 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         raise ValueError("checkpoint/training-receipt config identity mismatch")
 
     input_hashes = _input_hashes(args)
-    if dict(checkpoint.get("input_hashes", {})) != input_hashes:
-        raise ValueError("diagnostic inputs do not match checkpoint input hashes")
+    checkpoint_input_hashes = dict(checkpoint.get("input_hashes", {}))
+    _validate_checkpoint_input_hashes(checkpoint_input_hashes, input_hashes)
+    if dict(training_receipt.get("input_hashes", {})) != checkpoint_input_hashes:
+        raise ValueError("checkpoint/training-receipt input identity mismatch")
     adapter_scope = str(config["model"].get("adapter_scope", "tail4"))
     cache_entry_block = adapter_scope_cache_entry_block(adapter_scope)
     matched_map = read_matched_hard_prior_map(
@@ -309,6 +330,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "training_receipt_sha256": sha256_file(args.training_receipt),
         "config_sha256": canonical_sha256(config),
         "input_hashes": input_hashes,
+        "checkpoint_input_hashes": checkpoint_input_hashes,
         "cleaned_split_freeze_sha256": cleaned["receipt_sha256"],
         "interventions": report,
         "mechanism": {

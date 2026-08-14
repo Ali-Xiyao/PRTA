@@ -18,17 +18,17 @@ PRIOR interventions, patient-cluster paired Dev bootstrap, and a scope-matched
 Tail8 TILA three-seed comparator. Wave046 remains immutable and continues on
 its existing local workers.
 
-- [ ] Audit the exact V0/V1/V2 terminal checkpoint/prediction identities and
+- [x] Audit the exact V0/V1/V2 terminal checkpoint/prediction identities and
   existing mechanism-diagnostic/bootstrap implementations. Prove that every
   required input is cleaned Train/Dev-only and that no protected path is read.
-- [ ] Freeze a separate no-training V0/V1/V2 diagnostic namespace covering
+- [x] Freeze a separate no-training V0/V1/V2 diagnostic namespace covering
   seeds 17/28/43 and true/matched-hard/null/reversed PRIOR, with fixed metrics,
   class tables, prediction flips, gaps, receipts, and zero protected reads.
 - [ ] Implement and run patient-cluster paired Dev bootstrap for V2-V0,
   V2-V1, and V1-V0, including Macro-F1, balanced accuracy, ODER, class recall/
   F1, and exclusive-correct/exclusive-wrong counts. No seed or class may be
   dropped after results are observed.
-- [ ] Freeze a Tail8/rank32/H0 TILA three-seed fairness matrix with the same
+- [x] Freeze a Tail8/rank32/H0 TILA three-seed fairness matrix with the same
   cleaned split, head/loss/budget/data/cache/weights contract as the candidate
   comparison. Pass source/config/hash/compute gates before launch.
 - [ ] Use only scientifically free GPUs without moving or duplicating active
@@ -52,6 +52,7 @@ Errors encountered:
 |---|---:|---|
 | Initial focused gate found one import-order issue, one unused synthetic-test variable, and a test expectation that assumed class index 0 was `Improved` although the frozen order starts with `Stable` | 1 | No runtime experiment was started. Correct the test/formatting issues explicitly, then rerun focused lint and tests before continuing. |
 | Repository-wide `ruff format --check src scripts tests` reports 91 historical files that predate the current formatter | 1 | Do not reformat unrelated user/project code. Keep the focused format gate on all touched files; repository-wide Ruff check, full pytest, compileall, and diff check remain the substantive engineering gates. |
+| Wave047 v1 prelaunch identity audit found that V0/V1 checkpoint receipts correctly omit the matched-hard map they did not use during training, while the new PRIOR diagnostic requires that additional immutable input | 1 | Keep v1 permanently unstarted and immutable. Permit exactly the historical base hash set or the full V2 hash set, require all shared hashes and the checkpoint/training-receipt identity to match, rerun all gates, and deploy only a newly frozen v2 namespace. |
 
 ## 2026-08-14 comprehensive documented-baseline inventory
 
