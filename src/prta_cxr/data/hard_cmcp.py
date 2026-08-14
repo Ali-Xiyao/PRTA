@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from bisect import bisect_right
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -115,19 +116,58 @@ def build_random_counterfactual_prior_entries(
     group_audit: dict[str, Any] = {}
     for key in sorted(groups):
         group = sorted(groups[key], key=lambda row: str(row["sample_id"]))
+        by_label: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for row in group:
+            by_label[str(row[label_key])].append(row)
+        patient_positions: dict[str, dict[str, list[int]]] = {}
+        for label, pool in by_label.items():
+            positions: dict[str, list[int]] = defaultdict(list)
+            for index, row in enumerate(pool):
+                positions[str(row["patient_id_hash"])].append(index)
+            patient_positions[label] = positions
+
+        def select_without_patient(
+            pool: Sequence[dict[str, Any]], forbidden: Sequence[int], offset: int
+        ) -> dict[str, Any]:
+            low = 0
+            high = len(pool) - 1
+            while low < high:
+                middle = (low + high) // 2
+                legal_through_middle = middle + 1 - bisect_right(forbidden, middle)
+                if legal_through_middle > offset:
+                    high = middle
+                else:
+                    low = middle + 1
+            return pool[low]
+
         for target in group:
-            candidates = [
-                candidate
-                for candidate in group
-                if str(candidate["patient_id_hash"]) != str(target["patient_id_hash"])
-                and str(candidate[label_key]) != str(target[label_key])
-            ]
-            if not candidates:
+            target_label = str(target[label_key])
+            target_patient = str(target["patient_id_hash"])
+            legal_counts = []
+            for label in sorted(by_label):
+                if label == target_label:
+                    continue
+                forbidden = patient_positions[label].get(target_patient, [])
+                count = len(by_label[label]) - len(forbidden)
+                if count:
+                    legal_counts.append((label, count, forbidden))
+            total_legal = sum(value[1] for value in legal_counts)
+            if not total_legal:
                 raise ContractError(
                     f"no legal random-CMCP candidate for {target['sample_id']}"
                 )
             digest = hashlib.sha256(f"{salt}|{target['sample_id']}".encode()).digest()
-            candidate = candidates[int.from_bytes(digest[:8], "big") % len(candidates)]
+            offset = int.from_bytes(digest[:8], "big") % total_legal
+            candidate = None
+            for label, count, forbidden in legal_counts:
+                if offset < count:
+                    candidate = select_without_patient(
+                        by_label[label], forbidden, offset
+                    )
+                    break
+                offset -= count
+            if candidate is None:  # pragma: no cover - arithmetic invariant
+                raise RuntimeError("random-CMCP candidate selection failed")
             entries.append(
                 {
                     "target_sample_id": str(target["sample_id"]),
