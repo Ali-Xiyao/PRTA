@@ -29,3 +29,11 @@ def test_synthetic_smoke_saves_checkpoint_and_receipt(tmp_path):
     assert checkpoint["schema"] == "prta-cxr.synthetic-smoke-checkpoint.v1"
     receipt = json.loads(path.with_suffix(".receipt.json").read_text(encoding="utf-8"))
     assert receipt["checkpoint_bytes"] > 0
+
+
+def test_new_fusion_families_pass_synthetic_smoke(tmp_path):
+    for family in ("early_concat", "symmetric_cross_attention"):
+        path = tmp_path / f"{family}.pt"
+        result = run_synthetic_smoke(path, steps=1, family=family)
+        assert result["status"] == "PASS_SYNTHETIC_SMOKE"
+        assert result["family"] == family

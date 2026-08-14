@@ -7,8 +7,35 @@ from prta_cxr.contracts import ContractError
 from prta_cxr.data.cmcp import build_cmcp_matches, transition_examples
 from prta_cxr.data.hard_cmcp import (
     build_matched_hard_prior_entries,
+    build_random_counterfactual_prior_entries,
     read_matched_hard_prior_map,
 )
+
+
+def test_random_cmcp_is_deterministic_legal_and_order_independent():
+    rows = [
+        {
+            "sample_id": f"sample-{index}",
+            "patient_id_hash": f"patient-{index}",
+            "finding": "Edema",
+            "progression_label": label,
+            "split": "train",
+        }
+        for index, label in enumerate(
+            ("Stable", "Improved", "Worse", "New", "Resolved", "Stable")
+        )
+    ]
+    first, audit = build_random_counterfactual_prior_entries(rows)
+    second, _ = build_random_counterfactual_prior_entries(list(reversed(rows)))
+    assert first == second
+    assert audit["coverage"] == 1.0
+    by_id = {row["sample_id"]: row for row in rows}
+    for entry in first:
+        target = by_id[entry["target_sample_id"]]
+        candidate = by_id[entry["counterfactual_sample_id"]]
+        assert target["patient_id_hash"] != candidate["patient_id_hash"]
+        assert target["progression_label"] != candidate["progression_label"]
+        assert target["finding"] == candidate["finding"]
 
 
 def test_cmcp_is_cross_patient_and_opposite_label():

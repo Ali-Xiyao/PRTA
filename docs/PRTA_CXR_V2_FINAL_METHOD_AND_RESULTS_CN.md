@@ -33,7 +33,8 @@
 - 输入为同一患者的 prior CXR、current CXR 与 finding text。
 - 图像编码器为冻结的 BiomedCLIP ViT。
 - 训练读取冻结的 Block-4 token cache，不微调 backbone。
-- 使用最近八次可用历史检查，即 Tail8。
+- Adapter scope 为 BiomedCLIP ViT 最后 8 个 Transformer blocks（Tail8），从 Block-4 cache 继续前向。
+- Temporal input 为一组 prior-current study pair，而不是 8 次历史检查或 8 张历史影像。
 - 标签空间固定为五类：`Stable / Improved / Worse / New / Resolved`。
 
 ### 2.2 表征路径
@@ -62,7 +63,8 @@
 |---|---:|
 | Backbone | frozen BiomedCLIP ViT |
 | Cache entry | Block-4 |
-| Temporal window | Tail8 |
+| Adapter scope | last 8 ViT blocks（Tail8） |
+| Temporal input | one prior-current pair |
 | Head | H0 |
 | Hidden width | 768 |
 | Low-rank dimension | 32 |
@@ -170,7 +172,7 @@ bootstrap 使用预注册的 patient-cluster paired Dev protocol，10,000 次重
 | TILA Tail8 fairness comparator | 0.528645 ± 0.003539 | 0.537958 ± 0.015500 | 0.006339 ± 0.001486 |
 | **PRTA-CXR V2 Tail8/H0** | **0.551821 ± 0.006574** | **0.552606 ± 0.004177** | **0.003720 ± 0.000743** |
 
-TILA Tail8 是窗口长度公平比较器，不是 V2 的结构消融。B401–B403 与 TILA Tail8 均独立于 V3–V5 的结构搜索。
+TILA Tail8 是 adapter scope 公平比较器，不是 V2 的结构消融。B401–B403 与 TILA Tail8 均独立于 V3–V5 的结构搜索。
 
 ### 6.2 基线每 seed 结果
 

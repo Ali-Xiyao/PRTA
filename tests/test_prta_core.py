@@ -52,8 +52,7 @@ def test_prta_shapes_native_heads_and_gradient_path():
     assert NativeH2Head(16)(output, query).shape == (3, 5)
     logits.sum().backward()
     assert any(
-        parameter.grad is not None
-        for parameter in adapter.tail.adapters.parameters()
+        parameter.grad is not None for parameter in adapter.tail.adapters.parameters()
     )
 
 
@@ -141,7 +140,16 @@ def test_selective_state_preservation_downweights_large_change():
     assert adapted.grad is not None
 
 
-@pytest.mark.parametrize("family", ("current_only", "siamese_diff", "tila"))
+@pytest.mark.parametrize(
+    "family",
+    (
+        "current_only",
+        "siamese_diff",
+        "tila",
+        "early_concat",
+        "symmetric_cross_attention",
+    ),
+)
 def test_native_baseline_families_produce_five_logits(family):
     config = {
         "model": {
@@ -152,9 +160,7 @@ def test_native_baseline_families_produce_five_logits(family):
             "dropout": 0.0,
         }
     }
-    value = build_train_model(
-        [nn.Identity() for _ in range(4)], nn.Identity(), config
-    )
+    value = build_train_model([nn.Identity() for _ in range(4)], nn.Identity(), config)
     output, logits, query = value(
         torch.randn(2, 9, 16),
         torch.randn(2, 9, 16),
@@ -163,6 +169,77 @@ def test_native_baseline_families_produce_five_logits(family):
     assert output is None
     assert logits.shape == (2, 5)
     assert query.shape == (2, 16)
+
+
+def test_no_cross_time_ablation_uses_raw_prior_tokens():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        cross_time_alignment=False,
+        unaligned_prior_mode="raw",
+    )
+    prior = torch.randn(2, 9, 16)
+    current = torch.randn(2, 9, 16)
+    query = torch.randn(2, 16)
+    expected = adapter.tail(prior)
+    output = adapter(prior, current, query)
+    assert torch.equal(output.aligned_prior_tokens, expected)
+
+
+def test_no_relation_residual_bypasses_relation_projection():
+    adapter = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        temporal_relation_residual=False,
+    )
+    output = adapter(
+        torch.randn(2, 9, 16),
+        torch.randn(2, 9, 16),
+        torch.randn(2, 16),
+    )
+    output.transition_embedding.sum().backward()
+    assert all(
+        parameter.grad is None for parameter in adapter.relation_projection.parameters()
+    )
+
+
+def test_new_ablation_defaults_preserve_frozen_adapter_logits():
+    original = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+    )
+    explicit = PRTATemporalAdapter(
+        [nn.Identity() for _ in range(4)],
+        width=16,
+        heads=4,
+        adapter_rank=4,
+        state_tokens=4,
+        transition_tokens=4,
+        unaligned_prior_mode="conditioned",
+        temporal_relation_residual=True,
+    )
+    explicit.load_state_dict(original.state_dict())
+    prior = torch.randn(2, 9, 16)
+    current = torch.randn(2, 9, 16)
+    query = torch.randn(2, 16)
+    original_output = original(prior, current, query)
+    explicit_output = explicit(prior, current, query)
+    assert torch.equal(
+        original_output.transition_embedding,
+        explicit_output.transition_embedding,
+    )
 
 
 def test_adapter_scope_can_be_limited_to_last_two_tail_blocks():
@@ -190,9 +267,7 @@ def test_adapter_scope_can_be_limited_to_last_two_tail_blocks():
         ("tail10", 10, tuple(range(10)), 2),
     ),
 )
-def test_formal_adapter_scope_matrix(
-    scope, tail_length, expected_indices, entry_block
-):
+def test_formal_adapter_scope_matrix(scope, tail_length, expected_indices, entry_block):
     config = {
         "model": {
             "family": "prta",
@@ -235,9 +310,7 @@ def test_expanded_adapter_scopes_use_block4_cache(scope, expected_indices):
             "dropout": 0.0,
         }
     }
-    value = build_train_model(
-        [nn.Identity() for _ in range(8)], nn.Identity(), config
-    )
+    value = build_train_model([nn.Identity() for _ in range(8)], nn.Identity(), config)
     assert tuple(value.adapter.tail.adapter_indices) == expected_indices
     assert adapter_scope_cache_entry_block(scope) == 4
 
@@ -255,9 +328,7 @@ def test_expanded_adapter_scope_rejects_legacy_block8_tail():
         }
     }
     with pytest.raises(ValueError, match="Block-4 cache"):
-        build_train_model(
-            [nn.Identity() for _ in range(4)], nn.Identity(), config
-        )
+        build_train_model([nn.Identity() for _ in range(4)], nn.Identity(), config)
 
 
 def test_block4_tail_exposes_eight_frozen_transformer_blocks():
@@ -328,8 +399,7 @@ def test_h4_is_transition_primary_and_trains_both_branches_when_changed():
     logits = head(changed, query)
     logits.sum().backward()
     assert any(
-        parameter.grad is not None
-        for parameter in adapter.state_resampler.parameters()
+        parameter.grad is not None for parameter in adapter.state_resampler.parameters()
     )
     assert any(
         parameter.grad is not None
@@ -355,9 +425,7 @@ def test_clean_transition_only_omits_state_branch_parameters():
             },
         }
     }
-    value = build_train_model(
-        [nn.Identity() for _ in range(4)], nn.Identity(), config
-    )
+    value = build_train_model([nn.Identity() for _ in range(4)], nn.Identity(), config)
     output, logits, _ = value(
         torch.randn(2, 9, 16),
         torch.randn(2, 9, 16),

@@ -12,10 +12,15 @@ from torch import nn
 
 from prta_cxr.models.heads import NativeH1Head
 from prta_cxr.models.prta import PRTATemporalAdapter
+from prta_cxr.training.engine import build_train_model
 
 
 def run_synthetic_smoke(
-    output_path: Path, *, seed: int = 17, steps: int = 3
+    output_path: Path,
+    *,
+    seed: int = 17,
+    steps: int = 3,
+    family: str = "prta",
 ) -> dict[str, Any]:
     if steps < 1 or steps > 20:
         raise ValueError("smoke steps must be within [1, 20]")
@@ -24,30 +29,52 @@ def run_synthetic_smoke(
     torch.manual_seed(seed)
 
     width = 16
-    model = PRTATemporalAdapter(
-        [nn.Identity() for _ in range(4)],
-        width=width,
-        heads=4,
-        adapter_rank=4,
-        state_tokens=4,
-        transition_tokens=4,
-    )
-    head = NativeH1Head(width, hidden_width=16)
+    if family == "prta":
+        model = PRTATemporalAdapter(
+            [nn.Identity() for _ in range(4)],
+            width=width,
+            heads=4,
+            adapter_rank=4,
+            state_tokens=4,
+            transition_tokens=4,
+        )
+        head: nn.Module | None = NativeH1Head(width, hidden_width=16)
+    else:
+        model = build_train_model(
+            [nn.Identity() for _ in range(4)],
+            nn.Identity(),
+            {
+                "model": {
+                    "family": family,
+                    "width": width,
+                    "heads": 4,
+                    "adapter_rank": 4,
+                    "adapter_scope": "tail4",
+                    "dropout": 0.0,
+                }
+            },
+        )
+        head = None
     parameters = [
-        parameter
-        for parameter in list(model.parameters()) + list(head.parameters())
-        if parameter.requires_grad
+        parameter for parameter in model.parameters() if parameter.requires_grad
     ]
+    if head is not None:
+        parameters.extend(
+            parameter for parameter in head.parameters() if parameter.requires_grad
+        )
     optimizer = torch.optim.AdamW(parameters, lr=1e-3)
     prior = torch.randn(5, 9, width)
     current = torch.randn(5, 9, width)
-    query = torch.randn(5, width)
+    query = torch.randn(5, width if family == "prta" else 512)
     target = torch.arange(5)
     losses = []
     for _ in range(steps):
         optimizer.zero_grad(set_to_none=True)
-        output = model(prior, current, query)
-        logits = head(output, query)
+        if head is None:
+            _, logits, _ = model(prior, current, query)
+        else:
+            output = model(prior, current, query)
+            logits = head(output, query)
         loss = F.cross_entropy(logits, target)
         if not torch.isfinite(loss):
             raise RuntimeError("synthetic smoke loss is not finite")
@@ -62,7 +89,7 @@ def run_synthetic_smoke(
         "seed": seed,
         "steps": steps,
         "model_state": model.state_dict(),
-        "head_state": head.state_dict(),
+        "head_state": head.state_dict() if head is not None else None,
     }
     torch.save(checkpoint, output_path)
     receipt = {
@@ -72,6 +99,7 @@ def run_synthetic_smoke(
         "protected_outcomes_opened": False,
         "seed": seed,
         "steps": steps,
+        "family": family,
         "losses": losses,
         "checkpoint_path": output_path.as_posix(),
         "checkpoint_bytes": output_path.stat().st_size,

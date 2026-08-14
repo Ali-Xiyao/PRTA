@@ -43,9 +43,7 @@ from prta_cxr.models.prta import (
 from prta_cxr.training.losses import progression_classification_loss
 
 
-def _adapter_indices(
-    model: Mapping[str, Any], *, tail_length: int
-) -> tuple[int, ...]:
+def _adapter_indices(model: Mapping[str, Any], *, tail_length: int) -> tuple[int, ...]:
     scope = str(model.get("adapter_scope", "tail4"))
     if scope in {"no_tail", "tail0", "none"}:
         if tail_length != 4:
@@ -121,6 +119,12 @@ class PRTATrainModel(nn.Module):
             ),
             prior_reliability_gate=bool(
                 components.get("prior_reliability_gate", False)
+            ),
+            unaligned_prior_mode=str(
+                components.get("unaligned_prior_mode", "conditioned")
+            ),
+            temporal_relation_residual=bool(
+                components.get("temporal_relation_residual", True)
             ),
         )
         self.training_heads = PRTATrainingHeads(visual_width=width)
@@ -274,6 +278,99 @@ class TILATrainModel(_NativeTemporalBaseline):
         return None, self.head(features), query
 
 
+class EarlyConcatenationTrainModel(_NativeTemporalBaseline):
+    """Jointly attend over concatenated prior/current tokens."""
+
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        model = config["model"]
+        self.modality_embedding = nn.Parameter(torch.empty(2, self.width))
+        nn.init.normal_(self.modality_embedding, std=0.02)
+        self.attention = nn.MultiheadAttention(
+            self.width,
+            int(model["heads"]),
+            dropout=float(model.get("dropout", 0.0)),
+            batch_first=True,
+        )
+        self.norm = nn.LayerNorm(self.width)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 2),
+            nn.Linear(self.width * 2, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior) + self.modality_embedding[0]
+        current_value = self._encode(current) + self.modality_embedding[1]
+        tokens = torch.cat((prior_value, current_value), dim=1)
+        conditioned = tokens + query.unsqueeze(1)
+        attended, _ = self.attention(
+            self.norm(conditioned),
+            self.norm(conditioned),
+            self.norm(tokens),
+            need_weights=False,
+        )
+        pooled = (tokens + attended).mean(dim=1)
+        return None, self.head(torch.cat((pooled, query), dim=-1)), query
+
+
+class SymmetricCrossAttentionTrainModel(_NativeTemporalBaseline):
+    """Apply one shared cross-attention module in both temporal directions."""
+
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        model = config["model"]
+        self.attention = nn.MultiheadAttention(
+            self.width,
+            int(model["heads"]),
+            dropout=float(model.get("dropout", 0.0)),
+            batch_first=True,
+        )
+        self.norm = nn.LayerNorm(self.width)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 7),
+            nn.Linear(self.width * 7, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def _cross(self, query, context, condition):
+        attended, _ = self.attention(
+            self.norm(query + condition.unsqueeze(1)),
+            self.norm(context + condition.unsqueeze(1)),
+            self.norm(context),
+            need_weights=False,
+        )
+        return attended
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior)
+        current_value = self._encode(current)
+        current_from_prior = self._cross(current_value, prior_value, query)
+        prior_from_current = self._cross(prior_value, current_value, query)
+        current_pool = current_value.mean(dim=1)
+        prior_pool = prior_value.mean(dim=1)
+        current_cross_pool = current_from_prior.mean(dim=1)
+        prior_cross_pool = prior_from_current.mean(dim=1)
+        cross_difference = current_cross_pool - prior_cross_pool
+        features = torch.cat(
+            (
+                current_pool,
+                prior_pool,
+                current_cross_pool,
+                prior_cross_pool,
+                cross_difference,
+                cross_difference.abs(),
+                query,
+            ),
+            dim=-1,
+        )
+        return None, self.head(features), query
+
+
 def build_train_model(
     frozen_tail: list[nn.Module],
     final_norm: nn.Module,
@@ -285,6 +382,8 @@ def build_train_model(
         "current_only": CurrentOnlyTrainModel,
         "siamese_diff": SiameseDiffTrainModel,
         "tila": TILATrainModel,
+        "early_concat": EarlyConcatenationTrainModel,
+        "symmetric_cross_attention": SymmetricCrossAttentionTrainModel,
     }
     if family not in registry:
         raise ValueError(f"unsupported model family: {family}")
@@ -404,19 +503,18 @@ def _loss(
         )
     cmcp_weight = float(weights.get("cmcp", 0.0))
     if cmcp_weight:
-        matched_hard = bool(components.get("matched_hard_cmcp", False))
-        if matched_hard:
+        matching = str(model.config.get("cmcp", {}).get("matching", "in_batch_roll_v1"))
+        offline = matching in {"offline_hard_v1", "offline_random_v1"}
+        if offline:
             if "counterfactual_prior" not in batch:
-                raise ValueError("matched-hard CMCP requires counterfactual priors")
+                raise ValueError(f"{matching} CMCP requires counterfactual priors")
             counterfactual_prior = batch["counterfactual_prior"].to(device)
         elif prior.shape[0] > 1:
             counterfactual_prior = prior.roll(1, dims=0)
         else:
             counterfactual_prior = None
         if counterfactual_prior is not None:
-            counterfactual, _, _ = model(
-                counterfactual_prior, current, finding
-            )
+            counterfactual, _, _ = model(counterfactual_prior, current, finding)
             cmcp_spec = dict(model.config.get("cmcp", {}))
             total = total + cmcp_weight * cmcp_margin_loss(
                 output.transition_embedding,
@@ -616,9 +714,7 @@ def _maybe_update_weight_averaging(
     mode = str(audit["name"])
     should_update = mode == "ema" and event == "optimizer_step"
     should_update = should_update or (
-        mode == "swa"
-        and event == "epoch"
-        and epoch >= int(audit["start_epoch"])
+        mode == "swa" and event == "epoch" and epoch >= int(audit["start_epoch"])
     )
     if should_update:
         averaged_model.update_parameters(model)
@@ -652,9 +748,7 @@ def _build_two_stage_training(
     if str(optimization.get("learning_rate_schedule", "constant")) != "constant":
         raise ValueError("two-stage training currently requires constant learning rate")
     start_ratio = float(optimization.get("stage_two_start_ratio", 0.5))
-    learning_rate_ratio = float(
-        optimization.get("stage_two_learning_rate_ratio", 0.1)
-    )
+    learning_rate_ratio = float(optimization.get("stage_two_learning_rate_ratio", 0.1))
     direction_multiplier = float(
         optimization.get("stage_two_direction_margin_multiplier", 2.0)
     )
@@ -747,9 +841,8 @@ def _two_stage_checkpoint_improved(
     macro_f1 = float(metrics["macro_f1"])
     if not bool(audit["enabled"]) or epoch < int(audit["stage_two_start_epoch"]):
         return macro_f1 > best_f1 + min_delta, qualified_stage_two_best_found
-    qualified = (
-        float(metrics["opposite_direction_error_rate"])
-        <= float(audit["stage_two_oder_ceiling"])
+    qualified = float(metrics["opposite_direction_error_rate"]) <= float(
+        audit["stage_two_oder_ceiling"]
     )
     if not qualified:
         return False, qualified_stage_two_best_found

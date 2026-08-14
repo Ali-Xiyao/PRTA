@@ -27,17 +27,13 @@ class PRTAVariant:
 def prta_variant_registry() -> dict[str, PRTAVariant]:
     return {
         "A0": PRTAVariant("A0", False, False, False, False, False, False),
-        "A1": PRTAVariant(
-            "A1", False, False, False, False, False, False, True
-        ),
+        "A1": PRTAVariant("A1", False, False, False, False, False, False, True),
         "A2": PRTAVariant("A2", True, True, False, False, False, False),
         "A3": PRTAVariant("A3", True, True, True, False, False, False),
         "A4": PRTAVariant("A4", True, True, True, True, False, False),
         "A5": PRTAVariant("A5", True, True, True, False, True, False),
         "A6": PRTAVariant("A6", True, True, True, True, True, True),
-        "A7": PRTAVariant(
-            "A7", False, False, False, False, False, False, True
-        ),
+        "A7": PRTAVariant("A7", False, False, False, False, False, False, True),
     }
 
 
@@ -50,9 +46,7 @@ class FrozenBiomedCLIPDifference(nn.Module):
     ) -> None:
         super().__init__()
         if len(frozen_blocks) not in {4, 6, 8, 10}:
-            raise ValueError(
-                "A0 requires a 4-, 6-, 8-, or 10-block BiomedCLIP tail"
-            )
+            raise ValueError("A0 requires a 4-, 6-, 8-, or 10-block BiomedCLIP tail")
         self.frozen_blocks = nn.ModuleList(frozen_blocks)
         self.final_norm = final_norm
         self.eval().requires_grad_(False)
@@ -118,9 +112,7 @@ class FrozenTailWithAdapters(nn.Module):
     ) -> None:
         super().__init__()
         if len(frozen_blocks) not in {4, 6, 8, 10}:
-            raise ValueError(
-                "PRTA requires a 4-, 6-, 8-, or 10-block frozen ViT tail"
-            )
+            raise ValueError("PRTA requires a 4-, 6-, 8-, or 10-block frozen ViT tail")
         self.frozen_blocks = nn.ModuleList(frozen_blocks)
         for block in self.frozen_blocks:
             block.eval().requires_grad_(False)
@@ -138,9 +130,7 @@ class FrozenTailWithAdapters(nn.Module):
         self.adapter_indices = indices
         self.adapters = nn.ModuleDict(
             {
-                str(index): BottleneckAdapter(
-                    width, adapter_rank, dropout=dropout
-                )
+                str(index): BottleneckAdapter(width, adapter_rank, dropout=dropout)
                 for index in indices
             }
         )
@@ -236,6 +226,8 @@ class PRTATemporalAdapter(nn.Module):
         learned_relation_residual_scale: bool = False,
         relation_residual_initial_scale: float = 1e-3,
         prior_reliability_gate: bool = False,
+        unaligned_prior_mode: str = "conditioned",
+        temporal_relation_residual: bool = True,
     ) -> None:
         super().__init__()
         if width % heads:
@@ -251,10 +243,18 @@ class PRTATemporalAdapter(nn.Module):
         self.cross_time_alignment = bool(cross_time_alignment)
         self.bounded_state_anchor = bool(bounded_state_anchor)
         self.state_branch = bool(state_branch)
-        self.learned_relation_residual_scale = bool(
-            learned_relation_residual_scale
-        )
+        self.learned_relation_residual_scale = bool(learned_relation_residual_scale)
         self.prior_reliability_gate = bool(prior_reliability_gate)
+        self.unaligned_prior_mode = str(unaligned_prior_mode)
+        self.temporal_relation_residual = bool(temporal_relation_residual)
+        if self.unaligned_prior_mode not in {"conditioned", "raw"}:
+            raise ValueError("unaligned prior mode must be conditioned or raw")
+        if not self.temporal_relation_residual and (
+            self.learned_relation_residual_scale or self.prior_reliability_gate
+        ):
+            raise ValueError(
+                "relation residual scale/gate requires temporal relation residual"
+            )
         if self.prior_reliability_gate and not self.learned_relation_residual_scale:
             raise ValueError(
                 "prior reliability gate requires learned relation residual scale"
@@ -351,39 +351,46 @@ class PRTATemporalAdapter(nn.Module):
                 need_weights=False,
             )
         else:
-            aligned_prior = conditioned_prior
-        relation = torch.cat(
-            (
-                current,
-                aligned_prior,
-                current - aligned_prior,
-                (current - aligned_prior).abs(),
-                current * aligned_prior,
-            ),
-            dim=-1,
-        )
-        relation_residual = self.relation_projection(relation)
+            aligned_prior = (
+                conditioned_prior
+                if self.unaligned_prior_mode == "conditioned"
+                else prior
+            )
         prior_reliability = None
-        if self.prior_reliability_projection is not None:
-            reliability_context = torch.cat(
+        if self.temporal_relation_residual:
+            relation = torch.cat(
                 (
-                    current.mean(dim=1),
-                    aligned_prior.mean(dim=1),
-                    (current - aligned_prior).abs().mean(dim=1),
-                    query_condition,
+                    current,
+                    aligned_prior,
+                    current - aligned_prior,
+                    (current - aligned_prior).abs(),
+                    current * aligned_prior,
                 ),
                 dim=-1,
             )
-            prior_reliability = torch.sigmoid(
-                self.prior_reliability_projection(reliability_context)
-            )
-            relation_residual = relation_residual * prior_reliability.unsqueeze(1)
-        if self.relation_residual_scale is None:
-            transition_source = current + relation_residual
+            relation_residual = self.relation_projection(relation)
+            if self.prior_reliability_projection is not None:
+                reliability_context = torch.cat(
+                    (
+                        current.mean(dim=1),
+                        aligned_prior.mean(dim=1),
+                        (current - aligned_prior).abs().mean(dim=1),
+                        query_condition,
+                    ),
+                    dim=-1,
+                )
+                prior_reliability = torch.sigmoid(
+                    self.prior_reliability_projection(reliability_context)
+                )
+                relation_residual = relation_residual * prior_reliability.unsqueeze(1)
+            if self.relation_residual_scale is None:
+                transition_source = current + relation_residual
+            else:
+                transition_source = (
+                    current + self.relation_residual_scale * relation_residual
+                )
         else:
-            transition_source = (
-                current + self.relation_residual_scale * relation_residual
-            )
+            transition_source = current
         transition_tokens = self.transition_resampler(
             transition_source, query_condition
         )
@@ -453,9 +460,7 @@ class PRTATrainingHeads(nn.Module):
     def transition_text(self, text_embedding: torch.Tensor) -> torch.Tensor:
         return F.normalize(self.transition_text_projection(text_embedding), dim=-1)
 
-    def progression_logits(
-        self, transition_embedding: torch.Tensor
-    ) -> torch.Tensor:
+    def progression_logits(self, transition_embedding: torch.Tensor) -> torch.Tensor:
         return self.progression_classifier(transition_embedding)
 
 
@@ -513,9 +518,7 @@ def cmcp_margin_loss(
     margin: float = 0.2,
 ) -> torch.Tensor:
     if not (
-        true_transition.shape
-        == counterfactual_transition.shape
-        == target_text.shape
+        true_transition.shape == counterfactual_transition.shape == target_text.shape
     ):
         raise ValueError("CMCP embedding shapes differ")
     true_score = F.cosine_similarity(true_transition, target_text, dim=-1)
@@ -528,9 +531,7 @@ def cmcp_margin_loss(
 def invert_progression_logits(logits: torch.Tensor) -> torch.Tensor:
     if logits.shape[-1] != len(PROGRESSION_LABELS):
         raise ValueError("progression logits must contain five classes")
-    return logits.index_select(
-        -1, INVERSION_INDEX.to(device=logits.device)
-    )
+    return logits.index_select(-1, INVERSION_INDEX.to(device=logits.device))
 
 
 def project_equivariant_inversion_logits(
@@ -614,11 +615,8 @@ def state_preservation_loss(
 ) -> torch.Tensor:
     if adapted_state.shape != frozen_current_state.shape:
         raise ValueError("state-preservation embedding shapes differ")
-    losses = (
-        1
-        - F.cosine_similarity(
-            adapted_state, frozen_current_state.detach(), dim=-1
-        )
+    losses = 1 - F.cosine_similarity(
+        adapted_state, frozen_current_state.detach(), dim=-1
     )
     if sample_weights is None:
         return losses.mean()

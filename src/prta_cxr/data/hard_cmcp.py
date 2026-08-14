@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
@@ -12,16 +13,27 @@ import torch.nn.functional as F
 from prta_cxr.contracts import ContractError
 
 
-def read_matched_hard_prior_map(
+def read_counterfactual_prior_map(
     path: Path,
     *,
+    expected_matching: str | None = None,
     expected_split_manifest_sha256: str | None = None,
     expected_cache_manifest_sha256: str | None = None,
     expected_cache_entry_block: int | None = None,
 ) -> dict[str, str]:
     value = json.loads(Path(path).read_text(encoding="utf-8"))
-    if value.get("schema") != "prta-cxr.matched-hard-prior-map.v1":
-        raise ContractError("unsupported matched-hard prior map schema")
+    schema = value.get("schema")
+    inferred_matching = {
+        "prta-cxr.matched-hard-prior-map.v1": "offline_hard_v1",
+        "prta-cxr.counterfactual-prior-map.v1": value.get("matching"),
+    }.get(schema)
+    if inferred_matching not in {"offline_hard_v1", "offline_random_v1"}:
+        raise ContractError("unsupported counterfactual prior map schema/matching")
+    if expected_matching is not None and inferred_matching != expected_matching:
+        raise ContractError(
+            "counterfactual prior map matching mismatch: "
+            f"{inferred_matching} != {expected_matching}"
+        )
     expected_metadata = {
         "split_manifest_sha256": expected_split_manifest_sha256,
         "cache_manifest_sha256": expected_cache_manifest_sha256,
@@ -41,23 +53,104 @@ def read_matched_hard_prior_map(
             expected = int(expected)
         if actual != expected:
             raise ContractError(
-                f"matched-hard prior map {name} mismatch: {actual} != {expected}"
+                f"counterfactual prior map {name} mismatch: {actual} != {expected}"
             )
     entries = value.get("entries")
     if not isinstance(entries, list):
-        raise ContractError("matched-hard prior map entries are missing")
+        raise ContractError("counterfactual prior map entries are missing")
     result: dict[str, str] = {}
     for raw in entries:
         if not isinstance(raw, dict):
-            raise ContractError("matched-hard prior entry must be an object")
+            raise ContractError("counterfactual prior entry must be an object")
         target = str(raw.get("target_sample_id", ""))
         candidate = str(raw.get("counterfactual_sample_id", ""))
         if not target or not candidate:
-            raise ContractError("matched-hard prior entry identifiers are missing")
+            raise ContractError("counterfactual prior entry identifiers are missing")
         if target in result:
-            raise ContractError(f"duplicate matched-hard target: {target}")
+            raise ContractError(f"duplicate counterfactual target: {target}")
         result[target] = candidate
     return result
+
+
+def read_matched_hard_prior_map(
+    path: Path,
+    *,
+    expected_split_manifest_sha256: str | None = None,
+    expected_cache_manifest_sha256: str | None = None,
+    expected_cache_entry_block: int | None = None,
+) -> dict[str, str]:
+    return read_counterfactual_prior_map(
+        path,
+        expected_matching="offline_hard_v1",
+        expected_split_manifest_sha256=expected_split_manifest_sha256,
+        expected_cache_manifest_sha256=expected_cache_manifest_sha256,
+        expected_cache_entry_block=expected_cache_entry_block,
+    )
+
+
+def build_random_counterfactual_prior_entries(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    label_key: str = "progression_label",
+    salt: str = "prta-cxr-ifusion-random-cmcp-v1",
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Choose a legal random CMCP candidate by a stable per-row hash.
+
+    The selection is independent of input and batch order. Candidates stay in
+    the same split/finding and must use a different patient and label.
+    """
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for raw in rows:
+        row = dict(raw)
+        split = str(row.get("split", ""))
+        if split not in {"train", "dev"}:
+            continue
+        required = {"sample_id", "patient_id_hash", "finding", label_key}
+        missing = required - set(row)
+        if missing:
+            raise ContractError(f"random-CMCP row fields missing: {sorted(missing)}")
+        groups[(split, str(row["finding"]))].append(row)
+
+    entries: list[dict[str, Any]] = []
+    group_audit: dict[str, Any] = {}
+    for key in sorted(groups):
+        group = sorted(groups[key], key=lambda row: str(row["sample_id"]))
+        for target in group:
+            candidates = [
+                candidate
+                for candidate in group
+                if str(candidate["patient_id_hash"]) != str(target["patient_id_hash"])
+                and str(candidate[label_key]) != str(target[label_key])
+            ]
+            if not candidates:
+                raise ContractError(
+                    f"no legal random-CMCP candidate for {target['sample_id']}"
+                )
+            digest = hashlib.sha256(f"{salt}|{target['sample_id']}".encode()).digest()
+            candidate = candidates[int.from_bytes(digest[:8], "big") % len(candidates)]
+            entries.append(
+                {
+                    "target_sample_id": str(target["sample_id"]),
+                    "counterfactual_sample_id": str(candidate["sample_id"]),
+                    "split": key[0],
+                    "finding": key[1],
+                    "target_label": str(target[label_key]),
+                    "counterfactual_label": str(candidate[label_key]),
+                    "selection": "sha256_modulo_sorted_legal_candidates",
+                }
+            )
+        group_audit["|".join(key)] = {
+            "rows": len(group),
+            "matched": len(group),
+        }
+    entries.sort(key=lambda row: str(row["target_sample_id"]))
+    return entries, {
+        "eligible_rows": sum(len(group) for group in groups.values()),
+        "matched_rows": len(entries),
+        "coverage": 1.0 if entries else 0.0,
+        "salt_sha256": hashlib.sha256(salt.encode("utf-8")).hexdigest(),
+        "groups": group_audit,
+    }
 
 
 def build_matched_hard_prior_entries(
