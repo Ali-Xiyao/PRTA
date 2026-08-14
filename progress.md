@@ -7072,3 +7072,10 @@
   terminal receipts, failures, and the final no-selection native-baseline
   aggregate while explicitly forbidding intermediate metrics and protected
   data access.
+# 2026-08-14 Wave045 Seed17 lane completion and diagnostic advance
+
+- The Wave045 server3066 original lane is terminal at 6/6 cells. The newly terminal `W045-V5-S17` formal PASS receipt SHA is `6a7e8585ab22218f7b59caa20b015214c5b3c80971aed32c48c4adf6de80ae05`; protected-read count remains zero.
+- The preregistered server3066 checkpoint-diagnostic supplement activated only after that original-lane completion. `W045D-V3-S17` completed with receipt SHA `d35f1cec10f5cffaedf4ef2571ea310c73cdc3b2125ddfeda8b30c86f506e1b7`, and `W045D-V4-S17` completed with receipt SHA `e16ffbc5f18e27e95ee4a122bd096de5b141bbf767061dc91daac82ee1dd1ede`.
+- `W045D-V5-S17` is now the sole scientific child on allocation 3066 at step `3066.104`. The frozen source-checkpoint SHA is `eb0d344c8b79bedebfdaca8958de7643bfb59b810070fd17f66f1590698316b3`; protected-read count remains zero.
+- The server9929 original lane remains at 5/6 with `W045-V5-S43` active at step `9929.85`; its supplement remains correctly gated in WAITING state.
+- Wave046 remains unchanged with `W046-B401-S17` and `W046-B401-S28` active on local GPU0/GPU1 respectively; no failure or protected-read event was observed.
