@@ -7038,3 +7038,9 @@
   10 related tests, full repository pytest, and `git diff --check`. The exact
   five-cell queue and four reused terminal identities are ready for immutable
   preparation. No protected surface was opened.
+- First formal preparation performed the full read-only data/cache hash audit,
+  then failed closed before namespace creation because reused receipts encode
+  canonical config SHA rather than file-byte SHA. Verified this directly
+  against the training engine and corrected the reuse verifier to preserve and
+  validate both identities. No training process started and both GPUs stayed
+  idle.

@@ -147,8 +147,9 @@ def verify_reused_run(
         raise AuditContractError(f"reused seed drift for {expected_id}")
     if receipt.get("status") != "PASS_TRAINING_FINISHED":
         raise AuditContractError(f"reused receipt is not PASS for {expected_id}")
-    config_sha = sha256_file(config_path)
-    if receipt.get("config_sha256") != config_sha:
+    config_file_sha = sha256_file(config_path)
+    effective_config_sha = canonical_sha256(config)
+    if receipt.get("config_sha256") != effective_config_sha:
         raise AuditContractError(f"reused config hash mismatch for {expected_id}")
     if receipt.get("protected_outcomes_opened") is not False:
         raise AuditContractError(f"reused protected outcome opened for {expected_id}")
@@ -160,7 +161,8 @@ def verify_reused_run(
         "family": expected_family,
         "seed": expected_seed,
         "config_path": str(config_path),
-        "config_sha256": config_sha,
+        "config_file_sha256": config_file_sha,
+        "effective_config_sha256": effective_config_sha,
         "receipt_path": str(receipt_path),
         "receipt_sha256": sha256_file(receipt_path),
         "checkpoint_path": str(checkpoint),
