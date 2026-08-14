@@ -7067,3 +7067,8 @@
   `ad52b463cf87368e0698bf4c13703b021afa87c9b2b27b4d99cd3f91abec9bb4`.
   Both cards subsequently reached about 1,023 MiB allocation and 38%/43%
   utilization, confirming active compute; scheduler stderr remains zero.
+- Updated recurring automation `prta-cxr-15` in place to monitor Wave046
+  alongside immutable Wave045. It now records Wave046 lane transitions,
+  terminal receipts, failures, and the final no-selection native-baseline
+  aggregate while explicitly forbidding intermediate metrics and protected
+  data access.
