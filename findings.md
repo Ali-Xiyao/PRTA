@@ -2981,3 +2981,32 @@
 - The recurring monitor should not be duplicated. Updating `prta-cxr-15` in
   place is necessary so a later heartbeat does not try to repeat Wave045
   finalization or assume the already-running B402 rows are still transferable.
+- 2026-08-14 comprehensive baseline inventory: the user's memory of “many
+  baselines” maps to multiple protocol layers. B401-B405 are the only formal
+  model-baseline identifiers. D201-D205 and M301-M303 are development
+  scaling/head/loss/adapter screens; M305 is an earlier Dev diagnostic using
+  only seed17; A500-A507 are final-method ablations; T601-T614 are mostly
+  frozen-checkpoint inference, calibration, and subgroup analyses; X801-X806
+  explicitly exclude a VLM baseline matrix.
+- The reliability plan adds diagnostic score comparators rather than new
+  trained encoders: branch-disagreement JS score and residual correction
+  magnitude must be compared with maximum-softmax confidence and predictive
+  entropy for error detection, risk coverage, AURC, and referral analysis.
+- The large T601-T614 block is easy to remember as “many baselines,” but it is
+  mostly a frozen-checkpoint evaluation matrix: true/current-only/null/random/
+  matched-wrong/reversed/wrong-query interventions, temperature scaling,
+  calibration metrics, risk coverage, subgroups, and Holm correction. It
+  should be scheduled only after the final PRTA checkpoint exists.
+- The formal VLM phase deliberately has no competing VLM baseline matrix; it
+  contains one final-PRTA projector/post-training path plus structured and
+  qualitative evaluation. Old raw-two-image/Qwen attempts are legacy history,
+  not current comparison obligations.
+- Historical development screens D201-D205/M301-M303 and diagnostic M305 are
+  complete evidence but were produced before the current cleaned formal matrix
+  and are explicitly labelled diagnostic/development, not final baselines.
+  They should be cited as development history rather than rerun indiscriminately.
+- Current Wave046 closes the only main-method-independent training gap. The
+  remaining scientifically meaningful work is method-dependent: B404 final
+  PRTA, exact A500-A506 final-method ablations, then final-checkpoint T601-T614
+  and branch-disagreement versus max-softmax/entropy reliability comparisons.
+  B405 remains optional and unavailable; A507 is permanently retired.

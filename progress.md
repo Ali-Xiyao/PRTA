@@ -7194,3 +7194,46 @@
   config, queue order, scientific output, parent allocation, or telemetry state
   was modified during this audit. A preceding planning-only patch was rejected
   on stale context and changed no file.
+- 2026-08-14 started a comprehensive documented-baseline inventory at the
+  user's request. The audit will classify formal model baselines separately
+  from diagnostic controls, reliability/calibration comparators, VLM-specific
+  comparisons, and PRTA ablations, using the final manual as authority over
+  older empty tables. No runtime or protected surface is part of this phase.
+- The tracked-document index confirms the remembered larger plan spans several
+  different comparison types rather than many interchangeable model baselines:
+  development scaling/head/loss/adapter screens (D201-D205, M301-M303), old
+  seed-17 diagnostic baselines (M305), formal native baselines B401-B405,
+  method-dependent ablations A500-A507, trust/calibration/subgroup tasks
+  T601-T614, branch-disagreement risk comparators, and VLM tasks X801-X806.
+- The final execution manual keeps only Current-only, Siamese Diff, TILA, final
+  PRTA, and conditionally BioViL-T in the formal model table. It explicitly
+  states that Phase 8 must not introduce a VLM baseline matrix.
+- Repository implementation surfaces already support the later trust phase:
+  fixed-checkpoint PRIOR interventions, calibration metrics, risk-coverage,
+  subgroup summaries, and paper-table generation exist. These are analyses to
+  run after the final PRTA freeze, not additional backbone/model training jobs
+  that can be placed on idle GPUs now.
+- A complete `baseline/基线` text scan found no hidden formal encoder family
+  beyond B401-B405. “Strongest baseline” in calibration/reporting tables means
+  the strongest member of the formal native set, not a sixth model.
+- The final manual explicitly retires matched-representation benchmarking and
+  Qwen/VLM as the main comparison route. `LEGACY_MIGRATION_MAP.md` also marks
+  old Qwen SFT and raw-two-image baseline attempts as not migrated, so they are
+  not missing Wave046 obligations.
+- Wave041/043 provide valuable cleaned Train/Dev component-removal history, but
+  their method identity predates the still-evolving final PRTA-v2 route.
+  Therefore they cannot be relabeled as final A500-A506 without rerunning an
+  exact final-method-matched matrix after the final PRTA freeze. Wave045 is a
+  progressive-build study and explicitly is not a leave-one-out table.
+- Trust/calibration code supports interventions, calibration metrics,
+  risk-coverage, subgroups, and bootstrap reporting. However the formal trust
+  CLI requires a protocol-freeze receipt and formal prediction blocks; the
+  current protected gate forbids running that path. The separate Train/Dev-only
+  branch-disagreement reliability study remains recorded as pending.
+- Completed the comprehensive documented-baseline inventory. Wave046 covers
+  every currently eligible, main-method-independent native baseline: B401 is
+  complete, B402-S28/S43 are already active, and B403 is complete through
+  immutable reused receipts. The later gap is B404 final PRTA, exact A500-A506
+  final-method ablations, and frozen-checkpoint T601-T614 plus reliability
+  comparisons. B405 remains optional/unavailable, A507 remains retired, and no
+  extra experiment is scientifically eligible for the idle 9929 allocation.

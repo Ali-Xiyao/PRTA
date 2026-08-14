@@ -1,5 +1,29 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 comprehensive documented-baseline inventory
+
+The user remembers a broader historical baseline plan and asks whether the
+current B401-B403 native matrix omits other planned comparisons. Reconcile all
+tracked manuals/plans against the latest cleaned Train/Dev authority and
+separate formal model baselines from diagnostic controls, reliability/calibration
+comparators, VLM extensions, and method-dependent ablations.
+
+- [x] Recover the current execution state and prior Wave046 baseline audit from
+  `task_plan.md`, `progress.md`, and `findings.md`.
+- [x] Inventory every baseline/comparison family named in authoritative tracked
+  documents, including task IDs, required/optional status, and phase.
+- [x] Reconcile early plans with the later final execution manual and cleaned
+  seed contract; identify superseded, already-completed, method-dependent, and
+  currently unimplementable entries.
+- [x] Cross-check repository implementations and frozen runtime evidence for
+  each still-relevant comparison family without accessing protected data.
+- [x] Produce a concise gap table stating what Wave046 covers, what remains for
+  the final PRTA freeze, and what should not be launched now.
+
+Hard boundary: this is a document/code inventory only. Do not launch, duplicate,
+or tune any experiment from the historical plan merely because it appears in an
+older table; never access Internal-test or Gold.
+
 ## 2026-08-14 Wave046 four-GPU comparison completion audit
 
 The user authorizes running every still-missing, preregistered comparison
