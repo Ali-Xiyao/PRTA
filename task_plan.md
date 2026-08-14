@@ -32,7 +32,7 @@ maximum of three concurrently useful training GPUs.
 - [x] Freeze a separate no-training V0/V1/V2 diagnostic namespace covering
   seeds 17/28/43 and true/matched-hard/null/reversed PRIOR, with fixed metrics,
   class tables, prediction flips, gaps, receipts, and zero protected reads.
-- [ ] Implement and run patient-cluster paired Dev bootstrap for V2-V0,
+- [x] Implement and run patient-cluster paired Dev bootstrap for V2-V0,
   V2-V1, and V1-V0, including Macro-F1, balanced accuracy, ODER, class recall/
   F1, and exclusive-correct/exclusive-wrong counts. No seed or class may be
   dropped after results are observed.
@@ -43,12 +43,15 @@ maximum of three concurrently useful training GPUs.
   Wave046 cells. On the retained server, keep parents/telemetry alive, use
   `srun --jobid=<id> --overlap`, and permit at most one scientific child per
   allocation; otherwise HOLD.
-- [ ] After Wave046 and all three confirmation families are terminal, verify
+- [x] After Wave046 and all three confirmation families are terminal, verify
   every receipt/hash/identity and write a no-selection confirmation aggregate.
   Apply the preregistered V2/V1/V0 decision rule without protected evaluation.
-- [ ] Update tracked documentation and push only intended planning/source/
-  summary files; private checkpoints, predictions, and runtime aggregates stay
-  outside Git.
+  Both final aggregates PASS, all six V2 gates pass, and V2 is frozen only as
+  the Train/Dev-confirmed method pending an independently untouched test set.
+- [x] Update tracked documentation and push only intended planning/source/
+  summary files to the local bare remote; private checkpoints, predictions,
+  and runtime aggregates stay outside Git. The configured GitHub `origin` is
+  deliberately not used by this close-out authority.
 
 Hard boundary: never create V6/V7, rescue V3-V5, tune from confirmation
 outcomes, combine H4 with V2, access/list/hash/parse/infer Internal-test or
@@ -64,6 +67,7 @@ Errors encountered:
 | First Wave047 v2 preparation invocation supplied `--formal` but omitted the required explicit authorization environment value | 1 | Authorization failed before the new output namespace was created. Confirm the target remained absent, set the exact user-authorized formal value, and repeat the identical frozen preparation without changing any scientific input. |
 | First four-GPU amendment receipt embedded transactional staging paths in its queue rows | 1 | No local scientific process started. Preserve amendment v1 unstarted, relocate queue paths to the final immutable namespace before publication, test that contract, and activate only amendment v2. |
 | Generic local queue runner requires a Block8 cache status and therefore remained WAITING on the valid frozen Block4/Tail8 cache | 1 | Stop both wait-only supervisors before they start a child. Add a hash-gated direct local launcher using the same formal training entry point as Wave045; preserve the planned rows and launch receipts in amendment v2. |
+| Repository-wide Ruff inspection reached the user-owned untracked `data/` mirror and reported nine historical formatting diagnostics there | 1 | Do not alter or stage user-owned runtime mirrors. Touched-file Ruff/format checks pass, the complete pytest suite passes, and the final close-out artifacts were independently generated before this read-only repository-wide lint report. |
 
 ## 2026-08-14 comprehensive documented-baseline inventory
 

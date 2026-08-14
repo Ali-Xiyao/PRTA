@@ -3125,3 +3125,26 @@
   PASS receipt prevented automatic advancement to its now-reassigned TILA
   rows; no server TILA-S17/S28 output namespace exists. This is an
   identity-preserving scheduling amendment, not an interrupted scientific run.
+- Wave046 now closes the full currently eligible native-baseline matrix:
+  B401/B402/B403 x Seeds17/28/43 all have terminal, receipt/config/checkpoint-
+  verified Dev evidence. The immutable baseline aggregate SHA is
+  `9ab86761963805d89e654b3d1a1de1e968bc4032ea036bcdc7ca655b69ef56e1`.
+  Its resource surface explicitly records the mixed A800/RTX3090/reused-local
+  hardware and `NOT_RECORDED_BY_FROZEN_RUNNER` rather than inventing memory.
+- Wave047 confirmation is fully closed: nine V0/V1/V2 frozen-checkpoint PRIOR
+  diagnostics, the 10,000-replicate patient-cluster bootstrap, and three
+  Tail8-TILA runs were independently verified and summarized in aggregate SHA
+  `fb622508ab636238b1da6b58f3e13ae404b91a9426f6d5cc3e25e2fc6156f3ed`.
+  For V2-V0, Macro-F1 is positive in two of three seeds and the mean paired
+  bootstrap point estimate is +0.003861 (95% CI -0.000749 to +0.008395);
+  ODER is -0.000060 (95% CI -0.000743 to +0.000620). All five class-F1 point
+  estimates are positive. These are Train/Dev confirmation signals, not a
+  claim of statistically significant or externally validated superiority.
+- The frozen decision rule now selects the method identity V2 without opening
+  Internal-test or Gold: decision SHA
+  `2d323971ac3f59c13dd4d96e3d2bc919aac117480c53a64d8c9d823c218a409f`.
+  Its correct status is `FROZEN_MAIN_METHOD_TRAIN_DEV_CONFIRMED_PENDING_
+  INDEPENDENT_UNTOUCHED_TEST`; V1 remains a low-ODER fallback, V0 remains the
+  core reference, V3-V5 stay rejected, and H4 stays appendix-only. A new
+  untouched external cohort/patient set is still required before a final
+  independent-performance claim.

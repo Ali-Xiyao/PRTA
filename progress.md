@@ -7340,3 +7340,38 @@
   have live CPU/GPU activity with empty stderr. Server9929 concurrently runs
   TILA-S43 in step9929.95. All nine PRIOR diagnostics are terminal, no failure
   exists, and every status surface reports zero protected reads.
+- All three Tail8-TILA confirmations are now terminal PASS with zero protected
+  reads. The first private diagnostic-copy/bootstrap namespace detected a
+  copied `W047D-V2-S28` prediction-block hash mismatch and was preserved with a
+  failure receipt; no source artifact was changed. The identity-preserving
+  second private namespace retransferred only the 36 receipt-bound diagnostic
+  prediction blocks through the canonical tunnel and independently verified all
+  36 hashes before bootstrap.
+- The preregistered 10,000-replicate patient-cluster paired Dev bootstrap then
+  completed PASS in the second immutable private namespace: receipt SHA
+  `18e17e5dc63c97b2fe1cb59854e0d55465c60636b5e207c22659098f3e1cd0eb`,
+  fixed RNG seed `20260814`, zero protected reads, and no selection. Wave046
+  native-baseline and Wave047 final no-selection aggregates remain the next
+  required close-out step.
+- Close-out is now complete. The independent Wave046 native-baseline aggregate
+  and Wave047 candidate-confirmation aggregate both PASS in immutable private
+  namespace `wave046_wave047_closeout_aggregate_v1`, with SHA256
+  `9ab86761963805d89e654b3d1a1de1e968bc4032ea036bcdc7ca655b69ef56e1`
+  and `fb622508ab636238b1da6b58f3e13ae404b91a9426f6d5cc3e25e2fc6156f3ed`.
+  Every reused/new run, diagnostic receipt and prediction block was identity-
+  checked; all reported `protected_outcome_read_count = 0` and the aggregate
+  retains `winner_selected = false`.
+- Applied the user-authorized preregistered V2/V1/V0 Train/Dev rule in a new
+  immutable decision namespace. Receipt status is
+  `PASS_WAVE047_V2_FROZEN_BY_PREREGISTERED_TRAIN_DEV_RULE`, decision SHA256
+  `2d323971ac3f59c13dd4d96e3d2bc919aac117480c53a64d8c9d823c218a409f`.
+  V2 is positive on Seeds28/43 versus V0, has no clear paired-bootstrap
+  Macro-F1/balanced-accuracy harm or ODER worsening, has positive point F1
+  deltas in all five classes, and has no contradictory adverse-PRIOR response.
+  It is therefore frozen as `FROZEN_MAIN_METHOD_TRAIN_DEV_CONFIRMED_PENDING_
+  INDEPENDENT_UNTOUCHED_TEST`; V1 remains the fallback and V0 the reference.
+- Engineering handoff passes `pytest -q` for the complete repository, focused
+  Ruff/format for all four close-out source files, compileall, and `git diff
+  --check`. A broad Ruff invocation also found nine historical diagnostics only
+  in the user-owned untracked `data/` runtime mirror; that mirror is neither
+  modified nor staged.
