@@ -19,9 +19,9 @@ experiment or open Internal-test/Gold.
   Tail8-TILA comparison, frozen decision status, limitations, and hashes.
 - [x] Relabel the old Tail8 result document as historical without rewriting its
   original evidence as if it were V2 evidence.
-- [ ] Run focused documentation/source checks, commit only intended files, and
+- [x] Run focused documentation/source checks, commit only intended files, and
   publish the finalized branch to GitHub.
-- [ ] Merge the finalized branch into remote `main` only after verifying that
+- [x] Merge the finalized branch into remote `main` only after verifying that
   remote `main` has no unexpected commits or conflicts, then verify both remote
   branch heads.
 

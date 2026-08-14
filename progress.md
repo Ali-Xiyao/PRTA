@@ -7398,3 +7398,5 @@
 - Updated README status and navigation so the repository no longer claims formal experiments have not started.
 - The new report contains only aggregate Train/Dev metrics, configuration, interpretations, and audit hashes; no patient rows, prediction blocks, private paths, or protected results were added.
 - Publication checks passed: 257 pytest tests, Ruff over `src scripts tests`, compileall, `git diff --check`, and focused Markdown-link validation.
+- Committed the authoritative close-out as `2da748c4650459ebad3578426e08982e87cc312e` and pushed it to both GitHub `codex/dual-branch-repair-v1` and `main` by verified fast-forward.
+- `git ls-remote` independently confirmed both remote heads at the same close-out commit; untracked `data/` remains outside Git.
