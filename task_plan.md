@@ -1,5 +1,40 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 Wave046 four-GPU comparison completion audit
+
+The user authorizes running every still-missing, preregistered comparison
+experiment across the two retained A800 allocations and two local RTX3090s.
+The scientific matrix remains outcome-independent and Train/Dev-only: never
+duplicate a cell, never move an already-running cell, never add an optional
+external baseline without a recoverable frozen implementation/weights/data
+contract, and never access Internal-test or Gold.
+
+- [x] Re-read the active planning records and recover the authoritative native-
+  baseline matrix and immutable Wave046 execution amendments.
+- [x] Check the live local queue only through allowlisted status/process/GPU
+  surfaces. B401-S28/S43 are terminal PASS and B402-S28/S43 have already
+  started on local GPU1/GPU0, so neither B402 cell is eligible for a 9929
+  handoff without duplication.
+- [x] Verify the allocation-3066 B401-S17 retry terminal state and the current
+  3066/9929 Slurm occupancy without reading intermediate metrics.
+- [x] Audit all registered mandatory/optional comparison families and prove
+  whether any still-unstarted, main-method-independent cell has a complete
+  frozen implementation, weights, data, seed, and budget contract suitable
+  for allocation 9929.
+- [x] If and only if such a cell exists, freeze a no-duplicate four-GPU
+  amendment, pass engineering/preflight gates, and launch it on 9929; otherwise
+  record the exact blocker and leave 9929 scientifically idle. No eligible
+  cell exists: mandatory B401-B403 are terminal/running; B404 and A501-A506
+  depend on the not-yet-frozen final PRTA method; optional B405 has no stable
+  native implementation, weights, or frozen fairness contract.
+- [x] Continue the existing Wave046 queues unchanged, update the recurring
+  monitor, and report the final four-lane disposition to the user.
+
+Hard boundary: B402-S28/S43 are now active and immutable in place. The fourth
+GPU may not be filled with a duplicate, an outcome-selected arm, an unfrozen
+external baseline, or a method-dependent PRTA cell merely to maximize
+utilization.
+
 ## 2026-08-14 Wave045 final aggregation and cloud synchronization
 
 The user requests a definitive ablation status, synchronized final reporting,
@@ -1747,6 +1782,13 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 | Treat the 2026-08-03 approval as full-program formal authority | The user explicitly requested code completion plus formal execution under both paper documents until terminal completion, with a 20-minute recurring monitor; internal sequencing and GO/HOLD/STOP gates remain binding. |
 
 ## Errors Encountered
+| The first Wave046 four-GPU remote status command let local PowerShell expand the remote `$HOME`, producing a nonexistent `C:UsersAdmin/...` path | 1 | No remote scientific state changed. Retry with a single-quoted SSH payload so `$HOME/miniforge3/envs/prta-cxr311/bin/python` is expanded only by the canonical server shell. |
+| The corrected SSH query looked for the later monitoring controller inside the immutable scientific source snapshot, where it is intentionally absent | 2 | No remote state changed. Resolve only the deployed copy under the allowlisted Wave046 attempt3 runtime and invoke that exact frozen controller next. |
+| The successful controller/status command returned shell exit 1 after printing PASS because the trailing `ps -p 2045193` found the already-exited terminal controller | 3 | Treat the controller's immutable PASS/completion receipt and Slurm step roster as authoritative. No retry of the scientific job is required. |
+| The first repository-wide comparison-family search appended a Unix-style `*.md` positional glob that ripgrep rejected on Windows after returning the requested matches | 1 | No files or runs changed. Reissue only against explicit tracked directories/files and inspect the precise formal-protocol sections. |
+| The first attempt to record that search error accidentally included an empty patch hunk for a nonexistent path | 1 | `apply_patch` rejected the entire patch before changing any file. The corrected patch touches only `task_plan.md` and `progress.md`. |
+| The focused BioViL/model-family audit included three guessed optional paths (`uv.lock`, `src/prta_cxr/config.py`, and `schema.py`) that do not exist | 1 | The command still returned the authoritative engine registry and all BioViL references. Continue using only existing `pyproject.toml`, `training/engine.py`, formal protocol, and formal-matrix freeze evidence. |
+| The first final planning patch used stale context from before later progress entries were appended | 1 | `apply_patch` rejected the patch atomically. Reissue against the current tail and mark only the completed monitor/report step. |
 
 - 2026-08-10: Local immutable source extraction initially used
   `New-Item -LiteralPath`, but this PowerShell version does not expose that

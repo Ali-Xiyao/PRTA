@@ -2954,3 +2954,30 @@
 - The finalizer independently verifies every worker and terminal receipt hash, every config/effective-config identity, every frozen Train/Dev input hash, three-seed rosters, source-training links, hardware classes, and zero protected reads. Raw aggregates remain private; the tracked summary exposes only the auditable terminal statistics and hashes.
 - No pre-existing Wave045 aggregate or finalizer artifact exists in either private runtime. Finalization therefore needs a new fail-closed, receipt-driven aggregator rather than an ad hoc copy of worker progress.
 - Local terminal training receipts are under the original runtime `experiments/runs/<run_id>/training_receipt.json`; terminal diagnostic receipts use `experiments/runs/<run_id>/mechanism_diagnostic_receipt.json`. Server runs mirror this layout in the canonical server runtime.
+- 2026-08-14 four-GPU comparison audit: the registered mandatory native
+  baseline matrix remains B401 current-only, B402 Siamese difference, and B403
+  TILA over seeds 17/28/43. The live scheduler has already consumed both
+  remaining B402 rows, so allocation 9929 can only be used for a different
+  still-unstarted comparison family whose implementation, weights, cleaned
+  Train/Dev identity, seed set, and budget were frozen independently of
+  outcomes. GPU utilization alone is not a valid reason to duplicate or invent
+  a comparison cell.
+- The authoritative allocation-3066 retry can be checked fail-closed through
+  its worker controller's `status` mode. That mode exposes only the immutable
+  worker progress/completion/failure receipts and does not read or print the
+  training runner's active `training_progress.json` or intermediate metrics.
+- The new server receipt closes B401-S17 successfully on A800/3066. Together
+  with terminal local B401-S28/S43 and active local B402-S28/S43, every new
+  cell in the mandatory B401/B402/B403 matrix is either terminal or already
+  running. Allocation 9929 is free, but it cannot accelerate this exact matrix
+  without duplicating an active or terminal identity.
+- The formal experiment manual distinguishes resource utilization from
+  scientific eligibility. B401-B403 are mandatory native baselines and are
+  fully covered by the frozen Wave046 matrix. B404 and A501-A506 cannot be
+  frozen independently of the evolving main method. B405 BioViL-T is optional,
+  the formal freeze marks it `N/A_NO_STABLE_NATIVE_IMPLEMENTATION_AT_FREEZE`,
+  and the training registry contains no BioViL-T family. Thus no fourth-lane
+  launch is scientifically or operationally valid at this time.
+- The recurring monitor should not be duplicated. Updating `prta-cxr-15` in
+  place is necessary so a later heartbeat does not try to repeat Wave045
+  finalization or assume the already-running B402 rows are still transferable.

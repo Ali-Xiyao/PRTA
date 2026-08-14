@@ -7128,3 +7128,69 @@
 - Added tracked Chinese summary `docs/PRTA_CXR_Wave045_TrainDev_无选择汇总_CN.md` with three-seed results, paired cumulative deltas, checkpoint interventions, explicit instability observations, resource limitations, and immutable identities. Private raw aggregates remain outside Git.
 - Final engineering gate passed: Ruff over `src scripts tests`, focused Ruff format, all 248 pytest tests, compileall, and `git diff --check`.
 - Committed the finalizer, tests, tracked Chinese result summary, and planning updates as `98aa058`. Pushed that commit to both the local bare remote and GitHub branch `origin/codex/dual-branch-repair-v1`; private runtime aggregates and the untracked `data/` mirror were excluded.
+- 2026-08-14 four-GPU comparison audit: recovered the authoritative Wave046
+  native-baseline contract. The live allowlisted local queue now reports
+  B401-S28 and B401-S43 terminal `PASS_TRAINING_FINISHED`, while B402-S28
+  (PID 25104, GPU1) and B402-S43 (PID 14636, GPU0) are already RUNNING in the
+  frozen order. Both RTX3090s are therefore occupied; neither active B402 cell
+  can be reassigned to 9929 without creating a duplicate. No training-progress
+  file or intermediate metric was opened.
+- The canonical server alias remains `sues-hpc`. The exact allowlisted B401-S17
+  retry root is
+  `/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR/data/runtime/server_runs/continuous_lightweight_dev_search_v1/wave046_native_baseline_3066_server_attempt3_v1`,
+  with status controller `scripts/67_wave046_3066_server_worker.py` and frozen
+  manifest SHA `7de171a1...2410`. This gives a read-only terminal/status check
+  without opening the active training-progress surface.
+- One planning-record patch failed before changing any file because its
+  findings context did not match the wrapped Markdown lines. The retry uses
+  the exact current tail context and changes only planning records.
+- The first canonical-server read-only status command failed before invoking
+  the controller because local PowerShell expanded the remote `$HOME` into a
+  Windows path. No run, queue, Slurm step, or artifact changed; the next query
+  uses a single-quoted SSH payload.
+- The protected SSH retry reached the canonical server but confirmed the later
+  monitoring controller is not part of the immutable scientific source
+  snapshot. This is expected source separation, not a run failure. No state
+  changed; the deployed controller will be resolved only inside the allowlisted
+  Wave046 attempt3 runtime.
+- The exact deployed 3066 controller now reports
+  `PASS_WAVE046_3066_WORKER_COMPLETE`, no failure receipt, zero protected
+  reads, and B401-S17 training-receipt SHA `dd7fd053...a3bd`. Slurm shows only
+  retained parent/telemetry steps `3066.batch`, `3066.2`, `9929.batch`, and
+  `9929.0`; both A800 allocations are scientifically free. The shell's final
+  exit 1 came only from querying the now-exited controller PID after PASS.
+- The first broad comparison-family grep returned the relevant B401-B405
+  matches but exited on a trailing Windows-incompatible `*.md` argument. A
+  subsequent logging patch also contained an accidental empty nonexistent-file
+  hunk and was rejected atomically. Neither error changed source, runtime, or
+  queues; the audit continues with explicit tracked paths only.
+- Exact protocol review confirms B401 current-only, B402 Siamese difference,
+  and B403 TILA are the mandatory native baselines; B404 is the final evolving
+  PRTA method, and B405 BioViL-T is optional only if code, weights, and data
+  access are stable. The formal-matrix freeze explicitly records B405 as
+  `N/A_NO_STABLE_NATIVE_IMPLEMENTATION_AT_FREEZE`.
+- The training engine registry supports only `prta`, `current_only`,
+  `siamese_diff`, and `tila`; repository BioViL-T references exist only in
+  planning tables. No implementation, frozen weights, or fair-budget contract
+  exists to launch B405 on 9929. Three guessed optional search paths were
+  absent but did not affect the returned authoritative evidence.
+- Therefore every mandatory main-method-independent comparison cell is now
+  terminal or already running. Allocation 9929 remains intentionally
+  scientifically idle rather than duplicating B402/B403, inventing B405, or
+  starting method-dependent B404/A501-A506 before the final PRTA identity is
+  frozen.
+- Inspected the existing `prta-cxr-15` heartbeat before editing it. Its prompt
+  still described Wave045 server9929 as potentially active and B402 rows as
+  planned. The monitor remains useful, but those status facts are stale and
+  will be replaced with the terminal Wave045 finalization, terminal B401
+  roster, active B402 roster, and explicit no-eligible-9929-cell decision.
+- Updated heartbeat automation `prta-cxr-15` in place at the same 30-minute
+  cadence. It now freezes Wave045 as closed, records terminal B401-S17/S28/S43,
+  monitors active B402-S28 PID25104 and B402-S43 PID14636, keeps 9929 idle for
+  lack of an eligible cell, and performs the final no-selection native-baseline
+  verification/aggregation only after both B402 receipts pass.
+- Final live recheck shows supervisor PID16340 and both B402 Python children
+  alive with the exact frozen GPU assignments and no queue failure. No source,
+  config, queue order, scientific output, parent allocation, or telemetry state
+  was modified during this audit. A preceding planning-only patch was rejected
+  on stale context and changed no file.
