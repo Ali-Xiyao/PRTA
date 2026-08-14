@@ -1,5 +1,30 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 Wave045 final aggregation and cloud synchronization
+
+The user requests a definitive ablation status, synchronized final reporting,
+and a GitHub cloud push. Wave045 is terminal across all 18 original cells and
+all nine preregistered diagnostics. Wave046 remains a separate active native-
+baseline completion and must not be presented as part of the finished Wave045
+ablation.
+
+- [x] Independently verify all 18 training receipts and nine mechanism-
+  diagnostic receipts against frozen worker hashes, identities, hardware,
+  configs, source/data/cache contracts, and zero protected reads.
+- [x] Write separate immutable no-selection progressive-build and mechanism-
+  diagnostic aggregates outside Git, including paired seed deltas, class
+  metrics, ODER, resources, residual/gate/state distributions, intervention
+  flips, metric deltas, and hashes.
+- [x] Add concise tracked result summaries and receipt identities without
+  copying private checkpoints, predictions, or runtime directories into Git.
+- [ ] Run focused verification, update planning records, commit only intended
+  tracked files, push the current branch to the local bare remote and GitHub,
+  and verify both remote refs.
+
+Hard boundary: terminal Train/Dev receipts may now be aggregated, but never
+access Internal-test or Gold, never select a winner, never combine with H4,
+and never wait for or mix active Wave046 outcomes into the Wave045 report.
+
 ## 2026-08-14 Wave046 allocation-3066 execution amendment
 
 The user explicitly authorizes using the now-free allocation 3066 for part of
@@ -88,7 +113,7 @@ the later seeds would destroy the paired three-seed contract.
   outcome-adaptive selection.
 - [x] Update runtime directories, immutable receipts, planning documents, and
   the recurring monitor to cover the original matrix plus the supplement.
-- [ ] After original and supplementary work is terminal, write separate
+- [x] After original and supplementary work is terminal, write separate
   no-selection progressive-build and mechanism-diagnostic reports. Do not
   label the progressive table as leave-one-out ablation.
 
@@ -136,7 +161,7 @@ part of every receipt; no queue may be adapted from intermediate metrics.
   GPU/process state, and zero protected reads before launch.
 - [x] Launch fixed 6/6/3/3 queues on 3066/9929/local0/local1 and monitor only
   allowlisted queue/terminal/resource surfaces, never intermediate metrics.
-- [ ] After 18/18 terminal, independently aggregate every cell with no selection
+- [x] After 18/18 terminal, independently aggregate every cell with no selection
   and report paired three-seed V0-V5 results plus resource accounting.
 
 Hard boundaries: Train/Dev only; never access Internal-test or Gold; do not use
@@ -319,6 +344,16 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| First patch for optional diagnostic distributions used pre-format source context | 1 | The patch failed atomically. Re-read the formatted block and apply the same field-level change against current source; no file or runtime artifact changed. |
+| Third no-write validation assumed every variant records a prior-reliability distribution, but V3 correctly has no reliability gate | 1 | No output was written. Treat a distribution as not applicable only when all three frozen seeds store `null`; reject partial availability, and otherwise aggregate all five retained statistics. Repeat no-write validation. |
+| Second no-write validation compared diagnostic intervention dictionary iteration order to the preregistered semantic order | 1 | JSON keys are canonically sorted, so receipt dictionary order is not scientific state. Require the frozen arm list to equal `true/matched_hard/null/reversed` in order, and separately require the receipt dictionary to contain exactly that four-key set. No output was written. |
+| First patch for the diagnostic source-ID fix included an empty hunk with a mistyped progress-file path | 1 | The patch failed atomically. Reapply only nonempty hunks against the exact repository paths; no code, plan, or runtime artifact changed. |
+| First no-write validation expected diagnostic `experiment_id` to repeat the `W045D-*` wrapper ID, while the immutable diagnostic schema correctly stores the source training ID | 1 | No output or staging artifact was created. Validate `experiment_id` against each frozen arm's `source_run_id`; continue using the wrapper ID only for path/worker-receipt identity. Repeat no-write validation before finalization. |
+| Third Wave045 finalizer run used `zip(..., strict=True)` on the six-variant sequence and its five-element shifted view | 1 | Preserve the third failed staging namespace. Pair `VARIANTS[:-1]` with `VARIANTS[1:]`, then introduce a full `--validate-only` phase that constructs both 18-cell and nine-job aggregates without writing. Do not attempt another final write until that complete validation passes. |
+| Second Wave045 finalizer run rejected V0/V1 input hashes because the validator required the matched-hard map even for variants that explicitly do not use it | 1 | Preserve the second failed staging namespace. Require the frozen map hash only when the preparation arm says `uses_matched_hard_map=true`; V2-V5 and all diagnostics remain strict, while V0/V1 must omit that unused input. Rerun formatting/tests before a third finalization attempt. |
+| First Wave045 finalizer run expected a descriptive preparation status that differs from the immutable receipt's exact `PASS_WAVE045_18_CELL_MATRIX_FROZEN` value | 1 | Preserve the empty failed staging namespace, bind the validator to the exact existing receipt status, rerun focused gates, and use a fresh process-specific staging directory without changing any scientific input. |
+| Three finalization probes repeated the PowerShell error of piping directly from a `foreach` statement block | 3 | No runtime state changed. Stop using statement-block pipelines for this phase; use `ForEach-Object` or accumulate into an array before piping. The corrected probes returned the intended terminal-only metadata. |
+| First final-aggregation artifact search piped directly after a PowerShell `foreach` block and raised the known empty-pipe parser error | 1 | No artifact was read or changed. Accumulate matches into an array and pipe only after the loop; the corrected read found no existing aggregate/finalizer in either Wave045 runtime. |
 | Final read-only 3066 status check first guessed `controller.py`, then used unsupported step-format `%T`, and finally invoked the Python-3.11 controller with login-node Python 3.9 | 3 | No runtime state changed. Reissue against the exact deployed `67_wave046_3066_server_worker.py`, use the frozen Python-3.11 environment, and use default `squeue --steps`; formal status remains RUNNING with one scientific child and zero protected reads. |
 | Attempt3 `nohup ... &` launch under the forced-PTY SSH alias returned PID2043199 but the process vanished on session close before writing progress or starting a Slurm child | 1 | Record a launch-attempt failure receipt, retain the clean prepared namespace, and relaunch the same exact controller as a detached new session with `setsid -f` plus distinct attempt2 logs; verify persistence and the Slurm step before declaring launch. |
 | First attempt3 launch preflight treated the retained `3066.batch` parent step as an unexpected scientific child and exited before `nohup` | 1 | Allow only the known parent `3066.batch` and telemetry `3066.2`, continue rejecting every other step, then relaunch. No controller or scientific child started. |
