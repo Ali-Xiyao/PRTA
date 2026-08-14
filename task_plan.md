@@ -14,18 +14,20 @@ budgets, and the five-cell completion contract remain unchanged.
   PASS, zero protected reads, and Slurm has no scientific child on 3066.
 - [x] Verify Wave046 has two active local B401 cells, three still-planned cells,
   and no terminal outcome available to influence the handoff.
-- [ ] Freeze a hashed no-duplicate amendment assigning the exact
+- [x] Freeze a hashed no-duplicate amendment assigning the exact
   `W046-B401-S17` infrastructure retry to A800/3066 while leaving active
   B401-S28 plus planned B401-S43/B402-S28/S43 for the local RTX3090
   continuation.
-- [ ] Atomically prevent the existing local supervisor from claiming the
+- [x] Atomically prevent the existing local supervisor from claiming the
   outsourced cell, without stopping or modifying active B401-S17/S28 children.
-- [ ] Materialize the exact server-path config/source package, pass
+- [x] Materialize the exact server-path config/source package, pass
   Train/Dev-only preflight/hash/GPU/disk/protected-read gates, and launch one
   scientific child through `srun --jobid=3066 --overlap`.
-- [ ] Update the recurring monitor and final aggregation contract to combine
+- [x] Update the recurring monitor and final aggregation contract to combine
   the amended A800 cell with the four local Wave046 cells, reporting resources
-  by hardware class and making no outcome selection.
+  by hardware class and making no outcome selection. Automation `prta-cxr-15`
+  now binds the authoritative attempt3 namespace, controller PID `2045193`,
+  local continuation PID `16340`, and the immutable final matrix contract.
 
 Hard boundary: never duplicate any Wave046 cell, never resume or overwrite the
 failed B401-S17 partial, never use allocation 4161,
@@ -317,6 +319,9 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Final read-only 3066 status check first guessed `controller.py`, then used unsupported step-format `%T`, and finally invoked the Python-3.11 controller with login-node Python 3.9 | 3 | No runtime state changed. Reissue against the exact deployed `67_wave046_3066_server_worker.py`, use the frozen Python-3.11 environment, and use default `squeue --steps`; formal status remains RUNNING with one scientific child and zero protected reads. |
+| Attempt3 `nohup ... &` launch under the forced-PTY SSH alias returned PID2043199 but the process vanished on session close before writing progress or starting a Slurm child | 1 | Record a launch-attempt failure receipt, retain the clean prepared namespace, and relaunch the same exact controller as a detached new session with `setsid -f` plus distinct attempt2 logs; verify persistence and the Slurm step before declaring launch. |
+| First attempt3 launch preflight treated the retained `3066.batch` parent step as an unexpected scientific child and exited before `nohup` | 1 | Allow only the known parent `3066.batch` and telemetry `3066.2`, continue rejecting every other step, then relaunch. No controller or scientific child started. |
 | Server preparation attempt2 failed closed before receipt/launch because Windows `Path` serialized frozen POSIX manifest paths with backslashes | 1 | Preserve the deployed attempt2 package with a server-preparation failure receipt, generate attempt3 using `PurePosixPath`, reverify every manifest/package/input hash, and never reuse the malformed root. Allocation 3066 remains idle. |
 | Fourth activation reached package creation but failed before live-queue mutation because source-file hashing guessed nonexistent `src/prta_cxr/training.py` at commit `62235ff` | 1 | Preserve the `.preparing` directory as an immutable preparation-failure namespace, discover the exact tracked training-engine path from the frozen commit, update the manifest check, and use a new amendment runtime namespace. The live queue remains unchanged. |
 | Third fail-closed amendment activation found that the custom Windows handle probe treated an openable terminated process object as alive, although the queue runner had correctly classified its exit | 1 | Reuse the queue runner's already tested `process_alive` implementation, which checks `GetExitCodeProcess == STILL_ACTIVE`, instead of maintaining a second Windows liveness implementation. No namespace or queue mutation occurred. |
