@@ -18,10 +18,10 @@ must not be modified, delayed, or used for outcome-adaptive baseline choices.
 - [x] Independently verify whether cleaned B403 S17/S28/S43 and B402-S17 can be
   reused under one exact formal-baseline identity; if so, schedule only the
   missing B401 three seeds and B402 seeds 28/43.
-- [ ] Freeze a new immutable Train/Dev-only baseline namespace, exact configs,
+- [x] Freeze a new immutable Train/Dev-only baseline namespace, exact configs,
   source/data/cache hashes, fixed seeds, hardware identities, controller, and
   no-selection aggregate contract before reading any new outcome.
-- [ ] Run engineering/preflight gates and launch only the independent baseline
+- [x] Run engineering/preflight gates and launch only the independent baseline
   cells on idle local GPUs; do not access Internal-test or Gold.
 - [ ] Monitor terminal receipts and aggregate the complete frozen matrix with
   resource accounting, without selecting or changing the PRTA main method.

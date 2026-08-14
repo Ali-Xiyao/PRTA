@@ -2907,3 +2907,11 @@
   zero. B401 uses family `current_only`; B402 uses `siamese_diff`. The only
   cleaned-data update needed for B401 is the exact cleaned class-count vector
   `[39126,11010,13884,14534,1848]` plus new identity/seed fields.
+- Wave046 preparation is now immutable and PASS at source commit `62235ff`.
+  The exact complete baseline matrix reuses B402-S17 and all three B403 seeds,
+  and trains only B401-S17/S28/S43 plus B402-S28/S43. No outcome was read to
+  choose, order, or omit a cell.
+- Both idle RTX3090s are now occupied only by the new frozen native-baseline
+  queue. Hardware class is identical across all new cells, and the generic
+  scheduler will refill each device in preregistered order without reading an
+  intermediate metric.

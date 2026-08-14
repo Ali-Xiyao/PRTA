@@ -7048,3 +7048,22 @@
   checkpoint path `best.pt` is relative to the terminal receipt directory.
   Updated resolution accordingly and added a regression test; the Wave046
   namespace still does not exist and no GPU job has started.
+- Third preparation passed and froze
+  `wave046_native_baseline_completion_v1`: preparation SHA
+  `a417b03e22b54da612e673600cac91b5233cfffcb7e533c8611adfda9d7f2aaa`,
+  queue SHA `01bfda09a57ddac97504d5e76fc6440d4a82169e62c72054f76a259f5e997828`,
+  source commit `62235ff46fb26e4ccf05e3c9073188a84ca39119`.
+  All five new cells remain PLANNED with an empty runs directory; four reused
+  config/receipt/checkpoint triples passed full hashes, protected reads are
+  zero, and Internal-test/Gold remain closed. Both RTX3090s are still idle;
+  H: has 135.8 GiB free.
+- Wave046 launched at 13:08 CST under supervisor PID 12516 and immutable
+  launcher SHA `2e9ec45d...58805`. GPU0/PID21624 runs `W046-B401-S17` and
+  GPU1/PID10816 runs `W046-B401-S28`; B401-S43 then B402-S28/S43 remain in the
+  exact frozen queue. Both children are alive, initial GPU allocation is
+  visible, all stderr logs are empty, and protected reads remain zero. Launch
+  receipt status is `PASS_WAVE046_LAUNCHED`; Wave045 was not changed.
+- Launch-receipt SHA is
+  `ad52b463cf87368e0698bf4c13703b021afa87c9b2b27b4d99cd3f91abec9bb4`.
+  Both cards subsequently reached about 1,023 MiB allocation and 38%/43%
+  utilization, confirming active compute; scheduler stderr remains zero.
