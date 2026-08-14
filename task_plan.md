@@ -18,6 +18,14 @@ PRIOR interventions, patient-cluster paired Dev bootstrap, and a scope-matched
 Tail8 TILA three-seed comparator. Wave046 remains immutable and continues on
 its existing local workers.
 
+Resource amendment (2026-08-14): after Wave046 freed both RTX3090s, reassign
+only the unstarted Tail8-TILA S17/S28 cells to local GPU0/GPU1. Keep S43 on
+9929. Pause controller3066 while its already active final diagnostic continues,
+then retire it after that PASS receipt so it cannot duplicate either reassigned
+cell. This is outcome-blind resource scheduling; all scientific configs and
+the three-seed matrix remain unchanged. Three unique training cells imply a
+maximum of three concurrently useful training GPUs.
+
 - [x] Audit the exact V0/V1/V2 terminal checkpoint/prediction identities and
   existing mechanism-diagnostic/bootstrap implementations. Prove that every
   required input is cleaned Train/Dev-only and that no protected path is read.
@@ -54,6 +62,8 @@ Errors encountered:
 | Repository-wide `ruff format --check src scripts tests` reports 91 historical files that predate the current formatter | 1 | Do not reformat unrelated user/project code. Keep the focused format gate on all touched files; repository-wide Ruff check, full pytest, compileall, and diff check remain the substantive engineering gates. |
 | Wave047 v1 prelaunch identity audit found that V0/V1 checkpoint receipts correctly omit the matched-hard map they did not use during training, while the new PRIOR diagnostic requires that additional immutable input | 1 | Keep v1 permanently unstarted and immutable. Permit exactly the historical base hash set or the full V2 hash set, require all shared hashes and the checkpoint/training-receipt identity to match, rerun all gates, and deploy only a newly frozen v2 namespace. |
 | First Wave047 v2 preparation invocation supplied `--formal` but omitted the required explicit authorization environment value | 1 | Authorization failed before the new output namespace was created. Confirm the target remained absent, set the exact user-authorized formal value, and repeat the identical frozen preparation without changing any scientific input. |
+| First four-GPU amendment receipt embedded transactional staging paths in its queue rows | 1 | No local scientific process started. Preserve amendment v1 unstarted, relocate queue paths to the final immutable namespace before publication, test that contract, and activate only amendment v2. |
+| Generic local queue runner requires a Block8 cache status and therefore remained WAITING on the valid frozen Block4/Tail8 cache | 1 | Stop both wait-only supervisors before they start a child. Add a hash-gated direct local launcher using the same formal training entry point as Wave045; preserve the planned rows and launch receipts in amendment v2. |
 
 ## 2026-08-14 comprehensive documented-baseline inventory
 

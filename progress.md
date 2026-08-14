@@ -7324,3 +7324,19 @@
 - Updated heartbeat automation `prta-cxr-15` to monitor Wave046 plus the new
   authoritative Wave047 v2 queues and to continue bootstrap/final aggregation
   only after the relevant immutable PASS receipts exist.
+- Wave046 released both RTX3090s. Without inspecting outcomes, froze a resource
+  amendment that keeps the exact three Tail8-TILA configs but assigns S17/S28
+  to local GPU0/GPU1 and S43 to server9929. Controller3066 was paused while its
+  already active final V2-S28 diagnostic continued; its terminal receipt SHA
+  is `8c6aae68...cad2c`. The controller was then retired without launching a
+  duplicate TILA output; parent3066 and telemetry3066.2 remain alive.
+- The first amendment namespace stayed unstarted after detecting stale staging
+  paths. Amendment v2 freezes receipt SHA `61031fc5...d16c`. Two generic queue
+  supervisors also remained wait-only because the valid Tail8 cache uses the
+  Block4 schema; both were stopped before any child/output and replaced with a
+  hash-gated direct formal launcher.
+- Local Tail8-TILA S17/S28 are active as PIDs 22788/16852 with launch-receipt
+  SHAs `db914259...d88a`/`c72cd6b1...cdb1`. Both RTX3090s hold 2,753 MiB and
+  have live CPU/GPU activity with empty stderr. Server9929 concurrently runs
+  TILA-S43 in step9929.95. All nine PRIOR diagnostics are terminal, no failure
+  exists, and every status surface reports zero protected reads.

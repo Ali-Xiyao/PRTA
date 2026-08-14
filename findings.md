@@ -3115,3 +3115,13 @@
   pinning corrected source `384ecc1`. Its manifest SHAs are `cebed907...dc13c`
   for 3066 and `9a38ba21...d871` for 9929. Both lanes launched only after a
   fresh hash/occupancy gate, with v1 retained unstarted and immutable.
+- Once Wave046 finished, the maximum scientifically useful parallelism became
+  three rather than four: there are exactly three unique Tail8-TILA seeds.
+  Reassigning S17/S28 to the two idle RTX3090s while retaining S43 on A800/9929
+  removes 3066's former two-run serial critical path without duplicating a cell
+  or changing a config. Hardware class must remain explicit in the aggregate.
+- Pausing only controller3066 allowed its already launched V2-S28 diagnostic
+  child to finish normally. Retiring the stopped parent after the immutable
+  PASS receipt prevented automatic advancement to its now-reassigned TILA
+  rows; no server TILA-S17/S28 output namespace exists. This is an
+  identity-preserving scheduling amendment, not an interrupted scientific run.
