@@ -285,6 +285,8 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| New relative-checkpoint regression test had one Ruff import-order finding | 1 | Apply Ruff's focused import fix to that test only, then rerun formatting, lint, tests, and compilation. |
+| Second Wave046 preparation failed closed because historical receipts store checkpoint path `best.pt` relative to their run directory, while the verifier resolved it relative to the repository cwd | 1 | Resolve non-absolute checkpoint paths against the receipt directory and add a focused regression test. No namespace or GPU process was created. |
 | First Wave046 formal preparation failed closed after the large-input audit because reused training receipts store canonical/effective config SHA, while the new verifier compared the JSON file-byte SHA | 1 | Confirmed the receipt equals `canonical_sha256(config)` and the training engine writes that exact field; record both file and effective hashes and compare the receipt to the effective hash. No namespace or training process was created. |
 | First Wave046 focused test rejected the synthetic B402 parent because its fixture used placeholder class counts while the drift allowlist assumed the real cleaned parent | 1 | Make the builder accept an exact deterministic class-count rematerialization for either native parent, while removing that allowed path when the parent already has the cleaned counts; rerun all focused gates. |
 | Baseline runner search returned exit 1 after useful matches because a second `rg` used a Windows wildcard path that did not expand | 1 | Use `rg --files` or exact source paths; the read-only search changed nothing. |

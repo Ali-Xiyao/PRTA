@@ -7044,3 +7044,7 @@
   against the training engine and corrected the reuse verifier to preserve and
   validate both identities. No training process started and both GPUs stayed
   idle.
+- Second preparation failed closed on the next historical-schema detail:
+  checkpoint path `best.pt` is relative to the terminal receipt directory.
+  Updated resolution accordingly and added a regression test; the Wave046
+  namespace still does not exist and no GPU job has started.

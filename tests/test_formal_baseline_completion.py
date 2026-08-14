@@ -1,11 +1,13 @@
+import json
 from copy import deepcopy
 
 import pytest
 
 from prta_cxr.audit.tracin import AuditContractError
-from prta_cxr.contracts import PROGRESSION_LABELS
+from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256
 from prta_cxr.formal_baseline_completion import (
     build_formal_baseline_completion_configs,
+    verify_reused_run,
 )
 
 
@@ -94,3 +96,35 @@ def test_completion_configs_reject_partial_train() -> None:
             b402_parent=_parent("siamese_diff"),
             train_class_counts=_counts(),
         )
+
+
+def test_reused_run_resolves_checkpoint_relative_to_receipt(tmp_path) -> None:
+    config = _parent("tila")
+    config["experiment_id"] = "B403-S28"
+    config["seed"] = 28
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    checkpoint_path = tmp_path / "best.pt"
+    checkpoint_path.write_bytes(b"checkpoint")
+    receipt_path = tmp_path / "training_receipt.json"
+    receipt_path.write_text(
+        json.dumps(
+            {
+                "status": "PASS_TRAINING_FINISHED",
+                "config_sha256": canonical_sha256(config),
+                "protected_outcomes_opened": False,
+                "internal_test_opened": False,
+                "checkpoint_path": "best.pt",
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = verify_reused_run(
+        config_path=config_path,
+        receipt_path=receipt_path,
+        expected_id="B403-S28",
+        expected_family="tila",
+        expected_seed=28,
+    )
+    assert result["checkpoint_path"] == str(checkpoint_path.resolve())
+    assert result["zero_protected_reads"] is True

@@ -155,7 +155,10 @@ def verify_reused_run(
         raise AuditContractError(f"reused protected outcome opened for {expected_id}")
     if receipt.get("internal_test_opened") is not False:
         raise AuditContractError(f"reused Internal-test opened for {expected_id}")
-    checkpoint = audit_path(Path(str(receipt["checkpoint_path"])), role="checkpoint")
+    checkpoint_value = Path(str(receipt["checkpoint_path"]))
+    if not checkpoint_value.is_absolute():
+        checkpoint_value = receipt_path.parent / checkpoint_value
+    checkpoint = audit_path(checkpoint_value, role="checkpoint")
     return {
         "experiment_id": expected_id,
         "family": expected_family,
