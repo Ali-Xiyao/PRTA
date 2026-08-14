@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 from collections.abc import Mapping, Sequence
@@ -13,6 +12,7 @@ from typing import Any
 from prta_cxr.artifacts import replace_json_atomic, write_json_atomic
 from prta_cxr.audit.tracin import AuditContractError, audit_path
 from prta_cxr.contracts import canonical_sha256, sha256_file
+from prta_cxr.queue_runner import process_alive
 
 SOURCE_COMMIT = "62235ff46fb26e4ccf05e3c9073188a84ca39119"
 PREPARATION_SHA256 = "a417b03e22b54da612e673600cac91b5233cfffcb7e533c8611adfda9d7f2aaa"
@@ -72,25 +72,6 @@ def _git_blob_sha(repo_root: Path, commit: str, relative_path: str) -> str:
     return hashlib.sha256(result.stdout).hexdigest()
 
 
-def _pid_alive(pid: int) -> bool:
-    if os.name == "nt":
-        import ctypes
-
-        process_query_limited_information = 0x1000
-        handle = ctypes.windll.kernel32.OpenProcess(  # type: ignore[attr-defined]
-            process_query_limited_information, False, pid
-        )
-        if not handle:
-            return False
-        ctypes.windll.kernel32.CloseHandle(handle)  # type: ignore[attr-defined]
-        return True
-    try:
-        os.kill(pid, 0)
-    except OSError:
-        return False
-    return True
-
-
 def _validate_live_queue(rows: Sequence[Mapping[str, Any]]) -> None:
     by_id = {str(row["experiment_id"]): row for row in rows}
     if set(by_id) != set(EXPECTED_STATUS):
@@ -100,13 +81,13 @@ def _validate_live_queue(rows: Sequence[Mapping[str, Any]]) -> None:
             raise AuditContractError(f"Wave046 status drift for {run_id}")
     active_id = "W046-B401-S28"
     pid = int(by_id[active_id].get("pid", -1))
-    if pid <= 0 or not _pid_alive(pid):
+    if pid <= 0 or not process_alive(pid):
         raise AuditContractError(f"Wave046 active PID missing for {active_id}")
     failed = by_id[TARGET_ID]
     if failed.get("failure_reason") != "process exited without training receipt":
         raise AuditContractError("Wave046 B401-S17 failure identity drift")
     failed_pid = int(failed.get("pid", -1))
-    if failed_pid > 0 and _pid_alive(failed_pid):
+    if failed_pid > 0 and process_alive(failed_pid):
         raise AuditContractError("Wave046 failed B401-S17 PID is still alive")
     if any(row.get("status") == "PASS_TRAINING_FINISHED" for row in rows):
         raise AuditContractError("Wave046 terminal outcome exists before amendment")

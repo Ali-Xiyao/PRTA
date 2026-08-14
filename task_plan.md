@@ -317,6 +317,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Third fail-closed amendment activation found that the custom Windows handle probe treated an openable terminated process object as alive, although the queue runner had correctly classified its exit | 1 | Reuse the queue runner's already tested `process_alive` implementation, which checks `GetExitCodeProcess == STILL_ACTIVE`, instead of maintaining a second Windows liveness implementation. No namespace or queue mutation occurred. |
 | Real-queue identity audit's inline Python omitted the repository `src` path, so the new module was not importable after lint/tests had already passed | 1 | Rerun only the read-only identity audit with task-scoped `PYTHONPATH=src`; do not repeat the environment omission. |
 | First retry-aware amendment lint found one 89-character CLI description line | 1 | Split the description literal only, then rerun focused lint/tests and the real frozen-queue identity reconstruction before activation. |
 | Second Wave046 amendment activation failed closed because the reconstructed frozen queue canonical SHA did not equal the preparation queue SHA | 1 | Inspect only queue structure/keys and the original `_write_queue` contract, identify the exact execution fields added by the scheduler, add a regression using the real frozen queue shape, and retry only after the reconstruction hash equals `01bfda09...7828`. No namespace or queue mutation occurred. |
