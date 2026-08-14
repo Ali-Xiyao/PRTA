@@ -6997,3 +6997,9 @@
   retains the original preparation identity and zero protected reads. The
   original matrix is now 15/18 terminal; all Seed17 diagnostics remain
   correctly gated on the worker's complete terminal receipt.
+- A800/9929 completed `W045-V4-S43` with terminal receipt SHA
+  `5c66aa1aefbd038ee4f98f3494966385d8b79e5a9f3c906e9fe0de1d71989d5a`
+  and advanced only to final frozen `W045-V5-S43`. The formal terminal record
+  preserves the original preparation identity and zero protected reads. The
+  original matrix is now 16/18 terminal; all Seed43 diagnostics remain gated
+  until the complete immutable original worker receipt exists.
