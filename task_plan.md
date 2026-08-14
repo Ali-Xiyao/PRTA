@@ -317,6 +317,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Fourth activation reached package creation but failed before live-queue mutation because source-file hashing guessed nonexistent `src/prta_cxr/training.py` at commit `62235ff` | 1 | Preserve the `.preparing` directory as an immutable preparation-failure namespace, discover the exact tracked training-engine path from the frozen commit, update the manifest check, and use a new amendment runtime namespace. The live queue remains unchanged. |
 | Third fail-closed amendment activation found that the custom Windows handle probe treated an openable terminated process object as alive, although the queue runner had correctly classified its exit | 1 | Reuse the queue runner's already tested `process_alive` implementation, which checks `GetExitCodeProcess == STILL_ACTIVE`, instead of maintaining a second Windows liveness implementation. No namespace or queue mutation occurred. |
 | Real-queue identity audit's inline Python omitted the repository `src` path, so the new module was not importable after lint/tests had already passed | 1 | Rerun only the read-only identity audit with task-scoped `PYTHONPATH=src`; do not repeat the environment omission. |
 | First retry-aware amendment lint found one 89-character CLI description line | 1 | Split the description literal only, then rerun focused lint/tests and the real frozen-queue identity reconstruction before activation. |

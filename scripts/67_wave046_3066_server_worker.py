@@ -103,7 +103,7 @@ def verify_inputs(root: Path, manifest: dict[str, Any]) -> dict[str, str]:
     for relative in (
         "scripts/07_train.py",
         "scripts/sues_hpc_run_dev_search_arm.sh",
-        "src/prta_cxr/training.py",
+        "src/prta_cxr/training/engine.py",
     ):
         if not (source / relative).is_file():
             raise FileNotFoundError(f"source snapshot file missing: {relative}")

@@ -43,7 +43,7 @@ SERVER_BASE = Path(
 SERVER_LIVE = SERVER_BASE / "PRTA-CXR"
 SERVER_RUNTIME = SERVER_LIVE / "data/runtime"
 SERVER_SEARCH = SERVER_RUNTIME / "server_runs/continuous_lightweight_dev_search_v1"
-SERVER_ROOT = SERVER_SEARCH / "wave046_native_baseline_3066_amendment_v1"
+SERVER_ROOT = SERVER_SEARCH / "wave046_native_baseline_3066_amendment_attempt2_v1"
 SERVER_SOURCE = SERVER_BASE / "PRTA-CXR-source-snapshots" / SOURCE_COMMIT
 
 
@@ -252,7 +252,7 @@ def prepare_wave046_3066_amendment_main(
             for path in (
                 "scripts/07_train.py",
                 "scripts/sues_hpc_run_dev_search_arm.sh",
-                "src/prta_cxr/training.py",
+                "src/prta_cxr/training/engine.py",
             )
         },
         "no_outcome_selection": True,
