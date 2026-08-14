@@ -1,7 +1,17 @@
 from __future__ import annotations
 
+import os
+
 from prta_cxr.contracts import canonical_sha256
-from prta_cxr.wave046_amendment import ORIGINAL_QUEUE_SHA256, frozen_queue_identity
+from prta_cxr.wave046_amendment import (
+    ORIGINAL_QUEUE_SHA256,
+    _pid_alive,
+    frozen_queue_identity,
+)
+
+
+def test_pid_alive_accepts_current_process() -> None:
+    assert _pid_alive(os.getpid())
 
 
 def test_frozen_queue_identity_removes_only_execution_fields() -> None:

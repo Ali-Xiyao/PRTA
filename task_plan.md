@@ -313,6 +313,7 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| First Wave046 amendment activation failed closed before namespace creation because Windows `os.kill(pid, 0)` raised `WinError 87` while validating live training PIDs | 1 | Use a read-only Windows process handle (`OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION)`) for PID liveness, retain the POSIX check elsewhere, add a focused live-PID test, and rerun all amendment gates. The queue and runtime root were not modified. |
 | Combined preflight/smoke command was rejected before execution because it included recursive cleanup of the temporary smoke directory | 1 | Rerun the read-only/preflight and synthetic smoke checks without any deletion; preserve the tiny uniquely named temporary smoke artifact rather than request destructive cleanup. |
 | Repository-root Ruff check entered the user's untracked `data/` runtime mirror and reported nine pre-existing style findings unrelated to the amendment | 1 | Preserve `data/` untouched and untracked. Run the full tracked-code surfaces `src/`, `scripts/`, and `tests/` plus the already passing focused amendment lint; do not modify runtime mirrors for style. |
 | First focused Wave046 amendment lint found seven E501 findings on literal SHA-256 dictionary lines; targeted pytest and compileall still passed | 1 | Split only the long immutable hash literals across adjacent strings, then rerun formatting, lint, tests, and compilation. No runtime namespace or queue was modified. |

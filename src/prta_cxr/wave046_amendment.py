@@ -72,6 +72,17 @@ def _git_blob_sha(repo_root: Path, commit: str, relative_path: str) -> str:
 
 
 def _pid_alive(pid: int) -> bool:
+    if os.name == "nt":
+        import ctypes
+
+        process_query_limited_information = 0x1000
+        handle = ctypes.windll.kernel32.OpenProcess(  # type: ignore[attr-defined]
+            process_query_limited_information, False, pid
+        )
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)  # type: ignore[attr-defined]
+        return True
     try:
         os.kill(pid, 0)
     except OSError:
