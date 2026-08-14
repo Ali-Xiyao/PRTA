@@ -17,7 +17,7 @@ ablation.
   flips, metric deltas, and hashes.
 - [x] Add concise tracked result summaries and receipt identities without
   copying private checkpoints, predictions, or runtime directories into Git.
-- [ ] Run focused verification, update planning records, commit only intended
+- [x] Run focused verification, update planning records, commit only intended
   tracked files, push the current branch to the local bare remote and GitHub,
   and verify both remote refs.
 
