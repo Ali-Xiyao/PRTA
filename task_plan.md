@@ -1,5 +1,40 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 final V2 repository and paper-report close-out
+
+The user accepts the terminal Wave047 decision and requests the remaining
+repository close-out. The scientific identity is immutable: V2 is the final
+Train/Dev-confirmed PRTA-CXR method, V1 remains fallback, V0 remains core
+reference, V3-V5 remain rejected, and H4 remains appendix-only. This task may
+change tracked reporting and Git branch state only; it must not launch a new
+experiment or open Internal-test/Gold.
+
+- [x] Reconcile the current final branch with the latest remote `main`, verify
+  the seven already-published confirmation commits, and preserve untracked
+  user/runtime data outside Git.
+- [x] Audit the old Chinese final-results document and relevant repository
+  method/config sources for statements that conflict with frozen V2.
+- [x] Generate a Git-safe, patient-free V2 authoritative method/results
+  document containing the V0/V1/V2 confirmation, Wave046 B401-B403 table,
+  Tail8-TILA comparison, frozen decision status, limitations, and hashes.
+- [x] Relabel the old Tail8 result document as historical without rewriting its
+  original evidence as if it were V2 evidence.
+- [ ] Run focused documentation/source checks, commit only intended files, and
+  publish the finalized branch to GitHub.
+- [ ] Merge the finalized branch into remote `main` only after verifying that
+  remote `main` has no unexpected commits or conflicts, then verify both remote
+  branch heads.
+
+Hard boundary: no V6/V7, no V2+H4, no re-selection from the Git-safe table, no
+new evaluation, no patient-level predictions/checkpoints/private paths in Git,
+and no claim of statistical significance or independent validation.
+
+Close-out error log:
+
+| Error | Attempt | Resolution |
+|---|---:|---|
+| A planning-status patch used shortened checklist wording that did not match the wrapped text already on disk | 1 | `apply_patch` rejected the patch atomically; reread the current header and patched the exact wrapped lines without changing scientific files. |
+
 ## 2026-08-14 V2 candidate-freeze confirmation program
 
 The user accepts the post-Wave045 review direction and authorizes the minimal
@@ -68,6 +103,9 @@ Errors encountered:
 | First four-GPU amendment receipt embedded transactional staging paths in its queue rows | 1 | No local scientific process started. Preserve amendment v1 unstarted, relocate queue paths to the final immutable namespace before publication, test that contract, and activate only amendment v2. |
 | Generic local queue runner requires a Block8 cache status and therefore remained WAITING on the valid frozen Block4/Tail8 cache | 1 | Stop both wait-only supervisors before they start a child. Add a hash-gated direct local launcher using the same formal training entry point as Wave045; preserve the planned rows and launch receipts in amendment v2. |
 | Repository-wide Ruff inspection reached the user-owned untracked `data/` mirror and reported nine historical formatting diagnostics there | 1 | Do not alter or stage user-owned runtime mirrors. Touched-file Ruff/format checks pass, the complete pytest suite passes, and the final close-out artifacts were independently generated before this read-only repository-wide lint report. |
+| The first final-report inventory appended Unix-style `README*` and `*.md` positional globs to a Windows `rg` command | 1 | The docs inventory and exact old-summary matches were already returned, but the command ended nonzero on those two invalid path arguments. Reissue future searches with `--glob` or explicit roots; no file or Git state changed. |
+| The first exact V2 config probe assumed the local Wave045 root stored configs directly under `configs/` | 1 | The terminal aggregate extraction had already succeeded, but that guessed config path was absent. Resolve the config location only from the immutable Wave045 preparation receipt or tracked V2 builder; do not search broad private runtime roots. |
+| A follow-up assumed the same local Wave045 root retained its preparation receipt at the root | 2 | That exact receipt path is also absent in the current local mirror. Stop probing guessed runtime paths; the tracked `prta_v2.py` builder, tests, Wave045 Git-safe summary, and verified close-out hashes already provide the required reporting contract. |
 
 ## 2026-08-14 comprehensive documented-baseline inventory
 

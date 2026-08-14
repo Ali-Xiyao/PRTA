@@ -13,10 +13,14 @@ Qwen SFT attempts are intentionally absent.
 
 ## Current status
 
-The full data-to-training code path and synthetic validation are implemented.
-Real source manifests, exclusions, and the 238,511-pair candidate pool are now
-prepared and audited. GPU training and formal model experiments have **not**
-been started.
+PRTA-CXR V2 is now frozen as the main method after cleaned Train/Dev-only
+three-seed confirmation. Wave045 ablations and mechanism diagnostics, the
+Wave046 native-baseline matrix, and the Wave047 paired bootstrap and Tail8
+fairness comparison are complete. No independent untouched test has been run
+for V2; the project remains
+`FROZEN_MAIN_METHOD_TRAIN_DEV_CONFIRMED_PENDING_INDEPENDENT_UNTOUCHED_TEST`.
+See the authoritative
+[V2 final method and results report](docs/PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md).
 The rule-blind Luna pilot completed 150/150 rows. A same-roster blind Sol
 review found 115/124 agreement (92.74%, kappa 0.908) where both models were
 decisive and favored Luna over the rule 21-to-4 in the 30 rule-Luna conflicts.
@@ -29,39 +33,42 @@ The 250-row senior-physician Luna-assisted panel review is also complete:
 246/250 Luna labels were confirmed, four were corrected, and all 250 decisive
 consensus labels are frozen as patient-quarantined Gold. See the
 [senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md).
-The new patient-disjoint split is now frozen and independently audited. Full
-caching, training, and internal testing remain sequentially gated.
+The patient-disjoint cleaned split is frozen and independently audited. Any
+future independent untouched evaluation remains separately gated and is not
+authorized by the Train/Dev method freeze.
 
 ## Start here
 
-1. Read [the execution manual](docs/PRTA_CXR_最终论文实验与项目重构执行手册_CN.md).
-2. Use [the experiment plan and empty result tables](docs/PRTA_CXR_实验计划与空结果表_Markdown版_CN.md).
-3. Review [the migration map](docs/LEGACY_MIGRATION_MAP.md) and
+1. Read the authoritative
+   [V2 final method and Train/Dev results](docs/PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md).
+2. Read [the execution manual](docs/PRTA_CXR_最终论文实验与项目重构执行手册_CN.md).
+3. Use [the experiment plan and empty result tables](docs/PRTA_CXR_实验计划与空结果表_Markdown版_CN.md).
+4. Review [the migration map](docs/LEGACY_MIGRATION_MAP.md) and
    [Phase 0 status](docs/PHASE0_STATUS.md).
-4. Before any real-data build, follow
+5. Before any real-data build, follow
    [the full-data repartition policy](docs/DATA_REPARTITION_POLICY.md).
-5. Use the Chinese
+6. Use the Chinese
    [training readiness and command runbook](docs/TRAINING_READINESS_AND_COMMANDS_CN.md)
    before allocating a GPU.
-6. Check the frozen
+7. Check the frozen
    [real-data preparation status](docs/REAL_DATA_PREPARATION_STATUS_CN.md) for
    current counts, hashes, and the next execution gate.
-7. Review the
+8. Review the
    [Luna pilot status](docs/LUNA_PILOT_STATUS_CN.md) before authorizing any
    historical strict label expansion.
-8. Use the current
+9. Use the current
    [independent Silver pilot status](docs/INDEPENDENT_SILVER_PILOT_STATUS_CN.md)
    as the authority for future full-scale labeling decisions.
-9. Review the blind [Sol-vs-Luna status](docs/SOL_BLIND_REVIEW_STATUS_CN.md)
+10. Review the blind [Sol-vs-Luna status](docs/SOL_BLIND_REVIEW_STATUS_CN.md)
    for the evidence supporting the frozen Luna-primary policy.
-10. Use the
+11. Use the
     [senior-panel Gold status](docs/SENIOR_LUNA_ASSISTED_GOLD_STATUS_CN.md)
     for the human confirmation/correction result and exact artifact boundary.
-11. Use the
+12. Use the
     [Train/Dev-only approximate-TracIn audit guide](docs/PRTA_CXR_TracIn只读数据审计说明_CN.md)
     for the post-STOP read-only data-quality audit; row-level outputs remain
     private and must never enter Git.
-12. The active data surface is now the physician-confirmed cleaned split. See
+13. The active data surface is now the physician-confirmed cleaned split. See
     [physician exclusions and frozen cleaned split](docs/PRTA_CXR_医生确认排除与清洗后正式划分_CN.md).
 
 ## Local engineering validation

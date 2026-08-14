@@ -7375,3 +7375,26 @@
   --check`. A broad Ruff invocation also found nine historical diagnostics only
   in the user-owned untracked `data/` runtime mirror; that mirror is neither
   modified nor staged.
+- Began final repository/paper-report close-out from the accepted V2 review.
+  Fetched GitHub and verified `origin/main` is the exact ancestor of the final
+  branch (0 commits ahead of the branch, 100 behind), so no remote conflict or
+  unrelated mainline change is present. Audited the old final-results document
+  and confirmed it describes the superseded August-10 Tail8 method and used
+  protected outcomes; it will receive only a historical/superseded banner.
+- Extracted the Wave046 B401/B402/B403 and Tail8-TILA terminal scalar,
+  per-seed, per-class F1/recall tables plus Wave047 V2-V0 bootstrap contrasts
+  from the already verified private aggregates. No patient row, prediction,
+  checkpoint, Internal-test, or Gold artifact was opened.
+## 2026-08-14 final V2 close-out — source audit
+
+- Reconciled the pasted final-method specification with tracked `src/prta_cxr/prta_v2.py` and its tests.
+- Confirmed the final report can state the V2 architecture/loss contract without relying on private runtime paths or protected evaluation.
+- Confirmed the remote default branch is an exact ancestor of the final branch, so publication can be a conflict-free fast-forward after the close-out commit.
+
+## 2026-08-14 final V2 close-out — documentation complete
+
+- Created `docs/PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md` as the single authoritative V2 method/results report.
+- Added the superseded-history banner to the old Tail8 final summary while preserving its original evidence.
+- Updated README status and navigation so the repository no longer claims formal experiments have not started.
+- The new report contains only aggregate Train/Dev metrics, configuration, interpretations, and audit hashes; no patient rows, prediction blocks, private paths, or protected results were added.
+- Publication checks passed: 257 pytest tests, Ruff over `src scripts tests`, compileall, `git diff --check`, and focused Markdown-link validation.

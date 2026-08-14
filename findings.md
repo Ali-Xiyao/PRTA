@@ -3148,3 +3148,47 @@
   core reference, V3-V5 stay rejected, and H4 stays appendix-only. A new
   untouched external cohort/patient set is still required before a final
   independent-performance claim.
+- Final repository-report audit confirms that
+  `docs/PRTA_CXR_最终结果汇总_CN.md` is the conflicting legacy authority: it
+  calls the August-10 Tail8 model final, includes prior Internal-test/Gold
+  outcomes, and explicitly records prototype alignment/CMCP as disabled. It
+  must remain historically intact apart from a prominent supersession banner.
+- `docs/PRTA_CXR_Wave045_TrainDev_无选择汇总_CN.md` already contains the
+  correct V0-V5 Train/Dev evidence and is suitable as a source for the new
+  V2-focused authority. The new report must add the Wave046 native baselines,
+  scope-matched Tail8-TILA, Wave047 bootstrap/diagnostics, and decision hashes
+  without importing patient-level predictions or old protected outcomes.
+- Remote Git reconciliation is clean: `origin/main` is still
+  `8ccace5b64d3a084f8cd919d2cfc2906d81b4136`, exactly the merge base of
+  final branch head `4827a180d8759fe57ae289e7ab1e15d8534584fd`.
+  The branch is 100 commits ahead and zero behind, so the eventual `main`
+  integration can be a verified fast-forward rather than a conflict-bearing
+  merge.
+- Tracked V2 source corroborates the review definition: V1 enables
+  `prototype_alignment=0.01`; V2 additionally enables matched-hard CMCP with
+  `cmcp=0.01`; V3/V4/V5 alone add residual scale, reliability gate, and
+  selective state anchor. The new authority must describe V2/H0 as a
+  transition-primary classifier with a training-only state preservation path,
+  not as the old dual-branch final predictor.
+- Terminal Git-safe baseline summaries are now independently extracted from
+  the immutable close-out aggregates. Three-seed Macro-F1 means are B401
+  `0.412872`, B402 `0.522895`, B403 `0.524565`, and scope-matched Tail8-TILA
+  `0.528645`; corresponding ODER means are `0.035116`, `0.007053`,
+  `0.006279`, and `0.006339`. The aggregate also supplies every per-seed
+  scalar and every class F1/recall mean/SD, with mixed hardware recorded
+  explicitly rather than pooled as a speed comparison.
+- Wave047 paired bootstrap remains modest and non-significant: V2-V0
+  Macro-F1 `+0.003861` (95% CI `[-0.000749, +0.008395]`), balanced accuracy
+  `+0.003469` (95% CI `[-0.001168, +0.008130]`), and ODER `-0.000060`
+  (95% CI `[-0.000743, +0.000620]`). All five class-F1 point deltas are
+  positive, but all class intervals cross zero; the report must retain that
+  limitation.
+## 2026-08-14 final V2 source-contract audit
+
+- The tracked Wave045 implementation confirms that V2 is exactly V1 plus matched-hard CMCP: prototype weight `0.01`, temperature `0.07`, CMCP weight `0.01`, margin `0.2`, and matching mode `offline_hard_v1`.
+- The tracked configuration fixes Tail8/H0, Block-4 cached features, width/rank/heads `768/32/12`, state/transition tokens `20/20`, dropout `0.1`, 20 epochs, and state loss `0.025`.
+- V3/V4/V5 add learned residual scaling, a PRIOR reliability gate, and selective state anchoring respectively; these are not part of the frozen V2 method.
+- H0 makes the transition representation the prediction path. State tokens remain a training-time preservation/anchoring mechanism and must not be described as a second prediction branch.
+- The final report must distinguish inference inputs (prior CXR, current CXR, finding text) from training-only supervision artifacts (class prototypes and the offline matched-hard map).
+- The legacy `docs/PRTA_CXR_最终结果汇总_CN.md` contains old-method protected-evaluation evidence; it is retained only as immutable historical context and explicitly barred from attribution to V2.
+- README was stale and still stated that GPU/formal experiments had not started; the final close-out corrects that status and points readers to the V2 authority.

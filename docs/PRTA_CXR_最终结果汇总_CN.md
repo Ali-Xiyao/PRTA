@@ -1,4 +1,8 @@
-# PRTA-CXR 最终结果汇总
+# PRTA-CXR Historical Tail8 Outcome Summary（历史记录，已由 V2 最终文档取代）
+
+> **历史/已取代：** 本文记录的是 2026-08-10 冻结的旧 Tail8 方法及其当时已消费的评估证据，不是当前 PRTA-CXR V2。
+>
+> 当前唯一论文与仓库结果权威为 [PRTA-CXR V2 最终方法与 Train/Dev 结果](PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md)。旧方法的 Internal-test/Gold 数字不得迁移、折算或归属于 V2；本文其余内容保持原样，以保留历史审计链。
 
 > 冻结日期：2026-08-10
 >
