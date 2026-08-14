@@ -19,15 +19,16 @@ PREPARATION_SHA256 = "a417b03e22b54da612e673600cac91b5233cfffcb7e533c8611adfda9d
 ORIGINAL_QUEUE_SHA256 = (
     "01bfda09a57ddac97504d5e76fc6440d4a82169e62c72054f76a259f5e997828"
 )
-TARGET_ID = "W046-B401-S43"
+TARGET_ID = "W046-B401-S17"
 EXPECTED_STATUS = {
-    "W046-B401-S17": "RUNNING",
+    TARGET_ID: "FAILED",
     "W046-B401-S28": "RUNNING",
-    TARGET_ID: "PLANNED",
+    "W046-B401-S43": "PLANNED",
     "W046-B402-S28": "PLANNED",
     "W046-B402-S43": "PLANNED",
 }
 RUNTIME_FIELDS = {
+    "completed_at",
     "device",
     "failure_reason",
     "output_path",
@@ -97,11 +98,17 @@ def _validate_live_queue(rows: Sequence[Mapping[str, Any]]) -> None:
     for run_id, status in EXPECTED_STATUS.items():
         if by_id[run_id].get("status") != status:
             raise AuditContractError(f"Wave046 status drift for {run_id}")
-    for run_id in ("W046-B401-S17", "W046-B401-S28"):
-        pid = int(by_id[run_id].get("pid", -1))
-        if pid <= 0 or not _pid_alive(pid):
-            raise AuditContractError(f"Wave046 active PID missing for {run_id}")
-    if any(row.get("status") in {"FAILED", "PASS_TRAINING_FINISHED"} for row in rows):
+    active_id = "W046-B401-S28"
+    pid = int(by_id[active_id].get("pid", -1))
+    if pid <= 0 or not _pid_alive(pid):
+        raise AuditContractError(f"Wave046 active PID missing for {active_id}")
+    failed = by_id[TARGET_ID]
+    if failed.get("failure_reason") != "process exited without training receipt":
+        raise AuditContractError("Wave046 B401-S17 failure identity drift")
+    failed_pid = int(failed.get("pid", -1))
+    if failed_pid > 0 and _pid_alive(failed_pid):
+        raise AuditContractError("Wave046 failed B401-S17 PID is still alive")
+    if any(row.get("status") == "PASS_TRAINING_FINISHED" for row in rows):
         raise AuditContractError("Wave046 terminal outcome exists before amendment")
 
 
@@ -173,7 +180,9 @@ def prepare_wave046_3066_amendment_main(
     argv: Sequence[str] | None = None,
 ) -> int:
     parser = argparse.ArgumentParser(
-        description="Freeze the pre-outcome Wave046 B401-S43 handoff to allocation 3066"
+        description=(
+            "Freeze the Wave046 B401-S17 infrastructure retry on allocation 3066"
+        )
     )
     parser.add_argument("--wave-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
@@ -207,6 +216,14 @@ def prepare_wave046_3066_amendment_main(
         raise AuditContractError("Wave046 target config file hash drift")
     if target.get("effective_config_sha256") != canonical_sha256(config):
         raise AuditContractError("Wave046 target effective config hash drift")
+    failed_output = Path(str(target["output_path"]))
+    failed_receipt = failed_output / "training_receipt.json"
+    failed_stdout = Path(str(target["stdout_path"]))
+    failed_stderr = Path(str(target["stderr_path"]))
+    if failed_receipt.exists():
+        raise AuditContractError("failed B401-S17 unexpectedly has a terminal receipt")
+    if failed_stdout.stat().st_size != 0 or failed_stderr.stat().st_size != 0:
+        raise AuditContractError("failed B401-S17 logs are not the frozen empty pair")
 
     amended = [dict(row) for row in rows if row["experiment_id"] != TARGET_ID]
     temporary = output_root.with_name(output_root.name + ".preparing")
@@ -236,10 +253,16 @@ def prepare_wave046_3066_amendment_main(
         "claimed_config_file_sha256": sha256_file(config_path),
         "claimed_effective_config_sha256": canonical_sha256(config),
         "local_continuation_ids": [str(row["experiment_id"]) for row in amended],
-        "active_local_pids": {
-            run_id: int(by_id[run_id]["pid"])
-            for run_id in ("W046-B401-S17", "W046-B401-S28")
+        "superseded_infrastructure_failure": {
+            "run_id": TARGET_ID,
+            "pid": int(target["pid"]),
+            "failure_reason": target["failure_reason"],
+            "output_path": str(failed_output),
+            "terminal_receipt_exists": False,
+            "stdout_sha256": sha256_file(failed_stdout),
+            "stderr_sha256": sha256_file(failed_stderr),
         },
+        "active_local_pids": {"W046-B401-S28": int(by_id["W046-B401-S28"]["pid"])},
         "server_manifest_file_sha256": sha256_file(server_manifest_path),
         "server_manifest_canonical_sha256": canonical_sha256(manifest),
         "server_controller_sha256": sha256_file(controller_target),

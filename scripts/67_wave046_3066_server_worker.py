@@ -58,7 +58,7 @@ def verify_manifest(root: Path, expected_sha: str) -> dict[str, Any]:
         raise RuntimeError("server manifest status drift")
     if int(manifest.get("allocation", -1)) != 3066:
         raise RuntimeError("server allocation drift")
-    if manifest.get("run_id") != "W046-B401-S43":
+    if manifest.get("run_id") != "W046-B401-S17":
         raise RuntimeError("server run identity drift")
     if manifest.get("source_commit") != ("62235ff46fb26e4ccf05e3c9073188a84ca39119"):
         raise RuntimeError("server source commit drift")

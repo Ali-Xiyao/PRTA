@@ -3,18 +3,21 @@
 ## 2026-08-14 Wave046 allocation-3066 execution amendment
 
 The user explicitly authorizes using the now-free allocation 3066 for part of
-the frozen, main-method-independent comparison matrix. The amendment is made
-before any Wave046 terminal outcome exists and changes execution placement
-only: scientific configs, cleaned Train/Dev identity, seeds, budgets, and the
-five-cell completion contract remain unchanged.
+the frozen, main-method-independent comparison matrix. Before activation,
+local B401-S17 suffered an abrupt process-level infrastructure failure with no
+terminal receipt or stderr. No Wave046 terminal outcome exists. The amendment
+therefore retries that exact config from scratch on 3066 and changes execution
+placement only: scientific configs, cleaned Train/Dev identity, seeds,
+budgets, and the five-cell completion contract remain unchanged.
 
 - [x] Verify Wave045 server3066 original and diagnostic queues are terminal
   PASS, zero protected reads, and Slurm has no scientific child on 3066.
 - [x] Verify Wave046 has two active local B401 cells, three still-planned cells,
   and no terminal outcome available to influence the handoff.
-- [ ] Freeze a hashed no-duplicate amendment assigning only
-  `W046-B401-S43` to A800/3066 while leaving `W046-B402-S28/S43` for the local
-  RTX3090 continuation.
+- [ ] Freeze a hashed no-duplicate amendment assigning the exact
+  `W046-B401-S17` infrastructure retry to A800/3066 while leaving active
+  B401-S28 plus planned B401-S43/B402-S28/S43 for the local RTX3090
+  continuation.
 - [ ] Atomically prevent the existing local supervisor from claiming the
   outsourced cell, without stopping or modifying active B401-S17/S28 children.
 - [ ] Materialize the exact server-path config/source package, pass
@@ -24,7 +27,8 @@ five-cell completion contract remain unchanged.
   the amended A800 cell with the four local Wave046 cells, reporting resources
   by hardware class and making no outcome selection.
 
-Hard boundary: never duplicate `W046-B401-S43`, never use allocation 4161,
+Hard boundary: never duplicate any Wave046 cell, never resume or overwrite the
+failed B401-S17 partial, never use allocation 4161,
 never cancel parent allocation/telemetry, never access Internal-test or Gold,
 and HOLD if the local/server claim cannot be made fail-closed.
 
@@ -313,6 +317,9 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Real-queue identity audit's inline Python omitted the repository `src` path, so the new module was not importable after lint/tests had already passed | 1 | Rerun only the read-only identity audit with task-scoped `PYTHONPATH=src`; do not repeat the environment omission. |
+| First retry-aware amendment lint found one 89-character CLI description line | 1 | Split the description literal only, then rerun focused lint/tests and the real frozen-queue identity reconstruction before activation. |
+| Second Wave046 amendment activation failed closed because the reconstructed frozen queue canonical SHA did not equal the preparation queue SHA | 1 | Inspect only queue structure/keys and the original `_write_queue` contract, identify the exact execution fields added by the scheduler, add a regression using the real frozen queue shape, and retry only after the reconstruction hash equals `01bfda09...7828`. No namespace or queue mutation occurred. |
 | First Wave046 amendment activation failed closed before namespace creation because Windows `os.kill(pid, 0)` raised `WinError 87` while validating live training PIDs | 1 | Use a read-only Windows process handle (`OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION)`) for PID liveness, retain the POSIX check elsewhere, add a focused live-PID test, and rerun all amendment gates. The queue and runtime root were not modified. |
 | Combined preflight/smoke command was rejected before execution because it included recursive cleanup of the temporary smoke directory | 1 | Rerun the read-only/preflight and synthetic smoke checks without any deletion; preserve the tiny uniquely named temporary smoke artifact rather than request destructive cleanup. |
 | Repository-root Ruff check entered the user's untracked `data/` runtime mirror and reported nine pre-existing style findings unrelated to the amendment | 1 | Preserve `data/` untouched and untracked. Run the full tracked-code surfaces `src/`, `scripts/`, and `tests/` plus the already passing focused amendment lint; do not modify runtime mirrors for style. |
