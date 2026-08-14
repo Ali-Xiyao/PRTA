@@ -1,5 +1,33 @@
 # Active isolated task: dual-branch repair v1
 
+## 2026-08-14 Wave046 allocation-3066 execution amendment
+
+The user explicitly authorizes using the now-free allocation 3066 for part of
+the frozen, main-method-independent comparison matrix. The amendment is made
+before any Wave046 terminal outcome exists and changes execution placement
+only: scientific configs, cleaned Train/Dev identity, seeds, budgets, and the
+five-cell completion contract remain unchanged.
+
+- [x] Verify Wave045 server3066 original and diagnostic queues are terminal
+  PASS, zero protected reads, and Slurm has no scientific child on 3066.
+- [x] Verify Wave046 has two active local B401 cells, three still-planned cells,
+  and no terminal outcome available to influence the handoff.
+- [ ] Freeze a hashed no-duplicate amendment assigning only
+  `W046-B401-S43` to A800/3066 while leaving `W046-B402-S28/S43` for the local
+  RTX3090 continuation.
+- [ ] Atomically prevent the existing local supervisor from claiming the
+  outsourced cell, without stopping or modifying active B401-S17/S28 children.
+- [ ] Materialize the exact server-path config/source package, pass
+  Train/Dev-only preflight/hash/GPU/disk/protected-read gates, and launch one
+  scientific child through `srun --jobid=3066 --overlap`.
+- [ ] Update the recurring monitor and final aggregation contract to combine
+  the amended A800 cell with the four local Wave046 cells, reporting resources
+  by hardware class and making no outcome selection.
+
+Hard boundary: never duplicate `W046-B401-S43`, never use allocation 4161,
+never cancel parent allocation/telemetry, never access Internal-test or Gold,
+and HOLD if the local/server claim cannot be made fail-closed.
+
 ## 2026-08-14 independent formal-baseline launch amendment
 
 The user explicitly authorizes using currently idle local GPUs for comparison
@@ -285,6 +313,12 @@ not interrupt, reorder, or mutate the active Wave041 supervisor or its frozen
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| Combined preflight/smoke command was rejected before execution because it included recursive cleanup of the temporary smoke directory | 1 | Rerun the read-only/preflight and synthetic smoke checks without any deletion; preserve the tiny uniquely named temporary smoke artifact rather than request destructive cleanup. |
+| Repository-root Ruff check entered the user's untracked `data/` runtime mirror and reported nine pre-existing style findings unrelated to the amendment | 1 | Preserve `data/` untouched and untracked. Run the full tracked-code surfaces `src/`, `scripts/`, and `tests/` plus the already passing focused amendment lint; do not modify runtime mirrors for style. |
+| First focused Wave046 amendment lint found seven E501 findings on literal SHA-256 dictionary lines; targeted pytest and compileall still passed | 1 | Split only the long immutable hash literals across adjacent strings, then rerun formatting, lint, tests, and compilation. No runtime namespace or queue was modified. |
+| First 3066 input probe used the local-style `formal_program_v1/receipts/human_silver_accuracy_audit.json` server path, which is absent; all other exact input checks succeeded and source `62235ff` was confirmed absent | 1 | Use the already frozen server authority path under `server_runs/continuous_lightweight_dev_search_v1/inputs/`, verify its hash once, and deploy a new exact source snapshot. Do not repeat the absent local-style receipt path. |
+| Scheduler-module search targeted nonexistent repository-root `prta_cxr/` after correctly discovering the package under `src/prta_cxr/` | 1 | The read-only search changed nothing. Inspect the discovered `src/prta_cxr/cli_queue.py` and `queue_runner.py` paths directly; do not repeat the wrong root. |
+| Canonical 3066 status probe invoked `wave045_postreview_control.py` from the diagnostic runtime root, but the deployed controller file is not stored at that exact level | 1 | The exact runtime root exists and no state changed. Locate the deployed controller only within this allowlisted diagnostic namespace, then invoke that discovered path; do not repeat the root-level guess. |
 | New relative-checkpoint regression test had one Ruff import-order finding | 1 | Apply Ruff's focused import fix to that test only, then rerun formatting, lint, tests, and compilation. |
 | Second Wave046 preparation failed closed because historical receipts store checkpoint path `best.pt` relative to their run directory, while the verifier resolved it relative to the repository cwd | 1 | Resolve non-absolute checkpoint paths against the receipt directory and add a focused regression test. No namespace or GPU process was created. |
 | First Wave046 formal preparation failed closed after the large-input audit because reused training receipts store canonical/effective config SHA, while the new verifier compared the JSON file-byte SHA | 1 | Confirmed the receipt equals `canonical_sha256(config)` and the training engine writes that exact field; record both file and effective hashes and compare the receipt to the effective hash. No namespace or training process was created. |
