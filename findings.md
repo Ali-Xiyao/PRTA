@@ -3338,3 +3338,13 @@
 - V2 and F02 are the F1–ODER Pareto front; F01 and Current-only are dominated on these two dimensions.
 - Cost is deliberately marked pending rather than joining heterogeneous or cached-only timings.
 - Authoritative corrected statistics artifact is `holm_pareto_v3.json`, SHA-256 `5f23cb6ad7ac676e9e673a879fc09e4719cb915ff0a2e2b6a0867442faadad03`.
+## Corrected Phase16 server activation (2026-08-17)
+
+- Immutable corrected source snapshot commit: `22f3751b662b404b4bd716c1213c7b2a78990936`; source archive SHA-256 `232fa801ffb9d55d0c8b9fc543d9839ac973828e80eb239bc6879ae874d9fcb0`.
+- Server focused validation passed 27 tests, Ruff, compileall, and data-free preflight from the snapshot.
+- Corrected full registry: 51 configs / 87 jobs. Supplemental replay registry: 38 affected jobs (24 source-held train/eval, 7 modality, 7 state-pruning).
+- Two-A800 corrected lane loads are 76,560 s and 76,500 s, only 60 s apart.
+- Old repair supervisors were verified wait-only with no Slurm step, then replaced by corrected supervisors PIDs 693643/693644 plus finalizer supervisor 693645. Active main jobs were not interrupted.
+- Twelve not-yet-started obsolete source-held jobs were immutable-skipped as protocol-superseded, saving 64,800 nominal GPU seconds; their corrected roll and V1/no-CMCP replacements remain in the 38-job replay.
+- Activation receipt SHA-256: `ed4072df9ddc2a55c264ec73e30b58be472731ad1155894d8e8d055921b6f4b2`. Old-source supersession receipt SHA-256: `b33ed82d45136d7850e2e0696ad3ddf4368b85d893b49076cab7234361b6dc44`.
+- At the final activation check, plausible-noise 5% S17/S28 remained healthy in epoch index 6, corrected supervisors were waiting, and corrected outputs/states remained absent as expected.

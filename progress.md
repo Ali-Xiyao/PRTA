@@ -7523,3 +7523,13 @@
 - Repository Ruff check, compileall, diff whitespace validation, and targeted formatting checks passed.
 - Engineering preflight passed without opening real/protected data; a fresh synthetic smoke train passed with zero protected access.
 - The whole-repository formatter check remains intentionally unsuitable because numerous untouched legacy files predate the current Ruff formatter; targeted formatting on all 21 changed Python/test files is clean.
+## 2026-08-17 corrected Phase16 server queue activated
+
+- Committed the correction as `22f3751b662b404b4bd716c1213c7b2a78990936` and synchronized both GitHub origin and the local bare mirror.
+- Deployed a separate immutable server source snapshot instead of overwriting the live source used by active main jobs.
+- Prepared `program_v5_corrected` (51 configs, 87 jobs), `repair_program_v2_corrected` (38 affected jobs), and `repair_queue_v3_corrected` with a 60-second two-lane estimated imbalance.
+- Replaced only the two verified wait-only repair supervisors; active plausible-noise S17/S28 processes continued normally.
+- Added an automatic finalizer supervisor that waits for both corrected lanes and then reconciles initial/retry/old-repair/corrected state roots into `PASS_PHASE16_FINAL_NO_SELECTION_AGGREGATE`.
+- Skipped 12 pending obsolete source-held jobs before start because corrected V2-roll and V1/no-CMCP replacements are now frozen; saved 18 nominal GPU hours without interrupting a process.
+- Estimated remaining main work is roughly 60 nominal hours per lane after the skip; observed V2-like training speed implies about 4–5 days, followed by roughly 1–2 days for the corrected replay. The practical current range is about 5–7 days, subject to early stopping and cache throughput.
+- A server status probe tried both login-shell `nvidia-smi` locations and returned nonzero because GPU tools are only exposed inside Slurm; process/state/training-progress checks succeeded and no runtime changed.

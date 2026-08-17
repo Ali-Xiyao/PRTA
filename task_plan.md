@@ -1916,7 +1916,7 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 
 ## Phase 17 - Phase16 scientific-protocol correction and selective replay
 
-Status: in_progress (authorized 2026-08-17)
+Status: implementation_complete_remote_replay_queued (authorized 2026-08-17)
 
 Goal: apply the supplied review to the active Phase16 program without changing
 the frozen V2/core-ablation evidence, repair every scientifically ambiguous
@@ -1955,13 +1955,13 @@ roadmap before final aggregation.
   outcome-adaptive threshold tuning.
 - [x] Add V2/F02 multi-objective Pareto and Holm-family reporting from the
   already frozen aggregate surfaces without model reselection.
-- [ ] Build and freeze a corrected supplemental queue, balance it across the
+- [x] Build and freeze a corrected supplemental queue, balance it across the
   two A800s, replace only the waiting repair supervisors if required, and do
   not interrupt the two active unaffected main-queue training children.
 - [x] Update `paper/07_后续实验路线图_CN.md` and related paper identity text to
   distinguish completed, corrected/replay, exploratory, official-method,
   external, safety-routing, and end-to-end-efficiency evidence.
-- [ ] Run focused and repository-wide tests, remote preflight, immutable queue
+- [x] Run focused and repository-wide tests, remote preflight, immutable queue
   validation, and record the final server launch/ETA without reading protected
   outcomes.
 
