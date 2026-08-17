@@ -3354,3 +3354,12 @@
 - The only additional PRTA process surfaced by the broad server audit is a pre-existing stopped (`T`) Wave041 controller; it is not an active Phase16 experiment and is outside the Phase16 root.
 - The terminal marker must validate both corrected lane completion receipts, exact finalizer PASS coverage, zero protected access, and zero residual Phase16 queue/launcher processes.
 - Slurm allocations and unrelated GPU telemetry are deliberately not cancelled; the requested pause applies to PRTA-CXR experiment training/evaluation/selection and automatic continuations.
+## Terminal-stop deployment identities (2026-08-17)
+
+- Closeout source commit: `79876dde785195302c79c38fe3bc33ef414920e1`; archive SHA-256 `3b3e12fb9076d9c2a851ed9c4ec7a9ce8392b4f3b78cb650265a84089aaa1347`.
+- `phase16_stop.py` SHA-256: `d318dfd981f4749573230eb5dc1c94b5fa36c49bbae499469c771d58d790c9ca`.
+- Script 112 SHA-256: `5506415d10e9bd85cfad052863867ea5f0072f6d62ad2fd2ff6dab9eb2b4f52f`.
+- The independent server snapshot passed 6 focused finalizer/stop tests, Ruff, and compileall before supervisor replacement.
+- Phase16 终止监督器服务器副本已通过 `bash -n`；部署哈希为 `38e04f1f89888bc33ff4975e5e09242f57b00bfb245f0e8198aa10a5b7c9805e`。旧最终汇总监督器的 PID 文件名需要以服务器实际目录为准；错误路径返回空 PID，因此没有误停任何进程。
+- 已用终止监督器替换旧的最终汇总等待监督器：旧 PID `693645`，新 PID `725279`。替换前强制验证旧进程命令行匹配且所有直接子进程均为 `sleep 60`，因此没有中断最终汇总或任何实验进程。
+- 终止机制已正式 armed：PID `725279` 已由 init 接管；corrected supervisors `693643/693644` 与两个当前 Phase16 `srun` 均未受影响。激活回执哈希为 `c875647003861cb9fc6f0acb1b56300e13db44fac3ee905cd933a31a2fc150d3`。

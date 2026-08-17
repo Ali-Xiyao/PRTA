@@ -2987,7 +2987,7 @@ Stop rules:
 | A post-launch Slurm step probe reused unsupported `%T` formatting and a remote hash probe lost `$ROOT` through PowerShell expansion | 1 | Both were read-only and the running worker identities were already confirmed. Reissued `squeue --steps` without the unsupported formatter and hashed the two exact absolute receipt paths; no job or artifact changed. |
 ## Phase 18 - Terminal pause after corrected evidence completion
 
-Status: in_progress (authorized 2026-08-17)
+Status: implementation_complete_waiting_for_terminal_condition (authorized 2026-08-17)
 
 Goal: after both corrected A800 lanes and the authoritative Phase16 finalizer
 finish successfully, create an immutable global experiment STOP marker and
@@ -2996,16 +2996,16 @@ running. Do not stop the currently authorized work early.
 
 - [x] Reconfirm the current corrected lane/finalizer supervisors are still
   wait-only and that no later automatic experimental queue exists.
-- [ ] Replace only the wait-only finalizer supervisor with a terminal closeout
+- [x] Replace only the wait-only finalizer supervisor with a terminal closeout
   supervisor that runs the finalizer, validates its PASS status, verifies both
   corrected lane completions, and atomically creates
   `STOP_ALL_MODEL_AND_EXPERIMENT_SELECTION.json`.
 - [x] Make STOP creation fail closed if either lane, final aggregate, protected
   access guard, or residual Phase16 experiment process is inconsistent.
-- [ ] Validate launcher syntax and immutable hashes locally/server-side, record
+- [x] Validate launcher syntax and immutable hashes locally/server-side, record
   the activation receipt, and keep current main/corrected scientific jobs
   uninterrupted.
-- [ ] Synchronize the terminal-stop implementation and audit notes to both Git
+- [x] Synchronize the terminal-stop implementation and audit notes to both Git
   remotes.
 
 Stop rules:

@@ -7543,3 +7543,12 @@
 - Added `phase16_stop.py`, script 112, and three focused tests.
 - The stop receipt is immutable and fail-closed on incomplete final aggregation, lane failure, protected access, or residual Phase16 experiment processes.
 - Focused finalizer/stop tests pass 6/6; Ruff and compileall pass for the new implementation.
+## 2026-08-17 terminal-stop source deployment
+
+- Committed and synchronized terminal-stop implementation as `79876dde785195302c79c38fe3bc33ef414920e1`.
+- Deployed it as a second immutable server source snapshot, leaving the running/corrected experiment snapshot `22f3751...` untouched.
+- Exact archive verification and server focused validation passed.
+- 2026-08-17：已将终止监督器部署到 Phase16 `launch/phase16_terminal_closeout_supervisor.sh`，服务器语法检查通过，SHA256=`38e04f1f89888bc33ff4975e5e09242f57b00bfb245f0e8198aa10a5b7c9805e`。首次按旧假定文件名读取 PID 为空，未执行任何 kill；STOP 标记仍不存在（符合当前仍在运行的状态）。
+- 2026-08-17：确认服务器真实 PID 文件为 `finalizer.corrected_v1.supervisor.pid`；旧等待监督器 PID `693645` 仅有 `sleep 60` 子进程，经命令行门控后安全退出。新终止监督器 PID `725279` 已启动，初始子进程为 `sleep 60`；未触碰两条 corrected lane 或 GPU 作业。
+- 2026-08-17：新终止监督器已复核为 PID `725279`、PPID `1`、等待态；两条 corrected supervisor PID `693643/693644` 仍在，当前 Phase16 两个 `srun` 仍在运行。激活时最终汇总与 STOP 均尚未生成，符合“不提前停”的约束。
+- 2026-08-17：服务器激活回执 `terminal_stop_activation_receipt_v1.json` 已部署并通过 JSON 校验，SHA256=`c875647003861cb9fc6f0acb1b56300e13db44fac3ee905cd933a31a2fc150d3`。Phase18 实现完成，等待实验队列自然满足终止条件。
