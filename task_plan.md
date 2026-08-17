@@ -2989,6 +2989,10 @@ Stop rules:
 | Initial Slim priority process-tree probe used login-node `ps`, which cannot see compute-node queue/training processes | 1 | No signal was sent and no state changed. Reissue the audit through a read-only overlapping `srun` inside each retained allocation before identifying any queue-parent PID. |
 | First Slim focused gate found two long Markdown-renderer literals and an incomplete synthetic V2 test fixture lacking `native_head=H0` | 1 | No server Slim artifact existed. Wrapped the literals, completed the fixture to the already-frozen V2 parent contract, and reran the same focused gates after the targeted fixes. |
 | The strengthened outer selection-receipt guard made the synthetic validator fixture fail because it only carried closed flags inside `split_audit` | 1 | The production preparation already writes both layers correctly. Completed the synthetic outer receipt flags and reran the gate; no scientific code or server artifact changed. |
+| First post-activation login-node `ps -p` combined two shell-expanded PID variables into an improper list | 1 | The compute-node portion still proved both queue parents parked and both training children active; no mutation occurred. Reissue login supervisor verification with the exact recorded PIDs separately. |
+| First activation-receipt `scp` timed out after SSH closed the connection at ~20 seconds | 1 | Supervisors were already armed and unaffected; the receipt copy was not confirmed. Do not repeat the same transfer blindly: first probe SSH health, then use a bounded alternative transfer/verification path. |
+| Slim attempt1 map job failed immediately after both current cells completed; all 12 training cells were dependency-skipped and the priority supervisor exited fail-closed | 1 | Original Phase16 queue parents remain SIGSTOP and the terminal STOP remains impossible. Preserve attempt1 immutable states/logs, inspect the map stderr, fix the root cause in a new `slim_matrix_v2` namespace, and never overwrite/reuse the skipped state root. |
+| Slim attempt1 rendered preparation inputs beneath `{output_root}=.../results` instead of the immutable program root | 1 | The map failed in 1.68 seconds before loading cache/GPU data; all training was skipped. Change only config/selection paths to `{runtime_root}`, pass the Slim program root as runner `--runtime-root`, add regression assertions, and prepare entirely new v2 queues/results/shared-state. |
 ## Phase 18 - Terminal pause after corrected evidence completion
 
 Status: implementation_complete_waiting_for_terminal_condition (authorized 2026-08-17)
@@ -3052,7 +3056,7 @@ Frozen scientific scope:
 
 Execution gates:
 
-- [ ] Audit the current data/config/training interfaces and active server queue;
+- [x] Audit the current data/config/training interfaces and active server queue;
   define the smallest common Train-only split and exact reusable artifacts.
 - [x] Implement matrix construction, immutable manifests/configs, selection and
   aggregation receipts, protected-access guards, and regression tests.
@@ -3060,7 +3064,7 @@ Execution gates:
   outcomes, freeze source hashes, and deploy an immutable server snapshot.
 - [x] Park only the two Phase16 queue-parent processes while their current
   training children continue, so no next Phase16 cell can start before Slim.
-- [ ] Amend the armed terminal supervisor so STOP requires successful Slim
+- [x] Amend the armed terminal supervisor so STOP requires successful Slim
   matrix completion and result export; do not interrupt current jobs.
 - [ ] Balance and prioritize the matrix across the two server GPUs, launch it
   automatically immediately after both current cells finish, then resume the

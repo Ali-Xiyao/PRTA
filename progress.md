@@ -7569,3 +7569,14 @@
 - 2026-08-17：全仓 345/345 测试通过，Ruff、compileall、diff whitespace 全绿。随后代码审计发现 finalizer 应比较训练回执的 canonical config SHA 而不是 JSON 文件 SHA；已拆分 `config_hashes`（effective）与 `config_file_hashes`（bytes），并加强派生选择回执外层 protected flags 校验。
 - 2026-08-17：加强 selection receipt 外层保护门后，旧测试 fixture 未同步外层 closed flags；生产 builder 本来已正确写入。已补齐 fixture 并记录该部署前失败。
 - 2026-08-17：最终本地工程门再次通过：全仓 345/345 pytest、全仓 Ruff、9 个变更 Python 文件 format-check、compileall 与 diff whitespace 全绿（仅保留原有 Torch warning）。
+- 2026-08-17：Slim 实现与路线图提交为 `db52b32190b81d5cadcbbcd4c8011158b3c2f436`，已推送 GitHub origin 与本地 bare mirror。
+- 2026-08-17：服务器不可变 source snapshot 已部署到 Phase16 `sources/db52b321...`；archive SHA256=`4ea4ef20e2dc95249cfc426aad8b07de0ab296463d340bbf65828ee4dfbb78df`，传输校验与脚本存在性通过。
+- 2026-08-17：服务器 snapshot focused tests 13/13 与 compileall 通过。随后用真实 cleaned Train/Dev 结构输入成功冻结 `slim_matrix_v1`；命令仅构建 Train-only 派生选择面/config/queue，未启动训练或读取保护结果。
+- 2026-08-17：服务器 preparation audit：80,402 个原 Train rows、24,961 patients；Slim-Dev 16,085 rows/4,992 patients，Inner-Train 64,317 rows/19,969 patients，patient overlap=0，五类均完整。12 cells 双卡估时 92,700/91,500 秒，差 1,200 秒；preparation SHA=`3b1b0a1d...`。
+- 2026-08-17：已生成本地部署 launchers：两条 Slim lane、finalizer、严格优先 supervisor、含 Slim 硬门的新 terminal closeout。优先 supervisor 等各自当前 receipt 与进程退出后独立启卡，双 lane/finalizer PASS 后才 SIGCONT 原 Phase16 parents。
+- 2026-08-17：五个 launcher 已上传并通过服务器 `bash -n`。SHA256：lane3066=`afdf1844...`、lane9929=`8feef496...`、Slim finalizer=`d340b585...`、priority supervisor=`5278d649...`、Slim-aware terminal closeout=`04164da3...`。
+- 2026-08-17：已安全替换旧 terminal PID `725279`，新 Slim-aware terminal PID=`783316`，Slim priority PID=`783317`。首次组合 PID 的只读 `ps` 格式错误，但计算节点复核仍确认 queue parents 为 T、当前 S17/S28 活跃、Slim/STOP 尚未启动生成。
+- 2026-08-17：激活回执首次 scp 在约 20 秒时被服务器关闭连接，未确认落盘；运行中的监督器不受影响。按错误协议先检查 SSH，再换有界传输方式。
+- 2026-08-17：当前 Phase16 S17/S28 已分别于 12:37/12:48 自然完成。Slim attempt1 随即按优先级启动，但 shared matched-hard map 立即失败；lane3066=`COMPLETE_WITH_FAILURES`，lane9929 仅 dependency-skipped，12 个训练均未开始。priority supervisor 按 fail-closed 退出，原 queue parents 仍暂停，未恢复任何其他实验，STOP 未生成。
+- 2026-08-17：定位 attempt1 根因：queue runner 将 `{output_root}` 正确解析为 `slim_matrix_v1/results`，但 builder 错把 configs/selection 也写成该占位符，导致 map 在 1.68 秒内 FileNotFound，尚未读取 cache 或占用训练 GPU。已改为 `{runtime_root}` 且增加精确路径回归测试；将使用全新 v2 namespace。
+- 2026-08-17：v2 路径修复 focused 13/13 与全仓 345/345 测试通过；Ruff、format、compileall、diff whitespace 全绿。科学矩阵/选择规则未改变，仅修复 program-root 与 results-root 渲染边界。

@@ -162,6 +162,18 @@ def test_slim_jobs_balance_all_cells_after_one_shared_map():
         "label_quality_audit": "/quality.json",
     }
     jobs = build_slim_jobs(configs, inputs=inputs)
+    assert "{runtime_root}/configs/Slim-S0-S17.json" in jobs[0]["command"]
+    train_commands = [
+        job["command"] for job in jobs if job["job_id"].startswith("train-")
+    ]
+    assert all(
+        any("{runtime_root}/configs/" in item for item in command)
+        for command in train_commands
+    )
+    assert all(
+        "{runtime_root}/selection/train_only_selection_v1.jsonl" in command
+        for command in train_commands
+    )
     validate_registry({"schema": "prta-cxr.phase16-job-registry.v1", "jobs": jobs})
     lanes = allocate_lanes(jobs)
     assert sum(len(queue) for queue in lanes.values()) == 13
