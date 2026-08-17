@@ -7459,3 +7459,67 @@
 - Armed two durable repair supervisors in tmux. They are waiting on the corresponding main-lane completion files and have created no repair Slurm steps or state files yet, so they do not compete with active training.
 - Verified both main tmux/srun sessions remain alive and both A800s are at 95% utilization on real training.
 - Conservative remaining estimate including the armed repair tail is 81.94 h on 3066 and 80.86 h on 9929, roughly 2026-08-20 evening Beijing time; actual completion may be earlier because completed jobs have run below frozen estimates and training can early-stop.
+- User supplied an independent review of commit `501f4d2` and explicitly
+  authorized Phase16 protocol corrections plus replay of any affected completed
+  cells. Opened Phase 17 in the persistent plan; frozen V2/core/Phase15 evidence
+  remains immutable and formal Phase16 aggregation is paused.
+- Initial triage: the two active plausible-noise 5% children are unaffected and
+  continue; adapted comparator results require honest relabeling but no replay;
+  V1/no-CMCP source-held controls, corrected modality/finding interventions,
+  stronger audits, and an authoritative finalizer require implementation and a
+  new balanced supplemental queue.
+- Implemented the first correction slice: honest internal-comparator metadata,
+  six V1/no-CMCP source-held configs and evaluations, exact same-current older
+  history, explicit compound view-mismatch and token-scramble identities,
+  template-preserving clinical semantic alternatives, three sample-level
+  random-finding salts, and strengthened source/noise/scaling/map/cache audits.
+- First focused tests reached 17 PASS / 2 expected contract-test failures; the
+  failures were stale assertions for the deliberately renamed text condition
+  and expanded Phase16 matrix, not implementation faults. Updated those tests
+  and continue with new fail-closed coverage.
+- Completed the first Phase17 implementation gate. Twenty-two focused tests
+  now pass and targeted Ruff is clean. New tests prove exact same-current older
+  selection, sample-level deterministic three-salt finding permutations,
+  confirmatory V1/no-CMCP source configs, honest internal-comparator identity,
+  source-target leakage rejection, receipt audit binding, and expanded
+  noise/scaling hashes.
+## 2026-08-17 Phase17 correction-overlay test note
+
+- The first post-namespace focused run exposed one stale assertion for the renamed `modality-stress-v2-S*` jobs. This was a test expectation drift, not a runtime defect; the assertion was updated before continuing.
+## 2026-08-17 Phase16 finalizer implementation
+
+- Added `phase16_finalize.py`, CLI script 109, and focused tests.
+- Reconciliation is fail-closed on missing or duplicate PASS states and validates state/output/config/checkpoint/receipt/input-hash/seed/protected-read provenance.
+- Historical failed/skipped attempts and obsolete protocol job IDs remain visible in audit but are excluded from the corrected aggregate.
+- Focused protocol suite now passes 23 tests; the initial Ruff-only formatting findings were corrected with the repository formatter.
+## 2026-08-17 corrected roadmap and focused gate
+
+- Replaced the stale roadmap with a Phase16 correction/replay matrix, authoritative finalization gate, explicit V2/F02 narrative, safety-routing/Pareto/Holm additions, endpoint-latency boundary, and official/external-last policy.
+- Preserved the user boundary that clinician/manual evidence is excluded.
+- The complete focused correction suite passes 23/23 tests; targeted Ruff and format checks pass across all changed scientific modules and tests.
+- A read-only `rg` probe used Unix-style wildcard path arguments that PowerShell rejected as invalid literal paths. No artifact changed; the search was repeated from the repository root with output filtering.
+## 2026-08-17 formal frozen PRIOR safety routing
+
+- Added script 110 and a fail-closed three-Seed V2/B401 routing analyzer.
+- Focused implementation tests and Ruff passed.
+- Ran the authorized Dev-only simulation from six frozen probability receipts; status is `PASS_PHASE16_PRIOR_SAFETY_ROUTING_NO_SELECTION`, with Internal-test/Gold closed and no threshold fitting or model selection.
+- Added the paper-ready Markdown summary under `paper/data/10_Phase16_PRIOR安全路由.md` and updated the roadmap with the measured result and interpretation boundary.
+- A second read-only paper search used a PowerShell-incompatible wildcard path and returned a partial result plus a path error; no file changed, and the search was repeated with explicit directory paths.
+## 2026-08-17 Holm/Pareto correction audit
+
+- The first formal Holm/Pareto artifact correctly computed Holm families but populated the B401 Pareto row from the true-PRIOR routing branch, which intentionally preserves V2. This mislabeled V2 metrics as B401.
+- No model, prediction, or prior statistical result changed. The first `holm_pareto.json` is retained as superseded audit-only evidence and must not enter the paper.
+- Corrected the join to use the matched-hard Invalid→Current-only branch, added a regression test for the exact identity error, and scheduled an immutable v2 rerun.
+## 2026-08-17 Holm/Pareto v3 freeze
+
+- Added script 111, Holm unit tests, B401 identity regression coverage, conservative all-11 sensitivity analysis, and role-family analyses.
+- Authoritative v3 formal output passed with zero protected reads and no model/winner selection.
+- Added paper Markdown `paper/data/11_Phase16_Holm与Pareto.md` and updated the earlier bootstrap note so it no longer says correction is pending.
+- The first path probe followed an outdated `closeout/.../ifusion_paired_bootstrap` location and failed read-only; the exact immutable file was located at the Phase14 root and used unchanged.
+- A combined paper read also referenced a nonexistent `03_效率对比完整结果.md`; the existing files were not modified, and the needed evidence was obtained from the explicit immutable JSON paths.
+## 2026-08-17 final local engineering gate
+
+- Full repository pytest passed 335/335 tests (one unchanged Torch nested-tensor warning).
+- Repository Ruff check, compileall, diff whitespace validation, and targeted formatting checks passed.
+- Engineering preflight passed without opening real/protected data; a fresh synthetic smoke train passed with zero protected access.
+- The whole-repository formatter check remains intentionally unsuitable because numerous untouched legacy files predate the current Ruff formatter; targeted formatting on all 21 changed Python/test files is clean.

@@ -13,12 +13,16 @@ from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.phase16_queue import validate_registry
 from prta_cxr.provenance import resolve_source_commit
 
-REPAIR_GROUPS = {"modality_stress", "source_held_out", "state_pruning"}
+REPAIR_GROUPS = {
+    "modality_stress",
+    "source_held_out",
+    "source_held_out_exploratory",
+    "source_held_out_confirmatory",
+    "state_pruning",
+}
 
 
-def build_repair_registry(
-    registry: dict, *, raw_image_root: Path
-) -> dict[str, object]:
+def build_repair_registry(registry: dict, *, raw_image_root: Path) -> dict[str, object]:
     selected = [
         deepcopy(job)
         for job in validate_registry(registry)
@@ -33,7 +37,7 @@ def build_repair_registry(
             command = list(job["command"])
             command[-1:-1] = ["--raw-image-root", str(raw_image_root)]
             job["command"] = command
-        job["repair_protocol"] = "phase16-known-failure-repair-v1"
+        job["repair_protocol"] = "phase16-scientific-correction-and-repair-v2"
     return {"schema": "prta-cxr.phase16-job-registry.v1", "jobs": selected}
 
 

@@ -53,6 +53,9 @@ def test_nested_train_fractions_are_patient_level_and_nested():
     assert half_audit["train_patients"] == 10
     assert full_audit["train_patients"] == 20
     assert half_audit["patient_disjoint_from_dev"] is True
+    assert half_audit["selected_patient_sha256"]
+    assert half_audit["selected_train_sample_sha256"]
+    assert half_audit["transformed_roster_sha256"]
 
 
 def test_source_filter_is_split_specific_and_audited():
@@ -64,6 +67,8 @@ def test_source_filter_is_split_specific_and_audited():
     }
     assert {row["source"] for row in selected if row["split"] == "dev"} == {"source-a"}
     assert audit["patient_disjoint"] is True
+    assert audit["train_patient_sha256"]
+    assert audit["transformed_roster_sha256"]
 
 
 def test_label_noise_is_exact_deterministic_and_train_only():
@@ -76,6 +81,11 @@ def test_label_noise_is_exact_deterministic_and_train_only():
     assert first == second
     assert audit == second_audit
     assert audit["changed_rows"] == 4
+    assert audit["realized_noise_rate"] == 0.2
+    assert sum(sum(row.values()) for row in audit["transition_matrix"].values()) == 4
+    assert sum(audit["before_label_counts"].values()) == 20
+    assert sum(audit["after_label_counts"].values()) == 20
+    assert audit["transformed_train_roster_sha256"]
     assert all(
         row["progression_label"] == original["progression_label"]
         for row, original in zip(first[-5:], _rows()[-5:], strict=True)

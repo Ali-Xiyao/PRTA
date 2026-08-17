@@ -3225,3 +3225,116 @@
 - Repair queue v2 is balanced to 44,160 vs 44,100 seconds (60-second difference). Queue hashes are `28d7c665...d000` for 3066 and `27a8d4b4...9262` for 9929.
 - Current main-queue checkpoint: 21 PASS, 7 known FAILED, 6 dependency SKIPPED, 2 RUNNING, 41 unseen. Both running jobs are plausible-noise 5% training (S17/S28); each A800 reports 5,995 MiB and 95% utilization.
 - `open_clip_config.json` identifies the exact text dependency as `microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract` with context length 256 and MLP projection.
+
+## 2026-08-17 supplied Phase16 scientific review authority
+
+- The supplied review independently accepts the frozen V2, core ablations,
+  generic F01/F02 comparators, patient-cluster bootstrap implementation, PRIOR
+  interventions, calibration, cached-feature efficiency, scaling, and
+  synthetic label-noise designs; none of those completed results should be
+  invalidated or rerun.
+- Four P0 corrections govern the active work: adapted comparator identity must
+  not claim official reproduction; source-held roll is method-confounded and
+  needs a clean V1/no-CMCP control; several modality/finding interventions need
+  purer definitions or honest labels; and all Phase16 attempts need one
+  fail-closed finalizer.
+- The current main A800 children are plausible-noise 5% training and are not
+  implicated by the review. They should continue unchanged. The armed repair
+  supervisors are still waiting, providing a safe window to replace only the
+  future repair/correction tail after code and queue validation.
+- Completed adapted BioViL-T/CheXRelNet/TILA-style runs remain scientifically
+  useful internal architecture comparators. Their architecture and inputs do
+  not change, so relabeling is sufficient and retraining would add no evidence.
+- Confirmatory source shift will use V1/no-CMCP for full-data reference versus
+  MIMIC-only and CHEX-only at Seeds 17/28/43. Existing symmetric in-batch-roll
+  source-held jobs remain exploratory and must not supply the primary
+  domain-shift claim.
+- Formal aggregation remains paused until corrected identities, intervention
+  gates, replay coverage, and the Phase16 finalizer all pass.
+- Source audit confirms the review exactly: `OFFICIAL_BASELINES` currently
+  emits `official_longitudinal_baseline` with `official_asset_adapted` or
+  `paper_faithful_reimplementation`, while the model families are internal
+  `biovilt_adapted`, `chexrelnet_adapted`, and repository TILA. This is a
+  provenance/identity defect, not a numerical-training defect.
+- Current source-held configs alter both source roster and CMCP from frozen V2
+  matched-hard to symmetric `in_batch_roll_v1`; they are therefore exploratory
+  roll controls. A new V1/no-CMCP family is required for the confirmatory
+  single-factor source-shift comparison.
+- Dataset audit confirms `older` currently selects any same-patient/finding row
+  with a larger interval but does not bind the current examination, and
+  `view_mismatched` explicitly requires another patient as well as a different
+  prior view. The `corrupted` condition reverses token order and negates CLS,
+  so its scientifically accurate identity is token-scrambled PRIOR.
+- Finding-text audit confirms the synonym/semantic-alternative cache drops the
+  frozen `chest x-ray finding:` template, while typo retains it and paraphrase
+  intentionally changes the full sentence. The former must use the fixed
+  template and be named clinical semantic alternative.
+- `F4_random` is keyed only by finding name, so every observation for one
+  finding receives the same substitute. A corrected sample-level condition
+  must hash observation/sample ID plus one of three frozen salts and report the
+  three permutations separately and jointly.
+- The source evaluator checks target identity and checkpoint/receipt hashes but
+  does not yet assert that the target is absent from both configured Train and
+  selection-Dev sources or that the receipt's source-filter audit matches the
+  config. Those fail-closed checks are required.
+- Scaling already records selected patient/sample hashes and label/source
+  counts. Noise audit still needs before/after counts, 5x5 transition matrix,
+  source/finding change counts, and realized rate; map transform receipts need
+  one canonical transformed-roster hash and map target/candidate roster checks.
+- Training currently serializes source/fraction/noise audits inside the generic
+  `fraction_audit` receipt field and binds source/noise hashes in checkpoint
+  inputs. The clean source-held evaluator can therefore validate exact
+  config-to-receipt source identity without changing the training engine's
+  public receipt schema.
+- Phase16 job construction currently treats every non-scaling/source/noise axis
+  as an official baseline and indexes estimates by the old method label. The
+  comparator registry constants and job grouping must be renamed together to
+  avoid a partial provenance fix.
+- Frozen V1 is exactly the V2 architecture/config with prototype alignment
+  retained at 0.01, CMCP weight zero, and `matched_hard_cmcp=false`. The clean
+  source-held configs can be derived from the V2 parent by changing those
+  training-objective fields and setting `prta_v2_variant=V1`; no offline map is
+  then allowed or needed.
+- Existing finalization code provides reusable fail-closed patterns for
+  immutable JSON writes, config/seed/status/protected-read validation,
+  duplicate rejection, and no-selection declarations, but Phase16 needs a
+  generalized job/receipt reconciler because its outputs include training,
+  evaluation, cache, parity, and stress receipts across multiple roots.
+- The frozen manifest schema includes prior/current study IDs, image paths,
+  datetimes, and interval days. A pure older-history condition is therefore
+  implementable fail-closed by requiring the same patient/finding/current
+  study+image and a candidate prior timestamp strictly earlier than the
+  original prior timestamp.
+- Hard-CMCP map entries explicitly carry target and counterfactual sample IDs.
+  The Phase16 map builder can bind both rosters, require both to be subsets of
+  the transformed roster, and verify exact target coverage before writing the
+  immutable payload.
+- Queue terminal state files are the authoritative cross-attempt execution
+  surface: each PASS binds job ID, group, lane, source commit, rendered command,
+  output path/hash checks, return code, and timing. FAILED/SKIPPED attempts are
+  immutable audit evidence but must never supply final metrics.
+- Historical adapted-comparator state files use the old `official_baseline`
+  group and source commit `9372c55...`; the Phase16 finalizer must normalize
+  paper identity by model family/job ID while preserving those exact configs
+  and hashes rather than pretending the files were regenerated.
+## Phase17 finalizer and roadmap evidence (2026-08-17)
+
+- The corrected Phase16 registry now has 87 unique scientific jobs: 51 training cells, including 6 exploratory source-held roll cells and 6 confirmatory V1/no-CMCP source-held cells; corrected modality jobs use a v2 namespace so historical intervention outputs cannot be selected accidentally.
+- The finalizer must accept the legacy `official_baseline` group only as an identity alias for already completed internal comparators, while emitting the corrected `internal_longitudinal_comparator` identity and preserving the executed config/hash provenance.
+- Final reconciliation validates one and only one PASS per corrected job, output hashes, executed config, checkpoint config/input hashes, training receipt/seed/protected-access flags, and retains failed/skipped/legacy attempts outside aggregates.
+- The roadmap must replace the stale claim that true official longitudinal baselines are already in the active queue: current assets are architecture-inspired internal comparators; genuine official ports remain a separate later track after compatibility and asset checks.
+- The strongest no-retraining addition is explicit PRIOR validity routing (Always-V2 vs fallback/abstain), followed by Holm families, F1–ODER–cost Pareto reporting, and true endpoint latency.
+## Frozen PRIOR safety-routing result (2026-08-17)
+
+- Formal no-training routing receipt passed with zero protected reads and no selection; SHA-256 `cdf2c459bda30c5349c46139b7bcaf01545105601fd43c57d82be37621567a20`.
+- Invalid→Current-only produced Macro-F1 `0.412872 ± 0.007166` for matched-hard/null/reversed, versus Always-V2 `0.342056/0.249746/0.191750`.
+- Reversed-PRIOR ODER improved from `0.171324` to `0.035116`; null-PRIOR ODER worsened from `0.024760` to `0.035116`, so the paper must retain the multi-objective tradeoff rather than claim uniform dominance.
+- Abstention coverage is zero when an entire synthetic cohort is invalid; this is a safety boundary, not a classifier performance estimate.
+- The simulation uses known synthetic intervention identity and is explicitly an oracle-detectable upper bound, not a validated real-world invalid-history detector.
+## Holm and F1–ODER Pareto result (2026-08-17)
+
+- Conservative 11-comparison Holm adjustment leaves only A01 and A03 significant for Macro-F1; A02 changes from unadjusted `p=0.040796` to Holm `p=0.367163`.
+- Role-family adjustment is also retained but is explicitly post-result structured analysis, not preregistration: A02 is `p=0.040796` in A01/A02/A03 only.
+- V2 and F02 are the F1–ODER Pareto front; F01 and Current-only are dominated on these two dimensions.
+- Cost is deliberately marked pending rather than joining heterogeneous or cached-only timings.
+- Authoritative corrected statistics artifact is `holm_pareto_v3.json`, SHA-256 `5f23cb6ad7ac676e9e673a879fc09e4719cb915ff0a2e2b6a0867442faadad03`.

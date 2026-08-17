@@ -33,6 +33,8 @@ Close-out error log:
 
 | Error | Attempt | Resolution |
 |---|---:|---|
+| First Phase17 focused test run retained the old modality synonym key and 45-config/75-job matrix expectations | 1 | The implementation intentionally changes these public identities and adds six V1 source-held configs plus evaluations. Update the tests to the corrected semantic-alternative key and 51-config/87-job matrix, then rerun; no server or scientific artifact was touched. |
+| First Phase17 Ruff gate found two overlength comprehensions and formatter drift in nine modified files | 1 | Wrap the two expressions explicitly, then apply only Ruff's mechanical formatter to the enumerated source/test files before repeating lint and tests. No runtime or server artifact was touched. |
 | A planning-status patch used shortened checklist wording that did not match the wrapped text already on disk | 1 | `apply_patch` rejected the patch atomically; reread the current header and patched the exact wrapped lines without changing scientific files. |
 
 ## 2026-08-14 V2 candidate-freeze confirmation program
@@ -1911,6 +1913,71 @@ Status: formal-candidate freeze complete; stopped before protected evaluation;
 | Adopt Luna-primary five-class admission | The user accepted the Sol evidence and explicitly authorized full labeling; non-`Unclear` Luna outputs are retained regardless of rule disagreement. |
 | Do not call Luna-only test labels Gold | Gold status requires human confirmation of every selected row; a sampled accuracy audit validates Silver quality but does not convert unreviewed labels into Gold. |
 | Treat the 2026-08-03 approval as full-program formal authority | The user explicitly requested code completion plus formal execution under both paper documents until terminal completion, with a 20-minute recurring monitor; internal sequencing and GO/HOLD/STOP gates remain binding. |
+
+## Phase 17 - Phase16 scientific-protocol correction and selective replay
+
+Status: in_progress (authorized 2026-08-17)
+
+Goal: apply the supplied review to the active Phase16 program without changing
+the frozen V2/core-ablation evidence, repair every scientifically ambiguous
+Phase16 definition, rerun only affected scientific cells, and update the paper
+roadmap before final aggregation.
+
+- [x] Audit the review claims against the exact local source, frozen Phase16
+  queues, active server jobs, and repair supervisors; record which completed
+  results remain valid and which cells require corrected replay.
+- [x] Rename all internally adapted longitudinal comparators from
+  official/paper-faithful language to style/inspired internal
+  reimplementations in registries, receipts, tables, and paper text. Preserve
+  their already-completed metrics because the architecture/inputs do not
+  change.
+- [x] Add a clean V1 source-held-out protocol (prototype retained, CMCP off)
+  for MIMIC-only and CHEX-only, three fixed Seeds each, plus fail-closed target
+  source/config/receipt checks and target-Dev evaluation. Retain the current
+  symmetric roll protocol only as exploratory evidence.
+- [x] Correct modality definitions before their formal replay: exact
+  same-current older-PRIOR eligibility or an honest alternate-longer-interval
+  label; explicit wrong-patient+view-mismatch identity; token-scrambled rather
+  than image-corrupted identity; prompt-template-preserving clinical semantic
+  alternatives; and sample-level wrong-finding permutations with three frozen
+  salts.
+- [x] Strengthen scaling/noise/map/cache receipts with transformed roster,
+  selected patient/sample, config, class/source/finding, realized-noise, and
+  transition-matrix audits where applicable.
+- [x] Implement a Phase16 finalizer that reconciles original/retry/repair/new
+  correction roots by scientific job ID, validates hashes and protected-read
+  guards, rejects duplicate/missing PASS cells, excludes exploratory protocols
+  from confirmatory tables, and emits
+  `PASS_PHASE16_FINAL_NO_SELECTION_AGGREGATE` with no winner selection.
+- [x] Add the no-retraining PRIOR-validity routing simulation from frozen V2
+  and Current-only Dev predictions, explicitly labeling known synthetic
+  intervention identity as an oracle-detectable routing upper bound with no
+  outcome-adaptive threshold tuning.
+- [x] Add V2/F02 multi-objective Pareto and Holm-family reporting from the
+  already frozen aggregate surfaces without model reselection.
+- [ ] Build and freeze a corrected supplemental queue, balance it across the
+  two A800s, replace only the waiting repair supervisors if required, and do
+  not interrupt the two active unaffected main-queue training children.
+- [x] Update `paper/07_后续实验路线图_CN.md` and related paper identity text to
+  distinguish completed, corrected/replay, exploratory, official-method,
+  external, safety-routing, and end-to-end-efficiency evidence.
+- [ ] Run focused and repository-wide tests, remote preflight, immutable queue
+  validation, and record the final server launch/ETA without reading protected
+  outcomes.
+
+Stop rules:
+
+- Frozen V2, the 33-cell core ablation/fusion matrix, PRIOR diagnostics, and
+  completed Phase15 trust evidence must not be modified or rerun.
+- Do not kill or restart an active unaffected GPU child. Queue/supervisor
+  changes may occur only at a terminal boundary or while a supervisor is still
+  waiting and owns no Slurm step.
+- Internal-test, Gold, patient-level predictions, and protected outcomes remain
+  structurally unreachable.
+- A completed adapted comparator is relabeled, not retrained, unless the model
+  architecture or preprocessing actually changes.
+- No Phase16 paper aggregate may be produced until the authoritative finalizer
+  and corrected protocol gates pass.
 
 ## Errors Encountered
 | The first Wave046 four-GPU remote status command let local PowerShell expand the remote `$HOME`, producing a nonexistent `C:UsersAdmin/...` path | 1 | No remote scientific state changed. Retry with a single-quoted SSH payload so `$HOME/miniforge3/envs/prta-cxr311/bin/python` is expanded only by the canonical server shell. |

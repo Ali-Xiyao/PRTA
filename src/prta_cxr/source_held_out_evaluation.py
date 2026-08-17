@@ -18,6 +18,7 @@ from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256, sha256_file
 from prta_cxr.data.token_cache import Block8CacheIndex
 from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
 from prta_cxr.evaluation.progression import classification_metrics
+from prta_cxr.experiments import filter_train_dev_sources
 from prta_cxr.provenance import resolve_source_commit
 from prta_cxr.training.engine import build_train_model
 from prta_cxr.vision.biomedclip import (
@@ -40,6 +41,40 @@ def target_source_rows(
     if {str(row["source"]) for row in selected} != {target_source}:
         raise ValueError("target-source filter drift")
     return selected
+
+
+def validate_source_holdout_sources(
+    config: Mapping[str, Any], *, target_source: str
+) -> tuple[list[str], list[str]]:
+    data_config = dict(config.get("data", {}))
+    train_sources = list(map(str, data_config.get("train_sources", ())))
+    dev_sources = list(map(str, data_config.get("dev_sources", ())))
+    if not train_sources or not dev_sources:
+        raise ValueError("source-held-out config source rosters are missing")
+    if target_source in train_sources:
+        raise ValueError("target source leaked into source-held-out Train")
+    if target_source in dev_sources:
+        raise ValueError("target source leaked into selection Dev")
+    if set(train_sources) != set(dev_sources) or len(set(train_sources)) != 1:
+        raise ValueError("source-held-out Train/selection-Dev source drift")
+    return train_sources, dev_sources
+
+
+def validate_source_filter_receipt(
+    receipt: Mapping[str, Any],
+    checkpoint_hashes: Mapping[str, Any],
+    *,
+    expected_source_audit: Mapping[str, Any],
+) -> None:
+    recorded_source_audit = dict(
+        dict(receipt.get("fraction_audit", {})).get("source_filter", {})
+    )
+    if recorded_source_audit != dict(expected_source_audit):
+        raise ValueError("training receipt source-filter audit drift")
+    if checkpoint_hashes.get("source_filter_audit") != canonical_sha256(
+        expected_source_audit
+    ):
+        raise ValueError("checkpoint source-filter audit hash drift")
 
 
 @torch.no_grad()
@@ -107,6 +142,9 @@ def source_held_out_evaluation_main(argv: Sequence[str] | None = None) -> int:
         raise ValueError("checkpoint is not a Phase16 source-held-out run")
     if str(config.get("source_held_out_target")) != args.target_source:
         raise ValueError("target-source identity drift")
+    train_sources, dev_sources = validate_source_holdout_sources(
+        config, target_source=args.target_source
+    )
     receipt = json.loads(args.training_receipt.read_text(encoding="utf-8"))
     if receipt.get("status") != "PASS_TRAINING_FINISHED":
         raise ValueError("training receipt is not terminal PASS")
@@ -127,9 +165,16 @@ def source_held_out_evaluation_main(argv: Sequence[str] | None = None) -> int:
     for name, value in expected_base.items():
         if checkpoint_hashes.get(name) != value:
             raise ValueError(f"source-held-out input hash mismatch: {name}")
-    rows = target_source_rows(
-        read_jsonl(args.split_manifest), target_source=args.target_source
+    all_rows = read_jsonl(args.split_manifest)
+    _, expected_source_audit = filter_train_dev_sources(
+        all_rows, train_sources=train_sources, dev_sources=dev_sources
     )
+    validate_source_filter_receipt(
+        receipt,
+        checkpoint_hashes,
+        expected_source_audit=expected_source_audit,
+    )
+    rows = target_source_rows(all_rows, target_source=args.target_source)
     cache = Block8CacheIndex(args.cache_root)
     dataset = PRTAFeatureDataset(
         rows,
@@ -160,9 +205,14 @@ def source_held_out_evaluation_main(argv: Sequence[str] | None = None) -> int:
         "source_commit": resolve_source_commit(Path(__file__).resolve().parents[2]),
         "experiment_id": config["experiment_id"],
         "seed": int(config["seed"]),
-        "training_sources": list(config["data"]["train_sources"]),
-        "selection_dev_sources": list(config["data"]["dev_sources"]),
+        "training_sources": train_sources,
+        "selection_dev_sources": dev_sources,
         "target_source": args.target_source,
+        "source_held_out_protocol": str(
+            config.get("source_held_out_protocol", "legacy_unspecified")
+        ),
+        "source_filter_audit": expected_source_audit,
+        "source_filter_audit_sha256": canonical_sha256(expected_source_audit),
         "target_source_used_for_selection": False,
         "rows": len(predictions),
         "metrics": metrics,

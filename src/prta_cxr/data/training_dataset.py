@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Mapping, Sequence
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -45,9 +46,12 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             "matched_wrong",
             "matched_hard",
             "older",
+            "older_same_current",
             "reversed",
             "view_mismatched",
+            "wrong_patient_view_mismatched",
             "corrupted",
+            "token_scrambled",
         }:
             raise ContractError("unsupported dataset prior intervention")
         self.prior_intervention = prior_intervention
@@ -137,7 +141,13 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         )
         self.special_prior_indices = (
             self._special_prior_indices(self.prior_intervention)
-            if self.prior_intervention in {"older", "view_mismatched"}
+            if self.prior_intervention
+            in {
+                "older",
+                "older_same_current",
+                "view_mismatched",
+                "wrong_patient_view_mismatched",
+            }
             else list(range(len(self.rows)))
         )
         self.special_prior_coverage = sum(
@@ -213,7 +223,48 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
     def _special_prior_indices(self, intervention: str) -> list[int]:
         result = []
         for index, row in enumerate(self.rows):
-            if intervention == "older":
+            if intervention == "older_same_current":
+                try:
+                    row_prior_time = datetime.fromisoformat(
+                        str(row["prior_datetime"]).replace("Z", "+00:00")
+                    ).timestamp()
+                    row_current_time = datetime.fromisoformat(
+                        str(row["current_datetime"]).replace("Z", "+00:00")
+                    ).timestamp()
+                except (KeyError, TypeError, ValueError):
+                    row_prior_time = row_current_time = -1.0
+                candidates = []
+                for candidate, value in enumerate(self.rows):
+                    try:
+                        candidate_prior_time = datetime.fromisoformat(
+                            str(value["prior_datetime"]).replace("Z", "+00:00")
+                        ).timestamp()
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    same_current = (
+                        str(value.get("current_study_id", ""))
+                        == str(row.get("current_study_id", ""))
+                        and str(value.get("current_image_path", ""))
+                        == str(row.get("current_image_path", ""))
+                        and bool(str(row.get("current_study_id", "")))
+                    )
+                    if (
+                        candidate != index
+                        and same_current
+                        and str(value["patient_id_hash"]) == str(row["patient_id_hash"])
+                        and str(value["finding"]) == str(row["finding"])
+                        and str(value["prior_image_path"])
+                        != str(row["prior_image_path"])
+                        and candidate_prior_time < row_prior_time < row_current_time
+                    ):
+                        candidates.append(candidate)
+                candidates.sort(
+                    key=lambda candidate: (
+                        str(self.rows[candidate].get("prior_datetime", "")),
+                        str(self.rows[candidate]["sample_id"]),
+                    )
+                )
+            elif intervention == "older":
                 candidates = [
                     candidate
                     for candidate, value in enumerate(self.rows)
@@ -266,7 +317,12 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             prior_row = self.rows[self.wrong_prior_indices[index]]
             prior_source = str(prior_row["source"])
             prior_path = str(prior_row["prior_image_path"])
-        elif self.prior_intervention in {"older", "view_mismatched"}:
+        elif self.prior_intervention in {
+            "older",
+            "older_same_current",
+            "view_mismatched",
+            "wrong_patient_view_mismatched",
+        }:
             prior_row = self.rows[self.special_prior_indices[index]]
             prior_source = str(prior_row["source"])
             prior_path = str(prior_row["prior_image_path"])
@@ -300,7 +356,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         features = self.cache.get_many(keys).float()
         if self.prior_intervention == "null":
             features[0].zero_()
-        elif self.prior_intervention == "corrupted":
+        elif self.prior_intervention in {"corrupted", "token_scrambled"}:
             features[0, 1:] = features[0, 1:].flip(0)
             features[0, 0].neg_()
         query_finding = (

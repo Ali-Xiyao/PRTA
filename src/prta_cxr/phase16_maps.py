@@ -98,6 +98,16 @@ def build_phase16_map_main(argv: Sequence[str] | None = None) -> int:
         chunk_size=args.match_chunk_size,
         device=args.device,
     )
+    transformed_roster = sorted(str(row["sample_id"]) for row in rows)
+    transformed_ids = set(transformed_roster)
+    target_ids = [str(entry["target_sample_id"]) for entry in entries]
+    candidate_ids = [str(entry["counterfactual_sample_id"]) for entry in entries]
+    if len(target_ids) != len(set(target_ids)):
+        raise ValueError("Phase16 map contains duplicate targets")
+    if set(target_ids) != transformed_ids:
+        raise ValueError("Phase16 map target roster is incomplete")
+    if not set(candidate_ids).issubset(transformed_ids):
+        raise ValueError("Phase16 map candidate is outside transformed roster")
     payload = {
         "schema": "prta-cxr.matched-hard-prior-map.v1",
         "status": "PASS_PHASE16_TRANSFORMED_MATCHED_HARD_MAP",
@@ -107,6 +117,11 @@ def build_phase16_map_main(argv: Sequence[str] | None = None) -> int:
         "config_sha256": sha256_file(args.config),
         "transform_audit": transform_audit,
         "transform_audit_sha256": canonical_sha256(transform_audit),
+        "transformed_roster_sha256": canonical_sha256(transformed_roster),
+        "target_roster_sha256": canonical_sha256(sorted(target_ids)),
+        "candidate_roster_sha256": canonical_sha256(sorted(candidate_ids)),
+        "target_roster_complete": True,
+        "candidate_roster_subset": True,
         "matching": {
             "required_different_patient": True,
             "required_different_label": True,

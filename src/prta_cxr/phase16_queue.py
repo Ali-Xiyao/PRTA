@@ -17,9 +17,12 @@ GROUPS = (
     "modality_stress",
     "state_pruning",
     "source_held_out",
+    "source_held_out_exploratory",
+    "source_held_out_confirmatory",
     "data_scaling",
     "label_noise",
     "official_baseline",
+    "internal_longitudinal_comparator",
 )
 TERMINAL = {"PASS", "FAILED", "SKIPPED"}
 

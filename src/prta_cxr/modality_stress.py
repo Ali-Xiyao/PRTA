@@ -7,6 +7,7 @@ import os
 from collections.abc import Callable, Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
+from statistics import mean
 from typing import Any
 
 import torch
@@ -34,18 +35,23 @@ PRIOR_CONDITIONS = {
     "P2_random": "random",
     "P3_same_finding_wrong": "matched_wrong",
     "P4_matched_hard": "matched_hard",
-    "P5_older": "older",
+    "P5_older_same_current": "older_same_current",
     "P6_reversed": "reversed",
-    "P7_view_mismatched": "view_mismatched",
-    "P8_corrupted": "corrupted",
+    "P7_wrong_patient_view_mismatched": "wrong_patient_view_mismatched",
+    "P8_token_scrambled": "token_scrambled",
+}
+RANDOM_FINDING_CONDITIONS = {
+    "F4_random_perm_17": "prta-cxr-sample-random-finding-S17-v2",
+    "F4_random_perm_28": "prta-cxr-sample-random-finding-S28-v2",
+    "F4_random_perm_43": "prta-cxr-sample-random-finding-S43-v2",
 }
 FINDING_CONDITIONS = (
     "F0_correct",
     "F1_zero",
     "F2_generic",
     "F3_wrong",
-    "F4_random",
-    "F5_synonym",
+    *RANDOM_FINDING_CONDITIONS,
+    "F5_clinical_semantic_alternative",
     "F6_typo",
     "F7_paraphrase",
 )
@@ -167,6 +173,12 @@ def _predict(
                     "probabilities": probabilities[index].tolist(),
                     "source": str(batch["source"][index]),
                     "finding": str(batch["finding"][index]),
+                    "special_prior_available": bool(
+                        batch["special_prior_available"][index]
+                    ),
+                    "special_prior_sample_id": str(
+                        batch["special_prior_sample_id"][index]
+                    ),
                 }
             )
     return rows
@@ -190,20 +202,26 @@ def _finding_transform(
         if condition == "F1_zero":
             return torch.zeros_like(values)
         output = []
-        for finding in map(str, batch["finding"]):
+        for finding, sample_id in zip(
+            map(str, batch["finding"]), map(str, batch["sample_id"]), strict=True
+        ):
             if condition == "F2_generic":
                 value = intervention_embeddings["generic"][finding]
             elif condition == "F3_wrong":
                 value = base_embeddings[wrong[finding]]
-            elif condition == "F4_random":
+            elif condition in RANDOM_FINDING_CONDITIONS:
                 candidates = [name for name in findings if name != finding]
-                digest = hashlib.sha256(f"random-finding|{finding}".encode()).digest()
+                digest = hashlib.sha256(
+                    f"{RANDOM_FINDING_CONDITIONS[condition]}|{sample_id}".encode()
+                ).digest()
                 value = base_embeddings[
                     candidates[int.from_bytes(digest[:8], "big") % len(candidates)]
                 ]
             else:
                 key = {
-                    "F5_synonym": "synonym",
+                    "F5_clinical_semantic_alternative": (
+                        "clinical_semantic_alternative"
+                    ),
                     "F6_typo": "typo",
                     "F7_paraphrase": "paraphrase",
                 }[condition]
@@ -285,6 +303,34 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
     intervention_value = torch.load(
         args.intervention_text_cache, map_location="cpu", weights_only=True
     )
+    if intervention_value.get("schema") != "prta-cxr.modality-finding-text-cache.v2":
+        raise ValueError("modality finding cache is not corrected v2")
+    if (
+        intervention_value.get("split_manifest_sha256")
+        != input_hashes["split_manifest"]
+    ):
+        raise ValueError("modality finding cache split identity drift")
+    required_text_conditions = {
+        "generic",
+        "clinical_semantic_alternative",
+        "typo",
+        "paraphrase",
+    }
+    if set(intervention_value.get("embeddings", {})) != required_text_conditions:
+        raise ValueError("modality finding cache condition roster drift")
+    corruption_roots = {
+        "blur": args.blur_cache,
+        "contrast": args.contrast_cache,
+        "jpeg": args.jpeg_cache,
+    }
+    for condition, root in corruption_roots.items():
+        manifest_path = root / "cache_manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        encoder = dict(manifest.get("encoder", {}))
+        if encoder.get("modality_condition") != condition:
+            raise ValueError(f"current corruption cache condition drift: {condition}")
+        if encoder.get("split_manifest_sha256") != input_hashes["split_manifest"]:
+            raise ValueError(f"current corruption cache split drift: {condition}")
     conditions: dict[str, dict[str, Any]] = {}
     prediction_blocks: dict[str, list[dict[str, Any]]] = {}
     baseline_rows = None
@@ -308,8 +354,21 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
             "status": "PASS",
             "metrics": classification_metrics(predictions, labels=PROGRESSION_LABELS),
             "coverage": dataset.special_prior_coverage
-            if intervention in {"older", "view_mismatched"}
+            if intervention in {"older_same_current", "wrong_patient_view_mismatched"}
             else 1.0,
+            "condition_identity": {
+                "P5_older_same_current": (
+                    "same patient, finding, current study/image; "
+                    "candidate prior time precedes original prior time"
+                ),
+                "P7_wrong_patient_view_mismatched": (
+                    "different-patient and different-prior-view compound stress"
+                ),
+                "P8_token_scrambled": (
+                    "cached PRIOR token-order reversal plus CLS sign inversion; "
+                    "not image-level corruption"
+                ),
+            }.get(condition, intervention),
         }
     if baseline_rows is None:  # pragma: no cover
         raise RuntimeError("missing modality baseline")
@@ -334,6 +393,11 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
         conditions[condition] = {
             "status": "PASS",
             "metrics": classification_metrics(predictions, labels=PROGRESSION_LABELS),
+            "condition_identity": (
+                "sample-level wrong-finding permutation"
+                if condition in RANDOM_FINDING_CONDITIONS
+                else condition
+            ),
         }
     current_caches = {
         "C0_original": None,
@@ -381,6 +445,52 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
             }
         )
         value["comparison_to_P0_true"] = comparison
+        if condition in {
+            "P5_older_same_current",
+            "P7_wrong_patient_view_mismatched",
+        }:
+            eligible = [
+                row
+                for row in prediction_blocks[condition]
+                if row["special_prior_available"]
+            ]
+            eligible_ids = {str(row["observation_id"]) for row in eligible}
+            eligible_baseline = [
+                row
+                for row in baseline_rows
+                if str(row["observation_id"]) in eligible_ids
+            ]
+            value["eligible_subset"] = {
+                "rows": len(eligible),
+                "roster_sha256": canonical_sha256(sorted(eligible_ids)),
+                "metrics": (
+                    classification_metrics(eligible, labels=PROGRESSION_LABELS)
+                    if eligible
+                    else None
+                ),
+                "comparison_to_P0_true": (
+                    compare_condition_rows(eligible_baseline, eligible)
+                    if eligible
+                    else None
+                ),
+            }
+    random_conditions = [conditions[name] for name in RANDOM_FINDING_CONDITIONS]
+    random_summary = {
+        "members": list(RANDOM_FINDING_CONDITIONS),
+        "salts": dict(RANDOM_FINDING_CONDITIONS),
+        "mean_macro_f1": mean(
+            float(value["metrics"]["ordinary"]["macro_f1"])
+            for value in random_conditions
+        ),
+        "mean_prediction_flip_rate": mean(
+            float(value["comparison_to_P0_true"]["prediction_flip_rate"])
+            for value in random_conditions
+        ),
+        "mean_true_label_probability_drop": mean(
+            float(value["comparison_to_P0_true"]["mean_true_label_probability_drop"])
+            for value in random_conditions
+        ),
+    }
     staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
     staging.mkdir(parents=True, exist_ok=False)
     blocks_receipt = {}
@@ -393,7 +503,7 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
             "rows": len(predictions),
         }
     payload = {
-        "schema": "prta-cxr.complete-modality-stress.v1",
+        "schema": "prta-cxr.complete-modality-stress.v2",
         "status": "PASS_MODALITY_STRESS_WITH_DATA_GATED_OCCLUSIONS",
         "created_at": datetime.now(UTC).isoformat(),
         "source_commit": resolve_source_commit(Path(__file__).resolve().parents[2]),
@@ -410,6 +520,9 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
             "jpeg_cache_manifest": sha256_file(args.jpeg_cache / "cache_manifest.json"),
         },
         "conditions": conditions,
+        "condition_groups": {
+            "sample_level_random_finding_three_permutations": random_summary
+        },
         "prediction_blocks": blocks_receipt,
         "cleaned_split_freeze_sha256": cleaned["receipt_sha256"],
         "data_gated_conditions": [

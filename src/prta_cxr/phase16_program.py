@@ -19,10 +19,25 @@ SEEDS = (17, 28, 43)
 FRACTIONS = (0.10, 0.25, 0.50, 0.75)
 NOISE_RATES = (0.05, 0.10, 0.20)
 NOISE_FAMILIES = ("symmetric", "plausible")
-OFFICIAL_BASELINES = {
-    "BioViLT": ("biovilt_adapted", 15000, 0.0),
-    "CheXRelNet": ("chexrelnet_adapted", 12000, 0.0),
-    "TILAOfficial": ("tila", 15000, 0.10),
+INTERNAL_LONGITUDINAL_COMPARATORS = {
+    "BioViLT": {
+        "family": "biovilt_adapted",
+        "estimated_seconds": 15000,
+        "inversion_weight": 0.0,
+        "method_label": "BioViL-T-style Temporal Transformer",
+    },
+    "CheXRelNet": {
+        "family": "chexrelnet_adapted",
+        "estimated_seconds": 12000,
+        "inversion_weight": 0.0,
+        "method_label": "CheXRelNet-inspired Global Relation Network",
+    },
+    "TILAOfficial": {
+        "family": "tila",
+        "estimated_seconds": 15000,
+        "inversion_weight": 0.10,
+        "method_label": "TILA-style + Temporal Inversion",
+    },
 }
 
 
@@ -64,8 +79,9 @@ def build_phase16_configs(
             configs[experiment_id] = config
     for train_source in sources:
         source_tag = "CHEX" if "chex" in train_source.lower() else "MIMIC"
+        target_source = next(source for source in sources if source != train_source)
         for seed in SEEDS:
-            experiment_id = f"P16-SOURCE-{source_tag}-S{seed}"
+            experiment_id = f"P16-SOURCE-ROLL-{source_tag}-S{seed}"
             config = _v2_config(base, experiment_id=experiment_id, seed=seed)
             config["data"].update(
                 {
@@ -81,15 +97,40 @@ def build_phase16_configs(
             cmcp["matching"] = "in_batch_roll_v1"
             config["cmcp"] = cmcp
             config["phase16_axis"] = "source_held_out"
+            config["source_held_out_protocol"] = "exploratory_v2_in_batch_roll_v1"
+            config["source_held_out_role"] = "exploratory"
             config["phase16_protocol_amendment"] = (
                 "source-held-out uses symmetric in-batch CMCP because strict "
                 "different-patient/different-label maps are not complete after "
                 "single-source filtering"
             )
-            config["source_held_out_target"] = next(
-                source for source in sources if source != train_source
-            )
+            config["source_held_out_target"] = target_source
             configs[experiment_id] = config
+            v1_experiment_id = f"P16-SOURCE-V1-{source_tag}-S{seed}"
+            v1 = _v2_config(base, experiment_id=v1_experiment_id, seed=seed)
+            v1["prta_v2_variant"] = "V1"
+            v1["data"].update(
+                {
+                    "train_fraction": 1.0,
+                    "train_sources": [train_source],
+                    "dev_sources": [train_source],
+                }
+            )
+            v1_components = dict(v1["model"].get("components", {}))
+            v1_components["matched_hard_cmcp"] = False
+            v1["model"]["components"] = v1_components
+            v1_weights = dict(v1.get("loss_weights", {}))
+            v1_weights["prototype_alignment"] = 0.01
+            v1_weights["cmcp"] = 0.0
+            v1["loss_weights"] = v1_weights
+            v1_cmcp = dict(v1.get("cmcp", {}))
+            v1_cmcp["matching"] = "in_batch_roll_v1"
+            v1["cmcp"] = v1_cmcp
+            v1["phase16_axis"] = "source_held_out"
+            v1["source_held_out_protocol"] = "confirmatory_v1_no_cmcp_v1"
+            v1["source_held_out_role"] = "confirmatory"
+            v1["source_held_out_target"] = target_source
+            configs[v1_experiment_id] = v1
     for family in NOISE_FAMILIES:
         for rate in NOISE_RATES:
             for seed in SEEDS:
@@ -105,31 +146,32 @@ def build_phase16_configs(
                 }
                 config["phase16_axis"] = "label_noise"
                 configs[experiment_id] = config
-    for method, (family, _, inversion_weight) in OFFICIAL_BASELINES.items():
+    for method, specification in INTERNAL_LONGITUDINAL_COMPARATORS.items():
         for seed in SEEDS:
             experiment_id = f"P16-{method}-S{seed}"
             config = _v2_config(base, experiment_id=experiment_id, seed=seed)
-            config["model"]["family"] = family
+            config["model"]["family"] = str(specification["family"])
             config["model"].pop("components", None)
             config["cmcp"] = {"matching": "in_batch_roll_v1"}
             config["loss_weights"] = {
                 "classification": 1.0,
                 "alignment": 0.0,
                 "state": 0.0,
-                "inversion": inversion_weight,
+                "inversion": float(specification["inversion_weight"]),
                 "cmcp": 0.0,
                 "prototype_alignment": 0.0,
                 "direction_margin": 0.0,
                 "opposite_direction_cost": 0.0,
                 "branch_decorrelation": 0.0,
             }
-            config["phase16_axis"] = "official_longitudinal_baseline"
-            config["method_provenance"] = {
-                "BioViLT": "official_asset_adapted",
-                "CheXRelNet": "paper_faithful_reimplementation",
-                "TILAOfficial": "paper_faithful_reimplementation",
-            }[method]
-            config["method_label"] = method
+            config["phase16_axis"] = "internal_longitudinal_comparator"
+            config["method_key"] = method
+            config["method_provenance"] = (
+                "architecture_inspired_internal_reimplementation"
+            )
+            config["method_label"] = str(specification["method_label"])
+            config["official_implementation"] = False
+            config["official_checkpoint"] = False
             configs[experiment_id] = config
     return configs
 
@@ -234,14 +276,19 @@ def build_phase16_jobs(
             group = "data_scaling"
         elif axis == "source_held_out":
             estimate = 10500
-            group = "source_held_out"
+            role = str(config.get("source_held_out_role", "exploratory"))
+            group = f"source_held_out_{role}"
         elif axis == "label_noise":
             estimate = 18600
             group = "label_noise"
-        else:
-            method = str(config["method_label"])
-            estimate = OFFICIAL_BASELINES[method][1]
-            group = "official_baseline"
+        elif axis == "internal_longitudinal_comparator":
+            method = str(config["method_key"])
+            estimate = int(
+                INTERNAL_LONGITUDINAL_COMPARATORS[method]["estimated_seconds"]
+            )
+            group = "internal_longitudinal_comparator"
+        else:  # pragma: no cover - program construction invariant
+            raise ValueError(f"unsupported Phase16 training axis: {axis}")
         config_path = f"{remote_program_root}/configs/{experiment_id}.json"
         jobs.append(
             {
@@ -388,11 +435,12 @@ def build_phase16_jobs(
         if config.get("phase16_axis") != "source_held_out":
             continue
         target = str(config["source_held_out_target"])
+        role = str(config.get("source_held_out_role", "exploratory"))
         output = f"{{output_root}}/source_held_out/{experiment_id}"
         jobs.append(
             {
                 "job_id": f"evaluate-{experiment_id}",
-                "group": "source_held_out",
+                "group": f"source_held_out_{role}",
                 "estimated_seconds": 300,
                 "queue_priority": 100,
                 "dependencies": [f"train-{experiment_id}"],
@@ -430,10 +478,10 @@ def build_phase16_jobs(
                 ],
             }
         )
-    modality_text = "{output_root}/assets/modality/finding_interventions.pt"
+    modality_text = "{output_root}/assets/modality_v2/finding_interventions.pt"
     jobs.append(
         {
-            "job_id": "modality-text-cache",
+            "job_id": "modality-text-cache-v2",
             "group": "modality_stress",
             "estimated_seconds": 600,
             "queue_priority": 0,
@@ -455,8 +503,8 @@ def build_phase16_jobs(
     corruption_jobs = []
     corruption_paths = {}
     for condition in ("blur", "contrast", "jpeg"):
-        job_id = f"modality-current-cache-{condition}"
-        path = f"{{output_root}}/assets/modality/current_{condition}"
+        job_id = f"modality-current-cache-v2-{condition}"
+        path = f"{{output_root}}/assets/modality_v2/current_{condition}"
         corruption_jobs.append(job_id)
         corruption_paths[condition] = path
         jobs.append(
@@ -490,14 +538,14 @@ def build_phase16_jobs(
         )
     for seed in SEEDS:
         asset = dict(inputs["v2"][str(seed)])
-        output = f"{{output_root}}/modality_stress/S{seed}"
+        output = f"{{output_root}}/modality_stress_v2/S{seed}"
         jobs.append(
             {
-                "job_id": f"modality-stress-S{seed}",
+                "job_id": f"modality-stress-v2-S{seed}",
                 "group": "modality_stress",
                 "estimated_seconds": 5400,
                 "queue_priority": 10,
-                "dependencies": ["modality-text-cache", *corruption_jobs],
+                "dependencies": ["modality-text-cache-v2", *corruption_jobs],
                 "command": [
                     "{python}",
                     "{source}/scripts/106_evaluate_modality_stress.py",

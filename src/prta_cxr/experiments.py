@@ -47,6 +47,32 @@ def filter_train_dev_sources(
         "dev_sample_sha256": canonical_sha256(
             sorted(str(row["sample_id"]) for row in dev)
         ),
+        "train_patient_sha256": canonical_sha256(sorted(train_patients)),
+        "dev_patient_sha256": canonical_sha256(sorted(dev_patients)),
+        "train_label_counts": dict(
+            sorted(Counter(str(row["progression_label"]) for row in train).items())
+        ),
+        "dev_label_counts": dict(
+            sorted(Counter(str(row["progression_label"]) for row in dev).items())
+        ),
+        "train_finding_counts": dict(
+            sorted(Counter(str(row.get("finding", "unknown")) for row in train).items())
+        ),
+        "dev_finding_counts": dict(
+            sorted(Counter(str(row.get("finding", "unknown")) for row in dev).items())
+        ),
+        "transformed_roster_sha256": canonical_sha256(
+            sorted(
+                (
+                    str(row["sample_id"]),
+                    str(row["split"]),
+                    str(row["source"]),
+                    str(row.get("finding", "unknown")),
+                    str(row["progression_label"]),
+                )
+                for row in selected
+            )
+        ),
         "patient_disjoint": True,
     }
     return selected, audit
@@ -82,7 +108,13 @@ def inject_train_label_noise(
         "New": ("Worse",),
         "Stable": ("Improved", "Worse"),
     }
+    before_counts = Counter(str(row["progression_label"]) for row in train)
     changes = []
+    changed_by_source: Counter[str] = Counter()
+    changed_by_finding: Counter[str] = Counter()
+    transition_counts: dict[str, Counter[str]] = {
+        label: Counter() for label in PROGRESSION_LABELS
+    }
     for row in result:
         if row.get("split") != "train" or str(row["sample_id"]) not in selected:
             continue
@@ -97,6 +129,11 @@ def inject_train_label_noise(
         row["clean_progression_label"] = old
         row["progression_label"] = new
         changes.append((str(row["sample_id"]), old, new))
+        changed_by_source[str(row["source"])] += 1
+        changed_by_finding[str(row.get("finding", "unknown"))] += 1
+        transition_counts[old][new] += 1
+    transformed_train = [row for row in result if row.get("split") == "train"]
+    after_counts = Counter(str(row["progression_label"]) for row in transformed_train)
     audit = {
         "schema": "prta-cxr.train-label-noise-audit.v1",
         "rate": rate,
@@ -105,7 +142,32 @@ def inject_train_label_noise(
         "train_rows": len(train),
         "changed_rows": len(changes),
         "changed_fraction": len(changes) / len(train),
+        "realized_noise_rate": len(changes) / len(train),
         "change_sha256": canonical_sha256(changes),
+        "selected_sample_sha256": canonical_sha256(sorted(selected)),
+        "before_label_counts": {
+            label: before_counts[label] for label in PROGRESSION_LABELS
+        },
+        "after_label_counts": {
+            label: after_counts[label] for label in PROGRESSION_LABELS
+        },
+        "transition_matrix": {
+            old: {new: transition_counts[old][new] for new in PROGRESSION_LABELS}
+            for old in PROGRESSION_LABELS
+        },
+        "changed_by_source": dict(sorted(changed_by_source.items())),
+        "changed_by_finding": dict(sorted(changed_by_finding.items())),
+        "transformed_train_roster_sha256": canonical_sha256(
+            sorted(
+                (
+                    str(row["sample_id"]),
+                    str(row["source"]),
+                    str(row.get("finding", "unknown")),
+                    str(row["progression_label"]),
+                )
+                for row in transformed_train
+            )
+        ),
         "dev_label_changes": 0,
     }
     return result, audit
@@ -141,6 +203,7 @@ def nested_train_fraction(
     selected = selected_train + dev
     counts = Counter(str(row["progression_label"]) for row in selected_train)
     sources = Counter(str(row["source"]) for row in selected_train)
+    findings = Counter(str(row.get("finding", "unknown")) for row in selected_train)
     if set(counts) != set(PROGRESSION_LABELS):
         raise ContractError("train fraction loses progression-label support")
     audit = {
@@ -153,9 +216,22 @@ def nested_train_fraction(
         "dev_rows": len(dev),
         "label_counts": {label: counts[label] for label in PROGRESSION_LABELS},
         "source_counts": dict(sorted(sources.items())),
+        "finding_counts": dict(sorted(findings.items())),
         "selected_patient_sha256": canonical_sha256(sorted(selected_patients)),
         "selected_train_sample_sha256": canonical_sha256(
             sorted(str(row["sample_id"]) for row in selected_train)
+        ),
+        "transformed_roster_sha256": canonical_sha256(
+            sorted(
+                (
+                    str(row["sample_id"]),
+                    str(row["split"]),
+                    str(row["source"]),
+                    str(row.get("finding", "unknown")),
+                    str(row["progression_label"]),
+                )
+                for row in selected
+            )
         ),
         "patient_disjoint_from_dev": not selected_patients.intersection(
             str(row["patient_id_hash"]) for row in dev

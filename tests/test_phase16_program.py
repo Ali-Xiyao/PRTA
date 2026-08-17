@@ -47,14 +47,14 @@ def _inputs():
 
 def test_phase16_full_config_matrix_and_jobs():
     configs = build_phase16_configs(_base(), ("chexpert_plus", "mimic_cxr_jpg"))
-    assert len(configs) == 45
+    assert len(configs) == 51
     assert (
         sum(config["phase16_axis"] == "data_scaling" for config in configs.values())
         == 12
     )
     assert (
         sum(config["phase16_axis"] == "source_held_out" for config in configs.values())
-        == 6
+        == 12
     )
     assert (
         sum(config["phase16_axis"] == "label_noise" for config in configs.values())
@@ -62,35 +62,64 @@ def test_phase16_full_config_matrix_and_jobs():
     )
     assert (
         sum(
-            config["phase16_axis"] == "official_longitudinal_baseline"
+            config["phase16_axis"] == "internal_longitudinal_comparator"
             for config in configs.values()
         )
         == 9
     )
     jobs = build_phase16_jobs(configs, inputs=_inputs(), remote_program_root="/program")
-    assert len(jobs) == 75
+    assert len(jobs) == 87
     assert len({job["job_id"] for job in jobs}) == len(jobs)
     assert sum(job["job_id"].startswith("map-") for job in jobs) == 10
-    assert sum(job["job_id"].startswith("train-") for job in jobs) == 45
-    assert sum(job["job_id"].startswith("evaluate-P16-SOURCE") for job in jobs) == 6
-    assert sum(job["job_id"].startswith("modality-stress-S") for job in jobs) == 3
+    assert sum(job["job_id"].startswith("train-") for job in jobs) == 51
+    assert sum(job["job_id"].startswith("evaluate-P16-SOURCE") for job in jobs) == 12
+    assert sum(job["job_id"].startswith("modality-stress-v2-S") for job in jobs) == 3
     source_configs = [
         config
         for config in configs.values()
         if config["phase16_axis"] == "source_held_out"
     ]
+    roll_configs = [
+        config
+        for config in source_configs
+        if config["source_held_out_role"] == "exploratory"
+    ]
     assert all(
         config["cmcp"]["matching"] == "in_batch_roll_v1"
         and config["model"]["components"]["matched_hard_cmcp"] is False
-        for config in source_configs
+        for config in roll_configs
     )
-    source_jobs = [
-        job for job in jobs if job["job_id"].startswith("train-P16-SOURCE")
+    v1_configs = [
+        config
+        for config in source_configs
+        if config["source_held_out_role"] == "confirmatory"
     ]
+    assert len(v1_configs) == 6
+    assert all(
+        config["prta_v2_variant"] == "V1"
+        and config["loss_weights"]["prototype_alignment"] == 0.01
+        and config["loss_weights"]["cmcp"] == 0.0
+        and config["model"]["components"]["matched_hard_cmcp"] is False
+        for config in v1_configs
+    )
+    source_jobs = [job for job in jobs if job["job_id"].startswith("train-P16-SOURCE")]
     assert all(not job["dependencies"] for job in source_jobs)
     assert all(
         "--counterfactual-prior-map" not in job["command"] for job in source_jobs
     )
-    modality_cache = next(job for job in jobs if job["job_id"] == "modality-text-cache")
+    comparators = [
+        config
+        for config in configs.values()
+        if config["phase16_axis"] == "internal_longitudinal_comparator"
+    ]
+    assert all(
+        config["method_provenance"] == "architecture_inspired_internal_reimplementation"
+        and config["official_implementation"] is False
+        and "Official" not in config["method_label"]
+        for config in comparators
+    )
+    modality_cache = next(
+        job for job in jobs if job["job_id"] == "modality-text-cache-v2"
+    )
     assert "--model-root" in modality_cache["command"]
     assert "--text-cache" not in modality_cache["command"]

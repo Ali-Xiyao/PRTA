@@ -4,6 +4,7 @@ import argparse
 import io
 import json
 import os
+from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -24,7 +25,7 @@ from prta_cxr.vision.biomedclip import (
 )
 from prta_cxr.vision.text_cache import encode_texts, load_biomedclip_text_encoder
 
-SYNONYMS = {
+CLINICAL_SEMANTIC_ALTERNATIVES = {
     "atelectasis": "partial lung collapse",
     "cardiomegaly": "enlarged cardiac silhouette",
     "consolidation": "airspace opacity",
@@ -43,7 +44,13 @@ SYNONYMS = {
 
 def finding_intervention_prompts(findings: Sequence[str]) -> dict[str, dict[str, str]]:
     prompts: dict[str, dict[str, str]] = {
-        name: {} for name in ("generic", "synonym", "typo", "paraphrase")
+        name: {}
+        for name in (
+            "generic",
+            "clinical_semantic_alternative",
+            "typo",
+            "paraphrase",
+        )
     }
     for finding in sorted(set(map(str, findings))):
         lower = finding.lower()
@@ -53,8 +60,11 @@ def finding_intervention_prompts(findings: Sequence[str]) -> dict[str, dict[str,
             else finding[: len(finding) // 2] + finding[len(finding) // 2 + 1 :]
         )
         prompts["generic"][finding] = "chest x-ray finding"
-        prompts["synonym"][finding] = SYNONYMS.get(
+        alternative = CLINICAL_SEMANTIC_ALTERNATIVES.get(
             lower, f"radiographic sign of {finding}"
+        )
+        prompts["clinical_semantic_alternative"][finding] = (
+            f"chest x-ray finding: {alternative}"
         )
         prompts["typo"][finding] = f"chest x-ray finding: {typo}"
         prompts["paraphrase"][finding] = f"the chest radiograph demonstrates {finding}"
@@ -82,13 +92,20 @@ def prepare_modality_text_cache_main(argv: Sequence[str] | None = None) -> int:
     embeddings: dict[str, dict[str, torch.Tensor]] = {}
     for condition, condition_prompts in prompts.items():
         values = encode_texts(model, tokenizer, condition_prompts.values())
-        embeddings[condition] = dict(
-            zip(condition_prompts, values, strict=True)
-        )
+        embeddings[condition] = dict(zip(condition_prompts, values, strict=True))
     payload = {
-        "schema": "prta-cxr.modality-finding-text-cache.v1",
+        "schema": "prta-cxr.modality-finding-text-cache.v2",
         "status": "PASS_MODALITY_FINDING_TEXT_REENCODED",
         "prompts": prompts,
+        "condition_identity": {
+            "generic": "template-preserving finding omission",
+            "clinical_semantic_alternative": (
+                "template-preserving clinical semantic alternative; "
+                "not guaranteed strict synonym"
+            ),
+            "typo": "template-preserving deterministic single-character deletion",
+            "paraphrase": "intentional full-sentence paraphrase",
+        },
         "embeddings": embeddings,
         "split_manifest_sha256": sha256_file(args.split_manifest),
         "encoder": {
@@ -215,6 +232,19 @@ def build_current_corruption_cache_main(argv: Sequence[str] | None = None) -> in
             "original_image_path": str(row["current_image_path"]),
         }
     inventory = [inventory_by_key[key] for key in sorted(inventory_by_key)]
+    missing = [
+        row["image_path"] for row in inventory if not Path(row["image_path"]).is_file()
+    ]
+    if missing:
+        raise FileNotFoundError(
+            f"Dev current-image corruption input is incomplete: {len(missing)} missing"
+        )
+    source_counts = Counter(str(row["source"]) for row in inventory)
+    original_roster_sha256 = canonical_sha256(
+        sorted(
+            (str(row["source"]), str(row["original_image_path"])) for row in inventory
+        )
+    )
     visual, encoder_receipt = load_biomedclip_visual(args.weights)
     encoder_receipt.update(
         {
@@ -226,6 +256,9 @@ def build_current_corruption_cache_main(argv: Sequence[str] | None = None) -> in
                 "jpeg": {"quality": 20},
             }[args.condition],
             "split_manifest_sha256": sha256_file(args.split_manifest),
+            "dev_current_image_roster_sha256": original_roster_sha256,
+            "dev_current_image_count": len(inventory),
+            "source_counts": dict(sorted(source_counts.items())),
             "raw_image_root": (
                 str(args.raw_image_root.resolve())
                 if args.raw_image_root is not None

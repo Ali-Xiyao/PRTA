@@ -238,3 +238,61 @@ def test_feature_dataset_exposes_five_prototypes_and_matched_hard_prior(tmp_path
     diagnostic_item = diagnostic[0]
     assert torch.equal(diagnostic_item["prior"], features[2])
     assert "counterfactual_prior" not in diagnostic_item
+
+
+def test_older_same_current_requires_exact_current_and_earlier_prior(tmp_path):
+    paths = ("prior-older.png", "prior-original.png", "current.png")
+    inventory = [
+        {
+            "image_key": image_cache_key("source-a", path),
+            "source": "source-a",
+            "image_path": path,
+        }
+        for path in paths
+    ]
+    cache_root = tmp_path / "cache-older"
+    write_block8_cache(cache_root, inventory, torch.randn(3, 197, 768), shard_size=3)
+    text_path = tmp_path / "text-older.pt"
+    torch.save(
+        {
+            "finding_embeddings": {"Edema": torch.zeros(512)},
+            "transition_prototypes": {"Edema|Stable": torch.zeros(512)},
+        },
+        text_path,
+    )
+    common = {
+        "patient_id_hash": "patient-a",
+        "source": "source-a",
+        "current_study_id": "current-study",
+        "current_image_path": "current.png",
+        "current_datetime": "2025-01-10T00:00:00",
+        "finding": "Edema",
+        "progression_label": "Stable",
+        "split": "dev",
+    }
+    rows = [
+        {
+            **common,
+            "sample_id": "older",
+            "prior_image_path": "prior-older.png",
+            "prior_datetime": "2025-01-01T00:00:00",
+            "interval_days": 9.0,
+        },
+        {
+            **common,
+            "sample_id": "original",
+            "prior_image_path": "prior-original.png",
+            "prior_datetime": "2025-01-05T00:00:00",
+            "interval_days": 5.0,
+        },
+    ]
+    dataset = PRTAFeatureDataset(
+        rows,
+        cache=Block8CacheIndex(cache_root),
+        text_cache_path=text_path,
+        split="dev",
+        prior_intervention="older_same_current",
+    )
+    original = dataset[1]
+    assert original["special_prior_available"] is True
+    assert original["special_prior_sample_id"] == "older"
