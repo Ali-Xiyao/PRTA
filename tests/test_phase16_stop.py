@@ -37,6 +37,20 @@ def _lanes():
     }
 
 
+def _slim():
+    return {
+        "schema": "prta-cxr.slim-matrix-final.v1",
+        "status": "PASS_SLIM_MATRIX_SELECTED",
+        "selected_arm": "Slim-S3",
+        "selection_disposition": "SELECTED_SIMPLEST_WITHIN_FROZEN_TOLERANCES",
+        "selection_performed": True,
+        "winner_selected": True,
+        "internal_test_opened": False,
+        "gold_opened": False,
+        "protected_outcome_read_count": 0,
+    }
+
+
 def test_terminal_stop_requires_complete_pass_and_no_processes():
     result = build_terminal_stop_receipt(
         _final(),
@@ -71,4 +85,31 @@ def test_terminal_stop_rejects_residual_experiment_process():
             final_aggregate_sha256="final-sha",
             residual_processes=[{"pid": 123}],
             source_commit="commit",
+        )
+
+
+def test_terminal_stop_records_required_slim_selection():
+    result = build_terminal_stop_receipt(
+        _final(),
+        _lanes(),
+        final_aggregate_sha256="final-sha",
+        residual_processes=[],
+        source_commit="commit",
+        slim_final=(_slim(), "slim-sha"),
+    )
+    assert result["slim_final"]["selected_arm"] == "Slim-S3"
+    assert result["selection_performed"] is True
+
+
+def test_terminal_stop_rejects_nonterminal_slim_selection():
+    slim = _slim()
+    slim["winner_selected"] = False
+    with pytest.raises(ValueError, match="selected arm"):
+        build_terminal_stop_receipt(
+            _final(),
+            _lanes(),
+            final_aggregate_sha256="final-sha",
+            residual_processes=[],
+            source_commit="commit",
+            slim_final=(slim, "slim-sha"),
         )

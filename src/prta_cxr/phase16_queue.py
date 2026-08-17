@@ -23,6 +23,7 @@ GROUPS = (
     "label_noise",
     "official_baseline",
     "internal_longitudinal_comparator",
+    "slim_matrix",
 )
 TERMINAL = {"PASS", "FAILED", "SKIPPED"}
 

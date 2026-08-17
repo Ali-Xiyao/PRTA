@@ -2985,6 +2985,10 @@ Stop rules:
 | The first Wave043 launch-controller gate reported Python-3.9-compatible `timezone.utc` under UP017 plus formatter drift | 1 | Added a documented file-local UP017 exemption for the server Python 3.9 constraint, applied Ruff formatting, and repeated compile/lint/format gates before copying or launching the controller. |
 | A local Wave043 status call guessed mode `status` instead of the frozen controller's `status-local`/`status-server` modes | 1 | The read-only command changed no state. Reissued the exact local/server status modes and verified all four frozen workers, hardware assignments, and zero protected reads. |
 | A post-launch Slurm step probe reused unsupported `%T` formatting and a remote hash probe lost `$ROOT` through PowerShell expansion | 1 | Both were read-only and the running worker identities were already confirmed. Reissued `squeue --steps` without the unsupported formatter and hashed the two exact absolute receipt paths; no job or artifact changed. |
+| Initial Slim metric-schema search included nonexistent `tests/test_training_engine.py` and a no-match `data` branch, causing `rg` exit 1 after useful output | 1 | The read-only search changed nothing. Use the confirmed `training/engine.py::evaluate_loader` schema and target only existing paths in subsequent probes. |
+| Initial Slim priority process-tree probe used login-node `ps`, which cannot see compute-node queue/training processes | 1 | No signal was sent and no state changed. Reissue the audit through a read-only overlapping `srun` inside each retained allocation before identifying any queue-parent PID. |
+| First Slim focused gate found two long Markdown-renderer literals and an incomplete synthetic V2 test fixture lacking `native_head=H0` | 1 | No server Slim artifact existed. Wrapped the literals, completed the fixture to the already-frozen V2 parent contract, and reran the same focused gates after the targeted fixes. |
+| The strengthened outer selection-receipt guard made the synthetic validator fixture fail because it only carried closed flags inside `split_audit` | 1 | The production preparation already writes both layers correctly. Completed the synthetic outer receipt flags and reran the gate; no scientific code or server artifact changed. |
 ## Phase 18 - Terminal pause after corrected evidence completion
 
 Status: implementation_complete_waiting_for_terminal_condition (authorized 2026-08-17)
@@ -3018,3 +3022,61 @@ Stop rules:
   marker.
 - If finalization fails, do not create the STOP marker and do not launch any
   downstream experiment; retain logs for diagnosis.
+
+## Phase 19A - Frozen PRTA-CXR-Slim minimal matrix
+
+Status: in_progress (authorized 2026-08-17)
+
+Goal: implement and prioritize the smallest scientifically valid Slim matrix on
+the server, record its immutable results, and synchronize code plus results to
+both Git remotes before the terminal experiment STOP is allowed to be created.
+
+Frozen scientific scope:
+
+- Preserve all historical V2/ablation results; simplification changes the new
+  candidate method only and never deletes prior evidence.
+- Keep finding conditioning, cross-time attention, temporal relation residual,
+  ODC, and matched-hard CMCP fixed on; keep DMW fixed off.
+- Vary only standalone prototype CE and state anchor as a frozen 2x2:
+  `Slim-S0=(proto on,state on)`, `Slim-S1=(off,on)`,
+  `Slim-S2=(on,off)`, and `Slim-S3=(off,off)`.
+- Use a new Train-only patient-disjoint selection surface. Current Dev, Gold,
+  external data, and prior protected prediction/metric outputs are forbidden
+  for model selection.
+- Freeze the selection rule before launch: within the prespecified Macro-F1,
+  ODER, and per-class-recall tolerances, choose the structurally simplest arm;
+  otherwise retain the best admissible arm without post-hoc weight tuning.
+- The minimal matrix must include every arm on a common new selection surface;
+  an old Dev-based S0 result may be reported descriptively but cannot replace a
+  comparable Train-only S0 cell.
+
+Execution gates:
+
+- [ ] Audit the current data/config/training interfaces and active server queue;
+  define the smallest common Train-only split and exact reusable artifacts.
+- [x] Implement matrix construction, immutable manifests/configs, selection and
+  aggregation receipts, protected-access guards, and regression tests.
+- [x] Pass local unit/integration/lint/compile gates without opening protected
+  outcomes, freeze source hashes, and deploy an immutable server snapshot.
+- [x] Park only the two Phase16 queue-parent processes while their current
+  training children continue, so no next Phase16 cell can start before Slim.
+- [ ] Amend the armed terminal supervisor so STOP requires successful Slim
+  matrix completion and result export; do not interrupt current jobs.
+- [ ] Balance and prioritize the matrix across the two server GPUs, launch it
+  automatically immediately after both current cells finish, then resume the
+  parked Phase16 parents only after both Slim lanes and finalizer pass.
+- [ ] Monitor through completion, validate all expected cells/seeds and frozen
+  selection-rule output, and record paper-ready Markdown results.
+- [ ] Commit and push code plus non-sensitive result artifacts to GitHub origin
+  and the local bare mirror; verify both remote heads.
+
+Hard stops:
+
+- No Gold, external, current-Dev, test-label, or earlier protected metric read is
+  permitted for Slim selection or debugging.
+- No adaptive arm addition, weight tuning, seed dropping, or tolerance change
+  after preparation is frozen.
+- A failed common-surface gate blocks selection and STOP-marker creation; retain
+  the failure evidence and diagnose rather than silently shrinking the matrix.
+- Priority is strict: after the two currently running cells, all other Phase16
+  main/corrected work remains behind the complete Slim matrix.

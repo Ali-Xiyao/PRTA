@@ -7552,3 +7552,20 @@
 - 2026-08-17：确认服务器真实 PID 文件为 `finalizer.corrected_v1.supervisor.pid`；旧等待监督器 PID `693645` 仅有 `sleep 60` 子进程，经命令行门控后安全退出。新终止监督器 PID `725279` 已启动，初始子进程为 `sleep 60`；未触碰两条 corrected lane 或 GPU 作业。
 - 2026-08-17：新终止监督器已复核为 PID `725279`、PPID `1`、等待态；两条 corrected supervisor PID `693643/693644` 仍在，当前 Phase16 两个 `srun` 仍在运行。激活时最终汇总与 STOP 均尚未生成，符合“不提前停”的约束。
 - 2026-08-17：服务器激活回执 `terminal_stop_activation_receipt_v1.json` 已部署并通过 JSON 校验，SHA256=`c875647003861cb9fc6f0acb1b56300e13db44fac3ee905cd933a31a2fc150d3`。Phase18 实现完成，等待实验队列自然满足终止条件。
+- 2026-08-17：收到 PRTA-CXR-Slim 精简请求。已建立 Phase19A：服务器优先执行冻结的 prototype CE × state anchor 2×2，DMW 固定关闭、ODC/匹配困难 CMCP 与三项结构核心固定开启；选择面限定为新的 Train-only 患者级划分，禁止 Dev/Gold/外部/受保护结果参与选择。
+- 2026-08-17：上一轮“全部修复后终止”条件将扩展为“Phase16 与 Slim 矩阵及其结果导出均成功后才终止”，部署修改前不触碰当前两张卡的进程。
+- 2026-08-17：完成首轮代码面审计：训练内核已支持 prototype/state 独立开关；历史 ifusion 四 lane 控制器不适合复用，本轮将新增独立 Slim preparation/runner/finalizer，避免改写 Phase16 和旧消融协议。
+- 2026-08-17：服务器监督器审计确认：corrected lanes 仍等待 main retry completion；terminal closeout 仍直接等待 corrected completion。Slim 必须在部署时同时扩展终止门，并适合插入 main→corrected 的自然边界，从而优先于 corrected replay且不杀当前训练。
+- 2026-08-17：确认不能直接复用原 cleaned split 或 matched-hard map：新选择面需要派生清单回执校验、CLI 显式授权以及绑定新清单哈希的 matched-hard map。冻结最小方案为单一 Train-only 80/20 患者级划分、4 arms × 3 seeds = 12 个训练单元。
+- 2026-08-17：用户确认 Slim 必须先做，其他全部排后。执行顺序更新为“当前 S17/S28 自然完成 → Slim 全矩阵 → 恢复剩余 Phase16 → corrected replay → final STOP”；不允许当前单元之后抢跑其他任务。
+- 2026-08-17：首次队列父进程探测在登录节点不可见计算节点进程，返回空且未发送任何信号；下一步改用各 allocation 内的只读 overlap `srun` 精确审计进程树。
+- 2026-08-17：已在 gpu01 对两个 queue parent 精确门控后执行 SIGSTOP：9929=`2960860`、3066=`2960861` 均为 `T`；当前训练子进程 S28=`229877`、S17=`198437` 仍为 `Rl`。已实现“当前单元完成后不再启动其他 Phase16”的优先级保证。
+- 2026-08-17：已新增 `slim_matrix.py` 与脚本 113：构建 Train-only 五折中的固定 fold0 作为 20% Slim-Dev，冻结 4×3 配置、matched-hard map 依赖和双 A800 平衡队列；训练 CLI 新增显式派生选择面回执门控，默认历史 cleaned split 行为不变。
+- 2026-08-17：Slim preparation 首轮 Ruff lint/compile 通过，format-check 发现两个新改文件仅有机械格式漂移；已执行 Ruff formatter，随后 lint、format-check、compileall 全部通过。
+- 2026-08-17：已新增 Slim finalizer 与脚本 114：严格核验 12 个训练回执和双 lane completion，从各自 best epoch 汇总三 Seed mean±SD，按预冻结 Macro-F1/ODER/逐类 recall 容差选择最简 arm，并生成 JSON+Markdown。全局 STOP CLI 现要求 Slim final aggregate，防止 Phase16 自行完成后提前封停。
+- 2026-08-17：新增 Slim 回归测试，覆盖旧 Dev 排除/患者不重叠、派生清单哈希漂移、精确 2×2×3 配置、双卡负载、最简非劣选择，以及全局 STOP 对 Slim PASS/winner 的门控。
+- 2026-08-17：Slim 首轮 focused gate 暴露两个纯工程问题：Markdown renderer 两行超长、测试 V2 fixture 缺 `native_head=H0`；均在服务器部署前定点修复，科学协议未变。
+- 2026-08-17：修复后 focused gates 通过 18/18；9 个相关文件 Ruff lint/format 全绿。服务器确认三 Seed V2 parent configs 与全部非保护输入齐全，当前 S17/S28 尚未结束。
+- 2026-08-17：全仓 345/345 测试通过，Ruff、compileall、diff whitespace 全绿。随后代码审计发现 finalizer 应比较训练回执的 canonical config SHA 而不是 JSON 文件 SHA；已拆分 `config_hashes`（effective）与 `config_file_hashes`（bytes），并加强派生选择回执外层 protected flags 校验。
+- 2026-08-17：加强 selection receipt 外层保护门后，旧测试 fixture 未同步外层 closed flags；生产 builder 本来已正确写入。已补齐 fixture 并记录该部署前失败。
+- 2026-08-17：最终本地工程门再次通过：全仓 345/345 pytest、全仓 Ruff、9 个变更 Python 文件 format-check、compileall 与 diff whitespace 全绿（仅保留原有 Torch warning）。

@@ -45,6 +45,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--split-manifest", type=Path)
     parser.add_argument("--cleaned-split-freeze", type=Path)
     parser.add_argument("--cleaned-split-platform-root", type=Path)
+    parser.add_argument("--derived-train-only-selection-receipt", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--text-cache", type=Path)
     parser.add_argument("--matched-hard-prior-map", type=Path)
@@ -174,12 +175,23 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             else None
         )
         load_completed_human_silver_audit(args.label_quality_audit)
-        require_cleaned_manifest(
-            args.split_manifest,
-            receipt_path=args.cleaned_split_freeze,
-            role="train_dev",
-            portable_root=args.cleaned_split_platform_root,
-        )
+        if args.derived_train_only_selection_receipt is None:
+            require_cleaned_manifest(
+                args.split_manifest,
+                receipt_path=args.cleaned_split_freeze,
+                role="train_dev",
+                portable_root=args.cleaned_split_platform_root,
+            )
+        else:
+            from prta_cxr.slim_matrix import (
+                require_train_only_selection_manifest,
+            )
+
+            require_train_only_selection_manifest(
+                args.split_manifest,
+                selection_receipt_path=(args.derived_train_only_selection_receipt),
+                cleaned_split_freeze=args.cleaned_split_freeze,
+            )
         rows = read_jsonl(args.split_manifest)
         data_config = dict(config.get("data", {}))
         rows, source_filter_audit = filter_train_dev_sources(
@@ -271,6 +283,10 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
             "source_filter_audit": canonical_sha256(source_filter_audit),
         }
+        if args.derived_train_only_selection_receipt is not None:
+            input_hashes["derived_train_only_selection_receipt"] = sha256_file(
+                args.derived_train_only_selection_receipt
+            )
         if label_noise_audit is not None:
             input_hashes["label_noise_audit"] = canonical_sha256(label_noise_audit)
         if counterfactual_map_path is not None:

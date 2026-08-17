@@ -23,6 +23,8 @@ ACTIVE_EXPERIMENT_MARKERS = (
     "phase16_repair_lane_3066",
     "phase16_repair_lane_9929",
     "phase16_corrected_finalizer_supervisor",
+    "slim_priority_supervisor",
+    "114_finalize_slim_matrix.py",
 )
 
 
@@ -92,6 +94,7 @@ def build_terminal_stop_receipt(
     final_aggregate_sha256: str,
     residual_processes: Sequence[Mapping[str, Any]],
     source_commit: str,
+    slim_final: tuple[Mapping[str, Any], str] | None = None,
 ) -> dict[str, Any]:
     if final_aggregate.get("schema") != "prta-cxr.phase16-final-reconciliation.v1":
         raise ValueError("unsupported Phase16 final aggregate schema")
@@ -130,6 +133,24 @@ def build_terminal_stop_receipt(
             "Phase16 experiment processes remain active: "
             + ", ".join(str(row.get("pid")) for row in residual_processes)
         )
+    slim_inventory = None
+    if slim_final is not None:
+        slim, slim_sha256 = slim_final
+        if slim.get("schema") != "prta-cxr.slim-matrix-final.v1":
+            raise ValueError("unsupported Slim final aggregate schema")
+        if slim.get("status") != "PASS_SLIM_MATRIX_SELECTED":
+            raise ValueError("Slim final aggregate is not PASS")
+        _validate_closed(slim, label="Slim final aggregate")
+        if slim.get("selection_performed") is not True:
+            raise ValueError("Slim final aggregate lacks frozen selection")
+        if slim.get("winner_selected") is not True or not slim.get("selected_arm"):
+            raise ValueError("Slim final aggregate lacks selected arm")
+        slim_inventory = {
+            "final_sha256": slim_sha256,
+            "status": str(slim["status"]),
+            "selected_arm": str(slim["selected_arm"]),
+            "selection_disposition": str(slim["selection_disposition"]),
+        }
     return {
         "schema": "prta-cxr.terminal-experiment-stop.v1",
         "status": "STOP_ALL_MODEL_AND_EXPERIMENT_SELECTION",
@@ -140,12 +161,13 @@ def build_terminal_stop_receipt(
         "final_expected_job_count": int(final_aggregate["expected_job_count"]),
         "final_selected_pass_count": int(final_aggregate["selected_pass_count"]),
         "corrected_lane_completions": lane_inventory,
+        "slim_final": slim_inventory,
         "active_phase16_experiment_processes": [],
         "automatic_downstream_experiments_enabled": False,
         "slurm_allocations_cancelled": False,
         "unrelated_telemetry_cancelled": False,
-        "selection_performed": False,
-        "winner_selected": False,
+        "selection_performed": slim_inventory is not None,
+        "winner_selected": slim_inventory is not None,
         "internal_test_opened": False,
         "gold_opened": False,
         "protected_outcome_read_count": 0,
@@ -160,6 +182,7 @@ def phase16_terminal_stop_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--final-aggregate", type=Path, required=True)
     parser.add_argument("--lane-3066-completion", type=Path, required=True)
     parser.add_argument("--lane-9929-completion", type=Path, required=True)
+    parser.add_argument("--slim-final-aggregate", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
@@ -179,6 +202,10 @@ def phase16_terminal_stop_main(argv: Sequence[str] | None = None) -> int:
         final_aggregate_sha256=sha256_file(args.final_aggregate),
         residual_processes=residual,
         source_commit=resolve_source_commit(Path(__file__).resolve().parents[2]),
+        slim_final=(
+            _read_json(args.slim_final_aggregate),
+            sha256_file(args.slim_final_aggregate),
+        ),
     )
     _write_new_json(args.output, receipt)
     print(json.dumps(receipt, indent=2, sort_keys=True))
