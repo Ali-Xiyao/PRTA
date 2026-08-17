@@ -3075,6 +3075,10 @@ Execution gates:
 - [ ] Commit and push code plus non-sensitive result artifacts to GitHub origin
   and the local bare mirror; verify both remote heads.
 
+Automatic result handoff is armed locally: it may commit only the final aggregate
+JSON, rendered result Markdown, and deterministic narrative after the server
+finalizer passes all guards. It must never force-push or modify other files.
+
 Hard stops:
 
 - No Gold, external, current-Dev, test-label, or earlier protected metric read is
