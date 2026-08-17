@@ -7580,3 +7580,12 @@
 - 2026-08-17：当前 Phase16 S17/S28 已分别于 12:37/12:48 自然完成。Slim attempt1 随即按优先级启动，但 shared matched-hard map 立即失败；lane3066=`COMPLETE_WITH_FAILURES`，lane9929 仅 dependency-skipped，12 个训练均未开始。priority supervisor 按 fail-closed 退出，原 queue parents 仍暂停，未恢复任何其他实验，STOP 未生成。
 - 2026-08-17：定位 attempt1 根因：queue runner 将 `{output_root}` 正确解析为 `slim_matrix_v1/results`，但 builder 错把 configs/selection 也写成该占位符，导致 map 在 1.68 秒内 FileNotFound，尚未读取 cache 或占用训练 GPU。已改为 `{runtime_root}` 且增加精确路径回归测试；将使用全新 v2 namespace。
 - 2026-08-17：v2 路径修复 focused 13/13 与全仓 345/345 测试通过；Ruff、format、compileall、diff whitespace 全绿。科学矩阵/选择规则未改变，仅修复 program-root 与 results-root 渲染边界。
+- 2026-08-17：路径修复提交 `456fb11ac425f778b89ddd4ecd0bef92fdded069` 已同步两远端并部署新 snapshot；archive SHA=`b38fb7323a18571bec636c48d718766cbc6df7f8bda9d60d0bf43bc4db385d8e`。服务器 focused 13/13 后成功冻结全新 `slim_matrix_v2`。
+- 2026-08-17：`slim_matrix_v2` audit 通过：preparation=`3320be81...`，selection receipt=`3827b8eb...`，queues=`60fc8a00...`/`6a9f1be7...`，derived manifest 与 v1 完全相同，负载仍为 92,700/91,500 秒。
+- 2026-08-17：v2 launchers 上传并通过 bash syntax：lane3066=`9eb01fed...`、lane9929=`480b9bd9...`、finalizer=`2401891f...`、priority=`63aa3b10...`、terminal=`2610bbe5...`。
+- 2026-08-17：v2 已正式接管：Slim-aware terminal PID=`900455`、priority PID=`900456`，均已 reparent 到 init。`map-slim-train-only` 状态为 RUNNING，双 lane preparation/queue 哈希校验通过；原 Phase16 parents 继续暂停，v2 训练将优先。
+- 2026-08-17：attempt1 immutable failure receipt 已部署，SHA=`48e5f736...`；v2 priority activation receipt 已部署，SHA=`18d775d8...`。改用 legacy SCP transport 后小文件传输稳定，两个 JSON 均通过服务器解析。
+- 2026-08-17：v2 shared matched-hard map 在 28.01 秒内 PASS；两卡已同时进入首批 `Slim-S0-S17`/`Slim-S0-S28` 训练，shared-state 均为 RUNNING，GPU 查询显示约 5,995 MiB/95% utilization。无 failure/skip。
+- 2026-08-17：新增安全结果 exporter（脚本115）与测试：只接受 terminal PASS/winner/zero-protected 聚合，递归拒绝 patient/sample/checkpoint/prediction 字段及绝对路径，生成论文 JSON、Markdown 表和最终 Slim 叙事。
+- 2026-08-17：exporter 首轮 gate 的功能测试 7/7 通过；Ruff 仅报三条长中文叙事行，且测试命令猜错一个不存在文件后已走真实文件 fallback。已拆行并记录，不影响服务器训练。
+- 2026-08-17：exporter 修复后 focused 12/12、全仓 347/347 测试通过；全仓 Ruff、compileall、diff whitespace 全绿。
