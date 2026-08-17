@@ -3192,3 +3192,36 @@
 - The final report must distinguish inference inputs (prior CXR, current CXR, finding text) from training-only supervision artifacts (class prototypes and the offline matched-hard map).
 - The legacy `docs/PRTA_CXR_最终结果汇总_CN.md` contains old-method protected-evaluation evidence; it is retained only as immutable historical context and explicitly barred from attribution to V2.
 - README was stale and still stated that GPU/formal experiments had not started; the final close-out corrects that status and points readers to the V2 authority.
+## 2026-08-17 official BiomedCLIP asset requirement
+
+- User explicitly rejected the cached-embedding proxy fallback. Phase16 must use real prompt text re-encoding with Microsoft BiomedCLIP.
+- The proxy-based v2 program/queue is superseded and must not be uploaded or launched.
+- Microsoft official small config/tokenizer assets are mandatory; use the in-app browser because both local CLI and server-side direct downloads are blocked by network policy.
+- The official model repository visibly publishes `open_clip_config.json`, `special_tokens_map.json`, `tokenizer.json`, `tokenizer_config.json`, and `vocab.txt`; the existing 784 MB server weight can be reused without downloading it again.
+- The repository does not publish a generic `config.json` at its root, so the referenced PubMedBERT text-tower configuration must also be made local for a truly offline encoder smoke test.
+- Direct `/resolve/` and `/raw/` navigation is blocked by the Edge extension, while the official `/blob/` pages render the exact file contents in a code table. Use those rendered source tables as the acquisition path and verify hashes/syntax afterward.
+- The blob-table path works for small files, but Hugging Face suppresses the 679 kB `tokenizer.json` preview as “too large to display”; a byte-preserving download path is still required for that file.
+- The persistent Node runtime can reach the exact official `/resolve/` URLs even though local/server CLI paths and browser tab navigation are blocked. All six required files were downloaded byte-for-byte and hashed, including the referenced PubMedBERT `config.json`.
+- Official asset SHA-256 anchors include `open_clip_config.json` = `9a41f334...c23dc0`, `tokenizer.json` = `defc1f914...327ff`, `vocab.txt` = `7b366519...b5b9f`, and PubMedBERT `config.json` = `56bab767...507a1`.
+- Both cloud allocations remain RUNNING and idle: jobs 3066 and 9929 each expose one NVIDIA A800 80GB at 10 MiB / 0% utilization. The existing official checkpoint is intact at 783,705,670 bytes.
+- Superseded v1/v2 programs contain the expected 45 configs and 77 jobs but are not reusable because they bind the old model root/proxy command. Their base checkpoint hash is `96abc1c8...9e54` and must remain identical in v3.
+- A direct 629,243,904-byte checkpoint copy was truncated when SSH closed and hashes `2decfad5...ef2f`, so it is invalid and must never be used. Generate the v3 program server-side from the authoritative remote checkpoint instead of copying a large checkpoint over the unstable control link.
+- The workstation has one healthy long-lived SSH tunnel (`127.0.0.1:22222 -> server:22`) and three obsolete direct SSH processes in CLOSE_WAIT. Use the healthy tunnel for all remaining commands/transfers; do not disturb the established tunnel.
+- Authoritative remote S28 checkpoint is 719,472,850 bytes and exactly matches the prior immutable hash `96abc1c8...9e54`. Available project storage is ample (about 1.2 PB total, 2% used).
+- With `HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1`, and `HF_DATASETS_OFFLINE=1`, the frozen Microsoft BiomedCLIP text tower loaded strictly from the local snapshot and encoded two medical prompts to finite unit-normalized `(2, 512)` embeddings.
+- Frozen v3 queue: 77 jobs, 45 training configs, lane estimates 334,830 s vs 334,740 s (90 s imbalance). Queue hashes are `6620a21b...e5dd` for 3066 and `73f6a50c...2b44` for 9929.
+- First launch attempt exposed a queue-runner rendering defect: only a token equal to `{source}`/`{output_root}` was replaced, while placeholders embedded inside path strings remained literal. Every command therefore failed immediately before reading data or using GPU; dependent jobs were skipped.
+- Retry1 is alive, but blur/contrast raw-image caches fail because the clean manifest intentionally preserves Windows `H:\xiyao\dataset\...` paths; cached training works because cache keys normalize strings, while raw corruption needs an explicit audited Windows-to-server dataset-root translation.
+- Server inventory contains MIMIC metadata and CheXpert-Plus metadata roots but no matching raw MIMIC JPEG sample anywhere under `/ipfs/inspurfileset` within a 30-second exact-filename search. Raw-image corruption cannot be honestly reconstructed from token caches.
+- The authorized local H-drive copy does contain the failed MIMIC sample. The frozen Dev split has 8,801 unique current-image keys; its server-generated inventory is 3,218,851 bytes with SHA-256 `91790fe2...709ae`, identical after local transfer.
+- At the first sustained checkpoint, retry1 has 12 PASS, 7 FAILED, and 2 RUNNING. Both cards are now in real BioViLT training (S17 on 3066, S28 on 9929); tmux/srun owners remain alive.
+- Parallel local audit found all 8,801 required Dev current images, totaling 276,120,350 bytes (0.257 GiB). A bounded Dev-only transfer is practical.
+- Dev-only archive completed: 276,723,578 bytes, SHA-256 `92eaea04...ba62e`; receipt is 1,276,648 bytes, SHA-256 `68c07bb4...d541`, with per-image hashes for all 8,801 files.
+- The server unpack contains exactly 8,801 images totaling 276,120,350 bytes and matches both transfer hashes. Remote modality code tests pass.
+- State-pruned exports fail due an internal guard inconsistency: `_probability_export_allowed('candidate_v0_v2','V2')` returns true, but the subsequent `--true-only` guard checks only the separate comparator set that omits V2. This is a code defect, not an experimental failure.
+- The CHEX source-held hard map fails honestly because one same-finding row has no different-patient/different-label candidate after source filtering. The training dataset requires a complete strict map, so fabricating or omitting the row is not valid.
+- The training engine already supports `in_batch_roll_v1` CMCP without an offline map. For scientifically symmetric source-held evaluation, both CHEX-only and MIMIC-only directions should be amended to this same in-batch CMCP mode, with `matched_hard_cmcp=false`; do not mix hard-map MIMIC with roll-based CHEX.
+- Amended full program is 75 jobs; the selected repair registry is 26 jobs with hash `907be467...09f6`. Its first queue freeze is safe but imbalanced by 3,300 seconds (42,480 vs 45,780), which is larger than the requested near-synchronous finish target.
+- Repair queue v2 is balanced to 44,160 vs 44,100 seconds (60-second difference). Queue hashes are `28d7c665...d000` for 3066 and `27a8d4b4...9262` for 9929.
+- Current main-queue checkpoint: 21 PASS, 7 known FAILED, 6 dependency SKIPPED, 2 RUNNING, 41 unseen. Both running jobs are plausible-noise 5% training (S17/S28); each A800 reports 5,995 MiB and 95% utilization.
+- `open_clip_config.json` identifies the exact text dependency as `microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract` with context length 256 and MLP projection.

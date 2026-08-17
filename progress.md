@@ -7400,3 +7400,62 @@
 - Publication checks passed: 257 pytest tests, Ruff over `src scripts tests`, compileall, `git diff --check`, and focused Markdown-link validation.
 - Committed the authoritative close-out as `2da748c4650459ebad3578426e08982e87cc312e` and pushed it to both GitHub `codex/dual-branch-repair-v1` and `main` by verified fast-forward.
 - `git ls-remote` independently confirmed both remote heads at the same close-out commit; untracked `data/` remains outside Git.
+## 2026-08-17 asset recovery continuation
+
+- Selected the Browser control skill and discovered the persistent Node browser-control tool.
+- Next: download and hash official config/tokenizer files, restore the real-text code path, run offline encoder smoke tests, regenerate an immutable v3 queue, then upload and launch both A800 lanes.
+- Verified the official Hugging Face file listing and license signal in the rendered page. No model weight download is needed.
+- Triggered downloads for all five visible official assets. Edge reported success, but the files are not present in the Windows Downloads folder; inspect the browser download manager/artifact path before treating them as acquired.
+- The browser page sandbox disallows `fetch`, and direct raw navigation is client-blocked. The official blob page exposes exact source rows, so acquisition is continuing through the rendered source table instead of abandoning official assets.
+- Extracted `open_clip_config.json` and `special_tokens_map.json` from official rendered source rows. Large tokenizer extraction is not yet complete and no queue has been launched.
+- Completed byte-preserving acquisition of six official assets into `.tmp/biomedclip_text_model_v3` and wrote `OFFICIAL_ASSET_MANIFEST.json` with source URLs, sizes, and SHA-256 hashes.
+- Next gate: restore real prompt re-encoding code, force local text-tower config/tokenizer resolution, and pass an offline smoke test using the existing 784 MB checkpoint.
+- Confirmed Phase16 modules are new/untracked local files, so restoration must be an explicit patch rather than a Git checkout. Existing unrelated dirty worktree changes remain untouched.
+- Restored modality asset generation to actual frozen BiomedCLIP prompt encoding, changed its queue input from the old text cache to `--model-root`, and bound the OpenCLIP text model/tokenizer to the audited local snapshot.
+- Targeted Phase16/modality tests passed; fixed the only targeted Ruff finding (one 89-character line).
+- Full local test suite passed (323 tests). Official small-file hashes match the acquisition manifest; PowerShell's JSON converter rejected tokenizer case-distinct vocabulary keys, so final tokenizer syntax validation will use Python's standards-compliant JSON parser.
+- Server connectivity is healthy and both requested A800 allocations are idle. No Phase16 jobs have been started yet.
+- Standards-compliant Python parsing confirms the complete 679,168-byte tokenizer JSON is valid. Repository-wide Ruff found only ten mechanical issues in new Phase16 wrappers/tests; these are being cleaned before packaging.
+- Mechanical Ruff issues are fixed; repository-wide Ruff and compileall now pass.
+- Reconfirmed the frozen v1 input contract. The v3 input will change only `model_root` to an independent Phase16 snapshot containing the audited official small assets plus a symlink to the existing immutable weight file.
+- Inspected superseded immutable program receipts; v3 will be regenerated, not edited in place, preserving the same frozen V2 base-checkpoint hash and experiment matrix.
+- No local frozen V2 checkpoint copy was found in the project/temp tree, and an unrestricted H-drive scan timed out. Use the exact known server S28 checkpoint path and verify its SHA-256 after a focused copy instead of broad filesystem scanning.
+- Focused SCP of the large base checkpoint was interrupted and failed the immutable receipt hash. It is quarantined as invalid; switch to server-side program generation after the already completed local code/test gate.
+- Built the minimal v3 source overlay and separate official-text-asset archive, plus the new v3 input contract. Local SHA-256 values are frozen for transfer verification.
+- SSH is still being closed by the remote host before commands run. Diagnose lingering local SSH sessions/control sockets and handshake state while preserving both idle allocations.
+- Diagnosed the connection state: direct new sessions are rejected, but the pre-existing authenticated port-forward is ESTABLISHED. Continue through port 22222; stale CLOSE_WAIT probes are non-running diagnostics and do not own GPU work.
+- Tunnel access is confirmed on `mu01` using the configured SSH identity explicitly; server `tmux` is available for durable Slurm-step ownership.
+- Created the isolated v3 phase directories and uploaded the overlay, official asset archive, and v3 inputs through the healthy tunnel. Local transfer anchors: overlay `f907d5a3...b82a4`, assets `8bf533fa...1cc50`, inputs `5430c51f...d44e8`.
+- Remote SHA-256 verification passed for all three uploads; overlay/assets were extracted and the existing weight was linked into the isolated model root.
+- The first test command stopped before tests because the remembered Miniconda path was stale. The login shell confirms the real base is `/ipfs/.../miniforge3` and env `prta-cxr311`; rerun validation with that path.
+- Remote compileall and nine focused Phase16 tests passed. All six official asset hashes match local anchors, and the weight symlink resolves to the complete checkpoint.
+- The mandatory offline real-text smoke test passed on allocation 3066. The proxy path is fully superseded; proceed to immutable v3 program/queue generation.
+- Generated and froze the v3 program/queue from the authoritative checkpoint. First GPU jobs are blur cache on 3066 and contrast cache on 9929.
+- Uploaded both launchers. The first remote syntax command was malformed by PowerShell interpolation and stopped at `chmod`; no launcher or queue process was started. Re-run validation with a literal remote script.
+- Launch preflight then passed and both tmux sessions started, but all jobs terminated within seconds because `render_command` left embedded placeholders unresolved (for example `{source}/scripts/...`). No experiment trained and no protected/internal data was opened.
+- Preserve the failed attempt receipts/logs. Patch rendering with regression coverage, upload the single runner file, and retry into fresh result/shared-state roots using the same immutable queue hashes.
+- Patched placeholder rendering to replace embedded placeholders in every argument and added a cross-platform regression test covering script, input, output, and device forms. Targeted tests, Ruff, and compileall pass.
+- Uploaded the patched runner; its remote regression tests pass and SHA-256 is `92ee0a6f...01df`.
+- Created fresh retry roots and launchers. A server-side preflight rendered both first commands with zero braces and verified the resolved script files exist. Retry shared state is empty.
+- Retry1 launched at 2026-08-17 00:45:55 +08:00 and both tmux/srun owners remain alive. Independent jobs continue while modality raw-cache errors are diagnosed.
+- Blur and contrast failed on a missing literal Windows image path; JPEG and map work are still running. Do not stop the independent queue. Add an explicit server raw-data root/path translator, then repair only modality assets/evaluations.
+- Confirmed the raw image is absent server-side. Next: use the authorized local H-drive copy to materialize only the Dev current-image subset with a hashed path map, transfer that bounded asset set, and run repaired corruption caches without altering the main training queues.
+- Generated and transferred an exact 8,801-image Dev-current inventory without opening protected/internal splits. Next gate is local existence/byte-size audit before creating a bounded transfer archive.
+- Serial PowerShell stat of 8,801 H-drive files exceeded 120 seconds; switch to bounded parallel read-only validation.
+- Main queues are healthy enough to progress: 12 setup/map jobs passed and both cards entered BioViLT training. Besides the three expected raw-cache failures, state-pruned exports and one source map also failed and are queued for independent log diagnosis/repair without interrupting training.
+- Added explicit `--raw-image-root` support and a local Dev-only packer that writes an immutable gzip archive plus inventory/archive/per-file SHA-256 receipt. Targeted Ruff, compileall, and CLI smoke pass.
+- Dev raw-image packing finished successfully in 196 seconds. Both A800 lanes remain in BioViLT training; status is unchanged at 12 PASS / 7 FAILED / 2 RUNNING while those long jobs execute.
+- Uploaded/unpacked the full Dev-only raw subset and updated modality code on the server. A duplicate staging copy created by an overly broad SCP target was identified and is safe to remove because canonical local/server copies are verified.
+- The temporary port-forward ended, but direct key-based SSH access has recovered on `mu01`; continue through the direct alias.
+- Removed the accidental duplicate `staging_placeholder` directory after verifying it contained only two canonical duplicate files; canonical local and remote copies remain.
+- Diagnosed state-pruning and CHEX map failures. Fix the V2 guard directly. For CHEX source-held training, inspect the supported non-hard CMCP path and amend only that protocol rather than weakening hard-map validity.
+- Confirmed the supported non-hard CMCP path uses deterministic in-batch roll and requires no counterfactual map. Amend both source-held directions symmetrically and label the protocol change; preserve the original failed map as evidence.
+- Fixed the V2 true-only guard to use the existing scope-aware allowlist, and amended both source-held configs to symmetric in-batch CMCP with no hard-map dependency. Fourteen targeted tests pass; fixed the sole Ruff line-length finding.
+- Added an immutable repair-registry builder selecting only modality stress, source-held-out, and state-pruning jobs while injecting the verified Dev raw-image root. Cross-platform regression tests and Ruff now pass.
+- Uploaded amended code and passed 15 focused remote tests. Generated the immutable amended program and 26-job repair registry.
+- Repair queue v1 is not being launched because its 55-minute imbalance is avoidable. Improve assignment by separating LPT lane selection from dependency-rank execution ordering, then freeze v2 and require a small imbalance before arming supervisors.
+- Updated scheduling to perform duration-first LPT lane assignment, then topologically safe rank/priority ordering within each lane. Added regression coverage; four targeted tests and Ruff pass.
+- Frozen repair queue v2 with only a 60-second imbalance. Uploaded launchers and passed all-job rendering/script existence checks, raw-root binding checks, source-amendment checks, syntax checks, and empty-state checks.
+- Armed two durable repair supervisors in tmux. They are waiting on the corresponding main-lane completion files and have created no repair Slurm steps or state files yet, so they do not compete with active training.
+- Verified both main tmux/srun sessions remain alive and both A800s are at 95% utilization on real training.
+- Conservative remaining estimate including the armed repair tail is 81.94 h on 3066 and 80.86 h on 9929, roughly 2026-08-20 evening Beijing time; actual completion may be earlier because completed jobs have run below frozen estimates and training can early-stop.

@@ -18,3 +18,6 @@ manifests/labels/*.json*
 *.pth
 *.ckpt
 .env
+.planning/
+.tmp/
+data/runtime/

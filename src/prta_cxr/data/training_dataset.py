@@ -31,6 +31,7 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         label_key: str = "progression_label",
         include_transition_prototypes: bool = False,
         matched_hard_prior_map: Mapping[str, str] | None = None,
+        force_transition_prototype: bool = False,
     ) -> None:
         self.rows = [dict(row) for row in rows if row.get("split") == split]
         if not self.rows:
@@ -43,13 +44,17 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             "random",
             "matched_wrong",
             "matched_hard",
+            "older",
             "reversed",
+            "view_mismatched",
+            "corrupted",
         }:
             raise ContractError("unsupported dataset prior intervention")
         self.prior_intervention = prior_intervention
         self.wrong_finding_query = bool(wrong_finding_query)
         self.label_key = str(label_key)
         self.include_transition_prototypes = bool(include_transition_prototypes)
+        self.force_transition_prototype = bool(force_transition_prototype)
         value = torch.load(text_cache_path, map_location="cpu", weights_only=True)
         if not isinstance(value, dict):
             raise ContractError("text cache must be a dictionary")
@@ -130,6 +135,15 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             if self.prior_intervention in {"matched_wrong", "random"}
             else list(range(len(self.rows)))
         )
+        self.special_prior_indices = (
+            self._special_prior_indices(self.prior_intervention)
+            if self.prior_intervention in {"older", "view_mismatched"}
+            else list(range(len(self.rows)))
+        )
+        self.special_prior_coverage = sum(
+            index != selected
+            for index, selected in enumerate(self.special_prior_indices)
+        ) / len(self.rows)
         self.finding_derangement = {
             finding: sorted(self.finding_embeddings)[
                 (index + 1) % len(self.finding_embeddings)
@@ -196,6 +210,49 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
             result.append(candidates[selected])
         return result
 
+    def _special_prior_indices(self, intervention: str) -> list[int]:
+        result = []
+        for index, row in enumerate(self.rows):
+            if intervention == "older":
+                candidates = [
+                    candidate
+                    for candidate, value in enumerate(self.rows)
+                    if candidate != index
+                    and str(value["patient_id_hash"]) == str(row["patient_id_hash"])
+                    and str(value["finding"]) == str(row["finding"])
+                    and str(value["prior_image_path"]) != str(row["prior_image_path"])
+                    and float(value.get("interval_days", -1.0))
+                    > float(row.get("interval_days", -1.0))
+                ]
+                candidates.sort(
+                    key=lambda candidate: (
+                        float(self.rows[candidate].get("interval_days", -1.0)),
+                        str(self.rows[candidate]["sample_id"]),
+                    )
+                )
+            else:
+                candidates = [
+                    candidate
+                    for candidate, value in enumerate(self.rows)
+                    if str(value["patient_id_hash"]) != str(row["patient_id_hash"])
+                    and str(value["finding"]) == str(row["finding"])
+                    and str(value.get("prior_view", "unknown"))
+                    != str(row.get("prior_view", "unknown"))
+                ]
+                candidates.sort(
+                    key=lambda candidate: str(self.rows[candidate]["sample_id"])
+                )
+            if candidates:
+                digest = hashlib.sha256(
+                    f"{intervention}|{row['sample_id']}".encode()
+                ).digest()
+                result.append(
+                    candidates[int.from_bytes(digest[:8], "big") % len(candidates)]
+                )
+            else:
+                result.append(index)
+        return result
+
     def __len__(self) -> int:
         return len(self.rows)
 
@@ -207,6 +264,10 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         current_path = str(row["current_image_path"])
         if self.prior_intervention in {"matched_wrong", "random"}:
             prior_row = self.rows[self.wrong_prior_indices[index]]
+            prior_source = str(prior_row["source"])
+            prior_path = str(prior_row["prior_image_path"])
+        elif self.prior_intervention in {"older", "view_mismatched"}:
+            prior_row = self.rows[self.special_prior_indices[index]]
             prior_source = str(prior_row["source"])
             prior_path = str(prior_row["prior_image_path"])
         elif self.prior_intervention == "matched_hard":
@@ -239,6 +300,9 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         features = self.cache.get_many(keys).float()
         if self.prior_intervention == "null":
             features[0].zero_()
+        elif self.prior_intervention == "corrupted":
+            features[0, 1:] = features[0, 1:].flip(0)
+            features[0, 0].neg_()
         query_finding = (
             self.finding_derangement[str(row["finding"])]
             if self.wrong_finding_query
@@ -247,7 +311,11 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
         finding = torch.as_tensor(
             self.finding_embeddings[query_finding], dtype=torch.float32
         )
-        transition_value = self.transition_embeddings.get(row["sample_id"])
+        transition_value = (
+            None
+            if self.force_transition_prototype
+            else self.transition_embeddings.get(row["sample_id"])
+        )
         if transition_value is None:
             transition_value = self.transition_prototypes[
                 f"{row['finding']}|{row[self.label_key]}"
@@ -273,6 +341,14 @@ class PRTAFeatureDataset(Dataset[dict[str, Any]]):
                 row.get("calendar_interval_available", False)
             ),
             "prior_intervention": self.prior_intervention,
+            "prior_source": prior_source,
+            "prior_image_path": prior_path,
+            "current_source": current_source,
+            "current_image_path": current_path,
+            "special_prior_available": self.special_prior_indices[index] != index,
+            "special_prior_sample_id": str(
+                self.rows[self.special_prior_indices[index]]["sample_id"]
+            ),
             "query_finding": query_finding,
             "matched_wrong_sample_id": str(
                 self.rows[self.wrong_prior_indices[index]]["sample_id"]

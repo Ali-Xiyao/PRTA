@@ -32,6 +32,11 @@ def load_biomedclip_text_encoder(model_root: Path):
         (model_root / "open_clip_config.json").read_text(encoding="utf-8")
     )["model_cfg"]
     text_config = dict(config["text_cfg"])
+    # The published OpenCLIP config names the Hub repository.  Formal servers are
+    # intentionally offline, so bind both Hugging Face lookups to the audited
+    # local snapshot instead of allowing an implicit network request.
+    text_config["hf_model_name"] = str(model_root)
+    text_config["hf_tokenizer_name"] = str(model_root)
     text_config["hf_model_pretrained"] = False
     model = CustomTextCLIP(
         embed_dim=int(config["embed_dim"]),

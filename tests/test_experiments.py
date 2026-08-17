@@ -7,7 +7,9 @@ import sys
 from prta_cxr.contracts import PROGRESSION_LABELS
 from prta_cxr.experiments import (
     config_from_spec,
+    filter_train_dev_sources,
     initial_development_specs,
+    inject_train_label_noise,
     materialize_classification_counts,
     nested_train_fraction,
 )
@@ -51,6 +53,38 @@ def test_nested_train_fractions_are_patient_level_and_nested():
     assert half_audit["train_patients"] == 10
     assert full_audit["train_patients"] == 20
     assert half_audit["patient_disjoint_from_dev"] is True
+
+
+def test_source_filter_is_split_specific_and_audited():
+    selected, audit = filter_train_dev_sources(
+        _rows(), train_sources=["source-b"], dev_sources=["source-a"]
+    )
+    assert {row["source"] for row in selected if row["split"] == "train"} == {
+        "source-b"
+    }
+    assert {row["source"] for row in selected if row["split"] == "dev"} == {"source-a"}
+    assert audit["patient_disjoint"] is True
+
+
+def test_label_noise_is_exact_deterministic_and_train_only():
+    first, audit = inject_train_label_noise(
+        _rows(), rate=0.2, family="symmetric", salt="test"
+    )
+    second, second_audit = inject_train_label_noise(
+        _rows(), rate=0.2, family="symmetric", salt="test"
+    )
+    assert first == second
+    assert audit == second_audit
+    assert audit["changed_rows"] == 4
+    assert all(
+        row["progression_label"] == original["progression_label"]
+        for row, original in zip(first[-5:], _rows()[-5:], strict=True)
+    )
+    assert all(
+        row.get("clean_progression_label") != row["progression_label"]
+        for row in first
+        if "clean_progression_label" in row
+    )
 
 
 def test_development_specs_materialize_effective_loss_counts():

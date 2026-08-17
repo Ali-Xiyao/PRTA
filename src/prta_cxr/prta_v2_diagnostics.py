@@ -30,6 +30,93 @@ from prta_cxr.vision.biomedclip import (
 INTERVENTIONS = ("true", "matched_hard", "null", "reversed")
 LEGACY_DIAGNOSTIC_VARIANTS = {"V3", "V4", "V5"}
 CANDIDATE_CONFIRMATION_VARIANTS = {"V0", "V1", "V2"}
+IFUSION_FINAL_VARIANTS = {
+    "IF-A01",
+    "IF-A02",
+    "IF-A03",
+    "IF-A04",
+    "IF-A05",
+    "IF-A06",
+    "IF-A08",
+    "IF-A10",
+    "IF-A11",
+    "IF-F01",
+    "IF-F02",
+}
+FORMAL_BASELINE_VARIANTS = {"B401", "TILA8"}
+PROBABILITY_COMPARATORS = {"B401", "TILA8", "IF-F01", "IF-F02"}
+
+
+def _load_matched_map(
+    path: Path,
+    *,
+    true_only: bool,
+    split_manifest_sha256: str,
+    cache_manifest_sha256: str,
+    cache_entry_block: int,
+) -> Mapping[str, str] | None:
+    if true_only:
+        return None
+    return read_matched_hard_prior_map(
+        path,
+        expected_split_manifest_sha256=split_manifest_sha256,
+        expected_cache_manifest_sha256=cache_manifest_sha256,
+        expected_cache_entry_block=cache_entry_block,
+    )
+
+
+def _resolve_diagnostic_variant(
+    config: Mapping[str, Any], diagnostic_scope: str
+) -> tuple[str, set[str], str]:
+    if diagnostic_scope == "ifusion_final":
+        return (
+            str(config.get("ifusion_variant", "")),
+            IFUSION_FINAL_VARIANTS,
+            "IF-",
+        )
+    if diagnostic_scope == "candidate_v0_v2":
+        return (
+            str(config.get("prta_v2_variant", "")),
+            CANDIDATE_CONFIRMATION_VARIANTS,
+            "W045-",
+        )
+    if diagnostic_scope == "formal_baseline":
+        model = dict(config.get("model", {}))
+        family = str(model.get("family", ""))
+        variant = "B401" if family == "current_only" else ""
+        if family == "tila" and model.get("adapter_scope") == "tail8":
+            variant = "TILA8"
+        return variant, FORMAL_BASELINE_VARIANTS, "B4"
+    return (
+        str(config.get("prta_v2_variant", "")),
+        LEGACY_DIAGNOSTIC_VARIANTS,
+        "W045-",
+    )
+
+
+def _experiment_identity_matches(
+    experiment_id: str, *, diagnostic_scope: str, variant: str
+) -> bool:
+    if diagnostic_scope == "ifusion_final":
+        return experiment_id.startswith(f"{variant}-S")
+    if diagnostic_scope in {"candidate_v0_v2", "legacy_v3_v5"}:
+        return experiment_id.startswith(f"W045-{variant}-S")
+    if diagnostic_scope == "formal_baseline":
+        allowed_prefixes = {
+            "B401": ("W046-B401-S", "CLN1-B401-S", "B401-S", "M305-B401-S"),
+            "TILA8": ("W047-TILA8-S",),
+        }
+        return experiment_id.startswith(allowed_prefixes.get(variant, ()))
+    return False
+
+
+def _probability_export_allowed(diagnostic_scope: str, variant: str) -> bool:
+    if diagnostic_scope == "candidate_v0_v2":
+        return variant == "V2"
+    return variant in PROBABILITY_COMPARATORS and diagnostic_scope in {
+        "ifusion_final",
+        "formal_baseline",
+    }
 
 
 def _write_new_json(path: Path, value: object) -> None:
@@ -79,45 +166,71 @@ def _evaluate_intervention(
     *,
     device: torch.device,
     selective_state_beta: float,
+    retain_logits: bool = False,
+    deployment_prune_state: bool = False,
 ) -> dict[str, Any]:
     model.eval()
-    rows: list[dict[str, str]] = []
+    rows: list[dict[str, Any]] = []
     predictions: dict[str, int] = {}
     reliability_values: list[torch.Tensor] = []
     change_energy_values: list[torch.Tensor] = []
     state_weight_values: list[torch.Tensor] = []
     for batch in loader:
-        output, logits, _ = model(
+        model_inputs = (
             batch["prior"].to(device),
             batch["current"].to(device),
             batch["finding_text"].to(device),
         )
+        if deployment_prune_state:
+            output, logits, _ = model(*model_inputs, deployment_prune_state=True)
+        else:
+            output, logits, _ = model(*model_inputs)
         predicted = logits.argmax(dim=-1).cpu()
+        cpu_logits = logits.detach().float().cpu()
+        probabilities = cpu_logits.softmax(dim=-1)
         target = batch["target"].cpu()
-        if output.prior_reliability is not None:
-            reliability_values.append(output.prior_reliability)
-        if output.change_energy is not None:
-            change_energy_values.append(output.change_energy)
-            state_weight_values.append(
-                torch.exp(-selective_state_beta * output.change_energy)
+        prior_reliability = getattr(output, "prior_reliability", None)
+        change_energy = getattr(output, "change_energy", None)
+        if prior_reliability is not None:
+            reliability_values.append(prior_reliability)
+        if change_energy is not None:
+            change_energy_values.append(change_energy)
+            state_weight_values.append(torch.exp(-selective_state_beta * change_energy))
+        for index, (sample_id, patient, truth, prediction) in enumerate(
+            zip(
+                batch["sample_id"],
+                batch["patient_id_hash"],
+                target.tolist(),
+                predicted.tolist(),
+                strict=True,
             )
-        for sample_id, patient, truth, prediction in zip(
-            batch["sample_id"],
-            batch["patient_id_hash"],
-            target.tolist(),
-            predicted.tolist(),
-            strict=True,
         ):
             sample = str(sample_id)
             predictions[sample] = int(prediction)
-            rows.append(
-                {
-                    "patient_id": str(patient),
-                    "observation_id": sample,
-                    "target": PROGRESSION_LABELS[int(truth)],
-                    "prediction": PROGRESSION_LABELS[int(prediction)],
-                }
-            )
+            row: dict[str, Any] = {
+                "patient_id": str(patient),
+                "observation_id": sample,
+                "target": PROGRESSION_LABELS[int(truth)],
+                "prediction": PROGRESSION_LABELS[int(prediction)],
+            }
+            if retain_logits:
+                row.update(
+                    {
+                        "logits": cpu_logits[index].tolist(),
+                        "probabilities": probabilities[index].tolist(),
+                        "confidence": float(probabilities[index].max()),
+                        "source": str(batch["source"][index]),
+                        "finding": str(batch["finding"][index]),
+                        "prior_view": str(batch["prior_view"][index]),
+                        "current_view": str(batch["current_view"][index]),
+                        "interval_days": float(batch["interval_days"][index]),
+                        "interval_basis": str(batch["interval_basis"][index]),
+                        "calendar_interval_available": bool(
+                            batch["calendar_interval_available"][index]
+                        ),
+                    }
+                )
+            rows.append(row)
     metrics = classification_metrics(rows, labels=PROGRESSION_LABELS)
     return {
         "metrics": metrics,
@@ -139,6 +252,17 @@ def _input_hashes(args: argparse.Namespace) -> dict[str, str]:
         "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
         "matched_hard_prior_map": sha256_file(args.matched_hard_prior_map),
     }
+
+
+def _checkpoint_validation_hashes(
+    diagnostic_hashes: Mapping[str, str], *, variant: str
+) -> dict[str, str]:
+    result = dict(diagnostic_hashes)
+    if variant == "IF-A08":
+        if "random_counterfactual_prior_map" not in result:
+            raise ValueError("IF-A08 requires the frozen random counterfactual map")
+        result.pop("matched_hard_prior_map")
+    return result
 
 
 def _validate_checkpoint_input_hashes(
@@ -172,6 +296,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--cache-root", type=Path, required=True)
     parser.add_argument("--text-cache", type=Path, required=True)
     parser.add_argument("--matched-hard-prior-map", type=Path, required=True)
+    parser.add_argument("--random-counterfactual-prior-map", type=Path)
     parser.add_argument("--weights", type=Path, required=True)
     parser.add_argument("--label-quality-audit", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -179,8 +304,28 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--formal", action="store_true")
     parser.add_argument(
+        "--retain-logits",
+        action="store_true",
+        help="write raw Dev logits/probabilities for calibration evidence",
+    )
+    parser.add_argument(
+        "--true-only",
+        action="store_true",
+        help="evaluate only true PRIOR for allowlisted probability comparators",
+    )
+    parser.add_argument(
+        "--deployment-prune-state",
+        action="store_true",
+        help="skip the unused state branch for frozen H0 deployment parity",
+    )
+    parser.add_argument(
         "--diagnostic-scope",
-        choices=("legacy_v3_v5", "candidate_v0_v2"),
+        choices=(
+            "legacy_v3_v5",
+            "candidate_v0_v2",
+            "ifusion_final",
+            "formal_baseline",
+        ),
         default="legacy_v3_v5",
     )
     args = parser.parse_args(argv)
@@ -200,19 +345,33 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     if checkpoint.get("schema") != "prta-cxr.checkpoint.v1":
         raise ValueError("unsupported checkpoint schema")
     config = dict(checkpoint["config"])
-    variant = str(config.get("prta_v2_variant", ""))
-    allowed_variants = (
-        CANDIDATE_CONFIRMATION_VARIANTS
-        if args.diagnostic_scope == "candidate_v0_v2"
-        else LEGACY_DIAGNOSTIC_VARIANTS
+    variant, allowed_variants, _ = _resolve_diagnostic_variant(
+        config, args.diagnostic_scope
     )
     if variant not in allowed_variants:
         raise ValueError(
             f"{args.diagnostic_scope} does not permit Wave045 variant {variant!r}"
         )
+    if args.retain_logits and not _probability_export_allowed(
+        args.diagnostic_scope, variant
+    ):
+        parser.error("--retain-logits is restricted to frozen probability systems")
+    if args.true_only and not (
+        args.retain_logits
+        and _probability_export_allowed(args.diagnostic_scope, variant)
+    ):
+        parser.error("--true-only requires an allowlisted probability comparator")
+    if args.deployment_prune_state and not (
+        variant == "V2" and args.true_only and args.retain_logits
+    ):
+        parser.error("--deployment-prune-state requires V2 --true-only --retain-logits")
     experiment_id = str(config.get("experiment_id", ""))
-    if not experiment_id.startswith(f"W045-{variant}-S"):
-        raise ValueError("checkpoint experiment identity is not Wave045")
+    if not _experiment_identity_matches(
+        experiment_id,
+        diagnostic_scope=args.diagnostic_scope,
+        variant=variant,
+    ):
+        raise ValueError("checkpoint experiment identity does not match scope")
     training_receipt = json.loads(args.training_receipt.read_text(encoding="utf-8"))
     if training_receipt.get("status") != "PASS_TRAINING_FINISHED":
         raise ValueError("training receipt is not terminal PASS")
@@ -224,17 +383,27 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         raise ValueError("checkpoint/training-receipt config identity mismatch")
 
     input_hashes = _input_hashes(args)
+    if variant == "IF-A08":
+        if args.random_counterfactual_prior_map is None:
+            parser.error("IF-A08 requires --random-counterfactual-prior-map")
+        input_hashes["random_counterfactual_prior_map"] = sha256_file(
+            args.random_counterfactual_prior_map
+        )
     checkpoint_input_hashes = dict(checkpoint.get("input_hashes", {}))
-    _validate_checkpoint_input_hashes(checkpoint_input_hashes, input_hashes)
+    _validate_checkpoint_input_hashes(
+        checkpoint_input_hashes,
+        _checkpoint_validation_hashes(input_hashes, variant=variant),
+    )
     if dict(training_receipt.get("input_hashes", {})) != checkpoint_input_hashes:
         raise ValueError("checkpoint/training-receipt input identity mismatch")
     adapter_scope = str(config["model"].get("adapter_scope", "tail4"))
     cache_entry_block = adapter_scope_cache_entry_block(adapter_scope)
-    matched_map = read_matched_hard_prior_map(
+    matched_map = _load_matched_map(
         args.matched_hard_prior_map,
-        expected_split_manifest_sha256=input_hashes["split_manifest"],
-        expected_cache_manifest_sha256=input_hashes["cache_manifest"],
-        expected_cache_entry_block=cache_entry_block,
+        true_only=args.true_only,
+        split_manifest_sha256=input_hashes["split_manifest"],
+        cache_manifest_sha256=input_hashes["cache_manifest"],
+        cache_entry_block=cache_entry_block,
     )
     rows = read_jsonl(args.split_manifest)
     if {str(row.get("split")) for row in rows} - {"train", "dev"}:
@@ -253,7 +422,8 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
 
     intervention_results: dict[str, Any] = {}
     prediction_rows: dict[str, list[dict[str, str]]] = {}
-    for intervention in INTERVENTIONS:
+    evaluation_interventions = ("true",) if args.true_only else INTERVENTIONS
+    for intervention in evaluation_interventions:
         dataset = PRTAFeatureDataset(
             rows,
             cache=cache,
@@ -273,6 +443,8 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
             loader,
             device=device,
             selective_state_beta=beta,
+            retain_logits=args.retain_logits,
+            deployment_prune_state=args.deployment_prune_state,
         )
         prediction_rows[intervention] = result.pop("prediction_rows")
         intervention_results[intervention] = result
@@ -280,7 +452,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     true_predictions = intervention_results["true"]["predictions"]
     true_ordinary = intervention_results["true"]["metrics"]["ordinary"]
     report: dict[str, Any] = {}
-    for intervention in INTERVENTIONS:
+    for intervention in evaluation_interventions:
         result = intervention_results[intervention]
         predictions = result.pop("predictions")
         ordinary = result["metrics"]["ordinary"]
@@ -309,17 +481,46 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         checkpoint.get("training_model_state"),
         "adapter.relation_residual_scale",
     )
-    candidate_mode = args.diagnostic_scope == "candidate_v0_v2"
+    prediction_block_mode = args.diagnostic_scope in {
+        "candidate_v0_v2",
+        "ifusion_final",
+        "formal_baseline",
+    }
+    ifusion_mode = args.diagnostic_scope == "ifusion_final"
     receipt = {
         "schema": (
-            "prta-cxr.wave047-candidate-prior-diagnostic.v1"
-            if candidate_mode
-            else "prta-cxr.wave045-mechanism-diagnostic.v1"
+            (
+                "prta-cxr.wave047-candidate-probability-diagnostic.v1"
+                if variant == "V2"
+                else "prta-cxr.comparator-dev-probability-diagnostic.v1"
+            )
+            if args.retain_logits
+            else (
+                "prta-cxr.ifusion-dev-diagnostic.v1"
+                if ifusion_mode
+                else (
+                    "prta-cxr.wave047-candidate-prior-diagnostic.v1"
+                    if prediction_block_mode
+                    else "prta-cxr.wave045-mechanism-diagnostic.v1"
+                )
+            )
         ),
         "status": (
-            "PASS_WAVE047_CANDIDATE_TRAIN_DEV_PRIOR_DIAGNOSTIC"
-            if candidate_mode
-            else "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC"
+            (
+                "PASS_WAVE047_V2_DEV_PROBABILITY_EXPORT"
+                if variant == "V2"
+                else "PASS_COMPARATOR_DEV_PROBABILITY_EXPORT"
+            )
+            if args.retain_logits
+            else (
+                "PASS_IFUSION_TRAIN_DEV_PRIOR_DIAGNOSTIC"
+                if ifusion_mode
+                else (
+                    "PASS_WAVE047_CANDIDATE_TRAIN_DEV_PRIOR_DIAGNOSTIC"
+                    if prediction_block_mode
+                    else "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC"
+                )
+            )
         ),
         "created_at": datetime.now(UTC).isoformat(),
         "experiment_id": experiment_id,
@@ -346,14 +547,17 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "internal_test_opened": False,
         "gold_opened": False,
         "protected_outcome_read_count": 0,
+        "probability_export": bool(args.retain_logits),
+        "evaluation_interventions": list(evaluation_interventions),
+        "deployment_state_pruned": bool(args.deployment_prune_state),
     }
-    if candidate_mode:
+    if prediction_block_mode:
         staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
         if staging.exists():
             raise FileExistsError(f"candidate diagnostic staging exists: {staging}")
         staging.mkdir(parents=True, exist_ok=False)
         prediction_blocks = {}
-        for intervention in INTERVENTIONS:
+        for intervention in evaluation_interventions:
             block = [
                 {
                     **row,
@@ -373,8 +577,16 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
             }
         receipt["prediction_blocks"] = prediction_blocks
         receipt["checkpoint_only"] = True
-        receipt["candidate_status"] = "PENDING_CONFIRMATION"
-        _write_new_json(staging / "candidate_prior_diagnostic_receipt.json", receipt)
+        if args.retain_logits:
+            receipt["evidence_status"] = "PENDING_CALIBRATION_EVALUATION"
+            receipt_name = "candidate_probability_diagnostic_receipt.json"
+        elif ifusion_mode:
+            receipt["evidence_status"] = "PENDING_PAIRED_BOOTSTRAP"
+            receipt_name = "ifusion_dev_diagnostic_receipt.json"
+        else:
+            receipt["candidate_status"] = "PENDING_CONFIRMATION"
+            receipt_name = "candidate_prior_diagnostic_receipt.json"
+        _write_new_json(staging / receipt_name, receipt)
         staging.replace(args.output)
     else:
         args.output.mkdir(parents=True, exist_ok=False)

@@ -160,12 +160,24 @@ class PRTATrainModel(nn.Module):
                 )
 
     def forward(
-        self, prior: torch.Tensor, current: torch.Tensor, finding_text: torch.Tensor
+        self,
+        prior: torch.Tensor,
+        current: torch.Tensor,
+        finding_text: torch.Tensor,
+        *,
+        deployment_prune_state: bool = False,
     ) -> tuple[Any, torch.Tensor, torch.Tensor]:
         query = self.training_heads.finding_query(finding_text)
         if not self.finding_conditioning:
             query = torch.zeros_like(query)
-        output = self.adapter(prior, current, query)
+        if deployment_prune_state and not isinstance(self.native_head, NativeH0Head):
+            raise ValueError("deployment state pruning is valid only for native H0")
+        output = self.adapter(
+            prior,
+            current,
+            query,
+            deployment_prune_state=deployment_prune_state,
+        )
         if self.branch_mode == "legacy" and not self.dual_branch:
             output = replace(
                 output,
@@ -371,6 +383,84 @@ class SymmetricCrossAttentionTrainModel(_NativeTemporalBaseline):
         return None, self.head(features), query
 
 
+class BioViLTAdaptedTrainModel(_NativeTemporalBaseline):
+    """Paper-faithful temporal-token adaptation of BioViL-T for five classes."""
+
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        model = config["model"]
+        self.temporal_position = nn.Parameter(torch.empty(3, self.width))
+        nn.init.normal_(self.temporal_position, std=0.02)
+        layer = nn.TransformerEncoderLayer(
+            d_model=self.width,
+            nhead=int(model["heads"]),
+            dim_feedforward=self.width * 4,
+            dropout=float(model.get("dropout", 0.0)),
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+        )
+        self.temporal_pooler = nn.TransformerEncoder(layer, num_layers=2)
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width * 4),
+            nn.Linear(self.width * 4, self.width),
+            nn.GELU(),
+            nn.Linear(self.width, len(PROGRESSION_LABELS)),
+        )
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior).mean(dim=1)
+        current_value = self._encode(current).mean(dim=1)
+        temporal = torch.stack(
+            (prior_value, current_value, current_value - prior_value), dim=1
+        )
+        temporal = self.temporal_pooler(
+            temporal + self.temporal_position.unsqueeze(0) + query.unsqueeze(1)
+        )
+        features = torch.cat(
+            (temporal[:, 0], temporal[:, 1], temporal[:, 2], query), dim=-1
+        )
+        return None, self.head(features), query
+
+
+class CheXRelNetAdaptedTrainModel(_NativeTemporalBaseline):
+    """Relation-network adaptation for finding-conditioned interval change."""
+
+    def __init__(self, frozen_tail, final_norm, config) -> None:
+        super().__init__(frozen_tail, final_norm, config)
+        dropout = float(config["model"].get("dropout", 0.0))
+        self.relation = nn.Sequential(
+            nn.LayerNorm(self.width * 6),
+            nn.Linear(self.width * 6, self.width * 2),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(self.width * 2, self.width),
+            nn.GELU(),
+        )
+        self.head = nn.Sequential(
+            nn.LayerNorm(self.width), nn.Linear(self.width, len(PROGRESSION_LABELS))
+        )
+
+    def forward(self, prior, current, finding_text):
+        query = self.finding_projection(finding_text)
+        prior_value = self._encode(prior).mean(dim=1)
+        current_value = self._encode(current).mean(dim=1)
+        signed = current_value - prior_value
+        features = torch.cat(
+            (
+                prior_value,
+                current_value,
+                signed,
+                signed.abs(),
+                prior_value * current_value,
+                query,
+            ),
+            dim=-1,
+        )
+        return None, self.head(self.relation(features)), query
+
+
 def build_train_model(
     frozen_tail: list[nn.Module],
     final_norm: nn.Module,
@@ -384,6 +474,8 @@ def build_train_model(
         "tila": TILATrainModel,
         "early_concat": EarlyConcatenationTrainModel,
         "symmetric_cross_attention": SymmetricCrossAttentionTrainModel,
+        "biovilt_adapted": BioViLTAdaptedTrainModel,
+        "chexrelnet_adapted": CheXRelNetAdaptedTrainModel,
     }
     if family not in registry:
         raise ValueError(f"unsupported model family: {family}")
@@ -440,12 +532,12 @@ def _loss(
             logits,
             target,
         )
+    inversion_weight = float(weights.get("inversion", 0.0))
     auxiliary_requested = any(
         float(weights.get(name, 0.0))
         for name in (
             "alignment",
             "state",
-            "inversion",
             "cmcp",
             "prototype_alignment",
             "branch_decorrelation",
@@ -453,7 +545,14 @@ def _loss(
     )
     if output is None:
         if auxiliary_requested:
-            raise ValueError("native baselines require zero auxiliary-loss weights")
+            raise ValueError(
+                "native baselines require zero non-inversion auxiliary-loss weights"
+            )
+        if inversion_weight:
+            _, reverse_logits, _ = model(current, prior, finding)
+            total = total + inversion_weight * temporal_inversion_loss(
+                logits, reverse_logits
+            )
         return total, logits
     projected_text = model.training_heads.transition_text(transition_text)
     total = total + float(weights.get("alignment", 0.0)) * transition_alignment_loss(
@@ -495,7 +594,6 @@ def _loss(
         output.state_embedding,
         output.transition_embedding,
     )
-    inversion_weight = float(weights.get("inversion", 0.0))
     if inversion_weight:
         _, reverse_logits, _ = model(current, prior, finding)
         total = total + inversion_weight * temporal_inversion_loss(

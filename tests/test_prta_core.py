@@ -148,6 +148,8 @@ def test_selective_state_preservation_downweights_large_change():
         "tila",
         "early_concat",
         "symmetric_cross_attention",
+        "biovilt_adapted",
+        "chexrelnet_adapted",
     ),
 )
 def test_native_baseline_families_produce_five_logits(family):
@@ -437,6 +439,47 @@ def test_clean_transition_only_omits_state_branch_parameters():
     assert output.state_embedding is output.transition_embedding
     assert logits.shape == (2, 5)
     assert not any("state_resampler" in name for name, _ in value.named_parameters())
+
+
+def test_h0_deployment_state_pruning_is_exact_and_skips_state_resampler():
+    config = {
+        "model": {
+            "family": "prta",
+            "width": 16,
+            "heads": 4,
+            "adapter_rank": 4,
+            "adapter_scope": "tail4",
+            "state_tokens": 4,
+            "transition_tokens": 4,
+            "dropout": 0.0,
+            "native_head": "H0",
+            "components": {"dual_branch": True, "branch_mode": "legacy"},
+        }
+    }
+    value = build_train_model([nn.Identity() for _ in range(4)], nn.Identity(), config)
+    value.eval()
+    prior = torch.randn(2, 9, 16)
+    current = torch.randn(2, 9, 16)
+    finding = torch.randn(2, 512)
+    calls = 0
+    original = value.adapter.state_resampler.forward
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    value.adapter.state_resampler.forward = counted
+    with torch.no_grad():
+        _, ordinary_logits, _ = value(prior, current, finding)
+        assert calls == 1
+        pruned, pruned_logits, _ = value(
+            prior, current, finding, deployment_prune_state=True
+        )
+    assert calls == 1
+    assert pruned.state_tokens is pruned.transition_tokens
+    assert pruned.state_embedding is pruned.transition_embedding
+    assert torch.equal(ordinary_logits, pruned_logits)
 
 
 def test_branch_decorrelation_penalizes_collapsed_embeddings():

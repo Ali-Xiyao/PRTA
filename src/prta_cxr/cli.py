@@ -9,7 +9,7 @@ from pathlib import Path
 import torch
 
 from .authorization import require_formal_authorization
-from .contracts import sha256_file
+from .contracts import canonical_sha256, sha256_file
 from .preflight import run_preflight
 from .provenance import resolve_source_commit
 from .training.smoke import run_synthetic_smoke
@@ -109,6 +109,8 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         from prta_cxr.data.token_cache import Block8CacheIndex
         from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
         from prta_cxr.experiments import (
+            filter_train_dev_sources,
+            inject_train_label_noise,
             materialize_classification_counts,
             nested_train_fraction,
         )
@@ -180,6 +182,11 @@ def train_main(argv: Sequence[str] | None = None) -> int:
         )
         rows = read_jsonl(args.split_manifest)
         data_config = dict(config.get("data", {}))
+        rows, source_filter_audit = filter_train_dev_sources(
+            rows,
+            train_sources=data_config.get("train_sources"),
+            dev_sources=data_config.get("dev_sources"),
+        )
         rows, fraction_audit = nested_train_fraction(
             rows,
             fraction=float(data_config.get("train_fraction", 1.0)),
@@ -187,6 +194,18 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                 data_config.get("fraction_salt", "prta-cxr-luna-primary-scaling-v1")
             ),
         )
+        noise_config = dict(data_config.get("label_noise", {}))
+        noise_rate = float(noise_config.get("rate", 0.0))
+        label_noise_audit = None
+        if noise_rate:
+            rows, label_noise_audit = inject_train_label_noise(
+                rows,
+                rate=noise_rate,
+                family=str(noise_config.get("family", "symmetric")),
+                salt=str(noise_config.get("salt", "prta-cxr-label-noise-v1")),
+            )
+        fraction_audit["source_filter"] = source_filter_audit
+        fraction_audit["label_noise"] = label_noise_audit
         config = materialize_classification_counts(config, rows)
         experiment_id = str(config.get("experiment_id", ""))
         if not experiment_id:
@@ -199,6 +218,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             split="train",
             include_transition_prototypes=use_prototypes,
             matched_hard_prior_map=counterfactual_prior_map,
+            force_transition_prototype=label_noise_audit is not None,
         )
         dev_dataset = PRTAFeatureDataset(
             rows,
@@ -249,7 +269,10 @@ def train_main(argv: Sequence[str] | None = None) -> int:
             "cache_manifest": sha256_file(cache_manifest_path),
             "label_quality_audit": sha256_file(args.label_quality_audit),
             "cleaned_split_freeze": sha256_file(args.cleaned_split_freeze),
+            "source_filter_audit": canonical_sha256(source_filter_audit),
         }
+        if label_noise_audit is not None:
+            input_hashes["label_noise_audit"] = canonical_sha256(label_noise_audit)
         if counterfactual_map_path is not None:
             role = (
                 "matched_hard_prior_map"

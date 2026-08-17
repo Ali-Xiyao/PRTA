@@ -327,6 +327,8 @@ class PRTATemporalAdapter(nn.Module):
         prior_block8: torch.Tensor,
         current_block8: torch.Tensor,
         finding_query: torch.Tensor,
+        *,
+        deployment_prune_state: bool = False,
     ) -> PRTAOutput:
         if prior_block8.shape != current_block8.shape:
             raise ValueError("prior/current Block-8 token shapes differ")
@@ -397,7 +399,7 @@ class PRTATemporalAdapter(nn.Module):
         transition_embedding = F.normalize(
             self.transition_norm(transition_tokens.mean(dim=1)), dim=-1
         )
-        if self.state_resampler is None:
+        if deployment_prune_state or self.state_resampler is None:
             state_tokens = transition_tokens
             state_embedding = transition_embedding
         else:
