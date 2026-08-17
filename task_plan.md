@@ -3067,9 +3067,10 @@ Execution gates:
   training children continue, so no next Phase16 cell can start before Slim.
 - [x] Amend the armed terminal supervisor so STOP requires successful Slim
   matrix completion and result export; do not interrupt current jobs.
-- [ ] Balance and prioritize the matrix across the two server GPUs, launch it
-  automatically immediately after both current cells finish, then resume the
-  parked Phase16 parents only after both Slim lanes and finalizer pass.
+- [x] Balance and prioritize the matrix across the two server GPUs and launch
+  it automatically immediately after both previously running cells finish.
+- [ ] Resume the parked Phase16 parents only after both Slim lanes and the Slim
+  finalizer pass; until then every other experiment remains behind Slim.
 - [ ] Monitor through completion, validate all expected cells/seeds and frozen
   selection-rule output, and record paper-ready Markdown results.
 - [ ] Commit and push code plus non-sensitive result artifacts to GitHub origin
@@ -3078,6 +3079,18 @@ Execution gates:
 Automatic result handoff is armed locally: it may commit only the final aggregate
 JSON, rendered result Markdown, and deterministic narrative after the server
 finalizer passes all guards. It must never force-push or modify other files.
+
+Live execution checkpoint (2026-08-17 13:15 CST):
+
+- `Slim-S0-S17` and `Slim-S0-S28` are RUNNING on the two A800 lanes with
+  1,600/80,400 optimizer steps recorded in each first cell (~2%).
+- The v2 map dependency is PASS; no v2 Slim failure or skip is present.
+- The matrix remains balanced at six cells per GPU (nominal loads 92,700 s and
+  91,500 s). First-cell throughput implies a conservative 36–42 hour matrix
+  horizon before finalization; early stopping may shorten it.
+- Local watcher PID 10592 is active and polling every five minutes. It will
+  export exactly three paper artifacts and non-force-push both remotes only
+  after the guarded server final JSON and Markdown both exist.
 
 Hard stops:
 

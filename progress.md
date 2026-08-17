@@ -7590,3 +7590,6 @@
 - 2026-08-17：exporter 首轮 gate 的功能测试 7/7 通过；Ruff 仅报三条长中文叙事行，且测试命令猜错一个不存在文件后已走真实文件 fallback。已拆行并记录，不影响服务器训练。
 - 2026-08-17：exporter 修复后 focused 12/12、全仓 347/347 测试通过；全仓 Ruff、compileall、diff whitespace 全绿。
 - 2026-08-17：已生成并语法验证本地隐藏 watcher：等待服务器 v2 final JSON/Markdown，下载后在隔离 clone 中运行脚本115，严格校验仅新增三项 paper artifact，再非强制推送 GitHub 与本地 mirror，并回写双远端同步回执；任何保护门/分支冲突均 fail closed。
+- 2026-08-17 13:14 CST：已用隐藏 PowerShell 进程正式启动结果 watcher，PID=`10592`；启动日志已落盘并确认进程存活。watcher 每 300 秒轮询一次，仅在服务器 Slim final JSON 与 Markdown 同时存在后进入导出/提交/双远端非强制推送流程。
+- 2026-08-17 13:15 CST：服务器 Slim v2 健康检查确认 priority supervisor PID=`900456`、terminal closeout PID=`900455` 与双 lane Slurm step 均存活。首批 `Slim-S0-S17`/`Slim-S0-S28` 均为 RUNNING，各完成 1,600/80,400 optimizer steps（约 2%），无 failure/skip；原 Phase16 后续仍在 Slim 之后。
+- 2026-08-17 13:15 CST：按首段实测吞吐给出保守矩阵 ETA 约 36–42 小时；该估计包含两卡各顺序执行六个单元，不把尚未发生的 early stopping 当作确定收益。Slim finalizer PASS 后才会恢复 Phase16，最终仍由含 Slim 硬门的 terminal supervisor 收口并 STOP。
