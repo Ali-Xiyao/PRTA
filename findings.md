@@ -3348,3 +3348,9 @@
 - Twelve not-yet-started obsolete source-held jobs were immutable-skipped as protocol-superseded, saving 64,800 nominal GPU seconds; their corrected roll and V1/no-CMCP replacements remain in the 38-job replay.
 - Activation receipt SHA-256: `ed4072df9ddc2a55c264ec73e30b58be472731ad1155894d8e8d055921b6f4b2`. Old-source supersession receipt SHA-256: `b33ed82d45136d7850e2e0696ad3ddf4368b85d893b49076cab7234361b6dc44`.
 - At the final activation check, plausible-noise 5% S17/S28 remained healthy in epoch index 6, corrected supervisors were waiting, and corrected outputs/states remained absent as expected.
+## Terminal experiment STOP contract (2026-08-17)
+
+- Current corrected lane and finalizer supervisors remain wait-only; no terminal aggregate or STOP marker exists yet, as expected while the main queue is still running.
+- The only additional PRTA process surfaced by the broad server audit is a pre-existing stopped (`T`) Wave041 controller; it is not an active Phase16 experiment and is outside the Phase16 root.
+- The terminal marker must validate both corrected lane completion receipts, exact finalizer PASS coverage, zero protected access, and zero residual Phase16 queue/launcher processes.
+- Slurm allocations and unrelated GPU telemetry are deliberately not cancelled; the requested pause applies to PRTA-CXR experiment training/evaluation/selection and automatic continuations.

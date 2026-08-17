@@ -7533,3 +7533,13 @@
 - Skipped 12 pending obsolete source-held jobs before start because corrected V2-roll and V1/no-CMCP replacements are now frozen; saved 18 nominal GPU hours without interrupting a process.
 - Estimated remaining main work is roughly 60 nominal hours per lane after the skip; observed V2-like training speed implies about 4–5 days, followed by roughly 1–2 days for the corrected replay. The practical current range is about 5–7 days, subject to early stopping and cache throughput.
 - A server status probe tried both login-shell `nvidia-smi` locations and returned nonzero because GPU tools are only exposed inside Slurm; process/state/training-progress checks succeeded and no runtime changed.
+## 2026-08-17 terminal-pause request
+
+- User requested that all experiments pause after the complete corrected build/replay finishes.
+- Re-activated the planning-with-files workflow; session catchup reported that native Codex session parsing is unavailable, so the current plan/findings/progress files remain the authority.
+- Added Phase18 with a fail-closed condition: finalizer PASS and both corrected lane completions are required before creating the global STOP marker; current jobs must not be stopped early.
+## 2026-08-17 terminal-stop implementation
+
+- Added `phase16_stop.py`, script 112, and three focused tests.
+- The stop receipt is immutable and fail-closed on incomplete final aggregation, lane failure, protected access, or residual Phase16 experiment processes.
+- Focused finalizer/stop tests pass 6/6; Ruff and compileall pass for the new implementation.

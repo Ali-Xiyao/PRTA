@@ -2985,3 +2985,36 @@ Stop rules:
 | The first Wave043 launch-controller gate reported Python-3.9-compatible `timezone.utc` under UP017 plus formatter drift | 1 | Added a documented file-local UP017 exemption for the server Python 3.9 constraint, applied Ruff formatting, and repeated compile/lint/format gates before copying or launching the controller. |
 | A local Wave043 status call guessed mode `status` instead of the frozen controller's `status-local`/`status-server` modes | 1 | The read-only command changed no state. Reissued the exact local/server status modes and verified all four frozen workers, hardware assignments, and zero protected reads. |
 | A post-launch Slurm step probe reused unsupported `%T` formatting and a remote hash probe lost `$ROOT` through PowerShell expansion | 1 | Both were read-only and the running worker identities were already confirmed. Reissued `squeue --steps` without the unsupported formatter and hashed the two exact absolute receipt paths; no job or artifact changed. |
+## Phase 18 - Terminal pause after corrected evidence completion
+
+Status: in_progress (authorized 2026-08-17)
+
+Goal: after both corrected A800 lanes and the authoritative Phase16 finalizer
+finish successfully, create an immutable global experiment STOP marker and
+leave no Phase16 experiment/finalizer supervisor or automatic downstream queue
+running. Do not stop the currently authorized work early.
+
+- [x] Reconfirm the current corrected lane/finalizer supervisors are still
+  wait-only and that no later automatic experimental queue exists.
+- [ ] Replace only the wait-only finalizer supervisor with a terminal closeout
+  supervisor that runs the finalizer, validates its PASS status, verifies both
+  corrected lane completions, and atomically creates
+  `STOP_ALL_MODEL_AND_EXPERIMENT_SELECTION.json`.
+- [x] Make STOP creation fail closed if either lane, final aggregate, protected
+  access guard, or residual Phase16 experiment process is inconsistent.
+- [ ] Validate launcher syntax and immutable hashes locally/server-side, record
+  the activation receipt, and keep current main/corrected scientific jobs
+  uninterrupted.
+- [ ] Synchronize the terminal-stop implementation and audit notes to both Git
+  remotes.
+
+Stop rules:
+
+- The stop marker is created only after successful corrected lane completion
+  and `PASS_PHASE16_FINAL_NO_SELECTION_AGGREGATE`.
+- Do not cancel Slurm allocations or unrelated telemetry; "pause all
+  experiments" means no PRTA-CXR experimental queue, selection, training,
+  evaluation, or automatic continuation remains active after the terminal
+  marker.
+- If finalization fails, do not create the STOP marker and do not launch any
+  downstream experiment; retain logs for diagnosis.
