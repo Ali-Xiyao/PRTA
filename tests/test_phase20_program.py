@@ -282,3 +282,19 @@ def test_phase20_four_lane_allocation_has_host_local_map_dependencies():
         sum(job["estimated_seconds"] for job in queue) for queue in queues.values()
     ]
     assert max(loads) - min(loads) < 20_000
+
+
+def test_phase20_three_lane_allocation_reserves_second_local_gpu():
+    configs = build_phase20_configs(_parents(), _sources())
+    active = ("a800_3066", "a800_9929", "rtx3090_0")
+    queues = allocate_phase20_jobs(configs, active_lanes=active)
+    assert tuple(queues) == active
+    assert "rtx3090_1" not in queues
+    all_jobs = [job for queue in queues.values() for job in queue]
+    training = [job for job in all_jobs if job["job_id"].startswith("train-")]
+    assert len(training) == 63
+    assert {job["lane"] for job in all_jobs} <= set(active)
+    loads = [
+        sum(job["estimated_seconds"] for job in queue) for queue in queues.values()
+    ]
+    assert max(loads) - min(loads) < 20_000

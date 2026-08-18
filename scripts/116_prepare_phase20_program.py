@@ -1,7 +1,9 @@
-from _bootstrap import run
+from _bootstrap import dispatch
 
 if __name__ == "__main__":
-    run(
-        "prepare_phase20_program_main",
-        module_name="prta_cxr.phase20_program",
+    raise SystemExit(
+        dispatch(
+            "prepare_phase20_program_main",
+            module_name="prta_cxr.phase20_program",
+        )
     )

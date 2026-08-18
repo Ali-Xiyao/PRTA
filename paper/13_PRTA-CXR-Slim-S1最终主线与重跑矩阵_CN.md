@@ -23,6 +23,8 @@ temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0
 
 新训练固定 63 单元：S1 3、loss ablation 9、structural ablation 9、F01/F02-
 DMW0 6、source-held 6、scaling 12、label noise 18。Seeds 固定为 17/28/43。
+执行资源为服务器双 A800 + 本地 RTX3090 GPU0；本地 GPU1 明确预留为空闲卡，
+全部任务按三卡预计时长重新平衡。
 
 ## 论文写法
 

@@ -591,9 +591,17 @@ def _priority(config: Mapping[str, Any]) -> int:
 
 def allocate_phase20_jobs(
     configs: Mapping[str, Mapping[str, Any]],
+    *,
+    active_lanes: Sequence[str] = tuple(LANES),
 ) -> dict[str, list[dict[str, Any]]]:
-    queues: dict[str, list[dict[str, Any]]] = {lane: [] for lane in LANES}
-    loads = {lane: 0 for lane in LANES}
+    lanes = tuple(map(str, active_lanes))
+    if not lanes or len(lanes) != len(set(lanes)):
+        raise ValueError("Phase20 active lanes must be non-empty and unique")
+    unknown_lanes = set(lanes) - set(LANES)
+    if unknown_lanes:
+        raise ValueError(f"unknown Phase20 active lanes: {sorted(unknown_lanes)}")
+    queues: dict[str, list[dict[str, Any]]] = {lane: [] for lane in lanes}
+    loads = {lane: 0 for lane in lanes}
     training_jobs = []
     for experiment_id, config in configs.items():
         training_jobs.append(
@@ -616,7 +624,7 @@ def allocate_phase20_jobs(
         ),
     ):
         lane = min(
-            LANES,
+            lanes,
             key=lambda name: (
                 loads[name]
                 + round(
@@ -649,7 +657,7 @@ def allocate_phase20_jobs(
                     (str(job["host"]), str(job["map_key"])), []
                 ).append(job)
     for (host, map_key), consumers in sorted(map_consumers.items()):
-        host_lanes = [name for name, value in LANES.items() if value["host"] == host]
+        host_lanes = [name for name in lanes if LANES[name]["host"] == host]
         representative = min((str(job["experiment_id"]) for job in consumers), key=str)
         config = configs[representative]
         fraction = float(config.get("data", {}).get("train_fraction", 1.0))
@@ -793,7 +801,7 @@ def _load_by_seed(paths: Sequence[Path]) -> dict[int, dict[str, Any]]:
 
 def prepare_phase20_program_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Freeze the four-GPU non-external Slim-S1 confirmation program"
+        description="Freeze a selected-lane non-external Slim-S1 confirmation program"
     )
     parser.add_argument("--v2-config", type=Path, nargs=3, required=True)
     parser.add_argument("--a10-config", type=Path, nargs=3, required=True)
@@ -802,6 +810,12 @@ def prepare_phase20_program_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--f02-config", type=Path, nargs=3, required=True)
     parser.add_argument("--tila8-config", type=Path, nargs=3, required=True)
     parser.add_argument("--source", nargs=2, required=True)
+    parser.add_argument(
+        "--active-lane",
+        nargs="+",
+        choices=tuple(LANES),
+        default=tuple(LANES),
+    )
     parser.add_argument("--split-manifest", type=Path, required=True)
     parser.add_argument("--cleaned-split-freeze", type=Path, required=True)
     parser.add_argument("--cleaned-split-platform-root", type=Path, required=True)
@@ -860,7 +874,7 @@ def prepare_phase20_program_main(argv: Sequence[str] | None = None) -> int:
         f01_configs=f01,
         f02_configs=f02,
     )
-    queues = allocate_phase20_jobs(configs)
+    queues = allocate_phase20_jobs(configs, active_lanes=args.active_lane)
     staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
     staging.mkdir(parents=True, exist_ok=False)
     config_hashes = {}
@@ -920,6 +934,8 @@ def prepare_phase20_program_main(argv: Sequence[str] | None = None) -> int:
         },
         "seeds": list(SEEDS),
         "source_names": list(args.source),
+        "active_lanes": list(args.active_lane),
+        "reserved_lanes": [lane for lane in LANES if lane not in args.active_lane],
         "training_cell_count": len(configs),
         "job_count": len(all_jobs),
         "axis_counts": {

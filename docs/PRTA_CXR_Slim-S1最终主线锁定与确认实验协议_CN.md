@@ -55,10 +55,11 @@ canonical hash 与七类输入 hash 一致，Internal-test/Gold/protected outcom
 Current-only、Siamese 不通过改名重复训练。所有新结果写入独立 Phase20 命名空间，
 不得覆盖 V2、IF 或 Slim 历史目录。
 
-## 4. 四卡执行与自动依赖
+## 4. 三卡执行与自动依赖
 
-训练使用两张 A800 与两张 RTX3090。按 A800 等效预计时长做 longest-processing-
-time 分配，3090 采用保守慢速系数；每个任务只属于一条 lane。full S1 三 Seed 为
+训练使用两张 A800 与本地 RTX3090 GPU0；本地 GPU1 固定预留，不进入科学队列。
+按 A800 等效预计时长做 longest-processing-time 分配，3090 采用保守慢速系数；
+每个任务只属于一条 lane。full S1 三 Seed 为
 最高优先级，随后是精确损失消融和 F01/F02-DMW0，再依次执行结构、source-held、
 scaling 与 noise。scaling/noise 的 matched-hard map 按 host 生成并用 hash/依赖门
 复用，禁止跨 Windows/POSIX 路径引用。
