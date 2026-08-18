@@ -24,7 +24,7 @@ from prta_cxr.v2_calibration_evidence import (
     _validated_arrays,
 )
 
-SYSTEMS = ("V2", "B401", "TILA8", "IF-F01", "IF-F02")
+SYSTEMS = ("Slim-S1", "V2", "B401", "TILA8", "IF-F01", "IF-F02")
 AXES = (
     "progression_label",
     "finding",

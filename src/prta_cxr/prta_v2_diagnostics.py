@@ -45,6 +45,7 @@ IFUSION_FINAL_VARIANTS = {
 }
 FORMAL_BASELINE_VARIANTS = {"B401", "TILA8"}
 PROBABILITY_COMPARATORS = {"B401", "TILA8", "IF-F01", "IF-F02"}
+PHASE20_FINAL_VARIANTS = {"Slim-S1"}
 
 
 def _load_matched_map(
@@ -68,6 +69,12 @@ def _load_matched_map(
 def _resolve_diagnostic_variant(
     config: Mapping[str, Any], diagnostic_scope: str
 ) -> tuple[str, set[str], str]:
+    if diagnostic_scope == "phase20_s1":
+        return (
+            str(config.get("prta_v2_variant", "")),
+            PHASE20_FINAL_VARIANTS,
+            "P20-FINAL-S1-S",
+        )
     if diagnostic_scope == "ifusion_final":
         return (
             str(config.get("ifusion_variant", "")),
@@ -99,6 +106,11 @@ def _experiment_identity_matches(
 ) -> bool:
     if diagnostic_scope == "ifusion_final":
         return experiment_id.startswith(f"{variant}-S")
+    if diagnostic_scope == "phase20_s1":
+        return (
+            variant == "Slim-S1"
+            and experiment_id.startswith("P20-FINAL-S1-S")
+        )
     if diagnostic_scope in {"candidate_v0_v2", "legacy_v3_v5"}:
         return experiment_id.startswith(f"W045-{variant}-S")
     if diagnostic_scope == "formal_baseline":
@@ -111,6 +123,8 @@ def _experiment_identity_matches(
 
 
 def _probability_export_allowed(diagnostic_scope: str, variant: str) -> bool:
+    if diagnostic_scope == "phase20_s1":
+        return variant == "Slim-S1"
     if diagnostic_scope == "candidate_v0_v2":
         return variant == "V2"
     return variant in PROBABILITY_COMPARATORS and diagnostic_scope in {
@@ -325,6 +339,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
             "candidate_v0_v2",
             "ifusion_final",
             "formal_baseline",
+            "phase20_s1",
         ),
         default="legacy_v3_v5",
     )
@@ -362,10 +377,19 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
     ):
         parser.error("--true-only requires an allowlisted probability comparator")
     if args.deployment_prune_state and not (
-        variant == "V2" and args.true_only and args.retain_logits
+        variant in {"V2", "Slim-S1"} and args.true_only and args.retain_logits
     ):
-        parser.error("--deployment-prune-state requires V2 --true-only --retain-logits")
+        parser.error(
+            "--deployment-prune-state requires V2/Slim-S1 "
+            "--true-only --retain-logits"
+        )
     experiment_id = str(config.get("experiment_id", ""))
+    if args.diagnostic_scope == "phase20_s1" and (
+        config.get("phase20_protocol")
+        != "full-train-official-dev-slim-s1-confirmation-v1"
+        or config.get("phase20_axis") != "final_mainline_confirmation"
+    ):
+        raise ValueError("Phase20 Slim-S1 diagnostic protocol drift")
     if not _experiment_identity_matches(
         experiment_id,
         diagnostic_scope=args.diagnostic_scope,
@@ -485,40 +509,58 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "candidate_v0_v2",
         "ifusion_final",
         "formal_baseline",
+        "phase20_s1",
     }
     ifusion_mode = args.diagnostic_scope == "ifusion_final"
+    phase20_mode = args.diagnostic_scope == "phase20_s1"
     receipt = {
         "schema": (
             (
-                "prta-cxr.wave047-candidate-probability-diagnostic.v1"
-                if variant == "V2"
+                (
+                    "prta-cxr.phase20-s1-dev-probability-diagnostic.v1"
+                    if phase20_mode
+                    else "prta-cxr.wave047-candidate-probability-diagnostic.v1"
+                )
+                if variant in {"V2", "Slim-S1"}
                 else "prta-cxr.comparator-dev-probability-diagnostic.v1"
             )
             if args.retain_logits
             else (
-                "prta-cxr.ifusion-dev-diagnostic.v1"
-                if ifusion_mode
+                "prta-cxr.phase20-s1-prior-diagnostic.v1"
+                if phase20_mode
                 else (
-                    "prta-cxr.wave047-candidate-prior-diagnostic.v1"
-                    if prediction_block_mode
-                    else "prta-cxr.wave045-mechanism-diagnostic.v1"
+                    "prta-cxr.ifusion-dev-diagnostic.v1"
+                    if ifusion_mode
+                    else (
+                        "prta-cxr.wave047-candidate-prior-diagnostic.v1"
+                        if prediction_block_mode
+                        else "prta-cxr.wave045-mechanism-diagnostic.v1"
+                    )
                 )
             )
         ),
         "status": (
             (
-                "PASS_WAVE047_V2_DEV_PROBABILITY_EXPORT"
-                if variant == "V2"
+                (
+                    "PASS_PHASE20_S1_DEV_PROBABILITY_EXPORT"
+                    if phase20_mode
+                    else "PASS_WAVE047_V2_DEV_PROBABILITY_EXPORT"
+                )
+                if variant in {"V2", "Slim-S1"}
                 else "PASS_COMPARATOR_DEV_PROBABILITY_EXPORT"
             )
             if args.retain_logits
             else (
-                "PASS_IFUSION_TRAIN_DEV_PRIOR_DIAGNOSTIC"
-                if ifusion_mode
+                "PASS_PHASE20_S1_DEV_PRIOR_DIAGNOSTIC"
+                if phase20_mode
                 else (
-                    "PASS_WAVE047_CANDIDATE_TRAIN_DEV_PRIOR_DIAGNOSTIC"
-                    if prediction_block_mode
-                    else "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC"
+                    "PASS_IFUSION_TRAIN_DEV_PRIOR_DIAGNOSTIC"
+                    if ifusion_mode
+                    else (
+                        "PASS_WAVE047_CANDIDATE_TRAIN_DEV_PRIOR_DIAGNOSTIC"
+                        if prediction_block_mode
+                        else "PASS_WAVE045_TRAIN_DEV_MECHANISM_DIAGNOSTIC"
+                    )
                 )
             )
         ),

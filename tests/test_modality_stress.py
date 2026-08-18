@@ -4,6 +4,7 @@ from prta_cxr.modality_stress import (
     RANDOM_FINDING_CONDITIONS,
     _finding_transform,
     compare_condition_rows,
+    validate_modality_checkpoint_config,
 )
 
 
@@ -50,3 +51,20 @@ def test_random_finding_is_sample_level_and_uses_three_frozen_salts():
         assert len(set(first[:, 0].tolist())) > 1
         outputs.append(first)
     assert any(not torch.equal(outputs[0], value) for value in outputs[1:])
+
+
+def test_modality_stress_accepts_only_frozen_phase20_final_s1():
+    config = {
+        "experiment_id": "P20-FINAL-S1-S28",
+        "prta_v2_variant": "Slim-S1",
+        "phase20_protocol": "full-train-official-dev-slim-s1-confirmation-v1",
+        "phase20_axis": "final_mainline_confirmation",
+    }
+    assert validate_modality_checkpoint_config(config) == "Slim-S1"
+    config["experiment_id"] = "P20-ABL-NOSTATE-S28"
+    try:
+        validate_modality_checkpoint_config(config)
+    except ValueError as error:
+        assert "frozen V2 or Phase20 Slim-S1" in str(error)
+    else:
+        raise AssertionError("a Phase20 ablation cannot enter final-S1 modality stress")

@@ -57,6 +57,15 @@ def test_cache_inventory_separates_active_and_archival_files(tmp_path):
 
 
 def test_efficiency_system_identity_is_narrow_and_tail8_bound():
+    slim_s1 = {
+        "experiment_id": "P20-FINAL-S1-S17",
+        "prta_v2_variant": "Slim-S1",
+        "phase20_protocol": "full-train-official-dev-slim-s1-confirmation-v1",
+        "phase20_axis": "final_mainline_confirmation",
+        "model": {"family": "prta", "adapter_scope": "tail8"},
+    }
+    assert validate_efficiency_system(slim_s1, "Slim-S1") == "prta"
+
     current = {
         "experiment_id": "W046-B401-S28",
         "model": {"family": "current_only", "adapter_scope": "tail4"},

@@ -1,7 +1,10 @@
+import json
+
 import numpy as np
 
-from prta_cxr.contracts import PROGRESSION_LABELS
+from prta_cxr.contracts import PROGRESSION_LABELS, sha256_file
 from prta_cxr.v2_calibration_evidence import (
+    _load_probability_receipt,
     _selective_classification,
     _three_seed_disagreement,
     _uncertainty_summary,
@@ -80,3 +83,33 @@ def test_true_only_comparator_calibration_does_not_invent_prior_scores():
         "msp_uncertainty",
         "normalized_entropy",
     }
+
+
+def test_phase20_s1_probability_receipt_contract(tmp_path):
+    rows = _rows("true")
+    block = tmp_path / "true.predictions.jsonl"
+    block.write_text(
+        "".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8"
+    )
+    receipt = {
+        "schema": "prta-cxr.phase20-s1-dev-probability-diagnostic.v1",
+        "status": "PASS_PHASE20_S1_DEV_PROBABILITY_EXPORT",
+        "variant": "Slim-S1",
+        "seed": 17,
+        "probability_export": True,
+        "internal_test_opened": False,
+        "protected_outcome_read_count": 0,
+        "evaluation_interventions": ["true"],
+        "prediction_blocks": {
+            "true": {
+                "path": block.name,
+                "sha256": sha256_file(block),
+                "rows": len(rows),
+            }
+        },
+    }
+    path = tmp_path / "candidate_probability_diagnostic_receipt.json"
+    path.write_text(json.dumps(receipt), encoding="utf-8")
+    loaded, blocks = _load_probability_receipt(path, expected_system="Slim-S1")
+    assert loaded["variant"] == "Slim-S1"
+    assert len(blocks["true"]) == len(rows)

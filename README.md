@@ -20,6 +20,12 @@ reserved. V2 remains historical development evidence and is not the final
 paper method. See the authoritative
 [Slim-S1 Phase20 protocol](docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md).
 
+The Phase20-B Slim-S1 diagnostic pipeline and the post-cleanup 8-system ×
+3-seed comparator rebuild are implemented and hash-gated. They are continuation
+work only: they start after the active Phase20-A lane boundary and never use the
+reserved RTX3090 GPU1. External validation, Internal-test, Gold, and clinician
+manual work remain excluded.
+
 Git-safe pre-Phase20 source/config/aggregate history is frozen on
 `codex/archive-v2-history-before-phase20` at
 `6f471d93421b743fed446b650d7e2fd5f71ef24d`. Old private runtimes,

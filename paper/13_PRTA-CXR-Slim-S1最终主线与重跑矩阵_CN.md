@@ -13,10 +13,11 @@ temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0
 
 | 类型 | 内容 | 结论 |
 |---|---|---|
-| 继承 | IF-A10 作为 S0、TILA8、Current-only、Siamese | 不重复训练 |
+| 历史继承 | IF-A10/S0、TILA8、Current-only、Siamese 的 Git-safe 聚合结论 | 只作历史证据；旧私有 checkpoint 已删除 |
 | 新训练 | full S1、精确损失/结构消融、F01/F02-DMW0 | 必须重跑 |
 | 新训练 | source-held、scaling、symmetric/plausible noise | 必须按 S1 重跑 |
 | 新推理 | 模态压力、校准/选择性预测、亚组、效率/剪枝、安全路由 | full S1 checkpoint 后执行 |
+| 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds；Phase20-A lane 完成后自动接力 |
 | 历史保留 | V2 及其既有表格/诊断 | 只作开发父方法证据 |
 | 延后 | 外部验证 | 数据合同解决后最后执行 |
 | 封存 | Internal-test、Gold、医生人工 | 本阶段不做 |
@@ -33,10 +34,18 @@ lane 分别从 `P20-FINAL-S1-S17` 与 `P20-FINAL-S1-S28` 开始，本地 RTX3090
 从 `P20-FINAL-S1-S43` 开始；RTX3090 GPU1 保持空闲。三条 lane 均已进入正式
 训练，外部数据、Internal-test、Gold 与医生人工均未打开。
 
+为避免旧 checkpoint 清理后丢失患者级 paired/safety 分析能力，24-cell 对比重建
+程序与 Slim-S1 专属可信性推理程序已经构建并通过全仓测试。它们不会停止或抢占
+当前任务：对比重建按每条 Phase20-A lane 的 PASS completion 接力；可信性程序
+必须等三 Seed final S1 checkpoint 全部 PASS 后才能冻结。两者都不分配 GPU1。
+
 历史源码/聚合结论保存在 GitHub 分支
 `codex/archive-v2-history-before-phase20`（冻结提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。
 旧私有运行目录、checkpoint、患者级预测副本和传输包不进入 Git，已在当前输入
 allowlist 复验后从本地与服务器删除；清理不触碰 Phase20 及其必要输入。
+
+若需查看旧方法的源码、配置和公开聚合叙事，只使用上述只读归档分支；该分支不含
+任何 checkpoint、私有患者数据或账号凭据，不能作为恢复旧运行数据的渠道。
 
 ## 论文写法
 

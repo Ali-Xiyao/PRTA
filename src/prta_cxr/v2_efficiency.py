@@ -186,12 +186,13 @@ def profiled_flops(
     }
 
 
-EFFICIENCY_SYSTEMS = ("V2", "B401", "TILA8", "IF-F01", "IF-F02")
+EFFICIENCY_SYSTEMS = ("Slim-S1", "V2", "B401", "TILA8", "IF-F01", "IF-F02")
 
 
 def validate_efficiency_system(config: dict[str, Any], expected_system: str) -> str:
     family = str(dict(config.get("model", {})).get("family", ""))
     expected_family = {
+        "Slim-S1": "prta",
         "V2": "prta",
         "B401": "current_only",
         "TILA8": "tila",
@@ -202,7 +203,19 @@ def validate_efficiency_system(config: dict[str, Any], expected_system: str) -> 
         raise ValueError(
             f"efficiency system {expected_system} requires family {expected_family}"
         )
-    if expected_system == "V2":
+    if expected_system == "Slim-S1":
+        if (
+            config.get("prta_v2_variant") != "Slim-S1"
+            or not str(config.get("experiment_id", "")).startswith(
+                "P20-FINAL-S1-S"
+            )
+            or config.get("phase20_protocol")
+            != "full-train-official-dev-slim-s1-confirmation-v1"
+            or config.get("phase20_axis") != "final_mainline_confirmation"
+        ):
+            raise ValueError("Slim-S1 efficiency profile requires Phase20 identity")
+        scope = "phase20_s1"
+    elif expected_system == "V2":
         if config.get("prta_v2_variant") != "V2":
             raise ValueError("V2 efficiency profile requires frozen V2 identity")
         scope = "candidate_v0_v2"
@@ -264,8 +277,8 @@ def efficiency_main(argv: Sequence[str] | None = None) -> int:
         raise ValueError("unsupported checkpoint schema")
     config = dict(checkpoint["config"])
     model_family = validate_efficiency_system(config, args.system)
-    if args.deployment_prune_state and args.system != "V2":
-        parser.error("--deployment-prune-state is valid only for V2")
+    if args.deployment_prune_state and args.system not in {"V2", "Slim-S1"}:
+        parser.error("--deployment-prune-state is valid only for V2/Slim-S1")
     receipt = json.loads(args.training_receipt.read_text(encoding="utf-8"))
     if receipt.get("status") != "PASS_TRAINING_FINISHED":
         raise ValueError("training receipt is not terminal PASS")
@@ -328,14 +341,22 @@ def efficiency_main(argv: Sequence[str] | None = None) -> int:
     )
     report = {
         "schema": (
-            "prta-cxr.v2-efficiency-evidence.v1"
-            if args.system == "V2"
-            else "prta-cxr.comparator-efficiency-evidence.v1"
+            "prta-cxr.phase20-s1-efficiency-evidence.v1"
+            if args.system == "Slim-S1"
+            else (
+                "prta-cxr.v2-efficiency-evidence.v1"
+                if args.system == "V2"
+                else "prta-cxr.comparator-efficiency-evidence.v1"
+            )
         ),
         "status": (
-            "PASS_V2_FIXED_HARDWARE_EFFICIENCY"
-            if args.system == "V2"
-            else "PASS_COMPARATOR_FIXED_HARDWARE_EFFICIENCY"
+            "PASS_PHASE20_S1_FIXED_HARDWARE_EFFICIENCY"
+            if args.system == "Slim-S1"
+            else (
+                "PASS_V2_FIXED_HARDWARE_EFFICIENCY"
+                if args.system == "V2"
+                else "PASS_COMPARATOR_FIXED_HARDWARE_EFFICIENCY"
+            )
         ),
         "created_at": datetime.now(UTC).isoformat(),
         "source_commit": resolve_source_commit(Path(__file__).resolve().parents[2]),

@@ -18,7 +18,8 @@ from prta_cxr.authorization import (
     require_formal_authorization,
 )
 from prta_cxr.contracts import sha256_file
-from prta_cxr.phase20_program import LANES
+from prta_cxr.phase20_evidence_program import EVIDENCE_LANES
+from prta_cxr.phase20_queue_runner import dependency_decision
 from prta_cxr.provenance import resolve_source_commit
 
 TERMINAL = {"PASS", "FAILED", "SKIPPED"}
@@ -32,16 +33,10 @@ def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def dependency_decision(states: Sequence[str]) -> str:
-    if any(value in {"FAILED", "SKIPPED"} for value in states):
-        return "SKIP"
-    if states and not all(value == "PASS" for value in states):
-        return "WAIT"
-    return "RUN"
-
-
-def _input_paths(inputs: Mapping[str, Any]) -> dict[str, Path]:
-    required = (
+def validate_evidence_platform_inputs(
+    platform: Mapping[str, Any], input_manifest: Mapping[str, Any]
+) -> dict[str, Path]:
+    required = {
         "split_manifest",
         "cleaned_split_freeze",
         "cleaned_split_platform_root",
@@ -50,20 +45,15 @@ def _input_paths(inputs: Mapping[str, Any]) -> dict[str, Path]:
         "matched_hard_prior_map",
         "weights",
         "label_quality_audit",
-    )
-    missing = [name for name in required if not inputs.get(name)]
-    if missing:
-        raise ValueError(f"Phase20 platform inputs missing: {missing}")
-    return {name: Path(str(inputs[name])).resolve() for name in required}
-
-
-def validate_platform_inputs(
-    inputs: Mapping[str, Any], input_manifest: Mapping[str, Any]
-) -> dict[str, Path]:
-    if input_manifest.get("schema") != "prta-cxr.phase20-input-manifest.v1":
-        raise ValueError("unsupported Phase20 input manifest")
-    paths = _input_paths(inputs)
-    direct_roles = {
+        "model_root",
+        *(f"s1_checkpoint_{seed}" for seed in (17, 28, 43)),
+        *(f"s1_training_receipt_{seed}" for seed in (17, 28, 43)),
+    }
+    if set(platform) != required:
+        raise ValueError("Phase20 evidence platform input role set drift")
+    paths = {role: Path(str(platform[role])).resolve() for role in required}
+    expected = dict(input_manifest.get("input_sha256", {}))
+    file_roles = {
         "split_manifest": paths["split_manifest"],
         "cleaned_split_freeze": paths["cleaned_split_freeze"],
         "cache_manifest": paths["cache_root"] / "cache_manifest.json",
@@ -71,21 +61,33 @@ def validate_platform_inputs(
         "matched_hard_prior_map": paths["matched_hard_prior_map"],
         "weights": paths["weights"],
         "label_quality_audit": paths["label_quality_audit"],
+        "model_open_clip_config": paths["model_root"] / "open_clip_config.json",
+        "model_tokenizer": paths["model_root"] / "tokenizer.json",
+        "model_config": paths["model_root"] / "config.json",
+        "model_weights": paths["model_root"] / "open_clip_pytorch_model.bin",
+        **{
+            f"s1_checkpoint_{seed}": paths[f"s1_checkpoint_{seed}"]
+            for seed in (17, 28, 43)
+        },
+        **{
+            f"s1_training_receipt_{seed}": paths[f"s1_training_receipt_{seed}"]
+            for seed in (17, 28, 43)
+        },
     }
-    expected = dict(input_manifest.get("input_sha256", {}))
-    if set(expected) != set(direct_roles):
-        raise ValueError("Phase20 input role set drift")
-    for role, path in direct_roles.items():
+    if set(expected) != set(file_roles):
+        raise ValueError("Phase20 evidence frozen input role set drift")
+    for role, path in file_roles.items():
         if not path.is_file():
-            raise FileNotFoundError(f"Phase20 platform input missing: {role}")
+            raise FileNotFoundError(f"Phase20 evidence platform input missing: {role}")
         if sha256_file(path) != expected[role]:
-            raise ValueError(f"Phase20 platform input hash drift: {role}")
-    if not paths["cleaned_split_platform_root"].is_dir():
-        raise FileNotFoundError("Phase20 cleaned-split platform root missing")
+            raise ValueError(f"Phase20 evidence platform input hash drift: {role}")
+    for role in ("cleaned_split_platform_root", "cache_root", "model_root"):
+        if not paths[role].is_dir():
+            raise FileNotFoundError(f"Phase20 evidence directory missing: {role}")
     return paths
 
 
-def render_command(
+def render_evidence_command(
     command: Sequence[str],
     *,
     source: Path,
@@ -108,14 +110,14 @@ def render_command(
         for placeholder, replacement in replacements.items():
             value = value.replace(placeholder, replacement)
         if "{" in value or "}" in value:
-            raise ValueError(f"unresolved Phase20 command placeholder: {value}")
+            raise ValueError(f"unresolved Phase20 evidence placeholder: {value}")
         rendered.append(value)
     return rendered
 
 
 def _state_path(shared_state: Path, job_id: str) -> Path:
     if not job_id or any(value in job_id for value in ("/", "\\", "..")):
-        raise ValueError("unsafe Phase20 job ID")
+        raise ValueError("unsafe Phase20 evidence job ID")
     return shared_state / f"{job_id}.json"
 
 
@@ -136,10 +138,10 @@ def _wait_for_dependencies(
         time.sleep(poll_seconds)
 
 
-def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run a frozen Phase20 GPU lane")
+def run_phase20_evidence_queue_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run frozen Phase20 Slim-S1 evidence")
     parser.add_argument("--queue", type=Path, required=True)
-    parser.add_argument("--lane", choices=tuple(LANES), required=True)
+    parser.add_argument("--lane", choices=EVIDENCE_LANES, required=True)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--runtime-root", type=Path, required=True)
     parser.add_argument("--inputs", type=Path, required=True)
@@ -157,33 +159,30 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
     output_root = args.output_root.resolve()
     shared_state = args.shared_state.resolve()
     preparation = dict(_read_json(runtime_root / "preparation_receipt.json"))
-    if preparation.get("status") not in {
-        "PASS_PHASE20_SLIM_S1_PROGRAM_FROZEN",
-        "PASS_PHASE20_COMPARATOR_REBUILD_PROGRAM_FROZEN",
-    }:
-        raise ValueError("Phase20 preparation is not frozen PASS")
+    if preparation.get("status") != "PASS_PHASE20_SLIM_S1_EVIDENCE_PROGRAM_FROZEN":
+        raise ValueError("Phase20 evidence preparation is not frozen PASS")
     if preparation.get("source_commit") != resolve_source_commit(source):
-        raise ValueError("Phase20 source commit drift")
-    expected_queue_hash = dict(preparation["queue_hashes"]).get(args.queue.name)
-    if not expected_queue_hash or sha256_file(args.queue) != expected_queue_hash:
-        raise ValueError("Phase20 queue hash drift")
-    platform_inputs = validate_platform_inputs(
+        raise ValueError("Phase20 evidence source commit drift")
+    if preparation.get("lane") != args.lane:
+        raise ValueError("Phase20 evidence lane drift")
+    if sha256_file(args.queue) != preparation.get("queue_sha256"):
+        raise ValueError("Phase20 evidence queue hash drift")
+    platform_inputs = validate_evidence_platform_inputs(
         dict(_read_json(args.inputs)),
         dict(_read_json(runtime_root / "input_manifest.json")),
     )
     queue = _read_json(args.queue)
     if not isinstance(queue, list) or not queue:
-        raise ValueError("Phase20 lane queue is empty")
+        raise ValueError("Phase20 evidence queue is empty")
     if any(str(job.get("lane")) != args.lane for job in queue):
-        raise ValueError("Phase20 lane identity drift")
-    lane_root = output_root / args.lane
-    logs = lane_root / "logs"
+        raise ValueError("Phase20 evidence queue lane identity drift")
+    logs = output_root / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     shared_state.mkdir(parents=True, exist_ok=True)
-    progress_path = lane_root / "progress.json"
-    completion_path = lane_root / "completion.json"
+    progress_path = output_root / "progress.json"
+    completion_path = output_root / "completion.json"
     if completion_path.exists():
-        raise FileExistsError("Phase20 lane already has a completion receipt")
+        raise FileExistsError("Phase20 evidence already has a completion receipt")
     completed: list[dict[str, Any]] = []
     failures: list[str] = []
     skipped: list[str] = []
@@ -202,14 +201,15 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
                 if existing["status"] == "SKIPPED":
                     skipped.append(job_id)
                 continue
-            raise RuntimeError(f"non-terminal Phase20 state already exists: {job_id}")
-        dependencies = [str(value) for value in job.get("dependencies", [])]
+            raise RuntimeError(f"non-terminal Phase20 evidence state exists: {job_id}")
         decision, dependency_states = _wait_for_dependencies(
-            shared_state, dependencies, poll_seconds=args.poll_seconds
+            shared_state,
+            [str(value) for value in job.get("dependencies", [])],
+            poll_seconds=args.poll_seconds,
         )
         if decision == "SKIP":
             terminal = {
-                "schema": "prta-cxr.phase20-job-state.v1",
+                "schema": "prta-cxr.phase20-evidence-job-state.v1",
                 "status": "SKIPPED",
                 "job_id": job_id,
                 "lane": args.lane,
@@ -221,7 +221,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
             skipped.append(job_id)
             completed.append({"job_id": job_id, "status": "SKIPPED"})
             continue
-        command = render_command(
+        command = render_evidence_command(
             job["command"],
             source=source,
             runtime_root=runtime_root,
@@ -230,7 +230,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
             inputs=platform_inputs,
         )
         running = {
-            "schema": "prta-cxr.phase20-job-state.v1",
+            "schema": "prta-cxr.phase20-evidence-job-state.v1",
             "status": "RUNNING",
             "job_id": job_id,
             "group": job["group"],
@@ -260,7 +260,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
         output_checks = []
         outputs_ok = True
         for raw_path in job.get("expected_outputs", []):
-            rendered = render_command(
+            rendered = render_evidence_command(
                 [str(raw_path)],
                 source=source,
                 runtime_root=runtime_root,
@@ -294,9 +294,8 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
         if status == "FAILED":
             failures.append(job_id)
         progress = {
-            "schema": "prta-cxr.phase20-lane-progress.v1",
+            "schema": "prta-cxr.phase20-evidence-progress.v1",
             "status": "RUNNING",
-            "lane": args.lane,
             "updated_at": _now(),
             "completed": completed,
             "failures": failures,
@@ -309,7 +308,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
             write_json_atomic(progress_path, progress)
     final_status = "PASS" if not failures else "COMPLETE_WITH_FAILURES"
     completion = {
-        "schema": "prta-cxr.phase20-lane-completion.v1",
+        "schema": "prta-cxr.phase20-evidence-completion.v1",
         "status": final_status,
         "lane": args.lane,
         "completed_at": _now(),
@@ -317,6 +316,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
         "failures": failures,
         "skipped": skipped,
         "queue_sha256": sha256_file(args.queue),
+        "selection_performed": False,
         "external_opened": False,
         "internal_test_opened": False,
         "gold_opened": False,

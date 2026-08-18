@@ -27,9 +27,9 @@ Slim 的 4 Arms × 3 Seeds 只是在原 Train 内部 patient-disjoint 选择面�
 |---|---|---|
 | Full V2 三 Seed | 开发父方法与历史对照 | Git-safe 汇总冻结；旧私有运行数据已清理 |
 | Slim 12-cell | S1 模块选择依据 | Git-safe 汇总冻结，不重跑；旧 checkpoint 已清理 |
-| IF-A10 | full-data S0 | 三 Seed config/receipt/input hash 审计 PASS，直接继承 |
-| TILA8 | DMW 不适用的比较器 | 三 Seed直接继承 |
-| Current-only / Siamese | 方法无关比较器 | 直接继承 |
+| IF-A10 | full-data S0 的历史语义证据 | Git-safe 审计保留；私有 checkpoint 已删除，正式患者级重分析需重建 |
+| TILA8 | DMW 不适用的历史比较器 | Git-safe 聚合保留；正式患者级重分析需重建 |
+| Current-only / Siamese | 方法无关历史比较器 | Git-safe 聚合保留；正式 safety/paired 分析需重建 |
 | IF-F01 / IF-F02 | 历史 DMW=0.01 | 必须以 DMW=0 新命名重跑 |
 | V2 可信性/压力/效率结果 | 历史机制证据 | 保留；最终 S1 必须重新推理 |
 
@@ -51,9 +51,15 @@ canonical hash 与七类输入 hash 一致，Internal-test/Gold/protected outcom
 | data scaling | 10/25/50/75% | 12 |
 | label noise | symmetric/plausible × 5/10/20% | 18 |
 
-实验 ID、配置、队列与依赖均由 `phase20_program.py` 一次性生成。S0、TILA8、
-Current-only、Siamese 不通过改名重复训练。所有新结果写入独立 Phase20 命名空间，
-不得覆盖 V2、IF 或 Slim 历史目录。
+实验 ID、配置、队列与依赖均由 `phase20_program.py` 一次性生成。所有新结果写入
+独立 Phase20 命名空间，不得覆盖 V2、IF 或 Slim 历史目录。
+
+旧私有 checkpoint 按用户授权删除后，过去的“直接继承”仅剩 Git-safe 聚合结论，
+不足以完成患者级 paired bootstrap、safety routing 与最终方法同协议比较。因此另行
+冻结 **8 systems × 3 Seeds = 24 个 comparator rebuild 单元**：V2、S0、B401、
+B402、TILA8、BioViL-T-style、CheXRelNet-inspired 与 `TILAPaper`
+paper-based reimplementation。后三者明确是内部/独立复现，不冒充官方实现。该重建队列只在
+Phase20-A 对应 lane 完成后接力，不影响正在跑的 63-cell 主队列，也不使用预留 GPU。
 
 ## 4. 三卡执行与自动依赖
 
@@ -74,9 +80,14 @@ lane 为 `a800_3066`、`a800_9929` 与 `rtx3090_0`；`rtx3090_1` 明确保留为
 首次 A800 `nohup srun` 尝试因终端耦合在零结果状态被 Slurm 撤销，失败收据已保留；
 修复后的 `setsid -f` step `3066.188`/`9929.148` 与本地 lane 均已进入正式训练。
 
+接力队列同样只允许上述三条活动 lane，并使用 LPT 估时均衡。它必须等待每条
+Phase20-A lane 的 PASS completion，不能停止、迁移或抢占当前任务；接力自身也按
+源码提交、输入哈希、配置哈希和 queue hash fail closed。
+
 ## 5. full S1 完成后自动重推理
 
-仅使用 official Dev，按三 Seed 重新生成：
+Phase20-B 代码已构建并通过测试；仅在三 Seed full S1 checkpoint 全部 PASS 后，
+使用 official Dev 按三 Seed重新生成：
 
 1. PRIOR true/matched-hard/null/reversed 与修订后的 older/view/token 条件；
 2. finding 缺失/错误/临床同义表达和 current corruption；
@@ -88,6 +99,10 @@ lane 为 `a800_3066`、`a800_9929` 与 `rtx3090_0`；`rtx3090_1` 明确保留为
 
 统计比较固定包括 S1 vs A10/S0、V2、F02-DMW0、TILA8 和最强兼容独立比较器。
 Dev 上的非选择性 S1-vs-S0 只报告 effect/CI，不改写 Train-only 选择结论。
+
+对应机器入口为 `phase20_evidence_program.py` / `scripts/118_prepare_phase20_evidence.py`
+与 `phase20_evidence_runner.py` / `scripts/119_run_phase20_evidence.py`。在三 Seed S1
+artifact 未齐之前，准备器必须拒绝冻结，避免把中间 checkpoint 当最终证据。
 
 ## 6. 历史资产与清理边界
 

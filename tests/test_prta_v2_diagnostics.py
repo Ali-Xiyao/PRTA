@@ -234,11 +234,31 @@ def test_formal_baseline_scope_maps_only_allowlisted_native_families():
 
 
 def test_probability_export_allowlist_preserves_v2_and_comparator_boundaries():
+    assert _probability_export_allowed("phase20_s1", "Slim-S1")
     assert _probability_export_allowed("candidate_v0_v2", "V2")
     assert _probability_export_allowed("ifusion_final", "IF-F02")
     assert _probability_export_allowed("formal_baseline", "TILA8")
     assert not _probability_export_allowed("ifusion_final", "IF-A03")
     assert not _probability_export_allowed("formal_baseline", "B402")
+
+
+def test_phase20_s1_scope_is_exact_and_probability_enabled():
+    variant, allowed, prefix = _resolve_diagnostic_variant(
+        {"prta_v2_variant": "Slim-S1"}, "phase20_s1"
+    )
+    assert variant == "Slim-S1"
+    assert variant in allowed
+    assert prefix == "P20-FINAL-S1-S"
+    assert _experiment_identity_matches(
+        "P20-FINAL-S1-S43",
+        diagnostic_scope="phase20_s1",
+        variant="Slim-S1",
+    )
+    assert not _experiment_identity_matches(
+        "P20-ABL-NOSTATE-S43",
+        diagnostic_scope="phase20_s1",
+        variant="Slim-S1",
+    )
 
 
 def test_true_only_probability_fast_path_does_not_open_counterfactual_map(tmp_path):

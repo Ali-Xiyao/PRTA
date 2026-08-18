@@ -45,6 +45,24 @@ RANDOM_FINDING_CONDITIONS = {
     "F4_random_perm_28": "prta-cxr-sample-random-finding-S28-v2",
     "F4_random_perm_43": "prta-cxr-sample-random-finding-S43-v2",
 }
+
+
+def validate_modality_checkpoint_config(config: Mapping[str, Any]) -> str:
+    variant = str(config.get("prta_v2_variant", ""))
+    experiment_id = str(config.get("experiment_id", ""))
+    if variant == "V2" and experiment_id.startswith("W045-V2-S"):
+        return variant
+    if (
+        variant == "Slim-S1"
+        and experiment_id.startswith("P20-FINAL-S1-S")
+        and config.get("phase20_protocol")
+        == "full-train-official-dev-slim-s1-confirmation-v1"
+        and config.get("phase20_axis") == "final_mainline_confirmation"
+    ):
+        return variant
+    raise ValueError("modality stress requires frozen V2 or Phase20 Slim-S1")
+
+
 FINDING_CONDITIONS = (
     "F0_correct",
     "F1_zero",
@@ -266,8 +284,7 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
     )
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
     config = dict(checkpoint["config"])
-    if config.get("prta_v2_variant") != "V2":
-        raise ValueError("modality stress requires frozen V2")
+    variant = validate_modality_checkpoint_config(config)
     receipt = json.loads(args.training_receipt.read_text(encoding="utf-8"))
     if receipt.get("status") != "PASS_TRAINING_FINISHED" or receipt.get(
         "config_sha256"
@@ -508,6 +525,7 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
         "created_at": datetime.now(UTC).isoformat(),
         "source_commit": resolve_source_commit(Path(__file__).resolve().parents[2]),
         "experiment_id": config["experiment_id"],
+        "system": variant,
         "seed": int(config["seed"]),
         "checkpoint_sha256": sha256_file(args.checkpoint),
         "input_hashes": {

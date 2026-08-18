@@ -393,15 +393,21 @@ def _load_probability_receipt(
     expected_system: str = "V2",
 ) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
-    expected_schema = (
-        "prta-cxr.wave047-candidate-probability-diagnostic.v1"
-        if expected_system == "V2"
-        else "prta-cxr.comparator-dev-probability-diagnostic.v1"
-    )
-    expected_status = (
-        "PASS_WAVE047_V2_DEV_PROBABILITY_EXPORT"
-        if expected_system == "V2"
-        else "PASS_COMPARATOR_DEV_PROBABILITY_EXPORT"
+    expected_schema, expected_status = {
+        "V2": (
+            "prta-cxr.wave047-candidate-probability-diagnostic.v1",
+            "PASS_WAVE047_V2_DEV_PROBABILITY_EXPORT",
+        ),
+        "Slim-S1": (
+            "prta-cxr.phase20-s1-dev-probability-diagnostic.v1",
+            "PASS_PHASE20_S1_DEV_PROBABILITY_EXPORT",
+        ),
+    }.get(
+        expected_system,
+        (
+            "prta-cxr.comparator-dev-probability-diagnostic.v1",
+            "PASS_COMPARATOR_DEV_PROBABILITY_EXPORT",
+        ),
     )
     if receipt.get("schema") != expected_schema:
         raise ValueError("unsupported probability diagnostic schema")
@@ -565,7 +571,7 @@ def calibration_evidence_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
         "--system",
-        choices=("V2", "B401", "TILA8", "IF-F01", "IF-F02"),
+        choices=("Slim-S1", "V2", "B401", "TILA8", "IF-F01", "IF-F02"),
         default="V2",
     )
     parser.add_argument("--smoke", action="store_true")
@@ -606,25 +612,36 @@ def calibration_evidence_main(argv: Sequence[str] | None = None) -> int:
         for candidate in target_arrays[1:]
     ):
         raise ValueError("probability diagnostics have different Dev targets")
+    if args.system == "Slim-S1":
+        evidence_schema = "prta-cxr.phase20-s1-dev-calibration-evidence.v1"
+        evidence_status = (
+            "PASS_PHASE20_S1_DEV_CALIBRATION_SMOKE"
+            if args.smoke
+            else "PASS_PHASE20_S1_DEV_CALIBRATION_COMPLETE"
+        )
+        manifest_schema = "prta-cxr.phase20-s1-dev-calibration-manifest.v1"
+        result_stem = "phase20_s1_dev_calibration_evidence"
+    elif args.system == "V2":
+        evidence_schema = "prta-cxr.v2-dev-calibration-evidence.v1"
+        evidence_status = (
+            "PASS_V2_DEV_CALIBRATION_SMOKE"
+            if args.smoke
+            else "PASS_V2_DEV_CALIBRATION_COMPLETE"
+        )
+        manifest_schema = "prta-cxr.v2-dev-calibration-manifest.v1"
+        result_stem = "v2_dev_calibration_evidence"
+    else:
+        evidence_schema = "prta-cxr.comparator-dev-calibration-evidence.v1"
+        evidence_status = (
+            "PASS_COMPARATOR_DEV_CALIBRATION_SMOKE"
+            if args.smoke
+            else "PASS_COMPARATOR_DEV_CALIBRATION_COMPLETE"
+        )
+        manifest_schema = "prta-cxr.comparator-dev-calibration-manifest.v1"
+        result_stem = "comparator_dev_calibration_evidence"
     report = {
-        "schema": (
-            "prta-cxr.v2-dev-calibration-evidence.v1"
-            if args.system == "V2"
-            else "prta-cxr.comparator-dev-calibration-evidence.v1"
-        ),
-        "status": (
-            (
-                "PASS_V2_DEV_CALIBRATION_SMOKE"
-                if args.smoke
-                else "PASS_V2_DEV_CALIBRATION_COMPLETE"
-            )
-            if args.system == "V2"
-            else (
-                "PASS_COMPARATOR_DEV_CALIBRATION_SMOKE"
-                if args.smoke
-                else "PASS_COMPARATOR_DEV_CALIBRATION_COMPLETE"
-            )
-        ),
+        "schema": evidence_schema,
+        "status": evidence_status,
         "created_at": datetime.now(UTC).isoformat(),
         "source_commit": resolve_source_commit(Path(__file__).resolve().parents[2]),
         "system": args.system,
@@ -653,20 +670,11 @@ def calibration_evidence_main(argv: Sequence[str] | None = None) -> int:
     if staging.exists():
         raise FileExistsError(f"calibration evidence staging exists: {staging}")
     staging.mkdir(parents=True, exist_ok=False)
-    result_stem = (
-        "v2_dev_calibration_evidence"
-        if args.system == "V2"
-        else "comparator_dev_calibration_evidence"
-    )
     _write_new_json(staging / f"{result_stem}.json", report)
     markdown = _markdown(report)
     (staging / f"{result_stem}.md").write_text(markdown, encoding="utf-8")
     manifest = {
-        "schema": (
-            "prta-cxr.v2-dev-calibration-manifest.v1"
-            if args.system == "V2"
-            else "prta-cxr.comparator-dev-calibration-manifest.v1"
-        ),
+        "schema": manifest_schema,
         "status": report["status"],
         "files": {
             path.name: sha256_file(path)
