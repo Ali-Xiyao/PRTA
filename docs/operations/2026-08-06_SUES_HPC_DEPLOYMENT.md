@@ -85,3 +85,13 @@ Train/Dev training.
 - The Git-safe readiness receipt is
   `docs/operations/2026-08-06_SUES_HPC_READINESS_RECEIPT.json`. Formal training
   remains a separate authorization and must use a newly frozen Linux queue.
+
+## SSH connection recovery
+
+For future SUES-HPC banner/handshake timeouts, follow
+[`SUES_HPC_SSH连接恢复手册_CN.md`](SUES_HPC_SSH连接恢复手册_CN.md) before trying a
+different client, restarting a network adapter, or issuing concurrent retries.
+The repository-standard recovery is an identity-checked stale-client cleanup
+followed by one forced-TTY IPv4 connection with `IPQoS=none` and SSH
+multiplexing disabled. It must not signal workloads or create refresh-time
+Slurm steps.

@@ -13,3 +13,7 @@
 - Run `pytest`, `ruff check`, `python -m compileall`, preflight, and the
   synthetic smoke train before calling an engineering handoff ready.
 - A passing smoke suite is not scientific parity and is not Phase 0 GO.
+- For SUES-HPC connection failures, follow
+  `docs/operations/SUES_HPC_SSH连接恢复手册_CN.md` as the default recovery
+  procedure. Do not parallel-retry the gateway, restart adapters/proxies, kill
+  unverified processes, or create status-only `srun` steps.
