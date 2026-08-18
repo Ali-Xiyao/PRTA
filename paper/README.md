@@ -12,6 +12,11 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 材料保留为历史开发证据；full Train / official Dev 的 63-cell Phase20 训练与
 S1 专属可信性重推理完成前，不得把 Slim Train-only 数字写入最终主表。
 
+Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
+`codex/archive-v2-history-before-phase20`（提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。
+旧 checkpoint、患者级预测、缓存和运行副本已按用户授权清理，不属于可迁移论文
+材料，也不得恢复到 Git。
+
 ## 从哪里开始
 
 1. [证据状态总览](00_证据状态总览_CN.md)：哪些已完成、哪些仍缺失。

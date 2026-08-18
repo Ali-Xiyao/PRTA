@@ -1,6 +1,6 @@
 # PRTA-CXR Slim-S1 最终主线锁定与确认实验协议
 
-> 状态：`FROZEN_PHASE20_SLIM_S1_MAINLINE`
+> 状态：`FROZEN_PHASE20_SLIM_S1_MAINLINE / PHASE20_RUNNING`
 >
 > 生效日期：2026-08-18
 >
@@ -25,8 +25,8 @@ Slim 的 4 Arms × 3 Seeds 只是在原 Train 内部 patient-disjoint 选择面�
 
 | 历史证据 | Phase20 角色 | 处理 |
 |---|---|---|
-| Full V2 三 Seed | 开发父方法与历史对照 | 冻结保留，不覆盖 |
-| Slim 12-cell | S1 模块选择依据 | 冻结保留，不重跑 |
+| Full V2 三 Seed | 开发父方法与历史对照 | Git-safe 汇总冻结；旧私有运行数据已清理 |
+| Slim 12-cell | S1 模块选择依据 | Git-safe 汇总冻结，不重跑；旧 checkpoint 已清理 |
 | IF-A10 | full-data S0 | 三 Seed config/receipt/input hash 审计 PASS，直接继承 |
 | TILA8 | DMW 不适用的比较器 | 三 Seed直接继承 |
 | Current-only / Siamese | 方法无关比较器 | 直接继承 |
@@ -69,6 +69,11 @@ scaling 与 noise。scaling/noise 的 matched-hard map 按 host 生成并用 has
 输入、状态和输出全部 hash 绑定；重复 job ID、非新输出目录或受保护读取均 fail
 closed。
 
+2026-08-18 的正式 program 共 88 个依赖 job，其中 63 个为训练单元。三条活动
+lane 为 `a800_3066`、`a800_9929` 与 `rtx3090_0`；`rtx3090_1` 明确保留为空闲卡。
+首次 A800 `nohup srun` 尝试因终端耦合在零结果状态被 Slurm 撤销，失败收据已保留；
+修复后的 `setsid -f` step `3066.188`/`9929.148` 与本地 lane 均已进入正式训练。
+
 ## 5. full S1 完成后自动重推理
 
 仅使用 official Dev，按三 Seed 重新生成：
@@ -84,7 +89,21 @@ closed。
 统计比较固定包括 S1 vs A10/S0、V2、F02-DMW0、TILA8 和最强兼容独立比较器。
 Dev 上的非选择性 S1-vs-S0 只报告 effect/CI，不改写 Train-only 选择结论。
 
-## 6. 明确排除
+## 6. 历史资产与清理边界
+
+旧 V2/Slim 的 Git-safe 源码、配置历史、聚合结论和叙事固定保存在 GitHub 分支
+`codex/archive-v2-history-before-phase20`，冻结提交为
+`6f471d93421b743fed446b650d7e2fd5f71ef24d`。该分支不包含 checkpoint、患者级
+预测、报告、图像、缓存或凭据。
+
+在 Phase20 三条 lane 健康后，本地和服务器的旧运行目录、旧 checkpoint、失败
+副本与传输包均已按 allowlist 永久删除。仅保留当前 Phase20、cleaned Train/Dev、
+Block4/Tail8 cache、BiomedCLIP 权重、matched-hard map 与 label-quality audit。
+本地和服务器分别写出 `PASS_PHASE20_OLD_LOCAL_RUNTIME_DELETED` 与
+`PASS_PHASE20_OLD_SERVER_RUNTIME_DELETED` 私有收据。Phase20 运行中产生的
+checkpoint 仅在本轮依赖链尚需读取时保留，收口后按同一规则清理。
+
+## 7. 明确排除
 
 - 外部/跨源独立数据：因数据合同问题最后执行，本阶段不下载、不运行；
 - Internal-test 与 Gold：继续封存；

@@ -13,14 +13,19 @@ Qwen SFT attempts are intentionally absent.
 
 ## Current status
 
-PRTA-CXR V2 is now frozen as the main method after cleaned Train/Dev-only
-three-seed confirmation. Wave045 ablations and mechanism diagnostics, the
-Wave046 native-baseline matrix, and the Wave047 paired bootstrap and Tail8
-fairness comparison are complete. No independent untouched test has been run
-for V2; the project remains
-`FROZEN_MAIN_METHOD_TRAIN_DEV_CONFIRMED_PENDING_INDEPENDENT_UNTOUCHED_TEST`.
-See the authoritative
-[V2 final method and results report](docs/PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md).
+The final paper mainline is frozen as **PRTA-CXR-Slim / Slim-S1**. Phase20 is
+running the full-Train/official-Dev confirmation and non-external evidence
+matrix on two A800 lanes plus local RTX3090 GPU0; local GPU1 is deliberately
+reserved. V2 remains historical development evidence and is not the final
+paper method. See the authoritative
+[Slim-S1 Phase20 protocol](docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md).
+
+Git-safe pre-Phase20 source/config/aggregate history is frozen on
+`codex/archive-v2-history-before-phase20` at
+`6f471d93421b743fed446b650d7e2fd5f71ef24d`. Old private runtimes,
+checkpoints, predictions, and transfer packages were deleted after the
+Phase20 active-input allowlist passed; they are intentionally not stored in
+Git.
 The rule-blind Luna pilot completed 150/150 rows. A same-roster blind Sol
 review found 115/124 agreement (92.74%, kappa 0.908) where both models were
 decisive and favored Luna over the rule 21-to-4 in the 30 rule-Luna conflicts.
@@ -40,8 +45,8 @@ authorized by the Train/Dev method freeze.
 ## Start here
 
 1. Read the authoritative
-   [V2 final method and Train/Dev results](docs/PRTA_CXR_V2_FINAL_METHOD_AND_RESULTS_CN.md).
-2. Read [the execution manual](docs/PRTA_CXR_最终论文实验与项目重构执行手册_CN.md).
+   [Slim-S1 Phase20 protocol](docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md).
+2. Read the [Phase20 paper-facing rerun matrix](paper/13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md).
 3. Use [the experiment plan and empty result tables](docs/PRTA_CXR_实验计划与空结果表_Markdown版_CN.md).
 4. Review [the migration map](docs/LEGACY_MIGRATION_MAP.md) and
    [Phase 0 status](docs/PHASE0_STATUS.md).

@@ -11,6 +11,10 @@
 - Never read protected outcomes during data preparation or development.
 - Never place real patient identifiers, reports, credentials, images, feature
   caches, checkpoints, or predictions in Git.
+- Pre-Phase20 Git-safe history is frozen on
+  `codex/archive-v2-history-before-phase20` at
+  `6f471d93421b743fed446b650d7e2fd5f71ef24d`. Do not use that branch as a
+  runtime/checkpoint store or restore superseded Phase16 queues from it.
 - Keep all paths repository-relative in configs and receipts.
 - Run `pytest`, `ruff check`, `python -m compileall`, preflight, and the
   synthetic smoke train before calling an engineering handoff ready.
