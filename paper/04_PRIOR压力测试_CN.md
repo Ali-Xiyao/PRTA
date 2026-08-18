@@ -1,5 +1,10 @@
 # PRIOR 压力测试
 
+> **重推理状态（2026-08-18）**：以下为历史 Full V2 行为。论文最终方法已经
+> 锁定为 Slim-S1，因此 true/matched-hard/null/reversed、修订 older/view/token、
+> finding 干预和 current corruption 均须对 full-Train S1 三 Seed 重新导出。
+> 历史数字保留用于机制脉络，不能直接代表最终模型。
+
 ## Full V2 行为
 
 | PRIOR 条件 | Macro-F1 | Balanced Accuracy | ODER ↓ | Prediction flip rate |

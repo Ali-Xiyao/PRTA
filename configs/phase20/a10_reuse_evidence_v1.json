@@ -1,0 +1,83 @@
+{
+  "schema": "prta-cxr.phase20-a10-reuse-evidence.v1",
+  "status": "PASS_PHASE20_A10_ALL_SEED_RECEIPT_AUDIT",
+  "created_at": "2026-08-18T00:00:00+08:00",
+  "historical_source_commit": "9372c557bf9b4b292c2756979f6a5f9ae0d9ac0e",
+  "source_compatibility_audit": {
+    "status": "PASS_DEFAULT_TRAINING_PATH_SEMANTICALLY_COMPATIBLE",
+    "comparison_base": "9372c557bf9b4b292c2756979f6a5f9ae0d9ac0e",
+    "default_path_changes": [
+      "source filtering with no explicit source list retains the original Train/Dev roster and order",
+      "deployment_prune_state defaults false and does not alter ordinary PRTA forward execution",
+      "new prior interventions and label-noise logic are inactive for IF-A10",
+      "native-baseline additions and inversion refactor do not alter the PRTA auxiliary-loss path"
+    ],
+    "selection_reopened": false
+  },
+  "source_preparation_receipt": {
+    "schema": "prta-cxr.ifusion-final-evidence-preparation.v1",
+    "status": "PASS_IFUSION_CORE_MATRIX_FROZEN",
+    "server_receipt_file_sha256": "dbdf70ccfb7623d440c42201161727d8e87c32c18ea65e62afd1bcada17a654e"
+  },
+  "seeds": [
+    {
+      "seed": 17,
+      "training_status": "PASS_TRAINING_FINISHED",
+      "formal_experiment": true,
+      "internal_test_opened": false,
+      "protected_outcomes_opened": false,
+      "config_sha256": "e71441df8ca0c9d048dba4d01f6caa34e20d1096dd45fc38457a80b221c1ef31",
+      "training_receipt_file_sha256": "18108e6d84e656b38da94e6ffdd85e10d14e8cd2852ee251964e6aab2fe8cf29",
+      "input_hashes": {
+        "cache_manifest": "c541ec8c1eebdab45d6cb1d7dea2bfea388d12f78cc52f692aea3b04c6c1ac81",
+        "cleaned_split_freeze": "aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069",
+        "label_quality_audit": "b6c7d4cc1784deef5e45640d0c0151b68504a51f7f70b5b922ef67eba034b2c9",
+        "matched_hard_prior_map": "276f1d4d37f656631bbfc89ad3d9a73f2b6c7c4c4c65787a80bec63cfc23924e",
+        "split_manifest": "45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89",
+        "text_cache": "1846e3d9d7c12cdb71b37d8e12023d376a5b5b70438cfdecc3f141595c81a3fd",
+        "weights": "52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be"
+      }
+    },
+    {
+      "seed": 28,
+      "training_status": "PASS_TRAINING_FINISHED",
+      "formal_experiment": true,
+      "internal_test_opened": false,
+      "protected_outcomes_opened": false,
+      "config_sha256": "6a6defc525ee1e36e11cd1c365d8569adc1ae8c34dc04efab6b6358eb9ff0e0d",
+      "training_receipt_file_sha256": "9a831d2254113053f23aceb2e5cfe42b770089b935c6021c94e3846fafafb00e",
+      "input_hashes": {
+        "cache_manifest": "c541ec8c1eebdab45d6cb1d7dea2bfea388d12f78cc52f692aea3b04c6c1ac81",
+        "cleaned_split_freeze": "aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069",
+        "label_quality_audit": "b6c7d4cc1784deef5e45640d0c0151b68504a51f7f70b5b922ef67eba034b2c9",
+        "matched_hard_prior_map": "276f1d4d37f656631bbfc89ad3d9a73f2b6c7c4c4c65787a80bec63cfc23924e",
+        "split_manifest": "45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89",
+        "text_cache": "1846e3d9d7c12cdb71b37d8e12023d376a5b5b70438cfdecc3f141595c81a3fd",
+        "weights": "52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be"
+      }
+    },
+    {
+      "seed": 43,
+      "training_status": "PASS_TRAINING_FINISHED",
+      "formal_experiment": true,
+      "internal_test_opened": false,
+      "protected_outcomes_opened": false,
+      "config_sha256": "724562311e6a33d4a893db12b04b781c9958e8a32773a4f133328eb4a27a8a88",
+      "training_receipt_file_sha256": "b57e7ebd56a1afd65624b2bfde24d6e269af36a9325aac05e0ec60a16195caa8",
+      "input_hashes": {
+        "cache_manifest": "c541ec8c1eebdab45d6cb1d7dea2bfea388d12f78cc52f692aea3b04c6c1ac81",
+        "cleaned_split_freeze": "aa761c13ae74f29f7c30bc0fecb23db20eab02d79a52778dbbeddec9563cd069",
+        "label_quality_audit": "b6c7d4cc1784deef5e45640d0c0151b68504a51f7f70b5b922ef67eba034b2c9",
+        "matched_hard_prior_map": "276f1d4d37f656631bbfc89ad3d9a73f2b6c7c4c4c65787a80bec63cfc23924e",
+        "split_manifest": "45985f4ff5373715fbfaf7a3af1e3820dc8800ae123d3a98e6086f9b62e38f89",
+        "text_cache": "1846e3d9d7c12cdb71b37d8e12023d376a5b5b70438cfdecc3f141595c81a3fd",
+        "weights": "52cc993c5c5ff962bd0c60931874bc001e7e9b41666a385530f4a036294576be"
+      }
+    }
+  ],
+  "selection_performed": false,
+  "external_opened": false,
+  "internal_test_opened": false,
+  "gold_opened": false,
+  "protected_outcome_read_count": 0
+}

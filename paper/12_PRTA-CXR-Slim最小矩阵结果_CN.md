@@ -1,5 +1,10 @@
 # PRTA-CXR-Slim 最小矩阵最终结果
 
+> **最终方法衔接**：本页已经完成的 Train-only 选择正式锁定 Slim-S1，并成为
+> Phase20 最终投稿主线的唯一模块选择依据。本页 checkpoint/0.560520 均不是
+> full-Train official-Dev 结果；确认矩阵与重推理见
+> [Slim-S1 最终主线与重跑矩阵](13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md)。
+
 ## 证据状态
 
 状态：`PASS_SLIM_MATRIX_SELECTED`

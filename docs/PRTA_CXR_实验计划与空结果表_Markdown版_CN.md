@@ -1,5 +1,12 @@
 # PRTA-CXR 最终论文实验计划与空结果登记表
 
+> **2026-08-18 Phase20 权威覆盖**：最终方法已锁定为 Slim-S1，Seeds 固定为
+> 17/28/43。Phase20 在 full Train / official Dev 上执行 63 个新训练单元及 S1
+> 专属重推理；外部验证最后执行，Internal-test/Gold 与医生人工继续不做。详见
+> 《PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md》。下文旧 V2 空表与阶段
+> STOP 保留为审计历史，不再定义当前主线；其 Run Registry、patient-cluster
+> 统计、相对路径和禁止 outcome-adaptive selection 的规则仍然有效。
+
 > **文档类型**：实验执行、阶段确认与论文空表一体化 Markdown 文档  
 > **版本**：v1.0  
 > **主方法定位**：PRTA-CXR 原生纵向 ViT 分类器  

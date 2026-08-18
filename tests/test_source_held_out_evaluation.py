@@ -4,6 +4,7 @@ from prta_cxr.contracts import canonical_sha256
 from prta_cxr.source_held_out_evaluation import (
     target_source_rows,
     validate_source_filter_receipt,
+    validate_source_holdout_run_identity,
     validate_source_holdout_sources,
 )
 
@@ -39,4 +40,25 @@ def test_source_holdout_rejects_target_leakage_and_binds_filter_audit():
             {"fraction_audit": {"source_filter": {}}},
             hashes,
             expected_source_audit=audit,
+        )
+
+
+def test_source_holdout_accepts_frozen_phase16_and_phase20_identities():
+    assert (
+        validate_source_holdout_run_identity({"phase16_axis": "source_held_out"})
+        == "Phase16"
+    )
+    assert (
+        validate_source_holdout_run_identity(
+            {
+                "phase20_axis": "source_held_out",
+                "final_mainline": "Slim-S1",
+                "source_held_out_protocol": "s1_core_no_cmcp_v1",
+            }
+        )
+        == "Phase20"
+    )
+    with pytest.raises(ValueError, match="registered source-held-out"):
+        validate_source_holdout_run_identity(
+            {"phase20_axis": "source_held_out", "final_mainline": "V2"}
         )

@@ -1,5 +1,13 @@
 # PRTA-CXR 最终论文实验与项目重构执行手册（ViT 主线版）
 
+> **2026-08-18 Phase20 权威覆盖**：最终投稿主线已由历史 Full V2 改为
+> `PRTA-CXR-Slim / Slim-S1`。固定删除 standalone Prototype CE 与 DMW，保留
+> finding conditioning、cross-time alignment、temporal relation residual、state
+> 0.025、ODC 0.05、matched-hard CMCP 0.01 和 Tail8/H0。完整 63-cell 重跑与
+> 重推理协议见《PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md》。本文的
+> formal 双门禁、cleaned Train/Dev、患者隔离、注册/哈希、统计和 protected-
+> outcome 规则继续生效；下文 V2 方法身份、旧 Seed 和 STOP 叙事只作历史记录。
+
 > 版本：v1.0  
 > 日期：2026-08-01  
 > 目标：Information Fusion 特刊 “Trustworthy Multimodal Information Fusion for Healthcare”  

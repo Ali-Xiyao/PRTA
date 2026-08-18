@@ -60,6 +60,18 @@ def validate_source_holdout_sources(
     return train_sources, dev_sources
 
 
+def validate_source_holdout_run_identity(config: Mapping[str, Any]) -> str:
+    if config.get("phase16_axis") == "source_held_out":
+        return "Phase16"
+    if (
+        config.get("phase20_axis") == "source_held_out"
+        and config.get("final_mainline") == "Slim-S1"
+        and config.get("source_held_out_protocol") == "s1_core_no_cmcp_v1"
+    ):
+        return "Phase20"
+    raise ValueError("checkpoint is not a registered source-held-out run")
+
+
 def validate_source_filter_receipt(
     receipt: Mapping[str, Any],
     checkpoint_hashes: Mapping[str, Any],
@@ -138,8 +150,7 @@ def source_held_out_evaluation_main(argv: Sequence[str] | None = None) -> int:
     if checkpoint.get("schema") != "prta-cxr.checkpoint.v1":
         raise ValueError("unsupported checkpoint schema")
     config = dict(checkpoint["config"])
-    if config.get("phase16_axis") != "source_held_out":
-        raise ValueError("checkpoint is not a Phase16 source-held-out run")
+    validate_source_holdout_run_identity(config)
     if str(config.get("source_held_out_target")) != args.target_source:
         raise ValueError("target-source identity drift")
     train_sources, dev_sources = validate_source_holdout_sources(

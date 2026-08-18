@@ -1,7 +1,9 @@
 # PRTA-CXR repository rules
 
-- `docs/PRTA_CXR_最终论文实验与项目重构执行手册_CN.md` and
-  `docs/PRTA_CXR_实验计划与空结果表_Markdown版_CN.md` are the active authority.
+- `docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md` is the active
+  Phase20 method/experiment authority. The two older execution manuals remain
+  binding for privacy, provenance, statistics, and formal-launch gates, but their
+  V2 mainline fields are historical and superseded by the Slim-S1 protocol.
 - Do not run formal training, labeling, caching, evaluation, baseline,
   ablation, trust, visualization, or VLM jobs without explicit user authority.
 - Formal entry points must require both `--formal` and

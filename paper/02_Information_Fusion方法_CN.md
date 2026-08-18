@@ -1,12 +1,17 @@
 # Information Fusion 方法
 
+> **最终配置覆盖（2026-08-18）**：本章正式方法应写为 Slim-S1。保留
+> finding query、cross-time alignment、relation residual、state anchor 0.025、
+> ODC 0.05、matched-hard CMCP 0.01 与 Tail8/H0；standalone Prototype CE 和
+> DMW 均为 0。下文 Full V2/IF-Axx 定义保留为历史消融映射，不能再当成最终方法。
+
 ## 任务定义
 
 给定患者当前胸片表示、既往胸片表示和目标 finding 文本，预测五类纵向状态：
 Stable、Improved、Worse、New、Resolved。开发集包含 2,427 名患者的 11,201 条
 观察；所有统计以患者为聚类单位，避免把同一患者多条记录视为独立样本。
 
-## Full V2 的信息流
+## Slim-S1 的信息流
 
 论文方法部分建议把 V2 描述为四个相互联系的层次：
 
@@ -16,9 +21,9 @@ Stable、Improved、Worse、New、Resolved。开发集包含 2,427 名患者的 
    避免直接比较未对齐 token。
 3. **Temporal relation residual**：显式构造 prior-current relation，并以 residual
    形式注入 transition representation。
-4. **Training-time semantic and directional constraints**：prototype classification、
-   matched-hard CMCP、state anchoring、DMW 与 ODC 共同约束语义、历史特异性和
-   方向一致性。
+4. **Training-time history/state constraints**：matched-hard CMCP、state anchoring
+   与 ODC 约束历史特异性、状态保持和方向一致性；standalone Prototype CE 与
+   DMW 已由冻结 Slim 选择删除。
 
 不要把 Tail8 写成“只取最后 8 个 token”。Tail8 是冻结的 adapter/scope 配置，
 应按代码与原执行手册中的修正定义描述。

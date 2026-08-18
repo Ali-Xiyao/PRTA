@@ -1,14 +1,22 @@
-# PRTA-CXR V2 最终方法与 Train/Dev 结果（唯一权威版本）
+# PRTA-CXR V2 历史开发方法与 Train/Dev 结果
+
+> **主线变更（2026-08-18）**：本文不再是最终投稿方法权威。V2 的配置、数值
+> 与诊断继续作为不可变历史开发证据；最终方法已由 Train-only Slim 冻结矩阵
+> 选择并锁定为 `Slim-S1`，其 full-Train 确认和非外部证据按
+> 《PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md》重新生成。不得删除或
+> 改写本文历史结果，也不得把它继续称为最终主方法。
 
 > 状态：`FROZEN_MAIN_METHOD_TRAIN_DEV_CONFIRMED_PENDING_INDEPENDENT_UNTOUCHED_TEST`
 >
 > 冻结日期：2026-08-14
 >
-> 本文是 PRTA-CXR V2 的唯一论文与仓库结果权威。它只汇总 physician-confirmed cleaned Train/Dev 证据，不包含、复用或推断 Internal-test、Gold 或任何其他受保护结果，也不含患者级预测或私有运行时产物。
+> 本文是 PRTA-CXR V2 历史开发阶段的结果权威。它只汇总
+> physician-confirmed cleaned Train/Dev 证据，不包含、复用或推断
+> Internal-test、Gold 或任何其他受保护结果，也不含患者级预测或私有运行时产物。
 
 ## 1. 最终结论与边界
 
-最终主方法正式冻结为：
+在 2026-08-14 的 V2 开发阶段，当时的方法正式冻结为：
 
 > **PRTA-CXR V2：Tail8/H0 PRTA + Finding-Conditioned State Anchoring + Cross-Time Transition Representation + Prototype Supervision + Matched-Hard CMCP。**
 
@@ -266,4 +274,6 @@ Wave045 的 V3/V4/V5 checkpoint-only intervention diagnostics 在 `true / matche
 
 ## 10. 后续唯一科学步骤
 
-V2 已冻结，当前阶段不再进行主方法搜索、权重调整、结果导向消融或受保护集预览。若获得单独授权，唯一允许的下一步是：对这个完全冻结的 V2 执行一次独立、未触碰的测试评估，并将其与当前 Train/Dev 证据严格分开报告。
+V2 历史证据继续冻结，不进行结果导向改写或受保护集预览。后续主线已由
+2026-08-18 Slim-S1 协议接管；V2 只作为不可变开发父方法参与同一 official Dev
+口径的预先规定比较，不再单独打开 Internal-test/Gold，也不再定义投稿主方法。

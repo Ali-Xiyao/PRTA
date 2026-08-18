@@ -8,6 +8,10 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 结果才能进入论文表格；尚未完成的可靠性、外部泛化或临床价值只能写成计划或
 假设，不能提前写成已观察结论。
 
+最终投稿主方法已于 2026-08-18 锁定为 `PRTA-CXR-Slim / Slim-S1`。现有 V2
+材料保留为历史开发证据；full Train / official Dev 的 63-cell Phase20 训练与
+S1 专属可信性重推理完成前，不得把 Slim Train-only 数字写入最终主表。
+
 ## 从哪里开始
 
 1. [证据状态总览](00_证据状态总览_CN.md)：哪些已完成、哪些仍缺失。
@@ -24,6 +28,8 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 12. [比较器可信性与亚组](11_比较器可信性效率与亚组_CN.md)：四个比较器的三 Seed 校准、同卡效率与描述性亚组。
 13. [PRTA-CXR-Slim 最小矩阵最终结果](12_PRTA-CXR-Slim最小矩阵结果_CN.md)：
     Train-only 三 Seed 正式精简判定、冻结规则与收口凭据。
+14. [Slim-S1 最终主线与重跑矩阵](13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md)：
+    最终配置、继承/重跑/重推理边界与 Phase20 进度。
 
 ## 数据附录
 
@@ -41,13 +47,14 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 
 - 33 个 Information Fusion 训练单元、33 个四条件诊断导出和 10,000 次患者级
   paired bootstrap 已完成。
-- 冻结主方法仍为 Full V2；本轮分析没有重新选模型或选择 best seed。
+- 冻结投稿主方法为 Slim-S1；V2 保留为历史开发父方法，不重新选择 best seed。
 - 现有证据支持 finding-conditioned visual query 与 temporal relation residual
   是关键组件；其他模块的独立效应较小或不确定。
 - V2 与 B401/TILA8/F01/F02 的三 Seed Dev 校准、选择性预测、描述性亚组和固定
   A800 效率均已完成；自动化结果不等于临床验证。
 - PRTA-CXR-Slim 的 4 Arms × 3 Seeds 已由服务器正式 finalizer 收口并选择
-  `Slim-S1`；该选择不覆盖 Full V2，也不是外部验证结论。
+  `Slim-S1`；该 Train-only 选择现用于锁定最终主线，但不等同于 full-Train、
+  external 或临床验证结果。
 - 外部/跨源评估、正式官方纵向基线、source-held-out、grounding、data scaling
   和 label-noise 尚未完成；医生人工/reader study 已明确取消。
 
