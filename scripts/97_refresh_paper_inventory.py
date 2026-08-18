@@ -17,7 +17,9 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1] / "paper"
     output = root / "data" / "07_论文材料清单与哈希.md"
     files = sorted(
-        path for path in root.rglob("*.md") if path.resolve() != output.resolve()
+        path
+        for path in root.rglob("*")
+        if path.suffix in {".json", ".md"} and path.resolve() != output.resolve()
     )
     lines = [
         "# 论文材料清单与 SHA256",
@@ -25,7 +27,7 @@ def main() -> int:
         "生成日期：2026-08-18（Asia/Shanghai）。",
         "",
         "本表用于把整个 `paper/` 复制到另一台电脑后核验材料是否完整。哈希覆盖",
-        "除本清单自身之外的全部 Markdown 文件；字节数与 SHA256 均按文件原始字节",
+        "除本清单自身之外的全部 Markdown/JSON 文件；字节数与 SHA256 均按原始字节",
         "计算。本目录不包含患者级预测、checkpoint、影像或受保护测试集结果。",
         "",
         "| 文件 | 字节数 | SHA256 |",

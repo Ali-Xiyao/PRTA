@@ -10,7 +10,13 @@ from pathlib import Path
 from typing import Any
 
 from prta_cxr.authorization import require_formal_authorization
-from prta_cxr.contracts import PROGRESSION_LABELS, sha256_file
+from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256, sha256_file
+from prta_cxr.experiments import (
+    filter_train_dev_sources,
+    inject_train_label_noise,
+    materialize_classification_counts,
+    nested_train_fraction,
+)
 from prta_cxr.phase16_queue import LANES
 from prta_cxr.slim_matrix import SEEDS, SLIM_ARMS
 
@@ -26,6 +32,52 @@ def _read_json(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"expected JSON object: {path}")
     return value
+
+
+def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows = []
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line:
+            continue
+        value = json.loads(line)
+        if not isinstance(value, dict):
+            raise ValueError(f"expected JSON object at {path}:{line_number}")
+        rows.append(value)
+    if not rows:
+        raise ValueError(f"Slim selection manifest is empty: {path}")
+    return rows
+
+
+def _effective_training_config_sha256(
+    config: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> str:
+    """Replay the deterministic config transform used by formal training."""
+    data_config = dict(config.get("data", {}))
+    selected, _ = filter_train_dev_sources(
+        rows,
+        train_sources=data_config.get("train_sources"),
+        dev_sources=data_config.get("dev_sources"),
+    )
+    selected, _ = nested_train_fraction(
+        selected,
+        fraction=float(data_config.get("train_fraction", 1.0)),
+        salt=str(
+            data_config.get("fraction_salt", "prta-cxr-luna-primary-scaling-v1")
+        ),
+    )
+    noise_config = dict(data_config.get("label_noise", {}))
+    noise_rate = float(noise_config.get("rate", 0.0))
+    if noise_rate:
+        selected, _ = inject_train_label_noise(
+            selected,
+            rate=noise_rate,
+            family=str(noise_config.get("family", "symmetric")),
+            salt=str(noise_config.get("salt", "prta-cxr-label-noise-v1")),
+        )
+    effective = materialize_classification_counts(config, selected)
+    return canonical_sha256(effective)
 
 
 def _write_new(path: Path, text: str) -> None:
@@ -241,6 +293,7 @@ def finalize_slim_matrix_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--output-json", type=Path, required=True)
     parser.add_argument("--output-markdown", type=Path, required=True)
+    parser.add_argument("--offload-reconciliation", type=Path)
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
     require_formal_authorization(formal_flag=args.formal)
@@ -251,6 +304,23 @@ def finalize_slim_matrix_main(argv: Sequence[str] | None = None) -> int:
     if preparation.get("status") != "PASS_SLIM_MATRIX_FROZEN":
         raise ValueError("Slim matrix preparation is not PASS")
     _closed(preparation, label="Slim preparation")
+    reconciliation_inventory = None
+    if args.offload_reconciliation is not None:
+        reconciliation = _read_json(args.offload_reconciliation)
+        if reconciliation.get("schema") != "prta-cxr.slim-offload-reconciliation.v1":
+            raise ValueError("unsupported Slim offload reconciliation")
+        if reconciliation.get("status") != "PASS_SLIM_OFFLOAD_RECONCILED":
+            raise ValueError("Slim offload reconciliation is not PASS")
+        if reconciliation.get("server_preparation_sha256") != sha256_file(
+            preparation_path
+        ):
+            raise ValueError("Slim offload reconciliation preparation drift")
+        _closed(reconciliation, label="Slim offload reconciliation")
+        reconciliation_inventory = {
+            "path": str(args.offload_reconciliation),
+            "sha256": sha256_file(args.offload_reconciliation),
+            "imported_seed43": sorted(reconciliation.get("imported_seed43", {})),
+        }
     lane_inventory = {}
     for lane in LANES:
         path = args.root / "results" / lane / "completion.json"
@@ -273,17 +343,37 @@ def finalize_slim_matrix_main(argv: Sequence[str] | None = None) -> int:
         }
     cells: dict[str, dict[int, dict[str, Any]]] = {arm: {} for arm in SLIM_ARMS}
     receipt_inventory = {}
+    config_inventory = {}
+    selection_manifest_path = (
+        args.root / "selection" / "train_only_selection_v1.jsonl"
+    )
+    if sha256_file(selection_manifest_path) != preparation["derived_manifest_sha256"]:
+        raise ValueError("Slim selection manifest hash drift")
+    selection_rows = _read_jsonl(selection_manifest_path)
     for arm in SLIM_ARMS:
         for seed in SEEDS:
             experiment_id = f"{arm}-S{seed}"
+            config_path = args.root / "configs" / f"{experiment_id}.json"
+            if (
+                sha256_file(config_path)
+                != preparation["config_file_hashes"][config_path.name]
+            ):
+                raise ValueError(f"Slim config file drift: {experiment_id}")
+            config = _read_json(config_path)
+            source_config_sha256 = canonical_sha256(config)
+            if (
+                source_config_sha256
+                != preparation["config_hashes"][config_path.name]
+            ):
+                raise ValueError(f"Slim config identity drift: {experiment_id}")
+            effective_config_sha256 = _effective_training_config_sha256(
+                config, selection_rows
+            )
             path = (
                 args.root / "results" / "runs" / experiment_id / "training_receipt.json"
             )
             receipt = _read_json(path)
-            if (
-                receipt.get("config_sha256")
-                != preparation["config_hashes"][f"{experiment_id}.json"]
-            ):
+            if receipt.get("config_sha256") != effective_config_sha256:
                 raise ValueError(f"Slim receipt config drift: {experiment_id}")
             input_hashes = dict(receipt.get("input_hashes", {}))
             if (
@@ -293,6 +383,11 @@ def finalize_slim_matrix_main(argv: Sequence[str] | None = None) -> int:
                 raise ValueError(f"Slim selection manifest drift: {experiment_id}")
             cells[arm][seed] = _best_epoch_metrics(receipt)
             receipt_inventory[experiment_id] = sha256_file(path)
+            config_inventory[experiment_id] = {
+                "config_file_sha256": sha256_file(config_path),
+                "source_config_sha256": source_config_sha256,
+                "effective_config_sha256": effective_config_sha256,
+            }
     selection = summarize_and_select(
         cells,
         macro_f1_tolerance=float(preparation["selection_rule"]["macro_f1_tolerance"]),
@@ -306,7 +401,10 @@ def finalize_slim_matrix_main(argv: Sequence[str] | None = None) -> int:
         "status": "PASS_SLIM_MATRIX_SELECTED",
         "created_at": datetime.now(UTC).isoformat(),
         "preparation_sha256": sha256_file(preparation_path),
+        "finalizer_module_sha256": sha256_file(Path(__file__)),
+        "offload_reconciliation": reconciliation_inventory,
         "lane_completions": lane_inventory,
+        "config_sha256": config_inventory,
         "training_receipt_sha256": receipt_inventory,
         **selection,
         "selection_performed": True,

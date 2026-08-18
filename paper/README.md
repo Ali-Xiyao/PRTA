@@ -22,8 +22,8 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 10. [校准与选择性预测](09_校准与选择性预测_CN.md)：五折温度缩放、风险覆盖与转诊模拟。
 11. [效率与部署](10_效率与部署_CN.md)：固定 A800 的参数量、FLOPs、延迟、吞吐和缓存。
 12. [比较器可信性与亚组](11_比较器可信性效率与亚组_CN.md)：四个比较器的三 Seed 校准、同卡效率与描述性亚组。
-13. [PRTA-CXR-Slim 最小矩阵预汇总](12_PRTA-CXR-Slim最小矩阵预汇总_CN.md)：
-    Train-only 三 Seed 精简判定；正式服务器 finalizer 收口前保持“预汇总”标记。
+13. [PRTA-CXR-Slim 最小矩阵最终结果](12_PRTA-CXR-Slim最小矩阵结果_CN.md)：
+    Train-only 三 Seed 正式精简判定、冻结规则与收口凭据。
 
 ## 数据附录
 
@@ -35,6 +35,7 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
 - [效率完整结果](data/06_效率完整结果.md)
 - [论文材料清单与 SHA256](data/07_论文材料清单与哈希.md)
 - [Phase 15 比较器证据汇总](data/08_Phase15比较器证据汇总.md)
+- [PRTA-CXR-Slim 最终公共结果 JSON](data/09_PRTA-CXR-Slim最终结果.json)
 
 ## 当前结论边界
 
@@ -45,6 +46,8 @@ Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint
   是关键组件；其他模块的独立效应较小或不确定。
 - V2 与 B401/TILA8/F01/F02 的三 Seed Dev 校准、选择性预测、描述性亚组和固定
   A800 效率均已完成；自动化结果不等于临床验证。
+- PRTA-CXR-Slim 的 4 Arms × 3 Seeds 已由服务器正式 finalizer 收口并选择
+  `Slim-S1`；该选择不覆盖 Full V2，也不是外部验证结论。
 - 外部/跨源评估、正式官方纵向基线、source-held-out、grounding、data scaling
   和 label-noise 尚未完成；医生人工/reader study 已明确取消。
 
