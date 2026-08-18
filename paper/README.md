@@ -44,6 +44,8 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
     Train-only 三 Seed 正式精简判定、冻结规则与收口凭据。
 14. [Slim-S1 最终主线与重跑矩阵](13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md)：
     最终配置、继承/重跑/重推理边界与 Phase20 进度。
+15. [ReXGradient-160K 外部验证数据准备](14_ReXGradient-160K外部验证数据准备_CN.md)：
+    outcome-blind 配对、私有迁移规模、完整性凭据与一次性外部评估门控。
 
 ## 数据附录
 
@@ -69,8 +71,11 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 - PRTA-CXR-Slim 的 4 Arms × 3 Seeds 已由服务器正式 finalizer 收口并选择
   `Slim-S1`；该 Train-only 选择现用于锁定最终主线，但不等同于 full-Train、
   external 或临床验证结果。
-- 外部/跨源评估、正式官方纵向基线、source-held-out、grounding、data scaling
-  和 label-noise 尚未完成；医生人工/reader study 已明确取消。
+- ReXGradient-160K 的外部 validation/test 子集已完成 outcome-blind 私有暂存，正式
+  评估代码和 13-job 双卡队列已构建；标签映射、严格跨数据去重和一次性 public-test
+  评估尚未正式运行，不能写成外部性能。
+- 正式官方纵向基线、source-held-out、grounding、data scaling 和 label-noise 尚未
+  完成；医生人工/reader study 已明确取消。
 
 ## 迁移说明
 

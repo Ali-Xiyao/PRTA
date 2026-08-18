@@ -27,6 +27,31 @@ def _read_jsonl(path: Path) -> list[dict[str, object]]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
+def _bind_image_root(
+    rows: list[dict[str, object]], image_root: Path | None
+) -> list[dict[str, object]]:
+    if image_root is None:
+        return rows
+    root = image_root.resolve()
+    if not root.is_dir():
+        raise FileNotFoundError(f"image root is missing: {root}")
+    bound = []
+    for raw in rows:
+        row = dict(raw)
+        for key in ("prior_image_path", "current_image_path"):
+            value = Path(str(row[key]))
+            path = value.resolve() if value.is_absolute() else (root / value).resolve()
+            try:
+                path.relative_to(root)
+            except ValueError as error:
+                raise ValueError(f"image path escapes image root: {key}") from error
+            if not path.is_file():
+                raise FileNotFoundError(f"manifest image is missing: {key}")
+            row[key] = str(path)
+        bound.append(row)
+    return bound
+
+
 def _synthetic_inventory(count: int) -> list[dict[str, str]]:
     rows = []
     for index in range(count):
@@ -50,13 +75,12 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--model-root", type=Path)
+    parser.add_argument("--image-root", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--shard-size", type=int, default=256)
-    parser.add_argument(
-        "--output-block", type=int, choices=(2, 4, 6, 8), default=8
-    )
+    parser.add_argument("--output-block", type=int, choices=(2, 4, 6, 8), default=8)
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--synthetic-count", type=int, default=4)
     parser.add_argument("--resume", action="store_true")
@@ -103,15 +127,11 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(manifest, indent=2, sort_keys=True))
         return 0
 
-    if (
-        args.pair_manifest is None
-        or args.weights is None
-        or args.model_root is None
-    ):
+    if args.pair_manifest is None or args.weights is None or args.model_root is None:
         parser.error(
             "formal mode requires --pair-manifest, --weights, and --model-root"
         )
-    rows = _read_jsonl(args.pair_manifest)
+    rows = _bind_image_root(_read_jsonl(args.pair_manifest), args.image_root)
     inventory = unique_image_inventory(rows)
     from prta_cxr.vision.biomedclip import (
         BiomedCLIPIntermediateEncoder,
@@ -129,9 +149,7 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
         encoder_receipt=encoder_receipt,
         resume=args.resume,
     )
-    encoder = BiomedCLIPIntermediateEncoder(
-        visual, output_block=args.output_block
-    )
+    encoder = BiomedCLIPIntermediateEncoder(visual, output_block=args.output_block)
     while int(state["completed_images"]) < len(normalized):
         start = int(state["completed_images"])
         selected = normalized[start : start + args.shard_size]
@@ -177,10 +195,9 @@ def cache_main(argv: Sequence[str] | None = None) -> int:
     manifest["formal_input"] = {
         "sample_manifest_sha256": canonical_sha256(rows),
         "sample_manifest_file_sha256": sha256_file(args.pair_manifest),
-        "model_config_sha256": sha256_file(
-            args.model_root / "open_clip_config.json"
-        ),
+        "model_config_sha256": sha256_file(args.model_root / "open_clip_config.json"),
         "weights_sha256": sha256_file(args.weights),
+        "image_root_bound": args.image_root is not None,
     }
     replace_cache_manifest(args.output, manifest)
     Block8CacheIndex(args.output)

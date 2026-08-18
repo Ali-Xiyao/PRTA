@@ -28,6 +28,7 @@ vision = [
 data = [
   "pandas>=2.0",
   "pyarrow>=15",
+  "zstandard>=0.22",
 ]
 figures = [
   "matplotlib>=3.8",
