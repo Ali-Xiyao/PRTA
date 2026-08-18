@@ -38,6 +38,7 @@ lane 分别从 `P20-FINAL-S1-S17` 与 `P20-FINAL-S1-S28` 开始，本地 RTX3090
 程序与 Slim-S1 专属可信性推理程序已经构建并通过全仓测试。它们不会停止或抢占
 当前任务：对比重建按每条 Phase20-A lane 的 PASS completion 接力；可信性程序
 必须等三 Seed final S1 checkpoint 全部 PASS 后才能冻结。两者都不分配 GPU1。
+接力由 hash-gated CPU watcher 执行，前序 lane 非 PASS 时不会绕过失败继续训练。
 
 历史源码/聚合结论保存在 GitHub 分支
 `codex/archive-v2-history-before-phase20`（冻结提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。

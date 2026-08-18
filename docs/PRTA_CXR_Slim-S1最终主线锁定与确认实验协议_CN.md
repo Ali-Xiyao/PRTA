@@ -83,6 +83,9 @@ lane 为 `a800_3066`、`a800_9929` 与 `rtx3090_0`；`rtx3090_1` 明确保留为
 接力队列同样只允许上述三条活动 lane，并使用 LPT 估时均衡。它必须等待每条
 Phase20-A lane 的 PASS completion，不能停止、迁移或抢占当前任务；接力自身也按
 源码提交、输入哈希、配置哈希和 queue hash fail closed。
+`phase20_continuation_watcher.py` 仅在 CPU 上轮询完成凭据，并以无 shell 的 argv
+启动下一队列；若前序 lane 含失败、身份漂移或任一哈希不符，则写出 BLOCK/FAILED
+收据并拒绝接力。
 
 ## 5. full S1 完成后自动重推理
 
