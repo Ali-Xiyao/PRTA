@@ -628,7 +628,7 @@ PRTA-CXR/
 
 完整 PRTA 与以下单组件删除比较：
 
-- w/o finding conditioning；
+- w/o visual finding-query conditioning（仅关闭 visual finding query）；
 - w/o cross-time alignment；
 - w/o state/transition decoupling；
 - w/o CMCP；
@@ -874,7 +874,7 @@ X801  PRTA-to-VLM additional deployment
 | Variant | Finding condition | Alignment | Dual branch | CMCP | Inversion | State preserve | Macro-F1 | Prior gap | ODER |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Full PRTA | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |  |  |
-| w/o finding |  | ✓ | ✓ | ✓ | ✓ | ✓ |  |  |  |
+| w/o visual finding-query conditioning |  | ✓ | ✓ | ✓ | ✓ | ✓ |  |  |  |
 | w/o alignment | ✓ |  | ✓ | ✓ | ✓ | ✓ |  |  |  |
 | w/o dual branch | ✓ | ✓ |  | ✓ | ✓ | ✓ |  |  |  |
 | w/o CMCP | ✓ | ✓ | ✓ |  | ✓ | ✓ |  |  |  |

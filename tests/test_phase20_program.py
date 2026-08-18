@@ -10,6 +10,7 @@ from prta_cxr.phase20_program import (
     build_phase20_configs,
     build_reuse_audit,
     normalized_s0_semantics,
+    validate_phase20_configs,
 )
 
 
@@ -186,6 +187,47 @@ def test_phase20_exact_ablations_change_only_frozen_axis():
         assert config["loss_weights"]["prototype_alignment"] == 0
         assert config["loss_weights"]["direction_margin"] == 0
         assert config["model"]["adapter_scope"] == final["model"]["adapter_scope"]
+
+
+@pytest.mark.parametrize(
+    ("experiment_id", "field", "bad_value", "message"),
+    [
+        (
+            "P20-STRUCT-NOFINDING-S17",
+            "finding_conditioning",
+            True,
+            "finding-conditioning",
+        ),
+        (
+            "P20-STRUCT-NOALIGN-S17",
+            "cross_time_alignment",
+            True,
+            "cross-time-alignment",
+        ),
+        (
+            "P20-STRUCT-NORELATION-S17",
+            "temporal_relation_residual",
+            True,
+            "temporal-relation-residual",
+        ),
+    ],
+)
+def test_phase20_structural_validator_rejects_exact_contract_drift(
+    experiment_id, field, bad_value, message
+):
+    configs = build_phase20_configs(_parents(), _sources())
+    configs[experiment_id]["model"]["components"][field] = bad_value
+    with pytest.raises(ValueError, match=message):
+        validate_phase20_configs(configs, sources=_sources())
+
+
+def test_phase20_noalign_validator_requires_raw_prior():
+    configs = build_phase20_configs(_parents(), _sources())
+    configs["P20-STRUCT-NOALIGN-S28"]["model"]["components"]["unaligned_prior_mode"] = (
+        "conditioned"
+    )
+    with pytest.raises(ValueError, match="raw PRIOR"):
+        validate_phase20_configs(configs, sources=_sources())
 
 
 def test_phase20_reuse_audit_certifies_a10_and_retrains_fusion():

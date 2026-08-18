@@ -65,7 +65,8 @@ def validate_modality_checkpoint_config(config: Mapping[str, Any]) -> str:
 
 FINDING_CONDITIONS = (
     "F0_correct",
-    "F1_zero",
+    "F1_zero_text_embedding",
+    "F1b_zero_projected_query",
     "F2_generic",
     "F3_wrong",
     *RANDOM_FINDING_CONDITIONS,
@@ -158,6 +159,7 @@ def _predict(
     finding_transform: Callable[[Mapping[str, Any], torch.Tensor], torch.Tensor]
     | None = None,
     current_cache: Block8CacheIndex | None = None,
+    force_zero_projected_query: bool = False,
 ) -> list[dict[str, Any]]:
     model.eval()
     rows = []
@@ -175,7 +177,12 @@ def _predict(
         finding = batch["finding_text"]
         if finding_transform is not None:
             finding = finding_transform(batch, finding)
-        _, logits, _ = model(prior, current.to(device), finding.to(device))
+        _, logits, _ = model(
+            prior,
+            current.to(device),
+            finding.to(device),
+            force_zero_projected_query=force_zero_projected_query,
+        )
         probabilities = logits.detach().float().cpu().softmax(dim=-1)
         predictions = probabilities.argmax(dim=-1)
         for index, sample_id in enumerate(batch["sample_id"]):
@@ -215,9 +222,9 @@ def _finding_transform(
     }
 
     def transform(batch: Mapping[str, Any], values: torch.Tensor) -> torch.Tensor:
-        if condition == "F0_correct":
+        if condition in {"F0_correct", "F1b_zero_projected_query"}:
             return values
-        if condition == "F1_zero":
+        if condition == "F1_zero_text_embedding":
             return torch.zeros_like(values)
         output = []
         for finding, sample_id in zip(
@@ -340,6 +347,19 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
         "contrast": args.contrast_cache,
         "jpeg": args.jpeg_cache,
     }
+    dev_current_roster = sorted(
+        {
+            (str(row["source"]), str(row["current_image_path"]))
+            for row in rows
+            if row.get("split") == "dev"
+        }
+    )
+    expected_corruption_identity = {
+        "split_manifest_sha256": input_hashes["split_manifest"],
+        "dev_current_image_roster_sha256": canonical_sha256(dev_current_roster),
+        "dev_current_image_count": len(dev_current_roster),
+    }
+    observed_corruption_identity = None
     for condition, root in corruption_roots.items():
         manifest_path = root / "cache_manifest.json"
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -348,6 +368,20 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
             raise ValueError(f"current corruption cache condition drift: {condition}")
         if encoder.get("split_manifest_sha256") != input_hashes["split_manifest"]:
             raise ValueError(f"current corruption cache split drift: {condition}")
+        identity = {
+            key: encoder.get(key)
+            for key in (
+                "split_manifest_sha256",
+                "dev_current_image_roster_sha256",
+                "dev_current_image_count",
+            )
+        }
+        if identity != expected_corruption_identity:
+            raise ValueError(f"current corruption cache roster drift: {condition}")
+        if observed_corruption_identity is None:
+            observed_corruption_identity = identity
+        elif identity != observed_corruption_identity:
+            raise ValueError("current corruption cache cross-condition identity drift")
     conditions: dict[str, dict[str, Any]] = {}
     prediction_blocks: dict[str, list[dict[str, Any]]] = {}
     baseline_rows = None
@@ -405,15 +439,24 @@ def modality_stress_main(argv: Sequence[str] | None = None) -> int:
                 base_embeddings=text_value["finding_embeddings"],
                 intervention_embeddings=intervention_value["embeddings"],
             ),
+            force_zero_projected_query=(condition == "F1b_zero_projected_query"),
         )
         prediction_blocks[condition] = predictions
         conditions[condition] = {
             "status": "PASS",
             "metrics": classification_metrics(predictions, labels=PROGRESSION_LABELS),
-            "condition_identity": (
+            "condition_identity": {
+                "F1_zero_text_embedding": (
+                    "zero finding-text embedding before LayerNorm/biased projection"
+                ),
+                "F1b_zero_projected_query": (
+                    "zero visual finding query after learned projection"
+                ),
+            }.get(
+                condition,
                 "sample-level wrong-finding permutation"
                 if condition in RANDOM_FINDING_CONDITIONS
-                else condition
+                else condition,
             ),
         }
     current_caches = {

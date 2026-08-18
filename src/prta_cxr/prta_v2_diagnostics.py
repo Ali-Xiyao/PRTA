@@ -46,6 +46,17 @@ IFUSION_FINAL_VARIANTS = {
 FORMAL_BASELINE_VARIANTS = {"B401", "TILA8"}
 PROBABILITY_COMPARATORS = {"B401", "TILA8", "IF-F01", "IF-F02"}
 PHASE20_FINAL_VARIANTS = {"Slim-S1"}
+PHASE20_B2_VARIANTS = {
+    "V2",
+    "S0",
+    "B401",
+    "B402",
+    "TILA8",
+    "BioViLT",
+    "CheXRelNet",
+    "TILAPaper",
+    "F02-DMW0",
+}
 
 
 def _load_matched_map(
@@ -75,6 +86,13 @@ def _resolve_diagnostic_variant(
             PHASE20_FINAL_VARIANTS,
             "P20-FINAL-S1-S",
         )
+    if diagnostic_scope == "phase20_b2":
+        experiment_id = str(config.get("experiment_id", ""))
+        if experiment_id.startswith("P20-F02-DMW0-S"):
+            variant = "F02-DMW0"
+        else:
+            variant = str(config.get("phase20_role", ""))
+        return variant, PHASE20_B2_VARIANTS, "P20-"
     if diagnostic_scope == "ifusion_final":
         return (
             str(config.get("ifusion_variant", "")),
@@ -107,10 +125,11 @@ def _experiment_identity_matches(
     if diagnostic_scope == "ifusion_final":
         return experiment_id.startswith(f"{variant}-S")
     if diagnostic_scope == "phase20_s1":
-        return (
-            variant == "Slim-S1"
-            and experiment_id.startswith("P20-FINAL-S1-S")
-        )
+        return variant == "Slim-S1" and experiment_id.startswith("P20-FINAL-S1-S")
+    if diagnostic_scope == "phase20_b2":
+        if variant == "F02-DMW0":
+            return experiment_id.startswith("P20-F02-DMW0-S")
+        return experiment_id.startswith(f"P20-REBUILD-{variant}-S")
     if diagnostic_scope in {"candidate_v0_v2", "legacy_v3_v5"}:
         return experiment_id.startswith(f"W045-{variant}-S")
     if diagnostic_scope == "formal_baseline":
@@ -125,6 +144,8 @@ def _experiment_identity_matches(
 def _probability_export_allowed(diagnostic_scope: str, variant: str) -> bool:
     if diagnostic_scope == "phase20_s1":
         return variant == "Slim-S1"
+    if diagnostic_scope == "phase20_b2":
+        return variant in PHASE20_B2_VARIANTS
     if diagnostic_scope == "candidate_v0_v2":
         return variant == "V2"
     return variant in PROBABILITY_COMPARATORS and diagnostic_scope in {
@@ -340,6 +361,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
             "ifusion_final",
             "formal_baseline",
             "phase20_s1",
+            "phase20_b2",
         ),
         default="legacy_v3_v5",
     )
@@ -380,8 +402,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         variant in {"V2", "Slim-S1"} and args.true_only and args.retain_logits
     ):
         parser.error(
-            "--deployment-prune-state requires V2/Slim-S1 "
-            "--true-only --retain-logits"
+            "--deployment-prune-state requires V2/Slim-S1 --true-only --retain-logits"
         )
     experiment_id = str(config.get("experiment_id", ""))
     if args.diagnostic_scope == "phase20_s1" and (
@@ -510,6 +531,7 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "ifusion_final",
         "formal_baseline",
         "phase20_s1",
+        "phase20_b2",
     }
     ifusion_mode = args.diagnostic_scope == "ifusion_final"
     phase20_mode = args.diagnostic_scope == "phase20_s1"
@@ -593,6 +615,9 @@ def diagnostic_main(argv: Sequence[str] | None = None) -> int:
         "evaluation_interventions": list(evaluation_interventions),
         "deployment_state_pruned": bool(args.deployment_prune_state),
     }
+    if args.diagnostic_scope == "phase20_b2":
+        receipt["schema"] = "prta-cxr.phase20-b2-comparator-probability-diagnostic.v1"
+        receipt["status"] = "PASS_PHASE20_B2_COMPARATOR_DEV_PROBABILITY_EXPORT"
     if prediction_block_mode:
         staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
         if staging.exists():

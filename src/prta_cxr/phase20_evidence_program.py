@@ -14,6 +14,8 @@ from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.cleaned_split_freeze import require_cleaned_manifest
 from prta_cxr.contracts import canonical_sha256, sha256_file
 from prta_cxr.data.hard_cmcp import read_counterfactual_prior_map
+from prta_cxr.data.token_cache import image_cache_key
+from prta_cxr.data.training_dataset import read_jsonl
 from prta_cxr.phase20_program import PHASE20_PROTOCOL, SEEDS
 from prta_cxr.provenance import resolve_source_commit
 
@@ -35,6 +37,30 @@ def _write_new_json(path: Path, value: object) -> None:
         json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     temporary.replace(path)
+
+
+def raw_image_root_identity(
+    split_manifest: Path, raw_image_root: Path
+) -> dict[str, Any]:
+    keys = sorted(
+        {
+            image_cache_key(str(row["source"]), str(row["current_image_path"]))
+            for row in read_jsonl(split_manifest)
+            if row.get("split") == "dev"
+        }
+    )
+    roster = []
+    for key in keys:
+        path = raw_image_root / f"{key}.jpg"
+        if not path.is_file():
+            raise FileNotFoundError(f"Phase20 raw-image mirror missing: {path}")
+        roster.append((path.name, int(path.stat().st_size)))
+    if not roster:
+        raise ValueError("Phase20 raw-image mirror has an empty Dev roster")
+    return {
+        "dev_current_image_count": len(roster),
+        "filename_size_roster_sha256": canonical_sha256(roster),
+    }
 
 
 def validate_final_s1_artifact(
@@ -170,6 +196,8 @@ def build_phase20_evidence_jobs(*, lane: str) -> list[dict[str, Any]]:
                     "{split_manifest}",
                     "--weights",
                     "{weights}",
+                    "--raw-image-root",
+                    "{raw_image_root}",
                     "--condition",
                     condition,
                     "--output",
@@ -440,6 +468,7 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--weights", type=Path, required=True)
     parser.add_argument("--label-quality-audit", type=Path, required=True)
     parser.add_argument("--model-root", type=Path, required=True)
+    parser.add_argument("--raw-image-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
@@ -463,6 +492,9 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         receipt_path=args.cleaned_split_freeze,
         role="train_dev",
         portable_root=args.cleaned_split_platform_root,
+    )
+    raw_identity = raw_image_root_identity(
+        args.split_manifest, args.raw_image_root.resolve()
     )
     input_paths = {
         "split_manifest": args.split_manifest,
@@ -532,6 +564,8 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         "input_sha256": input_hashes,
         "cleaned_split_platform_root_required": True,
         "model_root_required": True,
+        "raw_image_root_required": True,
+        "raw_image_root_identity": raw_identity,
         "external_included": False,
         "internal_test_opened": False,
         "gold_opened": False,

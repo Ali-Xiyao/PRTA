@@ -183,9 +183,10 @@ def validate_phase20_comparator_configs(
             raise ValueError("Phase20 comparator protocol drift")
         if config.get("method_provenance") != specification["method_provenance"]:
             raise ValueError("Phase20 comparator method provenance drift")
-        if config.get("official_implementation") is not False or config.get(
-            "official_checkpoint"
-        ) is not False:
+        if (
+            config.get("official_implementation") is not False
+            or config.get("official_checkpoint") is not False
+        ):
             raise ValueError("Phase20 comparator cannot claim official assets")
         model = dict(config["model"])
         if model.get("family") != specification["family"]:
@@ -193,6 +194,8 @@ def validate_phase20_comparator_configs(
         if model.get("adapter_scope") != "tail8":
             raise ValueError("Phase20 comparator must use Tail8")
         weights = dict(config["loss_weights"])
+        if float(weights.get("classification", -1.0)) != 1.0:
+            raise ValueError("Phase20 comparator classification weight drift")
         if specification["family"] == "prta":
             if float(weights["prototype_alignment"]) != float(
                 specification["prototype_alignment"]
@@ -202,6 +205,17 @@ def validate_phase20_comparator_configs(
                 specification["direction_margin"]
             ):
                 raise ValueError("Phase20 PRTA comparator DMW drift")
+            if float(weights.get("state", -1.0)) != 0.025:
+                raise ValueError("Phase20 PRTA comparator state drift")
+            if float(weights.get("opposite_direction_cost", -1.0)) != 0.05:
+                raise ValueError("Phase20 PRTA comparator ODC drift")
+            if float(weights.get("cmcp", -1.0)) != 0.01:
+                raise ValueError("Phase20 PRTA comparator CMCP drift")
+            components = dict(model.get("components", {}))
+            if components.get("matched_hard_cmcp") is not True:
+                raise ValueError("Phase20 PRTA comparator matched-hard drift")
+            if dict(config.get("cmcp", {})).get("matching") != "offline_hard_v1":
+                raise ValueError("Phase20 PRTA comparator matching-mode drift")
         else:
             expected_inversion = float(specification["inversion"])
             if float(weights["inversion"]) != expected_inversion:
@@ -248,9 +262,7 @@ def _training_command(config: Mapping[str, Any]) -> list[str]:
         "--formal",
     ]
     if str(config["model"]["family"]) == "prta":
-        command.extend(
-            ["--counterfactual-prior-map", "{matched_hard_prior_map}"]
-        )
+        command.extend(["--counterfactual-prior-map", "{matched_hard_prior_map}"])
     return command
 
 
@@ -326,9 +338,7 @@ def prepare_phase20_comparator_program_main(
         description="Freeze post-cleanup nonexternal comparator rebuild queues"
     )
     parser.add_argument("--phase20-a-program", type=Path, required=True)
-    parser.add_argument(
-        "--active-lane", nargs="+", choices=tuple(LANES), required=True
-    )
+    parser.add_argument("--active-lane", nargs="+", choices=tuple(LANES), required=True)
     parser.add_argument("--split-manifest", type=Path, required=True)
     parser.add_argument("--cleaned-split-freeze", type=Path, required=True)
     parser.add_argument("--cleaned-split-platform-root", type=Path, required=True)
@@ -344,9 +354,7 @@ def prepare_phase20_comparator_program_main(
     if args.output.exists():
         parser.error("--output must be a new immutable directory")
     phase20_a_receipt_path = args.phase20_a_program / "preparation_receipt.json"
-    phase20_a_receipt = json.loads(
-        phase20_a_receipt_path.read_text(encoding="utf-8")
-    )
+    phase20_a_receipt = json.loads(phase20_a_receipt_path.read_text(encoding="utf-8"))
     if (
         phase20_a_receipt.get("status") != "PASS_PHASE20_SLIM_S1_PROGRAM_FROZEN"
         or int(phase20_a_receipt.get("training_cell_count", -1)) != 63

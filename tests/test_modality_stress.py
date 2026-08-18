@@ -1,11 +1,31 @@
 import torch
 
 from prta_cxr.modality_stress import (
+    FINDING_CONDITIONS,
     RANDOM_FINDING_CONDITIONS,
     _finding_transform,
+    _predict,
     compare_condition_rows,
     validate_modality_checkpoint_config,
 )
+from prta_cxr.prta_v2_diagnostics import (
+    _experiment_identity_matches,
+    _probability_export_allowed,
+    _resolve_diagnostic_variant,
+)
+
+
+class _ProjectedQueryProbe:
+    def __init__(self):
+        self.force_zero = None
+
+    def eval(self):
+        return self
+
+    def __call__(self, prior, current, finding, *, force_zero_projected_query=False):
+        self.force_zero = force_zero_projected_query
+        logits = torch.tensor([[1.0, 0.0, 0.0, 0.0, 0.0]])
+        return None, logits, torch.zeros(1, 3)
 
 
 def _row(sample, probabilities):
@@ -53,6 +73,42 @@ def test_random_finding_is_sample_level_and_uses_three_frozen_salts():
     assert any(not torch.equal(outputs[0], value) for value in outputs[1:])
 
 
+def test_finding_stress_separates_zero_embedding_from_zero_projected_query():
+    assert "F1_zero_text_embedding" in FINDING_CONDITIONS
+    assert "F1b_zero_projected_query" in FINDING_CONDITIONS
+    transform = _finding_transform(
+        "F1_zero_text_embedding",
+        base_embeddings={"A": torch.ones(512), "B": torch.zeros(512)},
+        intervention_embeddings={},
+    )
+    assert torch.equal(
+        transform({"finding": ["A"], "sample_id": ["x"]}, torch.ones(1, 512)),
+        torch.zeros(1, 512),
+    )
+    model = _ProjectedQueryProbe()
+    loader = [
+        {
+            "prior": torch.zeros(1, 2, 3),
+            "current": torch.zeros(1, 2, 3),
+            "finding_text": torch.ones(1, 512),
+            "sample_id": ["sample"],
+            "patient_id_hash": ["patient"],
+            "target": torch.tensor([0]),
+            "source": ["source"],
+            "finding": ["A"],
+            "special_prior_available": [False],
+            "special_prior_sample_id": [""],
+        }
+    ]
+    _predict(
+        model,
+        loader,
+        device=torch.device("cpu"),
+        force_zero_projected_query=True,
+    )
+    assert model.force_zero is True
+
+
 def test_modality_stress_accepts_only_frozen_phase20_final_s1():
     config = {
         "experiment_id": "P20-FINAL-S1-S28",
@@ -68,3 +124,21 @@ def test_modality_stress_accepts_only_frozen_phase20_final_s1():
         assert "frozen V2 or Phase20 Slim-S1" in str(error)
     else:
         raise AssertionError("a Phase20 ablation cannot enter final-S1 modality stress")
+
+
+def test_phase20_b2_diagnostic_scope_accepts_rebuild_and_f02_only():
+    config = {
+        "experiment_id": "P20-REBUILD-CheXRelNet-S28",
+        "phase20_role": "CheXRelNet",
+    }
+    variant, allowed, _ = _resolve_diagnostic_variant(config, "phase20_b2")
+    assert variant == "CheXRelNet"
+    assert variant in allowed
+    assert _experiment_identity_matches(
+        config["experiment_id"], diagnostic_scope="phase20_b2", variant=variant
+    )
+    assert _probability_export_allowed("phase20_b2", variant)
+    f02 = {"experiment_id": "P20-F02-DMW0-S43", "phase20_role": "ignored"}
+    variant, allowed, _ = _resolve_diagnostic_variant(f02, "phase20_b2")
+    assert variant == "F02-DMW0"
+    assert variant in allowed

@@ -166,9 +166,10 @@ class PRTATrainModel(nn.Module):
         finding_text: torch.Tensor,
         *,
         deployment_prune_state: bool = False,
+        force_zero_projected_query: bool = False,
     ) -> tuple[Any, torch.Tensor, torch.Tensor]:
         query = self.training_heads.finding_query(finding_text)
-        if not self.finding_conditioning:
+        if not self.finding_conditioning or force_zero_projected_query:
             query = torch.zeros_like(query)
         if deployment_prune_state and not isinstance(self.native_head, NativeH0Head):
             raise ValueError("deployment state pruning is valid only for native H0")
@@ -972,6 +973,10 @@ def train_model(
     seed_everything(seed)
     model.to(device)
     parameters = [value for value in model.parameters() if value.requires_grad]
+    parameter_audit = {
+        "total_parameters": sum(value.numel() for value in model.parameters()),
+        "trainable_parameters": sum(value.numel() for value in parameters),
+    }
     optimizer = torch.optim.AdamW(
         parameters,
         lr=float(config["optimization"]["learning_rate"]),
@@ -1172,6 +1177,7 @@ def train_model(
             ),
             "config": dict(config),
             "input_hashes": dict(input_hashes),
+            "parameter_audit": parameter_audit,
         }
         if averaged_model is not None:
             checkpoint["training_model_state"] = model.state_dict()
@@ -1236,6 +1242,7 @@ def train_model(
         "history": history,
         "config_sha256": canonical_sha256(config),
         "input_hashes": dict(input_hashes),
+        "parameter_audit": parameter_audit,
         "checkpoint_path": "best.pt",
         "fraction_audit": dict(fraction_audit or {}),
         "dev_prior_audit": dev_prior_audit,

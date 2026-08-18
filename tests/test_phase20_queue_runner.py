@@ -92,3 +92,42 @@ def test_phase20_platform_inputs_are_hash_gated(tmp_path):
     direct["weights"].write_text("changed\n", encoding="utf-8")
     with pytest.raises(ValueError, match="weights"):
         validate_platform_inputs(inputs, manifest)
+
+
+def test_phase20_platform_inputs_allow_hash_bound_posttraining_artifacts(tmp_path):
+    direct = {}
+    for name in (
+        "split_manifest",
+        "cleaned_split_freeze",
+        "text_cache",
+        "matched_hard_prior_map",
+        "weights",
+        "label_quality_audit",
+    ):
+        path = tmp_path / name
+        path.write_text(name, encoding="utf-8")
+        direct[name] = path
+    cache_root = tmp_path / "cache"
+    cache_root.mkdir()
+    cache_manifest = cache_root / "cache_manifest.json"
+    cache_manifest.write_text("{}", encoding="utf-8")
+    cleaned_root = tmp_path / "cleaned"
+    cleaned_root.mkdir()
+    checkpoint = tmp_path / "checkpoint.pt"
+    checkpoint.write_bytes(b"checkpoint")
+    inputs = {
+        **{name: str(path) for name, path in direct.items()},
+        "cache_root": str(cache_root),
+        "cleaned_split_platform_root": str(cleaned_root),
+        "b2_s0_checkpoint_17": str(checkpoint),
+    }
+    manifest = {
+        "schema": "prta-cxr.phase20-input-manifest.v1",
+        "input_sha256": {
+            **{name: sha256_file(path) for name, path in direct.items()},
+            "cache_manifest": sha256_file(cache_manifest),
+            "b2_s0_checkpoint_17": sha256_file(checkpoint),
+        },
+    }
+    result = validate_platform_inputs(inputs, manifest)
+    assert result["b2_s0_checkpoint_17"] == checkpoint.resolve()

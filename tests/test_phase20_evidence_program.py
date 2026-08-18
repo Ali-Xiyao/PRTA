@@ -40,6 +40,11 @@ def test_phase20_evidence_queue_covers_frozen_nonexternal_s1_evidence():
     pruned = by_id["evidence-state-pruned-S17"]["command"]
     assert "--true-only" in pruned
     assert "--deployment-prune-state" in pruned
+    for condition in ("blur", "contrast", "jpeg"):
+        corruption = by_id[f"evidence-current-cache-{condition}"]["command"]
+        assert corruption[corruption.index("--raw-image-root") + 1] == (
+            "{raw_image_root}"
+        )
 
 
 def test_phase20_evidence_queue_rejects_reserved_or_unknown_lane():

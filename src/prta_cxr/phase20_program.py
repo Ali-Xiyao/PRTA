@@ -297,37 +297,31 @@ def validate_phase20_configs(
         if model.get("family") != "prta":
             raise ValueError("Phase20 PRTA family drift")
         components = dict(model.get("components", {}))
-        if (
-            axis != "exact_structural_ablation"
-            or config.get("phase20_role") != "without_finding_conditioning"
-        ):
-            if not bool(components.get("finding_conditioning")):
-                raise ValueError("Phase20 finding core drift")
-        if (
-            axis != "exact_structural_ablation"
-            or config.get("phase20_role") != "without_cross_time_alignment"
-        ):
-            if not bool(components.get("cross_time_alignment")):
-                raise ValueError("Phase20 alignment core drift")
-        no_cmcp = (
-            axis == "source_held_out"
-            or config.get("phase20_role") == "without_matched_hard_cmcp"
-        )
+        role = str(config.get("phase20_role", ""))
+        expected_finding = role != "without_finding_conditioning"
+        if bool(components.get("finding_conditioning")) is not expected_finding:
+            raise ValueError("Phase20 finding-conditioning contract drift")
+        expected_alignment = role != "without_cross_time_alignment"
+        if bool(components.get("cross_time_alignment")) is not expected_alignment:
+            raise ValueError("Phase20 cross-time-alignment contract drift")
+        expected_relation = role != "without_temporal_relation_residual"
+        if bool(components.get("temporal_relation_residual")) is not expected_relation:
+            raise ValueError("Phase20 temporal-relation-residual contract drift")
+        if role == "without_cross_time_alignment":
+            if components.get("unaligned_prior_mode") != "raw":
+                raise ValueError("Phase20 NOALIGN must use raw PRIOR")
+        elif components.get("unaligned_prior_mode") != "conditioned":
+            raise ValueError("Phase20 aligned variants must retain conditioned PRIOR")
+        no_cmcp = axis == "source_held_out" or role == "without_matched_hard_cmcp"
         if bool(components.get("matched_hard_cmcp")) is no_cmcp:
             raise ValueError("Phase20 CMCP component drift")
         expected_cmcp = 0.0 if no_cmcp else 0.01
         if float(weights.get("cmcp", -1.0)) != expected_cmcp:
             raise ValueError("Phase20 CMCP weight drift")
-        expected_state = (
-            0.0 if config.get("phase20_role") == "without_state_anchor" else 0.025
-        )
+        expected_state = 0.0 if role == "without_state_anchor" else 0.025
         if float(weights.get("state", -1.0)) != expected_state:
             raise ValueError("Phase20 state weight drift")
-        expected_odc = (
-            0.0
-            if config.get("phase20_role") == "without_opposite_direction_cost"
-            else 0.05
-        )
+        expected_odc = 0.0 if role == "without_opposite_direction_cost" else 0.05
         if float(weights.get("opposite_direction_cost", -1.0)) != expected_odc:
             raise ValueError("Phase20 ODC weight drift")
         if axis == "source_held_out":

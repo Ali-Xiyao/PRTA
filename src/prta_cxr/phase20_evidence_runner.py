@@ -18,7 +18,7 @@ from prta_cxr.authorization import (
     require_formal_authorization,
 )
 from prta_cxr.contracts import sha256_file
-from prta_cxr.phase20_evidence_program import EVIDENCE_LANES
+from prta_cxr.phase20_evidence_program import EVIDENCE_LANES, raw_image_root_identity
 from prta_cxr.phase20_queue_runner import dependency_decision
 from prta_cxr.provenance import resolve_source_commit
 
@@ -46,6 +46,7 @@ def validate_evidence_platform_inputs(
         "weights",
         "label_quality_audit",
         "model_root",
+        "raw_image_root",
         *(f"s1_checkpoint_{seed}" for seed in (17, 28, 43)),
         *(f"s1_training_receipt_{seed}" for seed in (17, 28, 43)),
     }
@@ -81,9 +82,18 @@ def validate_evidence_platform_inputs(
             raise FileNotFoundError(f"Phase20 evidence platform input missing: {role}")
         if sha256_file(path) != expected[role]:
             raise ValueError(f"Phase20 evidence platform input hash drift: {role}")
-    for role in ("cleaned_split_platform_root", "cache_root", "model_root"):
+    for role in (
+        "cleaned_split_platform_root",
+        "cache_root",
+        "model_root",
+        "raw_image_root",
+    ):
         if not paths[role].is_dir():
             raise FileNotFoundError(f"Phase20 evidence directory missing: {role}")
+    if raw_image_root_identity(
+        paths["split_manifest"], paths["raw_image_root"]
+    ) != dict(input_manifest.get("raw_image_root_identity", {})):
+        raise ValueError("Phase20 evidence raw-image mirror identity drift")
     return paths
 
 
@@ -316,6 +326,7 @@ def run_phase20_evidence_queue_main(argv: Sequence[str] | None = None) -> int:
         "failures": failures,
         "skipped": skipped,
         "queue_sha256": sha256_file(args.queue),
+        "source_commit": resolve_source_commit(source),
         "selection_performed": False,
         "external_opened": False,
         "internal_test_opened": False,

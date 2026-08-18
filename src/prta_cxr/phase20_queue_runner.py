@@ -54,7 +54,7 @@ def _input_paths(inputs: Mapping[str, Any]) -> dict[str, Path]:
     missing = [name for name in required if not inputs.get(name)]
     if missing:
         raise ValueError(f"Phase20 platform inputs missing: {missing}")
-    return {name: Path(str(inputs[name])).resolve() for name in required}
+    return {name: Path(str(value)).resolve() for name, value in inputs.items()}
 
 
 def validate_platform_inputs(
@@ -73,8 +73,24 @@ def validate_platform_inputs(
         "label_quality_audit": paths["label_quality_audit"],
     }
     expected = dict(input_manifest.get("input_sha256", {}))
-    if set(expected) != set(direct_roles):
-        raise ValueError("Phase20 input role set drift")
+    extra_roles = set(expected) - set(direct_roles)
+    for role in extra_roles:
+        if role not in paths:
+            raise ValueError(f"Phase20 platform input missing frozen role: {role}")
+        direct_roles[role] = paths[role]
+    permitted = {
+        "split_manifest",
+        "cleaned_split_freeze",
+        "cleaned_split_platform_root",
+        "cache_root",
+        "text_cache",
+        "matched_hard_prior_map",
+        "weights",
+        "label_quality_audit",
+        *extra_roles,
+    }
+    if set(paths) != permitted:
+        raise ValueError("Phase20 platform input role set drift")
     for role, path in direct_roles.items():
         if not path.is_file():
             raise FileNotFoundError(f"Phase20 platform input missing: {role}")
@@ -160,6 +176,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
     if preparation.get("status") not in {
         "PASS_PHASE20_SLIM_S1_PROGRAM_FROZEN",
         "PASS_PHASE20_COMPARATOR_REBUILD_PROGRAM_FROZEN",
+        "PASS_PHASE20_B2_PROGRAM_FROZEN",
     }:
         raise ValueError("Phase20 preparation is not frozen PASS")
     if preparation.get("source_commit") != resolve_source_commit(source):
@@ -317,6 +334,7 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
         "failures": failures,
         "skipped": skipped,
         "queue_sha256": sha256_file(args.queue),
+        "source_commit": resolve_source_commit(source),
         "external_opened": False,
         "internal_test_opened": False,
         "gold_opened": False,

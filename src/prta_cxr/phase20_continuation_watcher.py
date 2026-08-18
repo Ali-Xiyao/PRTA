@@ -14,7 +14,7 @@ from prta_cxr.contracts import sha256_file
 from prta_cxr.phase20_queue_runner import replace_json_atomic, write_json_atomic
 from prta_cxr.provenance import resolve_source_commit
 
-SPEC_STATUS = "PASS_PHASE20_CONTINUATION_SPEC_FROZEN"
+SPEC_STATUS = "PASS_PHASE20_GLOBAL_FINALIZER_CONTINUATION_SPEC_FROZEN"
 NEXT_PROGRAM_STATUSES = {"PASS_PHASE20_COMPARATOR_REBUILD_PROGRAM_FROZEN"}
 
 
@@ -28,15 +28,17 @@ def _read_json(path: Path) -> Any:
 
 def validate_continuation_spec(raw: Mapping[str, Any]) -> dict[str, Any]:
     spec = dict(raw)
-    if spec.get("schema") != "prta-cxr.phase20-continuation-spec.v1":
+    if spec.get("schema") != "prta-cxr.phase20-continuation-spec.v2":
         raise ValueError("unsupported Phase20 continuation spec schema")
     if spec.get("status") != SPEC_STATUS:
         raise ValueError("Phase20 continuation spec is not frozen PASS")
     lane = str(spec.get("lane", ""))
     required_paths = (
         "source",
-        "gate_completion",
-        "gate_queue",
+        "gate_finalizer",
+        "gate_program_preparation",
+        "gate_program_preparation_sha256",
+        "gate_source_commit",
         "next_program",
         "next_queue",
         "next_completion",
@@ -45,8 +47,10 @@ def validate_continuation_spec(raw: Mapping[str, Any]) -> dict[str, Any]:
         if not str(spec.get(name, "")):
             raise ValueError(f"Phase20 continuation spec missing {name}")
     command = spec.get("runner_command")
-    if not isinstance(command, list) or not command or not all(
-        isinstance(value, str) and value for value in command
+    if (
+        not isinstance(command, list)
+        or not command
+        or not all(isinstance(value, str) and value for value in command)
     ):
         raise ValueError("Phase20 continuation runner command must be argv")
     if not any(value.endswith("117_run_phase20_queue.py") for value in command):
@@ -66,10 +70,13 @@ def validate_continuation_spec(raw: Mapping[str, Any]) -> dict[str, Any]:
         != Path(str(spec["next_queue"])).resolve()
     ):
         raise ValueError("Phase20 continuation runner queue drift")
-    if any(
-        bool(spec.get(name, False))
-        for name in ("external_opened", "internal_test_opened", "gold_opened")
-    ) or int(spec.get("protected_outcome_read_count", -1)) != 0:
+    if (
+        any(
+            bool(spec.get(name, False))
+            for name in ("external_opened", "internal_test_opened", "gold_opened")
+        )
+        or int(spec.get("protected_outcome_read_count", -1)) != 0
+    ):
         raise ValueError("Phase20 continuation protected-read boundary drift")
     return spec
 
@@ -78,9 +85,17 @@ def validate_continuation_inputs(spec: Mapping[str, Any]) -> None:
     source = Path(str(spec["source"])).resolve()
     if resolve_source_commit(source) != spec.get("source_commit"):
         raise ValueError("Phase20 continuation source commit drift")
-    gate_queue = Path(str(spec["gate_queue"])).resolve()
-    if sha256_file(gate_queue) != spec.get("gate_queue_sha256"):
-        raise ValueError("Phase20 continuation gate queue hash drift")
+    gate_program = Path(str(spec["gate_program_preparation"])).resolve()
+    if sha256_file(gate_program) != spec.get("gate_program_preparation_sha256"):
+        raise ValueError("Phase20 continuation gate program hash drift")
+    gate_preparation = dict(_read_json(gate_program))
+    if (
+        gate_preparation.get("status") != "PASS_PHASE20_SLIM_S1_PROGRAM_FROZEN"
+        or gate_preparation.get("source_commit") != spec.get("gate_source_commit")
+        or int(gate_preparation.get("training_cell_count", -1)) != 63
+        or int(gate_preparation.get("job_count", -1)) != 88
+    ):
+        raise ValueError("Phase20 continuation gate program identity drift")
     next_program = Path(str(spec["next_program"])).resolve()
     preparation = dict(_read_json(next_program / "preparation_receipt.json"))
     if preparation.get("status") not in NEXT_PROGRAM_STATUSES:
@@ -94,23 +109,64 @@ def validate_continuation_inputs(spec: Mapping[str, Any]) -> None:
 
 
 def gate_decision(spec: Mapping[str, Any]) -> str:
-    completion_path = Path(str(spec["gate_completion"])).resolve()
-    if not completion_path.is_file():
+    finalizer_path = Path(str(spec["gate_finalizer"])).resolve()
+    if not finalizer_path.is_file():
         return "WAIT"
-    completion = dict(_read_json(completion_path))
+    finalizer = dict(_read_json(finalizer_path))
+    if (
+        finalizer.get("schema") != "prta-cxr.phase20-a-final-no-selection-aggregate.v1"
+        or finalizer.get("source_commit") != spec.get("gate_source_commit")
+        or finalizer.get("program_preparation_sha256")
+        != spec.get("gate_program_preparation_sha256")
+        or int(finalizer.get("expected_job_count", -1)) != 88
+        or int(finalizer.get("unique_pass_count", -1)) != 88
+        or int(finalizer.get("training_cell_count", -1)) != 63
+        or int(finalizer.get("transformed_map_count", -1)) != 19
+        or int(finalizer.get("source_held_evaluation_count", -1)) != 6
+        or finalizer.get("selection_performed") is not False
+        or finalizer.get("winner_selected") is not False
+        or finalizer.get("external_evaluation_included") is not False
+        or finalizer.get("internal_test_opened") is not False
+        or finalizer.get("gold_opened") is not False
+        or int(finalizer.get("protected_outcome_read_count", -1)) != 0
+    ):
+        raise ValueError("Phase20 continuation gate finalizer identity drift")
+    return (
+        "RUN"
+        if finalizer.get("status") == "PASS_PHASE20_A_FINAL_NO_SELECTION_AGGREGATE"
+        else "BLOCK"
+    )
+
+
+def validate_next_completion(
+    spec: Mapping[str, Any], completion: Mapping[str, Any]
+) -> None:
+    next_program = Path(str(spec["next_program"])).resolve()
+    preparation = dict(_read_json(next_program / "preparation_receipt.json"))
+    next_queue = Path(str(spec["next_queue"])).resolve()
+    expected_queue_sha = dict(preparation.get("queue_hashes", {})).get(next_queue.name)
     if (
         completion.get("schema") != "prta-cxr.phase20-lane-completion.v1"
+        or completion.get("status") != "PASS"
         or completion.get("lane") != spec.get("lane")
-        or completion.get("queue_sha256") != spec.get("gate_queue_sha256")
+        or completion.get("queue_sha256") != expected_queue_sha
+        or completion.get("source_commit") != spec.get("source_commit")
     ):
-        raise ValueError("Phase20 continuation gate completion identity drift")
-    return "RUN" if completion.get("status") == "PASS" else "BLOCK"
+        raise ValueError("Phase20 continuation completion identity drift")
+    if (
+        any(
+            completion.get(name) is not False
+            for name in ("external_opened", "internal_test_opened", "gold_opened")
+        )
+        or int(completion.get("protected_outcome_read_count", -1)) != 0
+    ):
+        raise ValueError("Phase20 continuation completion protected-read drift")
 
 
 def watch_phase20_continuation_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Wait for a frozen Phase20 lane boundary and launch its continuation"
+            "Wait for the frozen Phase20-A global finalizer and launch a continuation"
         )
     )
     parser.add_argument("--spec", type=Path, required=True)
@@ -153,14 +209,13 @@ def watch_phase20_continuation_main(argv: Sequence[str] | None = None) -> int:
     )
     result = subprocess.run(list(spec["runner_command"]), check=False)
     completion_path = Path(str(spec["next_completion"])).resolve()
-    completion = (
-        dict(_read_json(completion_path)) if completion_path.is_file() else {}
-    )
-    passed = (
-        result.returncode == 0
-        and completion.get("status") == "PASS"
-        and completion.get("lane") == spec.get("lane")
-    )
+    completion = dict(_read_json(completion_path)) if completion_path.is_file() else {}
+    passed = result.returncode == 0
+    if passed:
+        try:
+            validate_next_completion(spec, completion)
+        except (KeyError, TypeError, ValueError):
+            passed = False
     replace_json_atomic(
         args.receipt,
         {

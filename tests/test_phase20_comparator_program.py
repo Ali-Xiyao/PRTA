@@ -55,9 +55,7 @@ def _final_s1(seed: int) -> dict:
 
 
 def _configs() -> dict[str, dict]:
-    return build_phase20_comparator_configs(
-        {seed: _final_s1(seed) for seed in SEEDS}
-    )
+    return build_phase20_comparator_configs({seed: _final_s1(seed) for seed in SEEDS})
 
 
 def test_phase20_comparator_rebuild_freezes_exact_8_by_3_matrix():
@@ -70,8 +68,7 @@ def test_phase20_comparator_rebuild_freezes_exact_8_by_3_matrix():
         COMPARATOR_PROTOCOL
     }
     assert all(
-        config["final_mainline_reference"] == "Slim-S1"
-        for config in configs.values()
+        config["final_mainline_reference"] == "Slim-S1" for config in configs.values()
     )
 
 
@@ -104,6 +101,27 @@ def test_phase20_comparator_validation_rejects_contract_drift():
     broken["P20-REBUILD-S0-S17"]["loss_weights"]["direction_margin"] = 0.01
     with pytest.raises(ValueError, match="DMW drift"):
         validate_phase20_comparator_configs(broken)
+
+
+@pytest.mark.parametrize(
+    ("path", "value", "message"),
+    [
+        (("loss_weights", "classification"), 0.9, "classification"),
+        (("loss_weights", "state"), 0.0, "state"),
+        (("loss_weights", "opposite_direction_cost"), 0.0, "ODC"),
+        (("loss_weights", "cmcp"), 0.0, "CMCP"),
+        (("model", "components", "matched_hard_cmcp"), False, "matched-hard"),
+        (("cmcp", "matching"), "in_batch_roll_v1", "matching-mode"),
+    ],
+)
+def test_phase20_prta_comparator_validator_is_exact(path, value, message):
+    configs = _configs()
+    target = configs["P20-REBUILD-S0-S28"]
+    for key in path[:-1]:
+        target = target[key]
+    target[path[-1]] = value
+    with pytest.raises(ValueError, match=message):
+        validate_phase20_comparator_configs(configs)
 
 
 def test_phase20_comparator_jobs_use_only_three_allowed_balanced_lanes():

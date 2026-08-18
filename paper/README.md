@@ -14,7 +14,12 @@ S1 专属可信性重推理完成前，不得把 Slim Train-only 数字写入最
 
 旧私有 checkpoint 清理后，V2/S0/B401/B402/TILA8 与三项纵向内部/论文复现比较器
 需要按 Phase20 输入合同重建 8×3 单元，才能生成患者级 paired/safety 证据；相关
-代码已完成，队列只在当前 Phase20-A lane 完成后接力，并继续保留本地 GPU1。
+代码已完成；队列只在 Phase20-A 的 63-cell/88-job 全局 finalizer PASS 后接力，
+不能仅凭单 lane completion 启动，并继续保留本地 GPU1。
+
+Phase20 证据链拆为 B1（20 个 S1-only jobs）与 B2（27 个比较器概率导出 + 1 个
+patient-cluster/Holm/safety/disagreement 统计 job）。三层 finalizer 分别对账 Phase20-A、
+24-cell comparator 与 B1+B2。当前均为代码就绪、结果未就绪状态。
 
 Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 `codex/archive-v2-history-before-phase20`（提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。
