@@ -39,8 +39,9 @@ lane 分别从 `P20-FINAL-S1-S17` 与 `P20-FINAL-S1-S28` 开始，本地 RTX3090
 当前任务：Phase20-A 三条 lane 正常运行；对比重建只接受跨 server/local host shard
 合并后的 88-job 全局 finalizer，不能按单条 lane completion 提前接力。可信性程序
 必须等三 Seed final S1 checkpoint 全部 PASS 后才能冻结。两者都不分配 GPU1。
-旧逐 lane watcher 已退出；修复后的 v2 hash-gated CPU watcher 不会停止当前训练，且
-全局 finalizer 非 PASS 时不会绕过失败继续训练。
+旧逐 lane watcher 已退出；修复后的 `6100318` 不可变源码、comparator program 和
+三个 v2 hash-gated CPU watcher 已部署。它们不会停止当前训练，且全局 finalizer
+非 PASS 时不会绕过失败继续训练；host-shard 合并由独立 CPU coordinator 自动完成。
 
 历史源码/聚合结论保存在 GitHub 分支
 `codex/archive-v2-history-before-phase20`（冻结提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。
