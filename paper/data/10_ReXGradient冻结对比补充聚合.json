@@ -1,0 +1,62 @@
+{
+  "schema": "prta-cxr.git-safe-rexgradient-frozen-comparator-supplement.v1",
+  "status": "PARTIAL_SINGLE_SEED_POST_HOC_FIXED_CONFIG",
+  "as_of": "2026-08-20",
+  "cohort": {
+    "rows": 203,
+    "patients": 142,
+    "same_protocol_and_label_manifest": true
+  },
+  "systems": {
+    "Slim-S1-S28": {
+      "patient_balanced_macro_f1": 0.1729824902314337,
+      "patient_balanced_balanced_accuracy": 0.2554631345474029,
+      "patient_balanced_opposite_direction_error_rate": 0.0715962441314554,
+      "inference_receipt_sha256": "450f3df6a5f8a2f97e562933a4bedcab4f76ce5d3d729a3a1dddbab8b6b1e3dd"
+    },
+    "F01-DMW0-S28": {
+      "patient_balanced_macro_f1": 0.22593367684863389,
+      "patient_balanced_balanced_accuracy": 0.2502253007842616,
+      "patient_balanced_opposite_direction_error_rate": 0.0772971160295104,
+      "patient_balanced_min_class_recall": 0.0,
+      "per_class_f1": {
+        "Stable": 0.7224143351147437,
+        "Improved": 0.02129277566539924,
+        "Worse": 0.2958325180982196,
+        "New": 0.09012875536480687,
+        "Resolved": 0.0
+      },
+      "per_class_recall": {
+        "Stable": 0.594105480868666,
+        "Improved": 0.016756433273488927,
+        "Worse": 0.24466019417475734,
+        "New": 0.3956043956043956,
+        "Resolved": 0.0
+      },
+      "config_sha256": "d0ef2bc3ac10d87c62c9875346b81730280265e2df728edaa842eee9ea977167",
+      "checkpoint_sha256": "e75db5c39653e7b03327e1784e20b4fdb1ef326adf1a961fde72aa3a1efb136a",
+      "inference_receipt_sha256": "6d77b5d9c0358fd99fe10c395ce7abb9b4369367f4a4540ada0527549bf79e85"
+    }
+  },
+  "descriptive_delta_f01_minus_slim_s1": {
+    "patient_balanced_macro_f1": 0.05295118661720019,
+    "patient_balanced_balanced_accuracy": -0.0052378337631412974,
+    "patient_balanced_opposite_direction_error_rate": 0.005700871898054988
+  },
+  "matrix_status": {
+    "Slim-S1": "3/3_SEEDS_FORMALLY_SEALED",
+    "F01-DMW0": "1/3_SEEDS",
+    "F02-DMW0": "0/3_SEEDS",
+    "B401": "0/3_SEEDS_REBUILD_REQUIRED",
+    "B402": "0/3_SEEDS_REBUILD_REQUIRED",
+    "TILA8": "0/3_SEEDS_REBUILD_REQUIRED"
+  },
+  "protocol_sha256": "66a39cfb8f792f524fcb418f2c454649cc3f567a537d71c03805c39558a3a754",
+  "selection_performed": false,
+  "threshold_tuning_performed": false,
+  "external_outcomes_used_for_training": false,
+  "contains_patient_level_data": false,
+  "contains_predictions": false,
+  "contains_private_paths": false,
+  "interpretation": "Single-seed supplementary evidence only; it cannot establish a formal comparator ranking."
+}

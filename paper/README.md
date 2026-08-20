@@ -48,6 +48,8 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
     outcome-blind 配对、私有迁移规模、完整性凭据与一次性外部评估门控。
 16. [Phase20 与 ReXGradient 中期结果](15_Phase20阶段结果与ReXGradient外部验证中期汇总_CN.md)：
     已齐全三 Seed主结果、结构消融、数据规模曲线、正式外部结果与风险判断。
+17. [ReXGradient 冻结对比补充结果](16_ReXGradient冻结对比补充结果_CN.md)：
+    F01-DMW0-S28 同队列单 Seed补充、当前矩阵缺口与严格解释边界。
 
 ## 数据附录
 
@@ -60,6 +62,7 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 - [论文材料清单与 SHA256](data/07_论文材料清单与哈希.md)
 - [Phase 15 比较器证据汇总](data/08_Phase15比较器证据汇总.md)
 - [PRTA-CXR-Slim 最终公共结果 JSON](data/09_PRTA-CXR-Slim最终结果.json)
+- [ReXGradient 冻结对比补充聚合 JSON](data/10_ReXGradient冻结对比补充聚合.json)
 
 ## 当前结论边界
 
