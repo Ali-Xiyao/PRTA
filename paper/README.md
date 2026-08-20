@@ -1,8 +1,8 @@
 # PRTA-CXR 论文材料工作区
 
-本目录保存可迁移、可审计的论文写作材料。当前内容只使用冻结的
-Train/Dev 聚合证据，不包含患者级预测、影像、报告、checkpoint、账号信息或
-任何受保护测试集结果。
+本目录保存可迁移、可审计的论文写作材料。当前内容使用冻结的 Train/Dev 聚合
+证据与一次性封存的 ReXGradient 外部聚合结果，不包含患者级预测、影像、报告、
+checkpoint、账号信息或任何受保护内部测试集结果。
 
 原始安全约束继续有效：只有通过注册冻结、一次性正式评估和不可变凭据校验的
 结果才能进入论文表格；尚未完成的可靠性、外部泛化或临床价值只能写成计划或
@@ -46,6 +46,8 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
     最终配置、继承/重跑/重推理边界与 Phase20 进度。
 15. [ReXGradient-160K 外部验证数据准备](14_ReXGradient-160K外部验证数据准备_CN.md)：
     outcome-blind 配对、私有迁移规模、完整性凭据与一次性外部评估门控。
+16. [Phase20 与 ReXGradient 中期结果](15_Phase20阶段结果与ReXGradient外部验证中期汇总_CN.md)：
+    已齐全三 Seed主结果、结构消融、数据规模曲线、正式外部结果与风险判断。
 
 ## 数据附录
 
@@ -71,11 +73,11 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 - PRTA-CXR-Slim 的 4 Arms × 3 Seeds 已由服务器正式 finalizer 收口并选择
   `Slim-S1`；该 Train-only 选择现用于锁定最终主线，但不等同于 full-Train、
   external 或临床验证结果。
-- ReXGradient-160K 的外部 validation/test 子集已完成 outcome-blind 私有暂存，正式
-  评估代码和 13-job 双卡队列已构建；标签映射、严格跨数据去重和一次性 public-test
-  评估尚未正式运行，不能写成外部性能。
-- 正式官方纵向基线、source-held-out、grounding、data scaling 和 label-noise 尚未
-  完成；医生人工/reader study 已明确取消。
+- ReXGradient-160K 已完成严格去重、冻结标签映射、三 Seed validation 与一次性
+  public-test；外部绝对性能偏低且有类别召回为零，只支持泛化缺口结论。
+- full-Train Slim-S1、核心结构消融、F01/F02-DMW0 与 data scaling 已形成三 Seed
+  中期聚合；source-held-out evaluation、label-noise、后续可信性链和正式 finalizer
+  尚未完成；医生人工/reader study 已明确取消。
 
 ## 迁移说明
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+from datetime import date
 from pathlib import Path
 
 
@@ -24,7 +25,7 @@ def main() -> int:
     lines = [
         "# 论文材料清单与 SHA256",
         "",
-        "生成日期：2026-08-18（Asia/Shanghai）。",
+        f"生成日期：{date.today().isoformat()}（Asia/Shanghai）。",
         "",
         "本表用于把整个 `paper/` 复制到另一台电脑后核验材料是否完整。哈希覆盖",
         "除本清单自身之外的全部 Markdown/JSON 文件；字节数与 SHA256 均按原始字节",
