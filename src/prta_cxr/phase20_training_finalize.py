@@ -5,6 +5,7 @@ import json
 import os
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean, stdev
@@ -13,7 +14,7 @@ from typing import Any
 import torch
 
 from prta_cxr.authorization import require_formal_authorization
-from prta_cxr.contracts import canonical_sha256, sha256_file
+from prta_cxr.contracts import PROGRESSION_LABELS, canonical_sha256, sha256_file
 
 TRAINING_METRICS = (
     "macro_f1",
@@ -22,6 +23,13 @@ TRAINING_METRICS = (
     "opposite_direction_error_rate",
     "nll",
     "brier",
+)
+SOURCE_HELD_METRICS = (
+    "accuracy",
+    "macro_f1",
+    "balanced_accuracy",
+    "min_class_recall",
+    "opposite_direction_error_rate",
 )
 
 
@@ -123,6 +131,52 @@ def _duration_seconds(receipt: Mapping[str, Any]) -> float | None:
     )
 
 
+def _validate_materialized_training_config(
+    checkpoint_config: Mapping[str, Any],
+    frozen_config: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+) -> tuple[str, str]:
+    """Validate the one runtime-derived field added after the frozen config loads."""
+    runtime_sha = canonical_sha256(checkpoint_config)
+    frozen_sha = canonical_sha256(frozen_config)
+    if runtime_sha == frozen_sha:
+        return runtime_sha, frozen_sha
+
+    audit = receipt.get("fraction_audit")
+    label_counts = (
+        dict(audit.get("label_counts", {})) if isinstance(audit, Mapping) else {}
+    )
+    noise_audit = audit.get("label_noise") if isinstance(audit, Mapping) else None
+    if isinstance(noise_audit, Mapping):
+        before_counts = dict(noise_audit.get("before_label_counts", {}))
+        if (
+            before_counts != label_counts
+            or int(noise_audit.get("dev_label_changes", -1)) != 0
+        ):
+            raise ValueError("label-noise audit does not preserve frozen Dev labels")
+        label_counts = dict(noise_audit.get("after_label_counts", {}))
+    if set(label_counts) != set(PROGRESSION_LABELS):
+        raise ValueError("runtime config drift lacks complete train label-count audit")
+    expected_counts = [int(label_counts[label]) for label in PROGRESSION_LABELS]
+    observed_loss = dict(checkpoint_config.get("classification_loss", {}))
+    if list(observed_loss.get("class_counts", [])) != expected_counts:
+        raise ValueError("runtime class counts disagree with train fraction audit")
+
+    normalized = deepcopy(dict(checkpoint_config))
+    normalized_loss = dict(normalized.get("classification_loss", {}))
+    frozen_loss = dict(frozen_config.get("classification_loss", {}))
+    if "class_counts" in frozen_loss:
+        normalized_loss["class_counts"] = frozen_loss["class_counts"]
+    else:
+        normalized_loss.pop("class_counts", None)
+    normalized["classification_loss"] = normalized_loss
+    if canonical_sha256(normalized) != frozen_sha:
+        raise ValueError(
+            "training config drift exceeds runtime-materialized class counts"
+        )
+    return runtime_sha, frozen_sha
+
+
 def validate_phase20_training_job(
     job: Mapping[str, Any],
     state: Mapping[str, Any],
@@ -168,11 +222,12 @@ def validate_phase20_training_job(
     experiment_id = job_id.removeprefix("train-")
     config_path = program_root / "configs" / f"{experiment_id}.json"
     frozen_config = _read_json(config_path)
-    config_sha = canonical_sha256(config)
+    config_sha, frozen_config_sha = _validate_materialized_training_config(
+        config, frozen_config, receipt
+    )
     if (
         config.get("experiment_id") != experiment_id
         or int(config.get("seed", -1)) != int(receipt.get("seed", -2))
-        or config_sha != canonical_sha256(frozen_config)
         or receipt.get("config_sha256") != config_sha
     ):
         raise ValueError(f"training config/seed drift: {job_id}")
@@ -232,6 +287,7 @@ def validate_phase20_training_job(
         "source_commit": program_source_commit,
         "queue_sha256": queue_sha256,
         "config_sha256": config_sha,
+        "frozen_config_sha256": frozen_config_sha,
         "checkpoint_sha256": sha256_file(checkpoint_path),
         "training_receipt_sha256": sha256_file(receipt_path),
         "input_hashes": input_hashes,
@@ -340,6 +396,53 @@ def _three_seed_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                     "sample_sd": float(stdev(observations)),
                 }
         result[experiment] = {"seeds": [17, 28, 43], "metrics": metrics}
+    return result
+
+
+def _source_held_three_seed_summary(
+    rows: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    grouped: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
+    for row in rows:
+        grouped[str(row["experiment_id"]).rsplit("-S", 1)[0]].append(row)
+    result = {}
+    for experiment, values in sorted(grouped.items()):
+        if sorted(int(value.get("seed", -1)) for value in values) != [17, 28, 43]:
+            continue
+        target_sources = {str(value.get("target_source", "")) for value in values}
+        rows_seen = {int(dict(value["metrics"])["rows"]) for value in values}
+        patients_seen = {int(dict(value["metrics"])["patients"]) for value in values}
+        if len(target_sources) != 1 or len(rows_seen) != 1 or len(patients_seen) != 1:
+            raise ValueError(f"source-held three-Seed identity drift: {experiment}")
+        scopes = {}
+        for scope in ("ordinary", "patient_balanced"):
+            scoped = [dict(dict(value["metrics"])[scope]) for value in values]
+            metrics = {}
+            for metric in SOURCE_HELD_METRICS:
+                observations = [float(value[metric]) for value in scoped]
+                metrics[metric] = {
+                    "mean": float(mean(observations)),
+                    "sample_sd": float(stdev(observations)),
+                }
+            per_class = {}
+            for metric in ("per_class_f1", "per_class_recall"):
+                per_class[metric] = {}
+                for label in PROGRESSION_LABELS:
+                    observations = [
+                        float(dict(value[metric])[label]) for value in scoped
+                    ]
+                    per_class[metric][label] = {
+                        "mean": float(mean(observations)),
+                        "sample_sd": float(stdev(observations)),
+                    }
+            scopes[scope] = {"metrics": metrics, **per_class}
+        result[experiment] = {
+            "seeds": [17, 28, 43],
+            "target_source": next(iter(target_sources)),
+            "rows": next(iter(rows_seen)),
+            "patients": next(iter(patients_seen)),
+            "scopes": scopes,
+        }
     return result
 
 
@@ -501,6 +604,9 @@ def finalize_phase20_training(
             evaluations, key=lambda row: str(row["job_id"])
         ),
         "training_three_seed_summary": _three_seed_summary(training),
+        "source_held_three_seed_summary": _source_held_three_seed_summary(
+            evaluations
+        ),
         "attempt_audit": sorted(attempt_audit, key=lambda row: str(row["job_id"])),
         "selection_performed": False,
         "winner_selected": False,
@@ -580,6 +686,9 @@ def merge_phase20_training_shards(
             evaluations, key=lambda row: str(row["job_id"])
         ),
         "training_three_seed_summary": _three_seed_summary(training),
+        "source_held_three_seed_summary": _source_held_three_seed_summary(
+            evaluations
+        ),
         "host_shards": [
             {
                 "host": shard["host"],

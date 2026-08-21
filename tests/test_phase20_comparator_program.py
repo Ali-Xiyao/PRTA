@@ -124,7 +124,7 @@ def test_phase20_prta_comparator_validator_is_exact(path, value, message):
         validate_phase20_comparator_configs(configs)
 
 
-def test_phase20_comparator_jobs_use_only_three_allowed_balanced_lanes():
+def test_phase20_comparator_jobs_support_original_three_lane_policy():
     active = ("a800_3066", "a800_9929", "rtx3090_0")
     queues = allocate_phase20_comparator_jobs(_configs(), active_lanes=active)
     assert tuple(queues) == active
@@ -138,6 +138,22 @@ def test_phase20_comparator_jobs_use_only_three_allowed_balanced_lanes():
         sum(job["estimated_seconds"] for job in queue) for queue in queues.values()
     ]
     assert max(loads) - min(loads) < 20_000
+
+
+def test_phase20_comparator_jobs_balance_across_all_four_authorized_lanes():
+    active = ("a800_3066", "a800_9929", "rtx3090_0", "rtx3090_1")
+    queues = allocate_phase20_comparator_jobs(_configs(), active_lanes=active)
+    assert tuple(queues) == active
+    jobs = [job for queue in queues.values() for job in queue]
+    assert len(jobs) == 24
+    assert len({job["job_id"] for job in jobs}) == 24
+    assert {job["lane"] for job in jobs} == set(active)
+    assert all(queues.values())
+    loads = {
+        lane: sum(job["estimated_seconds"] for job in queue)
+        for lane, queue in queues.items()
+    }
+    assert max(loads.values()) - min(loads.values()) < 20_000
 
 
 def test_phase20_comparator_rejects_reserved_or_duplicate_lane_requests():

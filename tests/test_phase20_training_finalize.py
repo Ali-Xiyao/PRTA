@@ -168,6 +168,102 @@ def test_phase20_training_finalizer_rejects_source_or_protected_drift(tmp_path):
         )
 
 
+def test_phase20_training_finalizer_accepts_only_audited_runtime_class_counts(
+    tmp_path,
+):
+    job, state, program, frozen_inputs = _fixture(tmp_path)
+    receipt_path = Path(state["output_checks"][0]["path"])
+    checkpoint_path = Path(state["output_checks"][1]["path"])
+    frozen_path = program / "configs" / "P20-FINAL-S1-S17.json"
+    frozen = json.loads(frozen_path.read_text(encoding="utf-8"))
+    frozen["classification_loss"] = {
+        "name": "class_balanced_focal",
+        "class_counts": [200, 40, 60, 70, 10],
+    }
+    _write(frozen_path, frozen)
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    checkpoint = torch.load(checkpoint_path, weights_only=True)
+    counts = [101, 23, 31, 37, 5]
+    checkpoint["config"]["classification_loss"] = {
+        "name": "class_balanced_focal",
+        "class_counts": counts,
+    }
+    receipt["fraction_audit"] = {
+        "label_counts": {
+            "Stable": 101,
+            "Improved": 23,
+            "Worse": 31,
+            "New": 37,
+            "Resolved": 5,
+        }
+    }
+    receipt["config_sha256"] = canonical_sha256(checkpoint["config"])
+    torch.save(checkpoint, checkpoint_path)
+    _write(receipt_path, receipt)
+    state["output_checks"][0]["sha256"] = sha256_file(receipt_path)
+    state["output_checks"][1]["sha256"] = sha256_file(checkpoint_path)
+
+    row = validate_phase20_training_job(
+        job,
+        state,
+        program_root=program,
+        program_source_commit="a" * 40,
+        queue_sha256="b" * 64,
+        frozen_inputs=frozen_inputs,
+    )
+    assert row["config_sha256"] == receipt["config_sha256"]
+    assert row["frozen_config_sha256"] != row["config_sha256"]
+
+    before_counts = {
+        "Stable": 200,
+        "Improved": 40,
+        "Worse": 60,
+        "New": 70,
+        "Resolved": 10,
+    }
+    receipt["fraction_audit"] = {
+        "label_counts": before_counts,
+        "label_noise": {
+            "before_label_counts": before_counts,
+            "after_label_counts": {
+                "Stable": 101,
+                "Improved": 23,
+                "Worse": 31,
+                "New": 37,
+                "Resolved": 5,
+            },
+            "dev_label_changes": 0,
+        },
+    }
+    _write(receipt_path, receipt)
+    state["output_checks"][0]["sha256"] = sha256_file(receipt_path)
+    validate_phase20_training_job(
+        job,
+        state,
+        program_root=program,
+        program_source_commit="a" * 40,
+        queue_sha256="b" * 64,
+        frozen_inputs=frozen_inputs,
+    )
+
+    checkpoint = torch.load(checkpoint_path, weights_only=True)
+    checkpoint["config"]["optimization"] = {"learning_rate": 0.123}
+    receipt["config_sha256"] = canonical_sha256(checkpoint["config"])
+    torch.save(checkpoint, checkpoint_path)
+    _write(receipt_path, receipt)
+    state["output_checks"][0]["sha256"] = sha256_file(receipt_path)
+    state["output_checks"][1]["sha256"] = sha256_file(checkpoint_path)
+    with pytest.raises(ValueError, match="exceeds runtime-materialized class counts"):
+        validate_phase20_training_job(
+            job,
+            state,
+            program_root=program,
+            program_source_commit="a" * 40,
+            queue_sha256="b" * 64,
+            frozen_inputs=frozen_inputs,
+        )
+
+
 def test_phase20_training_shards_merge_exact_global_roster(tmp_path):
     program = tmp_path / "program"
     jobs = []
@@ -193,7 +289,37 @@ def test_phase20_training_shards_merge_exact_global_roster(tmp_path):
     for index in range(6):
         job_id = f"evaluate-{index:02d}"
         jobs.append({"job_id": job_id})
-        evaluations.append({"job_id": job_id})
+        seed = (17, 28, 43)[index % 3]
+        score = 0.4 + index / 100
+        scope = {
+            "accuracy": score,
+            "macro_f1": score,
+            "balanced_accuracy": score,
+            "min_class_recall": score,
+            "opposite_direction_error_rate": 0.01,
+            "per_class_f1": {
+                label: score
+                for label in ("Stable", "Improved", "Worse", "New", "Resolved")
+            },
+            "per_class_recall": {
+                label: score
+                for label in ("Stable", "Improved", "Worse", "New", "Resolved")
+            },
+        }
+        evaluations.append(
+            {
+                "job_id": job_id,
+                "experiment_id": f"P20-SOURCE-X{index // 3}-S{seed}",
+                "seed": seed,
+                "target_source": f"source_{index // 3}",
+                "metrics": {
+                    "rows": 100,
+                    "patients": 25,
+                    "ordinary": scope,
+                    "patient_balanced": scope,
+                },
+            }
+        )
     _write(program / "job_registry.json", {"jobs": jobs})
     _write(
         program / "preparation_receipt.json",
@@ -235,6 +361,7 @@ def test_phase20_training_shards_merge_exact_global_roster(tmp_path):
     result = merge_phase20_training_shards(program, paths)
     assert result["status"] == "PASS_PHASE20_A_FINAL_NO_SELECTION_AGGREGATE"
     assert result["unique_pass_count"] == 88
+    assert len(result["source_held_three_seed_summary"]) == 2
     broken = json.loads(paths[1].read_text(encoding="utf-8"))
     broken["training"] = broken["training"][1:]
     _write(tmp_path / "broken.json", broken)
