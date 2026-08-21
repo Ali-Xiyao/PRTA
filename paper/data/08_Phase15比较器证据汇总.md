@@ -6,7 +6,7 @@
 - CPU 聚合：4/4 系统校准 + 4/4 系统描述性亚组。
 - Seeds：17、28、43；每 Seed 11,201 个 frozen Dev 观察。
 - 正式读取：Internal-test 0，Gold 0，protected outcome 0。
-- 本地可复算运行时：`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\phase15_comparator_evidence_20260816_v1`。
+- 私有运行目录不进入 Git；下列 Markdown 哈希用于迁移后核验。
 
 ## 完整 Markdown
 

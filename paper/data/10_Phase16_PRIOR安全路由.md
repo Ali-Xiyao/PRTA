@@ -39,8 +39,7 @@ cohort 上 coverage 为 0，只说明安全拒绝边界，不提供分类性能�
 
 ## 溯源
 
-- 正式 JSON：
-  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\phase16_safety_routing_20260817_v1\prior_safety_routing.json`
+- 正式聚合角色：`prior_safety_routing.json`（私有运行目录不进入 Git）
 - SHA-256：
   `cdf2c459bda30c5349c46139b7bcaf01545105601fd43c57d82be37621567a20`
 - 输入 receipt hashes 已完整记录在正式 JSON 中。

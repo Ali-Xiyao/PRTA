@@ -17,9 +17,10 @@ temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0
 | 新训练 | full S1、精确损失/结构消融、F01/F02-DMW0 | 必须重跑 |
 | 新训练 | source-held、scaling、symmetric/plausible noise | 必须按 S1 重跑 |
 | 新推理 | 模态压力、校准/选择性预测、亚组、效率/剪枝、安全路由 | full S1 checkpoint 后执行 |
-| 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds；仅在 Phase20-A 88-job 全局 finalizer PASS 后自动接力 |
+| 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds；各 lane 在自身冻结门 PASS 后接力，最终报告仍需 24/24 finalizer |
 | 历史保留 | V2 及其既有表格/诊断 | 只作开发父方法证据 |
-| 延后 | 外部验证 | 数据合同解决后最后执行 |
+| 正文泛化 | 双向 MIMIC-CXR/CheXpert Plus source-held | 三 Seed跨来源评估；不称为独立外部验证 |
+| 退役 | ReXGradient / 其他外部验证 | 不再运行，不进入论文结果或模型选择 |
 | 封存 | Internal-test、Gold、医生人工 | 本阶段不做 |
 
 新训练固定 63 单元：S1 3、loss ablation 9、structural ablation 9、F01/F02-

@@ -1,13 +1,20 @@
-# PRTA-CXR ReXGradient 外部验证执行协议
+# PRTA-CXR ReXGradient 历史执行协议（已退役）
+
+> **退役决定（2026-08-20）**：本协议不再是活跃实验授权。ReXGradient 不进入
+> 当前论文、模型选择、阈值、方法修改或后续比较器队列；不得据此启动新的正式运行。
+> 历史代码与私有密封产物只为审计和复现边界保留。正文泛化证据改为双向
+> MIMIC-CXR/CheXpert Plus source-held domain generalization，且不得称为独立外部
+> 临床验证。
 
 ## 1. 状态和授权边界
 
-当前状态为 `DATA_STAGED / EVAL_CODE_READY / EVAL_NOT_STARTED`。本协议和代码准备不
-授权正式去重、标签派生、缓存、推理或 public-test 访问。每个科学阶段都必须同时提供
-`--formal` 与正式环境确认；缺少任一条件即失败。
+当前状态为 `HISTORICAL_PROTOCOL / EXECUTION_RETIRED / DO_NOT_REPORT`。本协议和
+历史代码不授权正式去重、标签派生、缓存、推理或 public-test 访问；此前的形式化运行
+开关也不再构成启动授权。
 
-ReXGradient 只作为冻结 Slim-S1 的独立外部验证，不参与 checkpoint、阈值、标签规则
-或方法选择。原始影像、报告、私有 manifest、路径和预测均不得进入 Git。
+ReXGradient 仅作为历史审计对象保留，不再作为冻结 Slim-S1 的活跃论文证据，也不参与
+checkpoint、阈值、标签规则或方法选择。原始影像、报告、私有 manifest、路径和预测
+均不得进入 Git。
 
 ## 2. 冻结映射
 

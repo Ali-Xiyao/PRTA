@@ -4,7 +4,8 @@
 >
 > 生效日期：2026-08-18
 >
-> 适用范围：cleaned full Train / official Dev；不含外部数据、Internal-test、Gold
+> 适用范围：cleaned full Train / official Dev，以及双向 MIMIC-CXR/CheXpert Plus
+> source-held Dev；不含独立外部数据、Internal-test、Gold
 
 ## 1. 最终方法锁定
 
@@ -58,14 +59,16 @@ canonical hash 与七类输入 hash 一致，Internal-test/Gold/protected outcom
 不足以完成患者级 paired bootstrap、safety routing 与最终方法同协议比较。因此另行
 冻结 **8 systems × 3 Seeds = 24 个 comparator rebuild 单元**：V2、S0、B401、
 B402、TILA8、BioViL-T-style、CheXRelNet-inspired 与 `TILAPaper`
-paper-based reimplementation。后三者明确是内部/独立复现，不冒充官方实现。该重建队列只在
-**Phase20-A 全局 finalizer PASS** 后接力，不影响正在跑的 63-cell 主队列，也不使用
-预留 GPU。单条 lane completion 不能替代 63-cell/88-job 的跨 retry、跨主机唯一性与
-输出哈希对账。
+paper-based reimplementation。后三者明确是内部/独立复现，不冒充官方实现。2026-08-20
+用户授权每条 comparator lane 在其自身冻结的 Phase20-A 前序任务 PASS 后立即接力，
+不影响正在跑的 63-cell 主队列；全局 Phase20-A finalizer 仍是结果汇总、论文报告和
+下游 B2 的必经门。单条 lane completion 不能替代 63-cell/88-job 的跨 retry、跨主机
+唯一性与输出哈希对账。
 
-## 4. 三卡执行与自动依赖
+## 4. Phase20-A 三卡起跑、GPU1 尾部接力与 comparator 四卡执行
 
-训练使用两张 A800 与本地 RTX3090 GPU0；本地 GPU1 固定预留，不进入科学队列。
+Phase20-A 起跑时使用两张 A800 与本地 RTX3090 GPU0；GPU1 后续只接管明确授权的
+尾部任务，不停止或迁移既有任务。
 按 A800 等效预计时长做 longest-processing-time 分配，3090 采用保守慢速系数；
 每个任务只属于一条 lane。full S1 三 Seed 为
 最高优先级，随后是精确损失消融和 F01/F02-DMW0，再依次执行结构、source-held、
@@ -81,23 +84,24 @@ closed。
 lane 为 `a800_3066`、`a800_9929` 与 `rtx3090_0`；`rtx3090_1` 明确保留为空闲卡。
 首次 A800 `nohup srun` 尝试因终端耦合在零结果状态被 Slurm 撤销，失败收据已保留；
 修复后的 `setsid -f` step `3066.188`/`9929.148` 与本地 lane 均已进入正式训练。
+该句记录初始冻结状态；2026-08-20 的后续授权不改写原 88-job 身份，只允许 GPU1
+以唯一 handoff worker 完成原本属于本地队列的尾部 job。
 
-接力队列同样只允许上述三条活动 lane，并使用 LPT 估时均衡。它必须等待 server/local
-host finalizer shard 合并出 `PASS_PHASE20_A_FINAL_NO_SELECTION_AGGREGATE`，不能停止、迁移或抢占
-当前任务；接力自身也按
-源码提交、输入哈希、配置哈希和 queue hash fail closed。
-`phase20_continuation_watcher.py` v2 仅在 CPU 上轮询全局 finalizer，并以无 shell 的 argv
-启动下一队列；若前序 lane 含失败、身份漂移或任一哈希不符，则写出 BLOCK/FAILED
-收据并拒绝接力。
+2026-08-20 用户新增授权：24-cell comparator 接力改用全部四条 lane，并使用 LPT
+估时均衡；`rtx3090_1` 只在其 Phase20-A 尾部任务 terminal PASS 后加入，不停止、
+迁移或覆盖任何当前任务。每条 lane 的 per-lane watcher 只接受该 lane 的完整 PASS
+门：A800 使用 lane completion，GPU1 使用独占 handoff completion，GPU0 使用排除
+GPU1 接管尾部后的 25 个唯一 PASS state。接力仍按源码提交、输入哈希、配置哈希和
+queue hash fail closed；任一前序 lane 失败、身份漂移或哈希不符即写出 BLOCK/FAILED
+收据并拒绝该 lane 接力。全局 88/88 finalizer 只保留给跨主机聚合与最终报告。
 
 ## 5. full S1 完成后的 B1/B2 证据链
 
 Phase20-B1/B2 与三层 finalizer 代码已构建并通过测试；仅在各自上游 PASS 后，
 使用 official Dev 按三 Seed重新生成：
 
-1. PRIOR true/matched-hard/null/reversed 与修订后的 older/view/token 条件；
-2. finding 的 zero text embedding、真正 post-projection zero query、错误/临床同义
-   表达和 current corruption；
+1. PRIOR true/matched-hard/null/reversed；
+2. finding conditioning 的必要性继承 Phase20-A 正式消融；
 3. calibration、risk-coverage、selective referral；
 4. progression/finding/source/view/interval/long-tail 描述性亚组；
 5. state-pruning、参数量、FLOPs、延迟、吞吐与显存；
@@ -106,15 +110,20 @@ Phase20-B1/B2 与三层 finalizer 代码已构建并通过测试；仅在各自�
 
 执行拆为两个不可混淆的阶段：
 
-- **Phase20-B1（20 jobs）**：仅依赖 Final S1，完成 PRIOR/modality、calibration、
-  risk-coverage、subgroup、state-pruning 与 cached-feature efficiency；corruption
-  cache 显式绑定 `raw-image-root`，三种 condition 必须共享 split/roster/count hash。
+- **Phase20-B1 / Phase B（6 jobs）**：仅依赖 Final S1，完成三 Seed PRIOR 四条件、
+  calibration/risk-coverage、既有预测上的 subgroup/long-tail，以及固定 S43 的
+  state-pruning parity + full/pruned cached-feature efficiency。连同 evidence finalizer
+  共 7 个完成单元。
 - **Phase20-B2（28 jobs）**：等待 Phase20-A finalizer 与 24-cell comparator
   finalizer 均 PASS 后，先导出 9 个比较系统 × 3 Seeds 的 true-PRIOR 概率，再自动运行
   safety routing、三 Seed disagreement、risk-coverage comparison、exclusive
   correct/wrong 与 10,000 次 patient-cluster paired bootstrap。预先固定的
   S1-vs-S0/V2/F02-DMW0/TILA8 主对照组成 Holm family；按 Dev Macro-F1 排出的最强
   兼容比较器只作 outcome-ranked exploratory 对照，不包装成预注册推断。
+- **Phase20-C（可选，不进入完成门）**：blur/contrast/JPEG、扩展 finding/prompt
+  stress、S17/S28 重复 state-pruning，以及 older/view/token scramble。现有 11 个可选
+  job 只写入非 runnable catalog；没有明确后续决定时不冻结、不启动，也不阻塞 B1/B2
+  或 evidence finalizer。
 
 统计比较固定包括 S1 vs A10/S0、V2、F02-DMW0、TILA8 和最强兼容独立比较器。
 Dev 上的非选择性 S1-vs-S0 只报告 effect/CI，不改写 Train-only 选择结论。
@@ -141,15 +150,17 @@ Block4/Tail8 cache、BiomedCLIP 权重、matched-hard map 与 label-quality audi
 旧 checkpoint 的删除规则不适用于本轮新生成的论文复现资产。至少保留 Final S1、
 S0、F02-DMW0、TILA8 与最强兼容 paper-based comparator 的 Seeds 17/28/43，并记录
 checkpoint/config/receipt/input/best-epoch/source/hardware SHA 与身份，直到 Phase20-B1/B2、
-外部验证、最终图表和潜在审稿补实验全部结束。未经这一保留门不得清理。
+双向 source-held 正式评估、最终图表和潜在审稿补实验全部结束。未经这一保留门不得清理。
 
 ## 7. 明确排除
 
-- 外部/跨源独立数据：因数据合同问题最后执行，本阶段不下载、不运行；
+- ReXGradient 与其他独立外部数据：已退役，不再下载、不运行、不报告；
+- 双向 MIMIC-CXR/CheXpert Plus source-held：作为正文跨数据来源域泛化实验执行，
+  但不得称为独立外部临床验证；
 - Internal-test 与 Gold：继续封存；
 - 医生 reader study/新增人工标注：不做；
 - bbox/lung grounding、真正 official baseline 与 raw-image end-to-end latency：当前
-  不冒充已完成，分别随外部标注/官方资产/端到端计时条件后置；
+  不冒充已完成，分别随可审计标注/官方资产/端到端计时条件后置；
 - 基于 Phase20 outcome 的新结构、权重、Seed、容差或 best-seed 选择：禁止。
 
 V2 文档和数值仍是历史开发证据；从本协议生效起，不得再把 V2 写成最终投稿

@@ -56,8 +56,7 @@ V2 与 F02 构成当前两目标 Pareto 前沿：F02 平均 F1 略高，V2 ODER 
 
 ## 溯源
 
-- 正式 JSON：
-  `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\phase16_safety_routing_20260817_v1\holm_pareto_v3.json`
+- 正式聚合角色：`holm_pareto_v3.json`（私有运行目录不进入 Git）
 - SHA-256：
   `5f23cb6ad7ac676e9e673a879fc09e4719cb915ff0a2e2b6a0867442faadad03`
 - 初版 `holm_pareto.json` 的 B401 join 错误，`holm_pareto_v2.json` 又缺少 11 项同族

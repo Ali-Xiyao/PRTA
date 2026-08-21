@@ -1,4 +1,8 @@
-# Phase20 阶段结果与 ReXGradient 外部验证中期汇总
+# Phase20 阶段结果中期汇总
+
+> **历史快照**：本页已由 2026-08-21 的
+> [Phase20-A 正式收口与三 Seed 汇总](15_Phase20-A正式收口与三Seed汇总_CN.md)
+> 取代。以下文字保留用于审计当时的中期判断，不再代表当前完成状态。
 
 > 状态：2026-08-20 中期快照。只纳入 terminal PASS 且三 Seed 齐全的聚合回执；
 > Phase20 全局 finalizer 尚未运行，因此本页不得直接作为投稿终表。患者级预测、
@@ -6,14 +10,12 @@
 
 ## 当前判断
 
-内部证据总体乐观：冻结的 full-Train `Slim-S1` 稳定复现历史 V2 的性能区间，
-三 Seed 方差较小；finding conditioning 与 relation residual 的结构消融出现大幅、
-跨 Seed 一致的退化；数据量曲线单调改善；正确 PRIOR 相对 matched-wrong PRIOR
-保持稳定优势。
+冻结的 full-Train `Slim-S1` 稳定复现历史 V2 的性能区间，三 Seed 方差较小；
+finding conditioning 与 relation residual 的结构消融出现大幅、跨 Seed 一致的
+退化；数据量曲线单调改善；正确 PRIOR 相对 matched-wrong PRIOR 保持稳定优势。
 
-外部证据必须谨慎：ReXGradient 正式 public test 已按一次性封存协议完成，但
-绝对性能偏低且有类别召回为零。当前结果能证明评估链真实、可审计，不能支持
-“跨域泛化良好”或“临床可迁移”的强结论。
+最终主方法继续锁定为 `Slim-S1`。后续实验只补齐跨数据来源泛化、label-noise、
+比较器与可信性统计，不再根据结果修改方法、权重、Seed 或阈值。
 
 ## full-Train Slim-S1 三 Seed
 
@@ -68,35 +70,30 @@
 Macro-F1 随数据量严格单调增加，ODER 总体严格下降。这是当前最干净的稳健性证据
 之一，也说明模型仍明显受益于更多纵向训练样本，尚未进入性能饱和区。
 
-## ReXGradient 正式外部验证
+## 跨数据来源泛化：正文主要泛化实验
 
-协议状态：validation 与一次性 public-test finalizer 均为 terminal PASS；public test
-仅访问一次，未做 checkpoint 重新选择、阈值调优或结果驱动协议修改。
+正文使用任务和标签空间一致的双向 source-held 评估：
 
-| 指标 | 结果 |
-|---|---:|
-| Public-test rows / patients | 203 / 142 |
-| 三 Seed patient-balanced Macro-F1 | **0.193942 ± 0.018689** |
-| Ensemble ordinary Macro-F1 | 0.196790 |
-| Ensemble patient-balanced Macro-F1 | 0.200965 |
-| Ensemble patient-balanced balanced accuracy | 0.291736 |
-| Ensemble patient-balanced ODER | 0.097418 |
-| Ensemble min class recall | **0.000000** |
-| Patient-cluster bootstrap Macro-F1 95% CI | [0.162511, 0.240389] |
+| 训练来源 | 评估来源 | Seeds | 当前状态 |
+|---|---|---|---|
+| MIMIC-CXR | CheXpert Plus | 17 / 28 / 43 | 训练完成；等待跨源评估回执齐全 |
+| CheXpert Plus | MIMIC-CXR | 17 / 28 / 43 | 训练完成；等待跨源评估回执齐全 |
 
-该外部结果的积极面是三 Seed、严格去重、冻结映射、患者聚类统计与一次性测试协议
-均真实完成。风险面是绝对性能低、类别不均衡明显、至少一个类别没有被有效识别，
-且 ODER 显著高于内部 Dev。论文应将其写成跨数据源标签语义、病例谱和纵向报告风格
-迁移困难的直接证据，不应包装成外部成功。
+每个方向必须报告 Macro-F1、Balanced Accuracy、ODER、五类 F1/Recall、患者聚类
+bootstrap 95% CI，以及 in-domain 与 cross-source 的性能差。由于 source-held 使用
+`S1-core / no-CMCP`，公平的 full-source 参考优先使用 `P20-ABL-NOCMCP`，不能只与
+带 CMCP 的 full Slim-S1 比较。
+
+该证据只能命名为 **cross-source domain generalization**，不能称为独立外部临床
+验证。六个跨源 evaluation receipt 全部 terminal PASS 前，不报告方向性结论。
 
 ## 尚不能收口的部分
 
-- label-noise：5%/10% plausible 已有服务器两 Seed，但本地 Seed43 仍在队列；
-  20% 与 symmetric 系列仍在运行，暂不形成三 Seed结论；
-- source-held-out：各源训练表面已完成，但跨源 evaluation receipt 尚未全部 terminal，
-  不使用训练表面高低来宣称跨源泛化；
-- Phase20 全局结果：当前约 68/88 job terminal PASS，四卡仍在推进；
-- 配对 bootstrap、效应量、95% CI、p 值及论文终表必须等待全局 finalizer。
+- label-noise：仍需等 plausible/symmetric 各比例三 Seed 齐全；
+- source-held-out：六个训练表面已完成，六个跨源 evaluation receipt 尚未全部
+  terminal，不能使用训练表面高低宣称跨源泛化；
+- Phase20 全局 finalizer、配对 bootstrap、效应量、95% CI、p 值及论文终表仍待完成；
+- 24-cell 比较器以及 B1/B2 可信性证据链仍由既定上游门控。
 
 ## 论文叙事建议
 
@@ -105,9 +102,7 @@ Macro-F1 随数据量严格单调增加，ODER 总体严格下降。这是当前
 2. 把 finding conditioning、relation residual 和数据规模曲线作为最强正面证据。
 3. 对 CMCP、ODC、state anchor 使用“较小/待配对统计确认”的措辞。
 4. 明确承认 F02 在 Macro-F1 上更高，但 Slim-S1 的 ODER 更好；避免全面 SOTA 叙事。
-5. 把 ReXGradient 写成严格外部压力测试揭示的泛化缺口，并将标签映射、样本规模、
-   类别不均衡与跨域语义差异列为主要局限。
+5. 将双向 MIMIC-CXR/CheXpert Plus source-held 结果作为正文泛化证据，并准确限定为
+   跨来源域泛化，不写成独立外部或临床验证。
 
-综合判断：**内部机制与主线结果乐观，外部可迁移性不乐观；整篇论文仍有价值，
-但价值更适合落在“方向感知纵向融合机制 + 严格失败边界”，而不是“已解决跨域临床
-泛化”。**
+综合判断：**内部机制与主线结果乐观；跨来源泛化结论等待双向三 Seed评估收口。**

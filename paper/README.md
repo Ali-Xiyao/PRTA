@@ -1,25 +1,29 @@
 # PRTA-CXR 论文材料工作区
 
-本目录保存可迁移、可审计的论文写作材料。当前内容使用冻结的 Train/Dev 聚合
-证据与一次性封存的 ReXGradient 外部聚合结果，不包含患者级预测、影像、报告、
-checkpoint、账号信息或任何受保护内部测试集结果。
+本目录保存可迁移、可审计的论文写作材料。当前内容只使用冻结的 Train/Dev 聚合
+证据与任务语义一致的 MIMIC-CXR/CheXpert Plus 跨来源评估，不包含患者级预测、
+影像、报告、checkpoint、账号信息或任何受保护测试集结果。
 
 原始安全约束继续有效：只有通过注册冻结、一次性正式评估和不可变凭据校验的
-结果才能进入论文表格；尚未完成的可靠性、外部泛化或临床价值只能写成计划或
+结果才能进入论文表格；尚未完成的可靠性、跨数据来源泛化或临床价值只能写成计划或
 假设，不能提前写成已观察结论。
 
 最终投稿主方法已于 2026-08-18 锁定为 `PRTA-CXR-Slim / Slim-S1`。现有 V2
-材料保留为历史开发证据；full Train / official Dev 的 63-cell Phase20 训练与
-S1 专属可信性重推理完成前，不得把 Slim Train-only 数字写入最终主表。
+材料保留为历史开发证据。full Train / official Dev 的 Phase20-A 已以 88/88
+唯一 PASS 收口；其 21 组训练和 2 组 source-held 三 Seed汇总现可进入论文材料。
+comparator 当前已有严格校验的 14/24 阶段性快照，其中 4/8 方法齐全三 Seed；
+最终比较结论与 S1 专属可信性仍须等待各自 finalizer。
 
 旧私有 checkpoint 清理后，V2/S0/B401/B402/TILA8 与三项纵向内部/论文复现比较器
 需要按 Phase20 输入合同重建 8×3 单元，才能生成患者级 paired/safety 证据；相关
-代码已完成；队列只在 Phase20-A 的 63-cell/88-job 全局 finalizer PASS 后接力，
-不能仅凭单 lane completion 启动，并继续保留本地 GPU1。
+代码已完成且四条独立队列已按各自冻结门执行。阶段性结果只包含 terminal PASS，
+最终汇总仍由严格 24/24 comparator finalizer 门控。
 
-Phase20 证据链拆为 B1（20 个 S1-only jobs）与 B2（27 个比较器概率导出 + 1 个
-patient-cluster/Holm/safety/disagreement 统计 job）。三层 finalizer 分别对账 Phase20-A、
-24-cell comparator 与 B1+B2。当前均为代码就绪、结果未就绪状态。
+Phase20 证据链拆为 Phase B/B1（6 个 focused trustworthiness jobs）与 B2（27 个
+比较器概率导出 + 1 个 patient-cluster/Holm/safety/disagreement 统计 job）。Phase C
+只保存 11 个现有可选 job 的非 runnable 目录及 4 类后置扩展，不进入完成门。三层
+finalizer 分别对账 Phase20-A、24-cell comparator 与 B1+B2。Phase20-A finalizer
+已经 PASS；后两层仍等待当前 GPU 队列和后续证据任务。
 
 Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 `codex/archive-v2-history-before-phase20`（提交 `6f471d93421b743fed446b650d7e2fd5f71ef24d`）。
@@ -35,7 +39,7 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 5. [PRIOR 压力测试](04_PRIOR压力测试_CN.md)：模态干预与机制解释。
 6. [统计与报告协议](05_统计与报告协议_CN.md)：Seed、bootstrap、CI 和多重比较。
 7. [讨论与局限](06_讨论与局限_CN.md)：可直接改写进 Discussion。
-8. [后续实验路线图](07_后续实验路线图_CN.md)：校准、效率、外部评估等缺口。
+8. [后续实验路线图](07_后续实验路线图_CN.md)：校准、效率、跨来源泛化等缺口。
 9. [表格与配图规划](08_表格与配图规划_CN.md)：每张表/图的数据就绪状态。
 10. [校准与选择性预测](09_校准与选择性预测_CN.md)：五折温度缩放、风险覆盖与转诊模拟。
 11. [效率与部署](10_效率与部署_CN.md)：固定 A800 的参数量、FLOPs、延迟、吞吐和缓存。
@@ -44,12 +48,14 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
     Train-only 三 Seed 正式精简判定、冻结规则与收口凭据。
 14. [Slim-S1 最终主线与重跑矩阵](13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md)：
     最终配置、继承/重跑/重推理边界与 Phase20 进度。
-15. [ReXGradient-160K 外部验证数据准备](14_ReXGradient-160K外部验证数据准备_CN.md)：
-    outcome-blind 配对、私有迁移规模、完整性凭据与一次性外部评估门控。
-16. [Phase20 与 ReXGradient 中期结果](15_Phase20阶段结果与ReXGradient外部验证中期汇总_CN.md)：
-    已齐全三 Seed主结果、结构消融、数据规模曲线、正式外部结果与风险判断。
-17. [ReXGradient 冻结对比补充结果](16_ReXGradient冻结对比补充结果_CN.md)：
-    F01-DMW0-S28 同队列单 Seed补充、当前矩阵缺口与严格解释边界。
+15. [Phase20 中期结果](14_Phase20阶段结果中期汇总_CN.md)：
+    已齐全三 Seed主结果、结构消融、数据规模曲线与跨来源评估门控。
+16. [Phase20-A 正式收口与三 Seed 汇总](15_Phase20-A正式收口与三Seed汇总_CN.md)：
+    88/88 核验、21 组训练汇总及 2 组双向 source-held 聚合。
+17. [Phase20 comparator 阶段性结果](16_Phase20-comparator阶段性结果_CN.md)：
+    14/24 terminal PASS 快照、完整三 Seed方法与明确待跑单元。
+18. [论文实验数据总表与待跑清单](17_论文实验数据总表与待跑清单_CN.md)：
+    当前可写结果、数据协议、B1/B2 空表状态与论文叙事统一入口。
 
 ## 数据附录
 
@@ -62,7 +68,8 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 - [论文材料清单与 SHA256](data/07_论文材料清单与哈希.md)
 - [Phase 15 比较器证据汇总](data/08_Phase15比较器证据汇总.md)
 - [PRTA-CXR-Slim 最终公共结果 JSON](data/09_PRTA-CXR-Slim最终结果.json)
-- [ReXGradient 冻结对比补充聚合 JSON](data/10_ReXGradient冻结对比补充聚合.json)
+- [Phase20-A 三 Seed 正式聚合 JSON](data/12_Phase20-A三Seed正式聚合.json)
+- [Phase20 comparator 阶段性聚合 JSON](data/13_Phase20-comparator阶段性聚合.json)
 
 ## 当前结论边界
 
@@ -76,14 +83,14 @@ Phase20 之前的 Git-safe 源码、配置与聚合结论固定在 GitHub 分支
 - PRTA-CXR-Slim 的 4 Arms × 3 Seeds 已由服务器正式 finalizer 收口并选择
   `Slim-S1`；该 Train-only 选择现用于锁定最终主线，但不等同于 full-Train、
   external 或临床验证结果。
-- ReXGradient-160K 已完成严格去重、冻结标签映射、三 Seed validation 与一次性
-  public-test；外部绝对性能偏低且有类别召回为零，只支持泛化缺口结论。
-- full-Train Slim-S1、核心结构消融、F01/F02-DMW0 与 data scaling 已形成三 Seed
-  中期聚合；source-held-out evaluation、label-noise、后续可信性链和正式 finalizer
-  尚未完成；医生人工/reader study 已明确取消。
+- Phase20-A 已核验 88/88 唯一 PASS，并形成 21 组训练与 2 组双向
+  MIMIC-CXR/CheXpert Plus source-held 三 Seed正式聚合。后者只能称为 cross-source
+  domain generalization，不能称为独立外部临床验证。24-cell comparator 当前为
+  14 PASS、4 RUNNING、6 PENDING；B1/B2 可信性链和各自 finalizer 尚未完成；
+  医生人工/reader study 已明确取消。
 
 ## 迁移说明
 
-整个 `paper/` 可以复制到另一台电脑。Markdown 内不依赖本机绝对路径；本机
-运行时证据的原始路径与哈希只记录在
-[证据来源与哈希](data/04_证据来源与哈希.md) 中，便于将来核验。
+整个 `paper/` 可以复制到另一台电脑。Markdown 内不依赖本机绝对路径；
+[证据来源与哈希](data/04_证据来源与哈希.md) 仅登记产物角色与 SHA256，
+不公开本机或服务器运行目录。
