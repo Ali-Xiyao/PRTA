@@ -73,6 +73,15 @@ def _validated_method_row(row: Mapping[str, Any], program_root: Path) -> dict[st
     }
 
 
+def _job_method(program_root: Path, job: Mapping[str, Any]) -> str:
+    experiment_id = str(job["job_id"]).removeprefix("train-")
+    config = _read_json(program_root / "configs" / f"{experiment_id}.json")
+    method = str(config.get("phase20_role", ""))
+    if method not in COMPARATOR_SPECS:
+        raise ValueError(f"unknown comparator job method: {experiment_id}")
+    return method
+
+
 def build_interim_host_snapshot(
     program_root: Path,
     state_roots: Mapping[str, Path],
@@ -123,6 +132,7 @@ def build_interim_host_snapshot(
     statuses: list[dict[str, Any]] = []
     frozen_inputs = dict(input_manifest["input_sha256"])
     for job_id, job in expected.items():
+        method = _job_method(program_root, job)
         values = attempts.get(job_id, [])
         if len(values) > 1:
             raise ValueError(f"duplicate comparator state attempts: {job_id}")
@@ -130,7 +140,7 @@ def build_interim_host_snapshot(
             statuses.append(
                 {
                     "job_id": job_id,
-                    "method": str(job["method"]),
+                    "method": method,
                     "seed": int(job["seed"]),
                     "lane": str(job["lane"]),
                     "status": "PENDING",
@@ -162,7 +172,7 @@ def build_interim_host_snapshot(
         statuses.append(
             {
                 "job_id": job_id,
-                "method": str(job["method"]),
+                "method": method,
                 "seed": int(job["seed"]),
                 "lane": str(job["lane"]),
                 "status": status,
