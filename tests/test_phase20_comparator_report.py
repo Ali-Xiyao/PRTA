@@ -8,7 +8,7 @@ import pytest
 from prta_cxr.contracts import PROGRESSION_LABELS, sha256_file
 from prta_cxr.phase20_comparator_program import COMPARATOR_SPECS, COMPARATOR_STATUS
 from prta_cxr.phase20_comparator_report import (
-    _job_method,
+    _job_identity,
     merge_interim_host_snapshots,
     render_interim_markdown,
 )
@@ -142,10 +142,13 @@ def test_interim_merge_rejects_missing_job(tmp_path: Path) -> None:
         )
 
 
-def test_job_method_is_resolved_from_frozen_config(tmp_path: Path) -> None:
+def test_job_identity_is_resolved_from_frozen_config(tmp_path: Path) -> None:
     program = tmp_path / "program"
     _write(
         program / "configs" / "P20-REBUILD-B401-S17.json",
-        {"phase20_role": "B401"},
+        {"phase20_role": "B401", "seed": 17},
     )
-    assert _job_method(program, {"job_id": "train-P20-REBUILD-B401-S17"}) == "B401"
+    assert _job_identity(program, {"job_id": "train-P20-REBUILD-B401-S17"}) == (
+        "B401",
+        17,
+    )
