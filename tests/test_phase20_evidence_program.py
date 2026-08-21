@@ -83,6 +83,10 @@ def test_final_s1_artifact_validation_is_exact_and_closed(tmp_path):
         "weights": "weights",
         "label_quality_audit": "quality",
     }
+    checkpoint_input_hashes = {
+        **input_hashes,
+        "source_filter_audit": "source-filter-audit",
+    }
     config = {
         "experiment_id": "P20-FINAL-S1-S28",
         "seed": seed,
@@ -95,7 +99,7 @@ def test_final_s1_artifact_validation_is_exact_and_closed(tmp_path):
         {
             "schema": "prta-cxr.checkpoint.v1",
             "config": config,
-            "input_hashes": input_hashes,
+            "input_hashes": checkpoint_input_hashes,
         },
         checkpoint,
     )
@@ -105,7 +109,7 @@ def test_final_s1_artifact_validation_is_exact_and_closed(tmp_path):
             {
                 "status": "PASS_TRAINING_FINISHED",
                 "config_sha256": canonical_sha256(config),
-                "input_hashes": input_hashes,
+                "input_hashes": checkpoint_input_hashes,
                 "internal_test_opened": False,
                 "protected_outcomes_opened": False,
             }
@@ -120,13 +124,14 @@ def test_final_s1_artifact_validation_is_exact_and_closed(tmp_path):
     )
     assert result["experiment_id"] == "P20-FINAL-S1-S28"
     assert len(result["checkpoint_sha256"]) == 64
+    assert result["input_hashes"] == checkpoint_input_hashes
 
     config["experiment_id"] = "P20-ABL-NOSTATE-S28"
     torch.save(
         {
             "schema": "prta-cxr.checkpoint.v1",
             "config": config,
-            "input_hashes": input_hashes,
+            "input_hashes": checkpoint_input_hashes,
         },
         checkpoint,
     )

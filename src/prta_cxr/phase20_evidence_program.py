@@ -95,7 +95,12 @@ def validate_final_s1_artifact(
     if receipt.get("protected_outcomes_opened") is not False:
         raise ValueError(f"Phase20 final-S1 opened protected outcomes: S{seed}")
     checkpoint_inputs = dict(checkpoint.get("input_hashes", {}))
-    if checkpoint_inputs != dict(expected_input_hashes):
+    expected_base = dict(expected_input_hashes)
+    if (
+        {key: checkpoint_inputs.get(key) for key in expected_base} != expected_base
+        or set(checkpoint_inputs) != {*expected_base, "source_filter_audit"}
+        or not str(checkpoint_inputs["source_filter_audit"])
+    ):
         raise ValueError(f"Phase20 final-S1 checkpoint input drift: S{seed}")
     if dict(receipt.get("input_hashes", {})) != checkpoint_inputs:
         raise ValueError(f"Phase20 final-S1 training input drift: S{seed}")
@@ -105,6 +110,7 @@ def validate_final_s1_artifact(
         "config_sha256": canonical_sha256(config),
         "checkpoint_sha256": sha256_file(checkpoint_path),
         "training_receipt_sha256": sha256_file(training_receipt_path),
+        "input_hashes": checkpoint_inputs,
     }
 
 
@@ -563,6 +569,12 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
             SEEDS, args.checkpoint, args.training_receipt, strict=True
         )
     }
+    source_filter_hashes = {
+        str(value["input_hashes"]["source_filter_audit"])
+        for value in artifact_evidence.values()
+    }
+    if len(source_filter_hashes) != 1:
+        raise ValueError("Phase20 final-S1 source-filter audit drift across seeds")
     jobs = build_phase20_evidence_jobs(lane=args.lane)
     phase_c_jobs = build_phase20_phase_c_jobs(lane=args.lane)
     staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
