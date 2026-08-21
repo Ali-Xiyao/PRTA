@@ -4,8 +4,6 @@ from pathlib import Path
 import pytest
 
 from prta_cxr.contracts import sha256_file
-from prta_cxr.data.token_cache import image_cache_key
-from prta_cxr.phase20_evidence_program import raw_image_root_identity
 from prta_cxr.phase20_evidence_runner import (
     render_evidence_command,
     validate_evidence_platform_inputs,
@@ -20,7 +18,6 @@ def _file(path: Path, content: bytes = b"x") -> Path:
 
 def test_phase20_evidence_platform_inputs_are_hash_bound(tmp_path):
     cache_root = tmp_path / "cache"
-    model_root = tmp_path / "model"
     cleaned_root = tmp_path / "cleaned"
     cleaned_root.mkdir()
     split = tmp_path / "split.jsonl"
@@ -35,12 +32,6 @@ def test_phase20_evidence_platform_inputs_are_hash_bound(tmp_path):
         + "\n",
         encoding="utf-8",
     )
-    raw_image_root = tmp_path / "raw-images"
-    raw_image_root.mkdir()
-    _file(
-        raw_image_root / f"{image_cache_key('MIMIC-CXR', 'portable/current.jpg')}.jpg",
-        b"jpeg-placeholder",
-    )
     platform = {
         "split_manifest": str(split),
         "cleaned_split_freeze": str(_file(tmp_path / "freeze.json")),
@@ -50,8 +41,6 @@ def test_phase20_evidence_platform_inputs_are_hash_bound(tmp_path):
         "matched_hard_prior_map": str(_file(tmp_path / "map.json")),
         "weights": str(_file(tmp_path / "weights.bin", b"weights")),
         "label_quality_audit": str(_file(tmp_path / "quality.json")),
-        "model_root": str(model_root),
-        "raw_image_root": str(raw_image_root),
     }
     file_roles = {
         "split_manifest": Path(platform["split_manifest"]),
@@ -61,10 +50,6 @@ def test_phase20_evidence_platform_inputs_are_hash_bound(tmp_path):
         "matched_hard_prior_map": Path(platform["matched_hard_prior_map"]),
         "weights": Path(platform["weights"]),
         "label_quality_audit": Path(platform["label_quality_audit"]),
-        "model_open_clip_config": _file(model_root / "open_clip_config.json"),
-        "model_tokenizer": _file(model_root / "tokenizer.json"),
-        "model_config": _file(model_root / "config.json"),
-        "model_weights": _file(model_root / "open_clip_pytorch_model.bin", b"weights"),
     }
     for seed in (17, 28, 43):
         checkpoint = _file(tmp_path / f"S{seed}" / "best.pt")
@@ -74,8 +59,7 @@ def test_phase20_evidence_platform_inputs_are_hash_bound(tmp_path):
         file_roles[f"s1_checkpoint_{seed}"] = checkpoint
         file_roles[f"s1_training_receipt_{seed}"] = receipt
     manifest = {
-        "input_sha256": {role: sha256_file(path) for role, path in file_roles.items()},
-        "raw_image_root_identity": raw_image_root_identity(split, raw_image_root),
+        "input_sha256": {role: sha256_file(path) for role, path in file_roles.items()}
     }
     validated = validate_evidence_platform_inputs(platform, manifest)
     assert validated["cache_root"] == cache_root.resolve()

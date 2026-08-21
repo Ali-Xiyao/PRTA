@@ -19,9 +19,11 @@ from prta_cxr.data.training_dataset import read_jsonl
 from prta_cxr.phase20_program import PHASE20_PROTOCOL, SEEDS
 from prta_cxr.provenance import resolve_source_commit
 
-EVIDENCE_PROTOCOL = "phase20-slim-s1-official-dev-evidence-v1"
+EVIDENCE_PROTOCOL = "phase20-slim-s1-focused-trustworthiness-v2"
 FINAL_SYSTEM = "Slim-S1"
 EVIDENCE_LANES = ("a800_3066", "a800_9929", "rtx3090_0")
+PHASE_B_JOB_COUNT = 6
+PHASE_C_OPTIONAL_JOB_COUNT = 11
 
 
 def _now() -> str:
@@ -151,69 +153,48 @@ def _diagnostic_command(seed: int, *, pruned: bool) -> list[str]:
     return command
 
 
+def _order_jobs(jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by_id = {str(job["job_id"]): job for job in jobs}
+    if len(by_id) != len(jobs):
+        raise ValueError("Phase20 evidence job IDs are not unique")
+    ranks: dict[str, int] = {}
+
+    def rank(job_id: str) -> int:
+        if job_id not in ranks:
+            dependencies = [str(value) for value in by_id[job_id]["dependencies"]]
+            internal = [value for value in dependencies if value in by_id]
+            ranks[job_id] = 0 if not internal else 1 + max(map(rank, internal))
+        return ranks[job_id]
+
+    jobs.sort(
+        key=lambda job: (
+            rank(str(job["job_id"])),
+            -int(job["estimated_seconds"]),
+            str(job["job_id"]),
+        )
+    )
+    for index, job in enumerate(jobs):
+        job["queue_index"] = index
+    return jobs
+
+
+def _diagnostic_receipts() -> list[str]:
+    return [
+        value
+        for seed in SEEDS
+        for value in (
+            "--diagnostic-receipt",
+            f"{{output_root}}/probability/S{seed}/candidate_probability_diagnostic_receipt.json",
+        )
+    ]
+
+
 def build_phase20_evidence_jobs(*, lane: str) -> list[dict[str, Any]]:
+    """Build the mandatory Phase B focused trustworthiness queue."""
     if lane not in EVIDENCE_LANES:
         raise ValueError(f"unsupported Phase20 evidence lane: {lane}")
-    jobs: list[dict[str, Any]] = [
-        {
-            "job_id": "evidence-modality-text-cache",
-            "group": "modality_assets",
-            "lane": lane,
-            "estimated_seconds": 600,
-            "dependencies": [],
-            "command": [
-                "{python}",
-                "{source}/scripts/104_prepare_modality_text_cache.py",
-                "--split-manifest",
-                "{split_manifest}",
-                "--model-root",
-                "{model_root}",
-                "--output",
-                "{output_root}/assets/modality/finding_interventions.pt",
-                "--formal",
-            ],
-            "expected_outputs": [
-                "{output_root}/assets/modality/finding_interventions.pt"
-            ],
-        }
-    ]
-    corruption_jobs = []
-    for condition in ("blur", "contrast", "jpeg"):
-        job_id = f"evidence-current-cache-{condition}"
-        corruption_jobs.append(job_id)
-        output = f"{{output_root}}/assets/modality/current_{condition}"
-        jobs.append(
-            {
-                "job_id": job_id,
-                "group": "modality_assets",
-                "lane": lane,
-                "estimated_seconds": 1800,
-                "dependencies": [],
-                "command": [
-                    "{python}",
-                    "{source}/scripts/105_build_current_corruption_cache.py",
-                    "--split-manifest",
-                    "{split_manifest}",
-                    "--weights",
-                    "{weights}",
-                    "--raw-image-root",
-                    "{raw_image_root}",
-                    "--condition",
-                    condition,
-                    "--output",
-                    output,
-                    "--device",
-                    "{device}",
-                    "--batch-size",
-                    "32",
-                    "--shard-size",
-                    "256",
-                    "--formal",
-                ],
-                "expected_outputs": [f"{output}/cache_manifest.json"],
-            }
-        )
-    probability_jobs = []
+    jobs: list[dict[str, Any]] = []
+    probability_jobs: list[str] = []
     for seed in SEEDS:
         probability_job = f"evidence-probability-S{seed}"
         probability_jobs.append(probability_job)
@@ -232,106 +213,7 @@ def build_phase20_evidence_jobs(*, lane: str) -> list[dict[str, Any]]:
                 "expected_outputs": [probability_receipt],
             }
         )
-        pruned_job = f"evidence-state-pruned-S{seed}"
-        pruned_receipt = (
-            f"{{output_root}}/state_pruning/S{seed}/pruned_export/"
-            "candidate_probability_diagnostic_receipt.json"
-        )
-        jobs.append(
-            {
-                "job_id": pruned_job,
-                "group": "state_pruning",
-                "lane": lane,
-                "estimated_seconds": 500,
-                "dependencies": [probability_job],
-                "command": _diagnostic_command(seed, pruned=True),
-                "expected_outputs": [pruned_receipt],
-            }
-        )
-        parity_output = f"{{output_root}}/state_pruning/S{seed}/parity.json"
-        jobs.append(
-            {
-                "job_id": f"evidence-state-parity-S{seed}",
-                "group": "state_pruning",
-                "lane": lane,
-                "estimated_seconds": 60,
-                "dependencies": [pruned_job],
-                "command": [
-                    "{python}",
-                    "{source}/scripts/101_compare_state_pruning.py",
-                    "--baseline-receipt",
-                    probability_receipt,
-                    "--pruned-receipt",
-                    pruned_receipt,
-                    "--output",
-                    parity_output,
-                    "--formal",
-                ],
-                "expected_outputs": [parity_output],
-            }
-        )
-        modality_output = f"{{output_root}}/modality/S{seed}"
-        jobs.append(
-            {
-                "job_id": f"evidence-modality-S{seed}",
-                "group": "modality_stress",
-                "lane": lane,
-                "estimated_seconds": 5400,
-                "dependencies": [
-                    "evidence-modality-text-cache",
-                    *corruption_jobs,
-                    probability_job,
-                ],
-                "command": [
-                    "{python}",
-                    "{source}/scripts/106_evaluate_modality_stress.py",
-                    "--checkpoint",
-                    f"{{s1_checkpoint_{seed}}}",
-                    "--training-receipt",
-                    f"{{s1_training_receipt_{seed}}}",
-                    "--split-manifest",
-                    "{split_manifest}",
-                    "--cleaned-split-freeze",
-                    "{cleaned_split_freeze}",
-                    "--cleaned-split-platform-root",
-                    "{cleaned_split_platform_root}",
-                    "--cache-root",
-                    "{cache_root}",
-                    "--text-cache",
-                    "{text_cache}",
-                    "--intervention-text-cache",
-                    "{output_root}/assets/modality/finding_interventions.pt",
-                    "--matched-hard-prior-map",
-                    "{matched_hard_prior_map}",
-                    "--blur-cache",
-                    "{output_root}/assets/modality/current_blur",
-                    "--contrast-cache",
-                    "{output_root}/assets/modality/current_contrast",
-                    "--jpeg-cache",
-                    "{output_root}/assets/modality/current_jpeg",
-                    "--weights",
-                    "{weights}",
-                    "--label-quality-audit",
-                    "{label_quality_audit}",
-                    "--output",
-                    modality_output,
-                    "--device",
-                    "{device}",
-                    "--batch-size",
-                    "16",
-                    "--formal",
-                ],
-                "expected_outputs": [f"{modality_output}/modality_stress_receipt.json"],
-            }
-        )
-    diagnostic_receipts = [
-        value
-        for seed in SEEDS
-        for value in (
-            "--diagnostic-receipt",
-            f"{{output_root}}/probability/S{seed}/candidate_probability_diagnostic_receipt.json",
-        )
-    ]
+    diagnostic_receipts = _diagnostic_receipts()
     jobs.extend(
         [
             {
@@ -372,83 +254,220 @@ def build_phase20_evidence_jobs(*, lane: str) -> list[dict[str, Any]]:
                 ],
                 "expected_outputs": ["{output_root}/subgroups/manifest.json"],
             },
+            {
+                "job_id": "evidence-state-efficiency-S43",
+                "group": "state_pruning_and_efficiency",
+                "lane": lane,
+                "estimated_seconds": 1200,
+                "dependencies": ["evidence-probability-S43"],
+                "command": [
+                    "{python}",
+                    "{source}/scripts/131_profile_phase20_state_efficiency.py",
+                    "--checkpoint",
+                    "{s1_checkpoint_43}",
+                    "--training-receipt",
+                    "{s1_training_receipt_43}",
+                    "--baseline-receipt",
+                    "{output_root}/probability/S43/candidate_probability_diagnostic_receipt.json",
+                    "--split-manifest",
+                    "{split_manifest}",
+                    "--cleaned-split-freeze",
+                    "{cleaned_split_freeze}",
+                    "--cleaned-split-platform-root",
+                    "{cleaned_split_platform_root}",
+                    "--cache-root",
+                    "{cache_root}",
+                    "--text-cache",
+                    "{text_cache}",
+                    "--matched-hard-prior-map",
+                    "{matched_hard_prior_map}",
+                    "--weights",
+                    "{weights}",
+                    "--label-quality-audit",
+                    "{label_quality_audit}",
+                    "--output",
+                    "{output_root}/efficiency/S43",
+                    "--device",
+                    "{device}",
+                    "--warmup",
+                    "20",
+                    "--repeats",
+                    "100",
+                    "--formal",
+                ],
+                "expected_outputs": ["{output_root}/efficiency/S43/manifest.json"],
+            },
         ]
     )
-    for pruned in (False, True):
-        suffix = "pruned" if pruned else "full"
-        command = [
-            "{python}",
-            "{source}/scripts/90_profile_v2_efficiency.py",
-            "--checkpoint",
-            "{s1_checkpoint_17}",
-            "--training-receipt",
-            "{s1_training_receipt_17}",
-            "--split-manifest",
-            "{split_manifest}",
-            "--cleaned-split-freeze",
-            "{cleaned_split_freeze}",
-            "--cleaned-split-platform-root",
-            "{cleaned_split_platform_root}",
-            "--cache-root",
-            "{cache_root}",
-            "--text-cache",
-            "{text_cache}",
-            "--matched-hard-prior-map",
-            "{matched_hard_prior_map}",
-            "--weights",
-            "{weights}",
-            "--label-quality-audit",
-            "{label_quality_audit}",
-            "--output",
-            f"{{output_root}}/efficiency/S17_{suffix}.json",
-            "--device",
-            "{device}",
-            "--warmup",
-            "20",
-            "--repeats",
-            "100",
-            "--system",
-            FINAL_SYSTEM,
-            "--formal",
-        ]
-        if pruned:
-            command.append("--deployment-prune-state")
+    if len(jobs) != PHASE_B_JOB_COUNT:
+        raise ValueError("Phase20-B focused evidence queue must contain exactly 6 jobs")
+    return _order_jobs(jobs)
+
+
+def build_phase20_phase_c_jobs(*, lane: str) -> list[dict[str, Any]]:
+    """Catalog optional Phase C jobs; these are not placed in the active queue."""
+    if lane not in EVIDENCE_LANES:
+        raise ValueError(f"unsupported Phase20 evidence lane: {lane}")
+    jobs: list[dict[str, Any]] = [
+        {
+            "job_id": "phase-c-modality-text-cache",
+            "group": "optional_modality_assets",
+            "lane": lane,
+            "estimated_seconds": 600,
+            "dependencies": [],
+            "command": [
+                "{python}",
+                "{source}/scripts/104_prepare_modality_text_cache.py",
+                "--split-manifest",
+                "{split_manifest}",
+                "--model-root",
+                "{model_root}",
+                "--output",
+                "{output_root}/phase_c/assets/modality/finding_interventions.pt",
+                "--formal",
+            ],
+            "expected_outputs": [
+                "{output_root}/phase_c/assets/modality/finding_interventions.pt"
+            ],
+        }
+    ]
+    corruption_jobs: list[str] = []
+    for condition in ("blur", "contrast", "jpeg"):
+        job_id = f"phase-c-current-cache-{condition}"
+        corruption_jobs.append(job_id)
+        output = f"{{output_root}}/phase_c/assets/modality/current_{condition}"
         jobs.append(
             {
-                "job_id": f"evidence-efficiency-{suffix}",
-                "group": "efficiency",
+                "job_id": job_id,
+                "group": "optional_generic_corruption",
                 "lane": lane,
-                "estimated_seconds": 240,
-                "dependencies": (
-                    ["evidence-state-parity-S17"] if pruned else [probability_jobs[0]]
-                ),
-                "command": command,
-                "expected_outputs": [f"{{output_root}}/efficiency/S17_{suffix}.json"],
+                "estimated_seconds": 1800,
+                "dependencies": [],
+                "command": [
+                    "{python}",
+                    "{source}/scripts/105_build_current_corruption_cache.py",
+                    "--split-manifest",
+                    "{split_manifest}",
+                    "--weights",
+                    "{weights}",
+                    "--raw-image-root",
+                    "{raw_image_root}",
+                    "--condition",
+                    condition,
+                    "--output",
+                    output,
+                    "--device",
+                    "{device}",
+                    "--batch-size",
+                    "32",
+                    "--shard-size",
+                    "256",
+                    "--formal",
+                ],
+                "expected_outputs": [f"{output}/cache_manifest.json"],
             }
         )
-    by_id = {str(job["job_id"]): job for job in jobs}
-    if len(by_id) != len(jobs):
-        raise ValueError("Phase20 evidence job IDs are not unique")
-    ranks: dict[str, int] = {}
-
-    def rank(job_id: str) -> int:
-        if job_id not in ranks:
-            dependencies = [str(value) for value in by_id[job_id]["dependencies"]]
-            if any(value not in by_id for value in dependencies):
-                raise ValueError(f"unknown Phase20 evidence dependency: {job_id}")
-            ranks[job_id] = 0 if not dependencies else 1 + max(map(rank, dependencies))
-        return ranks[job_id]
-
-    jobs.sort(
-        key=lambda job: (
-            rank(str(job["job_id"])),
-            -int(job["estimated_seconds"]),
-            str(job["job_id"]),
+    for seed in SEEDS:
+        modality_output = f"{{output_root}}/phase_c/modality/S{seed}"
+        jobs.append(
+            {
+                "job_id": f"phase-c-modality-S{seed}",
+                "group": "optional_extended_modality_stress",
+                "lane": lane,
+                "estimated_seconds": 5400,
+                "dependencies": [
+                    "phase-c-modality-text-cache",
+                    *corruption_jobs,
+                    f"evidence-probability-S{seed}",
+                ],
+                "command": [
+                    "{python}",
+                    "{source}/scripts/106_evaluate_modality_stress.py",
+                    "--checkpoint",
+                    f"{{s1_checkpoint_{seed}}}",
+                    "--training-receipt",
+                    f"{{s1_training_receipt_{seed}}}",
+                    "--split-manifest",
+                    "{split_manifest}",
+                    "--cleaned-split-freeze",
+                    "{cleaned_split_freeze}",
+                    "--cleaned-split-platform-root",
+                    "{cleaned_split_platform_root}",
+                    "--cache-root",
+                    "{cache_root}",
+                    "--text-cache",
+                    "{text_cache}",
+                    "--intervention-text-cache",
+                    "{output_root}/phase_c/assets/modality/finding_interventions.pt",
+                    "--matched-hard-prior-map",
+                    "{matched_hard_prior_map}",
+                    "--blur-cache",
+                    "{output_root}/phase_c/assets/modality/current_blur",
+                    "--contrast-cache",
+                    "{output_root}/phase_c/assets/modality/current_contrast",
+                    "--jpeg-cache",
+                    "{output_root}/phase_c/assets/modality/current_jpeg",
+                    "--weights",
+                    "{weights}",
+                    "--label-quality-audit",
+                    "{label_quality_audit}",
+                    "--output",
+                    modality_output,
+                    "--device",
+                    "{device}",
+                    "--batch-size",
+                    "16",
+                    "--formal",
+                ],
+                "expected_outputs": [f"{modality_output}/modality_stress_receipt.json"],
+            }
         )
-    )
-    for index, job in enumerate(jobs):
-        job["queue_index"] = index
-    return jobs
+    for seed in (17, 28):
+        pruned_job = f"phase-c-state-pruned-S{seed}"
+        pruned_receipt = (
+            f"{{output_root}}/phase_c/state_pruning/S{seed}/pruned_export/"
+            "candidate_probability_diagnostic_receipt.json"
+        )
+        command = _diagnostic_command(seed, pruned=True)
+        command[command.index("--output") + 1] = (
+            f"{{output_root}}/phase_c/state_pruning/S{seed}/pruned_export"
+        )
+        jobs.append(
+            {
+                "job_id": pruned_job,
+                "group": "optional_multiseed_state_pruning",
+                "lane": lane,
+                "estimated_seconds": 500,
+                "dependencies": [f"evidence-probability-S{seed}"],
+                "command": command,
+                "expected_outputs": [pruned_receipt],
+            }
+        )
+        parity_output = f"{{output_root}}/phase_c/state_pruning/S{seed}/parity.json"
+        jobs.append(
+            {
+                "job_id": f"phase-c-state-parity-S{seed}",
+                "group": "optional_multiseed_state_pruning",
+                "lane": lane,
+                "estimated_seconds": 60,
+                "dependencies": [pruned_job],
+                "command": [
+                    "{python}",
+                    "{source}/scripts/101_compare_state_pruning.py",
+                    "--baseline-receipt",
+                    f"{{output_root}}/probability/S{seed}/candidate_probability_diagnostic_receipt.json",
+                    "--pruned-receipt",
+                    pruned_receipt,
+                    "--output",
+                    parity_output,
+                    "--formal",
+                ],
+                "expected_outputs": [parity_output],
+            }
+        )
+    if len(jobs) != PHASE_C_OPTIONAL_JOB_COUNT:
+        raise ValueError("Phase20-C optional evidence catalog must contain 11 jobs")
+    return _order_jobs(jobs)
 
 
 def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
@@ -467,8 +486,6 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--matched-hard-prior-map", type=Path, required=True)
     parser.add_argument("--weights", type=Path, required=True)
     parser.add_argument("--label-quality-audit", type=Path, required=True)
-    parser.add_argument("--model-root", type=Path, required=True)
-    parser.add_argument("--raw-image-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--formal", action="store_true")
     args = parser.parse_args(argv)
@@ -493,9 +510,6 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         role="train_dev",
         portable_root=args.cleaned_split_platform_root,
     )
-    raw_identity = raw_image_root_identity(
-        args.split_manifest, args.raw_image_root.resolve()
-    )
     input_paths = {
         "split_manifest": args.split_manifest,
         "cleaned_split_freeze": args.cleaned_split_freeze,
@@ -504,10 +518,6 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         "matched_hard_prior_map": args.matched_hard_prior_map,
         "weights": args.weights,
         "label_quality_audit": args.label_quality_audit,
-        "model_open_clip_config": args.model_root / "open_clip_config.json",
-        "model_tokenizer": args.model_root / "tokenizer.json",
-        "model_config": args.model_root / "config.json",
-        "model_weights": args.model_root / "open_clip_pytorch_model.bin",
     }
     for seed, checkpoint, receipt in zip(
         SEEDS, args.checkpoint, args.training_receipt, strict=True
@@ -518,8 +528,6 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         if not path.is_file():
             raise FileNotFoundError(f"Phase20 evidence input missing: {role}")
     input_hashes = {role: sha256_file(path) for role, path in input_paths.items()}
-    if input_hashes["weights"] != input_hashes["model_weights"]:
-        raise ValueError("Phase20 evidence visual/text model weights drift")
     phase20_a_inputs = json.loads(
         (args.phase20_a_program / "input_manifest.json").read_text(encoding="utf-8")
     )["input_sha256"]
@@ -556,16 +564,16 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         )
     }
     jobs = build_phase20_evidence_jobs(lane=args.lane)
+    phase_c_jobs = build_phase20_phase_c_jobs(lane=args.lane)
     staging = args.output.with_name(f".{args.output.name}.preparing.{os.getpid()}")
     staging.mkdir(parents=True, exist_ok=False)
     input_manifest = {
-        "schema": "prta-cxr.phase20-evidence-input-manifest.v1",
+        "schema": "prta-cxr.phase20-evidence-input-manifest.v2",
         "status": "PASS_PHASE20_EVIDENCE_INPUTS_FROZEN",
         "input_sha256": input_hashes,
         "cleaned_split_platform_root_required": True,
-        "model_root_required": True,
-        "raw_image_root_required": True,
-        "raw_image_root_identity": raw_identity,
+        "model_root_required": False,
+        "raw_image_root_required": False,
         "external_included": False,
         "internal_test_opened": False,
         "gold_opened": False,
@@ -583,6 +591,26 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
             "jobs": jobs,
         },
     )
+    _write_new_json(
+        staging / "phase_c_optional_registry.json",
+        {
+            "schema": "prta-cxr.phase20-phase-c-optional-registry.v1",
+            "status": "NOT_FROZEN_PHASE_C_OPTIONAL",
+            "runnable": False,
+            "job_count": len(phase_c_jobs),
+            "jobs": phase_c_jobs,
+            "deferred_unbuilt_families": [
+                "older PRIOR",
+                "view-mismatch PRIOR",
+                "token-scrambled PRIOR",
+                "typo/synonym/paraphrase/random-finding salts",
+            ],
+            "activation_rule": (
+                "Requires an explicit later Phase C decision and a separately frozen "
+                "queue; it is not part of the Phase B completion gate."
+            ),
+        },
+    )
     receipt = {
         "schema": "prta-cxr.phase20-evidence-preparation.v1",
         "status": "PASS_PHASE20_SLIM_S1_EVIDENCE_PROGRAM_FROZEN",
@@ -593,8 +621,13 @@ def prepare_phase20_evidence_main(argv: Sequence[str] | None = None) -> int:
         "seeds": list(SEEDS),
         "lane": args.lane,
         "job_count": len(jobs),
+        "phase_b_required_job_count": len(jobs),
+        "phase_c_optional_job_count": len(phase_c_jobs),
         "queue_sha256": sha256_file(staging / "queue.json"),
         "registry_sha256": sha256_file(staging / "job_registry.json"),
+        "phase_c_optional_registry_sha256": sha256_file(
+            staging / "phase_c_optional_registry.json"
+        ),
         "input_manifest_sha256": sha256_file(staging / "input_manifest.json"),
         "phase20_a_preparation_sha256": sha256_file(
             args.phase20_a_program / "preparation_receipt.json"

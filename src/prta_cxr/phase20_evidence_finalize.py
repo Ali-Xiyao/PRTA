@@ -10,6 +10,7 @@ from typing import Any
 
 from prta_cxr.authorization import require_formal_authorization
 from prta_cxr.contracts import sha256_file
+from prta_cxr.phase20_evidence_program import PHASE_B_JOB_COUNT
 from prta_cxr.phase20_training_finalize import _closed, _read_json, _write_new_json
 
 
@@ -168,7 +169,7 @@ def finalize_phase20_evidence(
         artifact_roots=b1_artifact_roots,
         preparation_status="PASS_PHASE20_SLIM_S1_EVIDENCE_PROGRAM_FROZEN",
         state_schema="prta-cxr.phase20-evidence-job-state.v1",
-        expected_jobs=20,
+        expected_jobs=PHASE_B_JOB_COUNT,
     )
     b2, b2_audit = _validate_program_states(
         program_root=b2_program,
@@ -180,13 +181,10 @@ def finalize_phase20_evidence(
     )
     b1_groups = {str(row["group"]) for row in b1}
     required_b1 = {
-        "modality_assets",
         "probability_and_prior_stress",
-        "state_pruning",
-        "modality_stress",
         "calibration_selective_prediction",
         "subgroup_long_tail",
-        "efficiency",
+        "state_pruning_and_efficiency",
     }
     if not required_b1 <= b1_groups:
         raise ValueError("Phase20-B1 evidence family coverage drift")
@@ -198,7 +196,7 @@ def finalize_phase20_evidence(
         "created_at": datetime.now(UTC).isoformat(),
         "phase20_a_final_sha256": sha256_file(phase20_a_final),
         "comparator_final_sha256": sha256_file(comparator_final),
-        "b1_job_count": 20,
+        "b1_job_count": PHASE_B_JOB_COUNT,
         "b2_job_count": 28,
         "b1_jobs": sorted(b1, key=lambda row: str(row["job_id"])),
         "b2_jobs": sorted(b2, key=lambda row: str(row["job_id"])),
@@ -208,8 +206,6 @@ def finalize_phase20_evidence(
         },
         "evidence_families": [
             "PRIOR stress",
-            "finding stress",
-            "current corruption",
             "calibration",
             "risk coverage",
             "subgroups",
@@ -227,6 +223,7 @@ def finalize_phase20_evidence(
         "internal_test_opened": False,
         "gold_opened": False,
         "protected_outcome_read_count": 0,
+        "phase_c_optional_included": False,
     }
 
 

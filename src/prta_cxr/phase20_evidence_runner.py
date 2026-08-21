@@ -18,7 +18,7 @@ from prta_cxr.authorization import (
     require_formal_authorization,
 )
 from prta_cxr.contracts import sha256_file
-from prta_cxr.phase20_evidence_program import EVIDENCE_LANES, raw_image_root_identity
+from prta_cxr.phase20_evidence_program import EVIDENCE_LANES
 from prta_cxr.phase20_queue_runner import dependency_decision
 from prta_cxr.provenance import resolve_source_commit
 
@@ -45,8 +45,6 @@ def validate_evidence_platform_inputs(
         "matched_hard_prior_map",
         "weights",
         "label_quality_audit",
-        "model_root",
-        "raw_image_root",
         *(f"s1_checkpoint_{seed}" for seed in (17, 28, 43)),
         *(f"s1_training_receipt_{seed}" for seed in (17, 28, 43)),
     }
@@ -62,10 +60,6 @@ def validate_evidence_platform_inputs(
         "matched_hard_prior_map": paths["matched_hard_prior_map"],
         "weights": paths["weights"],
         "label_quality_audit": paths["label_quality_audit"],
-        "model_open_clip_config": paths["model_root"] / "open_clip_config.json",
-        "model_tokenizer": paths["model_root"] / "tokenizer.json",
-        "model_config": paths["model_root"] / "config.json",
-        "model_weights": paths["model_root"] / "open_clip_pytorch_model.bin",
         **{
             f"s1_checkpoint_{seed}": paths[f"s1_checkpoint_{seed}"]
             for seed in (17, 28, 43)
@@ -85,15 +79,9 @@ def validate_evidence_platform_inputs(
     for role in (
         "cleaned_split_platform_root",
         "cache_root",
-        "model_root",
-        "raw_image_root",
     ):
         if not paths[role].is_dir():
             raise FileNotFoundError(f"Phase20 evidence directory missing: {role}")
-    if raw_image_root_identity(
-        paths["split_manifest"], paths["raw_image_root"]
-    ) != dict(input_manifest.get("raw_image_root_identity", {})):
-        raise ValueError("Phase20 evidence raw-image mirror identity drift")
     return paths
 
 

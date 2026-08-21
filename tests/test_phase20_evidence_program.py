@@ -6,42 +6,62 @@ import torch
 from prta_cxr.contracts import canonical_sha256
 from prta_cxr.phase20_evidence_program import (
     build_phase20_evidence_jobs,
+    build_phase20_phase_c_jobs,
     validate_final_s1_artifact,
 )
 
 
-def test_phase20_evidence_queue_covers_frozen_nonexternal_s1_evidence():
+def test_phase20_evidence_queue_is_focused_mandatory_phase_b():
     jobs = build_phase20_evidence_jobs(lane="rtx3090_0")
     by_id = {job["job_id"]: job for job in jobs}
-    assert len(jobs) == 20
-    assert len(by_id) == 20
+    assert len(jobs) == 6
+    assert len(by_id) == 6
     assert all(job["lane"] == "rtx3090_0" for job in jobs)
-    assert {
+    assert set(by_id) == {
         "evidence-probability-S17",
         "evidence-probability-S28",
         "evidence-probability-S43",
         "evidence-calibration",
         "evidence-subgroups",
-        "evidence-efficiency-full",
-        "evidence-efficiency-pruned",
-    } <= set(by_id)
+        "evidence-state-efficiency-S43",
+    }
     assert by_id["evidence-calibration"]["dependencies"] == [
         "evidence-probability-S17",
         "evidence-probability-S28",
         "evidence-probability-S43",
     ]
-    assert by_id["evidence-state-parity-S17"]["dependencies"] == [
-        "evidence-state-pruned-S17"
+    assert by_id["evidence-state-efficiency-S43"]["dependencies"] == [
+        "evidence-probability-S43"
     ]
     command = by_id["evidence-probability-S17"]["command"]
     assert command[command.index("--diagnostic-scope") + 1] == "phase20_s1"
     assert "--retain-logits" in command
     assert "--true-only" not in command
-    pruned = by_id["evidence-state-pruned-S17"]["command"]
-    assert "--true-only" in pruned
-    assert "--deployment-prune-state" in pruned
+    efficiency = by_id["evidence-state-efficiency-S43"]["command"]
+    assert efficiency[efficiency.index("--checkpoint") + 1] == "{s1_checkpoint_43}"
+    assert "131_profile_phase20_state_efficiency.py" in efficiency[1]
+
+
+def test_phase20_phase_c_catalog_is_optional_and_separate():
+    mandatory = build_phase20_evidence_jobs(lane="rtx3090_0")
+    optional = build_phase20_phase_c_jobs(lane="rtx3090_0")
+    mandatory_ids = {job["job_id"] for job in mandatory}
+    optional_ids = {job["job_id"] for job in optional}
+    assert len(optional) == 11
+    assert not mandatory_ids & optional_ids
+    assert {
+        "phase-c-current-cache-blur",
+        "phase-c-current-cache-contrast",
+        "phase-c-current-cache-jpeg",
+        "phase-c-modality-S17",
+        "phase-c-modality-S28",
+        "phase-c-modality-S43",
+        "phase-c-state-pruned-S17",
+        "phase-c-state-pruned-S28",
+    } <= optional_ids
     for condition in ("blur", "contrast", "jpeg"):
-        corruption = by_id[f"evidence-current-cache-{condition}"]["command"]
+        by_id = {job["job_id"]: job for job in optional}
+        corruption = by_id[f"phase-c-current-cache-{condition}"]["command"]
         assert corruption[corruption.index("--raw-image-root") + 1] == (
             "{raw_image_root}"
         )
