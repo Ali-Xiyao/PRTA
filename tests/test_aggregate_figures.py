@@ -2,7 +2,11 @@ import copy
 
 import numpy as np
 
-from prta_cxr.aggregate_figures import joint_recall_matrix, reliability_plot_series
+from prta_cxr.aggregate_figures import (
+    _normalize_svg,
+    joint_recall_matrix,
+    reliability_plot_series,
+)
 
 
 def _report():
@@ -67,3 +71,10 @@ def test_joint_matrix_leaves_suppressed_cells_blank():
     assert matrix.shape == (1, 5)
     assert np.isnan(matrix[0, -1])
     assert counts[0, -1] == 4
+
+
+def test_svg_normalization_removes_generated_trailing_whitespace(tmp_path):
+    path = tmp_path / "figure.svg"
+    path.write_bytes(b"<svg>   \r\n  <path /> \r\n</svg>\r\n")
+    _normalize_svg(path)
+    assert path.read_bytes() == b"<svg>\n  <path />\n</svg>\n"

@@ -101,9 +101,20 @@ def _save(fig: Any, output: Path, stem: str) -> list[Path]:
     for suffix in ("png", "svg"):
         path = output / f"{stem}.{suffix}"
         fig.savefig(path, dpi=220, bbox_inches="tight")
+        if suffix == "svg":
+            _normalize_svg(path)
         paths.append(path)
     plt.close(fig)
     return paths
+
+
+def _normalize_svg(path: Path) -> None:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    path.write_text(
+        "\n".join(line.rstrip() for line in lines) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def plot_aggregate_figures(
