@@ -1,6 +1,6 @@
 # PRTA-CXR Slim-S1 最终主线锁定与确认实验协议
 
-> 状态：`FROZEN_PHASE20_SLIM_S1_MAINLINE / PHASE20_RUNNING`
+> 状态：`FROZEN_PRTA_CXR_MAINLINE / PHASE20_EVIDENCE_FINAL_PASS`
 >
 > 生效日期：2026-08-18
 >
@@ -9,7 +9,7 @@
 
 ## 1. 最终方法锁定
 
-论文最终主方法改为 **PRTA-CXR-Slim / Slim-S1**。其固定定义为：
+论文最终方法统一为 **PRTA-CXR**；`Slim-S1` 仅作为冻结配置身份。其固定定义为：
 
 - 保留 finding-conditioned visual query、cross-time alignment、temporal relation
   residual、Tail8/rank32/H0；
@@ -164,5 +164,6 @@ checkpoint/config/receipt/input/best-epoch/source/hardware SHA 与身份，直�
 - 基于 Phase20 outcome 的新结构、权重、Seed、容差或 best-seed 选择：禁止。
 
 V2 文档和数值仍是历史开发证据；从本协议生效起，不得再把 V2 写成最终投稿
-主方法。S1 的 full-Train 结果未完成前，论文表格应标为 `RUNNING/PENDING`，不得把
-Slim Train-only 均值填入 official Dev 主表。
+主方法。历史执行期曾要求 S1 full-Train 完成前标记 `RUNNING/PENDING`；当前
+Phase20-A 88/88、comparator 24/24、B1 6/6、B2 28/28 与 evidence finalizer
+均已 PASS，official Dev 主表只使用最终三 Seed聚合，不使用 Slim Train-only 均值。

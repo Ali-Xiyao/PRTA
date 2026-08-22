@@ -1,9 +1,9 @@
 # PRIOR 压力测试
 
-> **重推理状态（2026-08-18）**：以下为历史 Full V2 行为。论文最终方法已经
-> 锁定为 Slim-S1，因此 true/matched-hard/null/reversed、修订 older/view/token、
-> finding 干预和 current corruption 均须对 full-Train S1 三 Seed 重新导出。
-> 历史数字保留用于机制脉络，不能直接代表最终模型。
+> **最终状态（2026-08-22）**：以下表格为历史 Full V2 行为，仅用于机制脉络。
+> PRTA-CXR 三 Seed 的 true/matched-hard/null/reversed 概率导出已经在 Phase20-B1
+> 6/6 PASS 中完成，正式聚合见 `data/15_Phase20-B1正式聚合.json`。Phase20-C 的
+> 扩展 finding/current corruption 项未启动，属于不进入论文完成门的可选未来工作。
 
 ## Full V2 行为
 
@@ -64,4 +64,5 @@ V2；这削弱了“F02 是更优主方法”的解释。
 - 可以说：A03 的干预不敏感与其历史通路被移除相一致。
 - 不可以说：干预证明了临床因果关系。
 - 不可以说：模型已对真实缺失/错误病史具有部署鲁棒性。
-- 下一步仍需 finding zero/wrong/synonym、current corruption 和真实缺失历史测试。
+- finding zero/wrong/synonym、current corruption 和真实缺失历史属于 Phase20-C
+  可选扩展；本论文不再补跑，也不据此声称部署鲁棒性。

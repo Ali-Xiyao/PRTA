@@ -1,6 +1,13 @@
 # PRTA-CXR 最终论文实验与项目重构执行手册（ViT 主线版）
 
-> **2026-08-18 Phase20 权威覆盖**：最终投稿主线已由历史 Full V2 改为
+> **2026-08-22 最终收口覆盖**：最终投稿方法统一为 **PRTA-CXR**，`Slim-S1`
+> 仅为冻结配置身份。Phase20-A 88/88、comparator 24/24、B1 6/6、B2 28/28
+> 与 evidence finalizer 已全部 PASS；本手册后续出现的 STOP、RUNNING、待跑、
+> V2 主线和医生复核内容均为历史执行记录，不再构成当前任务。当前权威入口为
+> `paper/07_后续实验路线图_CN.md`、`paper/17_论文实验数据总表与待跑清单_CN.md`
+> 和 `paper/18_Phase20最终证据与论文叙事_CN.md`。
+>
+> **2026-08-18 Phase20 权威覆盖（历史）**：最终投稿主线当时由历史 Full V2 改为
 > `PRTA-CXR-Slim / Slim-S1`。固定删除 standalone Prototype CE 与 DMW，保留
 > finding conditioning、cross-time alignment、temporal relation residual、state
 > 0.025、ODC 0.05、matched-hard CMCP 0.01 和 Tail8/H0。完整 63-cell 重跑与

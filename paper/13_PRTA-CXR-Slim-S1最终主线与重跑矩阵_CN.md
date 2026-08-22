@@ -2,7 +2,7 @@
 
 ## 最终决定
 
-最终投稿主线锁定为 `Slim-S1`：保留 finding conditioning、cross-time alignment、
+最终投稿方法锁定为 **PRTA-CXR**，`Slim-S1` 仅为冻结配置身份：保留 finding conditioning、cross-time alignment、
 temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0.01
 和 Tail8/H0；删除 standalone Prototype CE 与 DMW。
 
@@ -14,10 +14,10 @@ temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0
 | 类型 | 内容 | 结论 |
 |---|---|---|
 | 历史继承 | IF-A10/S0、TILA8、Current-only、Siamese 的 Git-safe 聚合结论 | 只作历史证据；旧私有 checkpoint 已删除 |
-| 新训练 | full S1、精确损失/结构消融、F01/F02-DMW0 | 必须重跑 |
-| 新训练 | source-held、scaling、symmetric/plausible noise | 必须按 S1 重跑 |
-| 新推理 | 模态压力、校准/选择性预测、亚组、效率/剪枝、安全路由 | full S1 checkpoint 后执行 |
-| 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds；各 lane 在自身冻结门 PASS 后接力，最终报告仍需 24/24 finalizer |
+| 新训练 | full S1、精确损失/结构消融、F01/F02-DMW0 | 已完成并由 Phase20-A finalizer 核验 |
+| 新训练 | source-held、scaling、symmetric/plausible noise | 已完成并纳入 88/88 PASS |
+| 新推理 | PRIOR 压力、校准/选择性预测、亚组、效率/剪枝、安全路由 | B1 6/6、B2 28/28 PASS |
+| 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds，24/24 finalizer PASS |
 | 历史保留 | V2 及其既有表格/诊断 | 只作开发父方法证据 |
 | 正文泛化 | 双向 MIMIC-CXR/CheXpert Plus source-held | 三 Seed跨来源评估；不称为独立外部验证 |
 | 退役 | ReXGradient / 其他外部验证 | 不再运行，不进入论文结果或模型选择 |
@@ -28,7 +28,11 @@ DMW0 6、source-held 6、scaling 12、label noise 18。Seeds 固定为 17/28/43�
 执行资源为服务器双 A800 + 本地 RTX3090 GPU0；本地 GPU1 明确预留为空闲卡，
 全部任务按三卡预计时长重新平衡。
 
-## 当前执行状态（2026-08-18）
+## 历史执行记录与最终状态
+
+截至 2026-08-22，Phase20-A 88/88、comparator 24/24、B1 6/6、B2 28/28
+及 evidence finalizer 均为 PASS。以下段落只记录 2026-08-18 起跑和接力设计，
+不再表示存在运行中或待跑任务。
 
 Phase20 已冻结为 88 个自动依赖 job，其中 63 个为新训练单元。服务器 A800 两条
 lane 分别从 `P20-FINAL-S1-S17` 与 `P20-FINAL-S1-S28` 开始，本地 RTX3090 GPU0
@@ -54,9 +58,9 @@ allowlist 复验后从本地与服务器删除；清理不触碰 Phase20 及其�
 
 ## 论文写法
 
-当前可写：“Train-only 模块选择按冻结容差选择了更精简的 S1；随后在 full Train /
-official Dev 上进行独立确认与可信性重评估。”在 Phase20 finalizer 完成前，不得写
-“S1 在 official Dev 优于 S0/V2”，也不得把 Slim 的 0.560520 当成最终主表数字。
+当前可写：“Train-only 模块选择按冻结容差确定了更精简的 PRTA-CXR 配置；随后在
+full Train / official Dev 上完成独立确认与可信性重评估。”正式主表使用 Phase20
+finalizer 的三 Seed结果，不使用 Slim Train-only 的 0.560520。
 
 完整机器协议见
 [Slim-S1 最终主线锁定与确认实验协议](../docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md)。

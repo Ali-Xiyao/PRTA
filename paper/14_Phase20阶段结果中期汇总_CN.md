@@ -8,13 +8,16 @@
 > Phase20 全局 finalizer 尚未运行，因此本页不得直接作为投稿终表。患者级预测、
 > checkpoint、原始日志、Internal-test、Gold 和医生人工数据均未纳入。
 
+> **终态补记（2026-08-22）**：当时所列 source-held、label-noise、comparator、
+> B1/B2 与全局 finalizer 后续均已完成；最终状态以 `paper/17` 为准。
+
 ## 当前判断
 
 冻结的 full-Train `Slim-S1` 稳定复现历史 V2 的性能区间，三 Seed 方差较小；
 finding conditioning 与 relation residual 的结构消融出现大幅、跨 Seed 一致的
 退化；数据量曲线单调改善；正确 PRIOR 相对 matched-wrong PRIOR 保持稳定优势。
 
-最终主方法继续锁定为 `Slim-S1`。后续实验只补齐跨数据来源泛化、label-noise、
+最终方法继续锁定为 **PRTA-CXR**（冻结配置身份 `Slim-S1`）。当时后续只补齐跨数据来源泛化、label-noise、
 比较器与可信性统计，不再根据结果修改方法、权重、Seed 或阈值。
 
 ## full-Train Slim-S1 三 Seed
@@ -87,13 +90,12 @@ bootstrap 95% CI，以及 in-domain 与 cross-source 的性能差。由于 sourc
 该证据只能命名为 **cross-source domain generalization**，不能称为独立外部临床
 验证。六个跨源 evaluation receipt 全部 terminal PASS 前，不报告方向性结论。
 
-## 尚不能收口的部分
+## 当时尚不能收口的部分（现均已完成）
 
-- label-noise：仍需等 plausible/symmetric 各比例三 Seed 齐全；
-- source-held-out：六个训练表面已完成，六个跨源 evaluation receipt 尚未全部
-  terminal，不能使用训练表面高低宣称跨源泛化；
-- Phase20 全局 finalizer、配对 bootstrap、效应量、95% CI、p 值及论文终表仍待完成；
-- 24-cell 比较器以及 B1/B2 可信性证据链仍由既定上游门控。
+- label-noise plausible/symmetric 各比例三 Seed 后续已齐全；
+- source-held-out 六个跨源 evaluation receipt 后续已 terminal PASS；
+- Phase20 全局 finalizer、配对 bootstrap、效应量、95% CI、p 值及论文终表已完成；
+- 24-cell 比较器与 B1/B2 可信性证据链均已完成。
 
 ## 论文叙事建议
 
@@ -105,4 +107,4 @@ bootstrap 95% CI，以及 in-domain 与 cross-source 的性能差。由于 sourc
 5. 将双向 MIMIC-CXR/CheXpert Plus source-held 结果作为正文泛化证据，并准确限定为
    跨来源域泛化，不写成独立外部或临床验证。
 
-综合判断：**内部机制与主线结果乐观；跨来源泛化结论等待双向三 Seed评估收口。**
+该中期判断已被最终收口替代；跨来源双向三 Seed评估已经完成。
