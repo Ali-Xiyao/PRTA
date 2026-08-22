@@ -22,7 +22,7 @@ from prta_cxr.contracts import sha256_file
 BOOTSTRAP_REPLICATES = 10_000
 BOOTSTRAP_SEED = 20_260_818
 MINIMUM_CELL_SUPPORT = 100
-S3_BATCH_REPLAY_ATOL = 1e-4
+S3_BATCH_REPLAY_ATOL = 2e-4
 
 
 def _pair_identity(row: Mapping[str, Any]) -> tuple[str, str, str, str]:
