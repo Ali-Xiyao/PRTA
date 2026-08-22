@@ -1,0 +1,14 @@
+{
+  "aggregate_only": true,
+  "evidence_sha256": "2b8d7dd640a930b54ccd736aac4fd7182aad94cca0352edf5cb6215b2079e879",
+  "figures": {
+    "PRTA_CXR_finding_progression_heatmap.png": "3d3c607c3173cabeb8d62507d67fd6a40ea5b37702b9d266487c32d31cd26240",
+    "PRTA_CXR_finding_progression_heatmap.svg": "252e9a1cfeb72ae053cb78a16d83e439ef3594fb0f11eae1d56f74607813663a",
+    "PRTA_CXR_reliability_curve.png": "f6d2a5a32624ea019fc33fd81d657134eaf7ad5b67263065b1237cf537589e00",
+    "PRTA_CXR_reliability_curve.svg": "8f89701623fc319481ba89f52450d18e0489c32c45c42fb1e5b8b9c9a4135c6c"
+  },
+  "minimum_reliability_count_mean": 20.0,
+  "schema": "prta-cxr.aggregate-evidence-figures.v1",
+  "source_commit": "3828b40a0e31a1702e761fa7d4ff19aa37bb7adc",
+  "status": "PASS_AGGREGATE_EVIDENCE_FIGURES_COMPLETE"
+}

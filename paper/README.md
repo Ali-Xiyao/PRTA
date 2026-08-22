@@ -29,6 +29,7 @@ generalization。Internal-test、Gold、医生人工与 reader study 均未打�
 7. [最终路线图](07_后续实验路线图_CN.md)
 8. [最终实验数据总表](17_论文实验数据总表与待跑清单_CN.md)
 9. [最终证据与论文叙事](18_Phase20最终证据与论文叙事_CN.md)
+10. [校准曲线与联合热图](19_校准曲线与Finding-Progression联合热图_CN.md)
 
 ## 最终聚合数据
 
@@ -37,6 +38,7 @@ generalization。Internal-test、Gold、医生人工与 reader study 均未打�
 - [Phase20-B1 正式聚合](data/15_Phase20-B1正式聚合.json)
 - [Phase20-B2 配对统计](data/16_Phase20-B2配对统计.json)
 - [Phase20 最终证据凭据](data/17_Phase20最终证据凭据.json)
+- [Phase21 校准与联合单元](data/18_Phase21校准与Finding-Progression联合单元.json)
 - [最终聚合数据说明](data/README.md)
 
 旧 14/24 comparator 阶段快照已经移入 VisualVIT 历史仓库，不能作为当前结果引用。
