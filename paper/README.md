@@ -31,6 +31,7 @@ generalization。Internal-test、Gold、医生人工与 reader study 均未打�
 9. [最终证据与论文叙事](18_Phase20最终证据与论文叙事_CN.md)
 10. [校准曲线与联合热图](19_校准曲线与Finding-Progression联合热图_CN.md)
 11. [Figure 5 finding-conditioned temporal attention flow](20_Figure5_Finding-conditioned_temporal_attention_flow_CN.md)
+12. [Figure S3 query specificity and attention stability](21_FigureS3_Query_specificity_and_attention_stability_CN.md)
 
 ## 最终聚合数据
 
@@ -42,6 +43,8 @@ generalization。Internal-test、Gold、医生人工与 reader study 均未打�
 - [Phase21 校准与联合单元](data/18_Phase21校准与Finding-Progression联合单元.json)
 - [Figure 5 两例聚合 attention 数据](data/19_Figure5_attention_flow_aggregate.json)
 - [Figure 5 attention 导出清单](figures/attention_export_manifest.json)
+- [Figure S3 query sensitivity 聚合](data/20_FigureS3_query_sensitivity_aggregate.json)
+- [Figure S3 restricted artifact notice](figures/supp_figure_s3_query_sensitivity.RESTRICTED.md)
 - [最终聚合数据说明](data/README.md)
 
 旧 14/24 comparator 阶段快照已经移入 VisualVIT 历史仓库，不能作为当前结果引用。

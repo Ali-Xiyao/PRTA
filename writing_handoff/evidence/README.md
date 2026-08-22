@@ -11,6 +11,8 @@
 - Phase21：真实 reliability bins、finding×progression 60 cells 与稀疏抑制门。
 - Figure 5：两例平均后的 attention-flow maps 与 rankwise route weights；不含影像、
   样本标识、单例预测或完整 W tensor。
+- Figure S3：全量 multi-finding pairs 的 between-query/between-seed JSD 中位数与
+  patient-clustered 95% CI；不含患者级 comparison units 或单例 maps。
 
 这些文件不包含 patient-level predictions、checkpoint、影像、报告或原始日志。
 历史 V2/Phase15/16 Markdown 已仅保存在 VisualVIT 归档，不能作为最终 S1 数字源。

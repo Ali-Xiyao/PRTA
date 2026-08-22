@@ -39,6 +39,158 @@
   "shared_p99_clip": 0.08322171984437607,
   "source_commit": "3f5031fd657f7040309df5246a27fcdbd4a0f4cb",
   "status": "PASS_FIGURE5_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED",
+  "supplementary_figure_s3": {
+    "attention_capture": {
+      "average_attn_weights": false,
+      "batched_replay_absolute_tolerance": 0.0002,
+      "cls_removed_and_patch_renormalized": true,
+      "native_post_softmax_attention": true,
+      "need_weights": true,
+      "probability_replay_absolute_tolerance": 2e-05
+    },
+    "bootstrap": {
+      "cluster": "patient",
+      "interval": "percentile 95%",
+      "replicates": 10000,
+      "rng_seed": 20260818
+    },
+    "cases_changed_after_attention_view": false,
+    "checkpoint_sha256": {
+      "S17": "42bdefcf50d4d0e5d34efe83d126d958ac5680bdb3cb559a287204b6de89bb77",
+      "S28": "02cee98860ac85340b882c262a7ded73ec03b7408fc97d6c4378d1cd6814ab4c",
+      "S43": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140"
+    },
+    "cohort": {
+      "pair_count": 1743,
+      "patient_cluster_count": 600,
+      "row_count": 3791
+    },
+    "cohort_receipt_sha256": "6b6aff99a61a907033d425279b4ebf0583a19bd0f5b056f6d3420b6b48b6594f",
+    "excluded_from_public_git": [
+      "supp_figure_s3_query_sensitivity.png",
+      "source CXR pixels",
+      "patient/sample identifiers and private paths",
+      "per-row attention-flow maps",
+      "patient-level JSD units"
+    ],
+    "jsd": {
+      "logarithm_base": 2,
+      "primary_distribution": "equal-mass concatenation [0.5*r_current, 0.5*r_prior]",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "sensitivity_distributions": [
+        "r_current",
+        "r_prior"
+      ]
+    },
+    "permission_basis": {
+      "mimic_cxr_dua": "https://physionet.org/content/mimic-cxr-jpg/view-dua/2.1.0/",
+      "reason": "No affirmative artifact-license receipt authorizes publishing MIMIC-CXR-JPG pixels or patient-level derivatives in public Git.",
+      "repository_contract": "DATA_AVAILABILITY.md"
+    },
+    "plot": {
+      "colormap": "magma",
+      "crop": "Resize(224, antialias=True) then CenterCrop(224)",
+      "interpolation": "bilinear",
+      "overlay_alpha": 0.4,
+      "seed": 43,
+      "shared_p99_clip": 0.08029880493879311,
+      "single_shared_colorbar": true,
+      "summary": "boxplot without per-unit points"
+    },
+    "private_analysis_manifest_sha256": "0844ff6d7de7e3d62ef615d2f911705d3abc4c5ccdd25f59439ac4111743a8b7",
+    "private_figure_sha256": "1757ae753f9e13f2468e866409e87e077c955d7fe10ea422b6d7455bee6651ee",
+    "public_git_redistribution_permitted": false,
+    "public_repository_visibility": "PUBLIC",
+    "publication_permission_confirmed": false,
+    "published_to_git": [
+      "selection/export/statistics/render code",
+      "tests",
+      "checkpoint and private-artifact hashes",
+      "aggregate JSD medians and patient-clustered confidence intervals",
+      "permission boundary and reproduction instructions"
+    ],
+    "qualitative_queries": [
+      {
+        "finding": "Lung Opacity",
+        "reference_progression": "New"
+      },
+      {
+        "finding": "Enlarged Cardiomediastinum",
+        "reference_progression": "Stable"
+      }
+    ],
+    "qualitative_selection_rule": "salted pre-view pair order; unanimous-correct S17/S28/S43; distinct progression states prioritized",
+    "renderer_commit": "84c7d91",
+    "schema": "prta-cxr.s3-query-sensitivity-release.v1",
+    "selection_performed_before_image_or_attention_view": true,
+    "source_commit": "d6af351",
+    "statistics": {
+      "between_query": {
+        "current": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.7593519336329274,
+          "ci95_low": 0.7423470485624867,
+          "median": 0.7517271104894766,
+          "patient_cluster_count": 600,
+          "unit_count": 7182
+        },
+        "joint": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.5856312507155224,
+          "ci95_low": 0.5685102099786326,
+          "median": 0.5771771664570029,
+          "patient_cluster_count": 600,
+          "unit_count": 7182
+        },
+        "prior": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.3976700594227113,
+          "ci95_low": 0.37411061742977647,
+          "median": 0.3860319840532146,
+          "patient_cluster_count": 600,
+          "unit_count": 7182
+        }
+      },
+      "between_seed": {
+        "current": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.5813473279086461,
+          "ci95_low": 0.569934801063537,
+          "median": 0.5758010003511365,
+          "patient_cluster_count": 600,
+          "unit_count": 11373
+        },
+        "joint": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.41847480679818894,
+          "ci95_low": 0.41322926359510853,
+          "median": 0.41583853487892863,
+          "patient_cluster_count": 600,
+          "unit_count": 11373
+        },
+        "prior": {
+          "bootstrap_replicates": 10000,
+          "bootstrap_rng_seed": 20260818,
+          "ci95_high": 0.2753710507171888,
+          "ci95_low": 0.2694535103862431,
+          "median": 0.27245818954097833,
+          "patient_cluster_count": 600,
+          "unit_count": 11373
+        }
+      },
+      "claim_gate": "between_query.joint.ci95_low > between_seed.joint.ci95_high",
+      "query_sensitive_routing_supported": true
+    },
+    "status": "PASS_S3_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED"
+  },
   "tensor_shapes": {
     "A_bar": [
       196,

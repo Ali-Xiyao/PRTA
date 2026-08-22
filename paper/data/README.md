@@ -11,6 +11,7 @@
 | `17_Phase20最终证据凭据.json` | 完成门、protected reads、no-selection | finalizer PASS |
 | `18_Phase21校准与Finding-Progression联合单元.json` | 三 Seed reliability bins、12×5 联合 cells 与抑制门 | aggregate-only PASS |
 | `19_Figure5_attention_flow_aggregate.json` | 两例平均后的 A_bar/r_current/r_prior/edge 与 rankwise route weights | aggregate-only PASS |
+| `20_FigureS3_query_sensitivity_aggregate.json` | 全量 multi-finding pairs 的 query/seed JSD 中位数与 patient-clustered 95% CI | aggregate-only PASS |
 
 旧 V2、Phase15/16、历史 PRIOR/效率/校准 Markdown 已迁入 VisualVIT 归档，不在
 本仓库重复保存，以避免被误当成最终 S1 数字。这里不包含 patient-level prediction、

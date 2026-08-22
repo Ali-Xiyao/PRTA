@@ -19,6 +19,7 @@
 11. [数据来源、筛选与归档边界](11_数据来源筛选与归档边界_CN.md)：写 Data、cohort construction、cross-source protocol 与数据可用性声明。
 12. [校准曲线与联合亚组热图](12_校准曲线与联合亚组热图_CN.md)：直接使用真实 bins/cells、成图与抑制规则。
 13. [Figure 5 时序 Attention Flow](13_Figure5时序Attention_Flow_CN.md)：案例冻结、真实 attention、图注和公开许可边界。
+14. [Figure S3 Query 特异性与 Attention 稳定性](14_FigureS3_Query特异性与Attention稳定性_CN.md)：全量 JSD、聚类 CI、图注和许可边界。
 
 ## 最终实验完成门
 

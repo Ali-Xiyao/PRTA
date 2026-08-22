@@ -38,3 +38,11 @@ artifact hashes, tensor shapes, and two-case aggregate attention maps. It does
 not include the source radiographs, per-case attention tensors, probabilities,
 routes, or rendered pixel-bearing figure. Those artifacts require a separate
 affirmative publication and redistribution review.
+
+Supplemental Figure S3 uses native attention-flow maps from all reportable
+multi-finding development pairs and a qualitative pair frozen before image or
+attention inspection. The public repository includes aggregate between-query
+and between-seed Jensen-Shannon divergence statistics with patient-clustered
+confidence intervals, checkpoint/artifact hashes, and exact generation code.
+It excludes source pixels, per-row maps, patient-level divergence units, and
+the rendered pixel-bearing figure pending the same affirmative review.
