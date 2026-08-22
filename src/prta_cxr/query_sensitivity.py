@@ -22,6 +22,7 @@ from prta_cxr.contracts import sha256_file
 BOOTSTRAP_REPLICATES = 10_000
 BOOTSTRAP_SEED = 20_260_818
 MINIMUM_CELL_SUPPORT = 100
+S3_BATCH_REPLAY_ATOL = 1e-4
 
 
 def _pair_identity(row: Mapping[str, Any]) -> tuple[str, str, str, str]:
@@ -594,6 +595,7 @@ def query_sensitivity_export_main(argv: Sequence[str] | None = None) -> int:
             finding_text=torch.stack(
                 [item["finding_text"] for item in items]
             ).to(device),
+            replay_atol=S3_BATCH_REPLAY_ATOL,
         )
         probabilities = torch.softmax(logits.float(), dim=-1).cpu().numpy()
         expected_probabilities = np.asarray(
@@ -654,6 +656,7 @@ def query_sensitivity_export_main(argv: Sequence[str] | None = None) -> int:
             "r_prior": list(prior_maps.shape),
         },
         "maximum_probability_replay_drift": maximum_probability_drift,
+        "attention_replay_absolute_tolerance": S3_BATCH_REPLAY_ATOL,
         "native_post_softmax_attention": True,
         "need_weights": True,
         "average_attn_weights": False,
