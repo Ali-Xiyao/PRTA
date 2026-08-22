@@ -1,0 +1,3659 @@
+{
+  "calibration": {
+    "aggregate": {
+      "cross_fitted_calibrated": {
+        "adaptive_ece": {
+          "mean": 0.02846922843211823,
+          "sd": 0.0005245111270959271,
+          "values": [
+            0.027908782998498877,
+            0.028948291812271328,
+            0.028550610485584483
+          ]
+        },
+        "aurc": {
+          "mean": 0.2185036608478065,
+          "sd": 0.00037088455915836743,
+          "values": [
+            0.21826503263635777,
+            0.21831500127162343,
+            0.21893094863543844
+          ]
+        },
+        "brier": {
+          "mean": 0.49242060647622293,
+          "sd": 0.0008900054992601825,
+          "values": [
+            0.49256777523758766,
+            0.49146618964525723,
+            0.4932278545458239
+          ]
+        },
+        "classwise_ece": {
+          "mean": 0.039552002639039636,
+          "sd": 0.0009362238050238779,
+          "values": [
+            0.04036936975040513,
+            0.03975605741824129,
+            0.03853058074847249
+          ]
+        },
+        "e_aurc": {
+          "mean": 0.1423626534966029,
+          "sd": 0.000705231117725044,
+          "values": [
+            0.14157145534651952,
+            0.14259135426462455,
+            0.1429251508786647
+          ]
+        },
+        "ece": {
+          "mean": 0.028529761663750885,
+          "sd": 0.0014355581164902601,
+          "values": [
+            0.02794658245925805,
+            0.030165134588340005,
+            0.0274775679436546
+          ]
+        },
+        "nll": {
+          "mean": 0.9147847566255898,
+          "sd": 0.0024721621631059393,
+          "values": [
+            0.9147018855874116,
+            0.9123550719424292,
+            0.9172973123469284
+          ]
+        }
+      },
+      "uncalibrated": {
+        "adaptive_ece": {
+          "mean": 0.03384975417931515,
+          "sd": 0.003875688809736254,
+          "values": [
+            0.032227196894533135,
+            0.031049046575453904,
+            0.03827301906795841
+          ]
+        },
+        "aurc": {
+          "mean": 0.21847313435087135,
+          "sd": 0.00041241823807400583,
+          "values": [
+            0.2182224795951222,
+            0.21824779386856863,
+            0.2189491295889232
+          ]
+        },
+        "brier": {
+          "mean": 0.49290081797142404,
+          "sd": 0.0012718047324265774,
+          "values": [
+            0.49289455610743943,
+            0.49163215573264635,
+            0.49417574207418635
+          ]
+        },
+        "classwise_ece": {
+          "mean": 0.040546879860405186,
+          "sd": 0.00040718842500867203,
+          "values": [
+            0.041001300223842935,
+            0.04021512775680389,
+            0.040424211600568735
+          ]
+        },
+        "e_aurc": {
+          "mean": 0.1423321269996677,
+          "sd": 0.000726502885156631,
+          "values": [
+            0.14152890230528395,
+            0.14252414686156975,
+            0.14294333183214947
+          ]
+        },
+        "ece": {
+          "mean": 0.03389484272251726,
+          "sd": 0.003795225140716191,
+          "values": [
+            0.03187132261703271,
+            0.031540186482560566,
+            0.038273019067958505
+          ]
+        },
+        "nll": {
+          "mean": 0.9146767392456788,
+          "sd": 0.002708950728610697,
+          "values": [
+            0.9144650389655937,
+            0.9120798497953058,
+            0.9174853289761368
+          ]
+        }
+      }
+    },
+    "patient_fold_assignment_sha256": "81591c1bed978d493dfeaa9877346b8dca262cc2357a3a80bd219b3ed4e758ac",
+    "three_seed_disagreement": {
+      "definitions": {
+        "mean_pairwise_total_variation": "mean pairwise total-variation distance across the three cross-fitted calibrated seed predictions",
+        "vote_disagreement": "1 - largest seed vote fraction"
+      },
+      "error_detection": {
+        "mean_pairwise_total_variation": {
+          "ensemble_opposite_direction_error": {
+            "auprc": 0.027827470210311293,
+            "auroc": 0.7945991107928266,
+            "fpr_at_80_tpr": 0.3571748276788112,
+            "negatives": 11171,
+            "positives": 30
+          },
+          "ensemble_prediction_error": {
+            "auprc": 0.46598732120542663,
+            "auroc": 0.6353891310370015,
+            "fpr_at_80_tpr": 0.608428691041027,
+            "negatives": 7166,
+            "positives": 4035
+          }
+        },
+        "vote_disagreement": {
+          "ensemble_opposite_direction_error": {
+            "auprc": 0.008758871332767204,
+            "auroc": 0.7132396383492973,
+            "fpr_at_80_tpr": 0.5512487691343658,
+            "negatives": 11171,
+            "positives": 30
+          },
+          "ensemble_prediction_error": {
+            "auprc": 0.45031975306927996,
+            "auroc": 0.5725148634903705,
+            "fpr_at_80_tpr": 0.7612336031258722,
+            "negatives": 7166,
+            "positives": 4035
+          }
+        }
+      },
+      "evaluated": true,
+      "referral": {
+        "mean_pairwise_total_variation": {
+          "0.05": {
+            "errors_captured_fraction": 0.07781908302354398,
+            "realized_fraction": 0.05008481385590572,
+            "referred_error_rate": 0.5597147950089126,
+            "referred_rows": 561,
+            "requested_fraction": 0.05,
+            "retained_error_rate": 0.34971804511278193
+          },
+          "0.1": {
+            "errors_captured_fraction": 0.1469640644361834,
+            "realized_fraction": 0.10008034996875279,
+            "referred_error_rate": 0.5289919714540589,
+            "referred_rows": 1121,
+            "requested_fraction": 0.1,
+            "retained_error_rate": 0.341468253968254
+          },
+          "0.2": {
+            "errors_captured_fraction": 0.27261462205700127,
+            "realized_fraction": 0.20007142219444693,
+            "referred_error_rate": 0.4908522980812137,
+            "referred_rows": 2241,
+            "requested_fraction": 0.2,
+            "retained_error_rate": 0.3275669642857143
+          }
+        },
+        "vote_disagreement": {
+          "0.05": {
+            "errors_captured_fraction": 0.07781908302354398,
+            "realized_fraction": 0.05008481385590572,
+            "referred_error_rate": 0.5597147950089126,
+            "referred_rows": 561,
+            "requested_fraction": 0.05,
+            "retained_error_rate": 0.34971804511278193
+          },
+          "0.1": {
+            "errors_captured_fraction": 0.15687732342007435,
+            "realized_fraction": 0.10008034996875279,
+            "referred_error_rate": 0.5646743978590544,
+            "referred_rows": 1121,
+            "requested_fraction": 0.1,
+            "retained_error_rate": 0.3375
+          },
+          "0.2": {
+            "errors_captured_fraction": 0.29045848822800496,
+            "realized_fraction": 0.20007142219444693,
+            "referred_error_rate": 0.5229808121374386,
+            "referred_rows": 2241,
+            "requested_fraction": 0.2,
+            "retained_error_rate": 0.31953125
+          }
+        }
+      },
+      "score_summary": {
+        "mean_pairwise_total_variation": {
+          "mean": 0.07870736341781417,
+          "p50": 0.06927352480953071,
+          "p95": 0.17497901779489258,
+          "sd": 0.0520130088744065
+        },
+        "vote_disagreement": {
+          "mean": 0.05868523643722287,
+          "p50": 0.0,
+          "p95": 0.33333333333333337,
+          "sd": 0.12997321691583347
+        }
+      },
+      "seed_count": 3,
+      "selective_prediction": {
+        "mean_pairwise_total_variation": {
+          "0.7": {
+            "class_coverage": {
+              "Improved": 0.6073500967117988,
+              "New": 0.6575901974132062,
+              "Resolved": 0.6498194945848376,
+              "Stable": 0.7448996516835296,
+              "Worse": 0.6730666666666667
+            },
+            "metrics": {
+              "accuracy": 0.6846065552863155,
+              "balanced_accuracy": 0.5841899162238462,
+              "confusion": [
+                [
+                  3652.0,
+                  275.0,
+                  392.0,
+                  146.0,
+                  26.0
+                ],
+                [
+                  385.0,
+                  469.0,
+                  2.0,
+                  34.0,
+                  52.0
+                ],
+                [
+                  463.0,
+                  4.0,
+                  641.0,
+                  151.0,
+                  3.0
+                ],
+                [
+                  289.0,
+                  29.0,
+                  146.0,
+                  501.0,
+                  1.0
+                ],
+                [
+                  24.0,
+                  45.0,
+                  2.0,
+                  4.0,
+                  105.0
+                ]
+              ],
+              "macro_f1": 0.5938752044402499,
+              "min_class_recall": 0.4978768577494692,
+              "opposite_direction_error_rate": 0.0014028822854227777,
+              "per_class_f1": {
+                "Improved": 0.5317460317460317,
+                "New": 0.5560488346281909,
+                "Resolved": 0.5722070844686649,
+                "Stable": 0.7850386930352536,
+                "Worse": 0.5243353783231084
+              },
+              "per_class_recall": {
+                "Improved": 0.4978768577494692,
+                "New": 0.5186335403726708,
+                "Resolved": 0.5833333333333334,
+                "Stable": 0.8131819193943443,
+                "Worse": 0.5079239302694136
+              },
+              "support": {
+                "Improved": 942.0,
+                "New": 966.0,
+                "Resolved": 180.0,
+                "Stable": 4491.0,
+                "Worse": 1262.0
+              }
+            },
+            "realized_coverage": 0.7000267833229176,
+            "requested_coverage": 0.7,
+            "rows": 7841
+          },
+          "0.8": {
+            "class_coverage": {
+              "Improved": 0.7143778207607995,
+              "New": 0.7719537100068073,
+              "Resolved": 0.740072202166065,
+              "Stable": 0.8352960689998341,
+              "Worse": 0.7882666666666667
+            },
+            "metrics": {
+              "accuracy": 0.6724695904474947,
+              "balanced_accuracy": 0.5767252942646839,
+              "confusion": [
+                [
+                  4038.0,
+                  321.0,
+                  460.0,
+                  186.0,
+                  31.0
+                ],
+                [
+                  457.0,
+                  546.0,
+                  2.0,
+                  42.0,
+                  61.0
+                ],
+                [
+                  547.0,
+                  5.0,
+                  751.0,
+                  171.0,
+                  4.0
+                ],
+                [
+                  340.0,
+                  34.0,
+                  186.0,
+                  573.0,
+                  1.0
+                ],
+                [
+                  29.0,
+                  52.0,
+                  2.0,
+                  4.0,
+                  118.0
+                ]
+              ],
+              "macro_f1": 0.585668828639417,
+              "min_class_recall": 0.4927797833935018,
+              "opposite_direction_error_rate": 0.0013391362571141614,
+              "per_class_f1": {
+                "Improved": 0.5285575992255567,
+                "New": 0.543127962085308,
+                "Resolved": 0.5619047619047619,
+                "Stable": 0.7730448932707954,
+                "Worse": 0.5217089267106634
+              },
+              "per_class_recall": {
+                "Improved": 0.4927797833935018,
+                "New": 0.5052910052910053,
+                "Resolved": 0.5756097560975609,
+                "Stable": 0.8018268467037332,
+                "Worse": 0.5081190798376184
+              },
+              "support": {
+                "Improved": 1108.0,
+                "New": 1134.0,
+                "Resolved": 205.0,
+                "Stable": 5036.0,
+                "Worse": 1478.0
+              }
+            },
+            "realized_coverage": 0.8000178555486117,
+            "requested_coverage": 0.8,
+            "rows": 8961
+          },
+          "0.9": {
+            "class_coverage": {
+              "Improved": 0.8413926499032882,
+              "New": 0.8801906058543226,
+              "Resolved": 0.855595667870036,
+              "Stable": 0.9180626969646708,
+              "Worse": 0.9125333333333333
+            },
+            "metrics": {
+              "accuracy": 0.6584664219819463,
+              "balanced_accuracy": 0.5674440205878183,
+              "confusion": [
+                [
+                  4354.0,
+                  397.0,
+                  530.0,
+                  220.0,
+                  34.0
+                ],
+                [
+                  522.0,
+                  646.0,
+                  4.0,
+                  56.0,
+                  77.0
+                ],
+                [
+                  635.0,
+                  5.0,
+                  861.0,
+                  206.0,
+                  4.0
+                ],
+                [
+                  382.0,
+                  46.0,
+                  218.0,
+                  646.0,
+                  1.0
+                ],
+                [
+                  37.0,
+                  63.0,
+                  2.0,
+                  4.0,
+                  131.0
+                ]
+              ],
+              "macro_f1": 0.5752300901512237,
+              "min_class_recall": 0.4950191570881226,
+              "opposite_direction_error_rate": 0.0013887511159607182,
+              "per_class_f1": {
+                "Improved": 0.5247766043866775,
+                "New": 0.5327835051546391,
+                "Resolved": 0.5413223140495868,
+                "Stable": 0.7595290013083297,
+                "Worse": 0.5177390258568851
+              },
+              "per_class_recall": {
+                "Improved": 0.4950191570881226,
+                "New": 0.49961330239752516,
+                "Resolved": 0.5527426160337553,
+                "Stable": 0.7866305329719964,
+                "Worse": 0.5032144944476914
+              },
+              "support": {
+                "Improved": 1305.0,
+                "New": 1293.0,
+                "Resolved": 237.0,
+                "Stable": 5535.0,
+                "Worse": 1711.0
+              }
+            },
+            "realized_coverage": 0.9000089277743059,
+            "requested_coverage": 0.9,
+            "rows": 10081
+          },
+          "0.95": {
+            "class_coverage": {
+              "Improved": 0.90715667311412,
+              "New": 0.944860449285228,
+              "Resolved": 0.924187725631769,
+              "Stable": 0.9600265383977442,
+              "Worse": 0.9610666666666666
+            },
+            "metrics": {
+              "accuracy": 0.6502208439056479,
+              "balanced_accuracy": 0.563579599367096,
+              "confusion": [
+                [
+                  4492.0,
+                  444.0,
+                  571.0,
+                  240.0,
+                  41.0
+                ],
+                [
+                  553.0,
+                  700.0,
+                  4.0,
+                  62.0,
+                  88.0
+                ],
+                [
+                  673.0,
+                  6.0,
+                  901.0,
+                  218.0,
+                  4.0
+                ],
+                [
+                  406.0,
+                  61.0,
+                  234.0,
+                  685.0,
+                  2.0
+                ],
+                [
+                  38.0,
+                  71.0,
+                  2.0,
+                  4.0,
+                  141.0
+                ]
+              ],
+              "macro_f1": 0.5685703361488346,
+              "min_class_recall": 0.4935158501440922,
+              "opposite_direction_error_rate": 0.001503618081007424,
+              "per_class_f1": {
+                "Improved": 0.5206396429899591,
+                "New": 0.5275317674239507,
+                "Resolved": 0.5300751879699248,
+                "Stable": 0.7517991631799164,
+                "Worse": 0.5128059191804212
+              },
+              "per_class_recall": {
+                "Improved": 0.4975124378109453,
+                "New": 0.4935158501440922,
+                "Resolved": 0.55078125,
+                "Stable": 0.7760884588804423,
+                "Worse": 0.5
+              },
+              "support": {
+                "Improved": 1407.0,
+                "New": 1388.0,
+                "Resolved": 256.0,
+                "Stable": 5788.0,
+                "Worse": 1802.0
+              }
+            },
+            "realized_coverage": 0.950004463887153,
+            "requested_coverage": 0.95,
+            "rows": 10641
+          },
+          "1.0": {
+            "class_coverage": {
+              "Improved": 1.0,
+              "New": 1.0,
+              "Resolved": 1.0,
+              "Stable": 1.0,
+              "Worse": 1.0
+            },
+            "metrics": {
+              "accuracy": 0.6397643067583252,
+              "balanced_accuracy": 0.5571216089309882,
+              "confusion": [
+                [
+                  4598.0,
+                  512.0,
+                  596.0,
+                  271.0,
+                  52.0
+                ],
+                [
+                  590.0,
+                  772.0,
+                  6.0,
+                  74.0,
+                  109.0
+                ],
+                [
+                  704.0,
+                  9.0,
+                  928.0,
+                  228.0,
+                  6.0
+                ],
+                [
+                  422.0,
+                  74.0,
+                  245.0,
+                  718.0,
+                  10.0
+                ],
+                [
+                  38.0,
+                  82.0,
+                  2.0,
+                  5.0,
+                  150.0
+                ]
+              ],
+              "macro_f1": 0.5563340160244247,
+              "min_class_recall": 0.48876786929884275,
+              "opposite_direction_error_rate": 0.0026783322917596645,
+              "per_class_f1": {
+                "Improved": 0.5146666666666667,
+                "New": 0.5193490054249548,
+                "Resolved": 0.4966887417218543,
+                "Stable": 0.7427509894192714,
+                "Worse": 0.5082146768893757
+              },
+              "per_class_recall": {
+                "Improved": 0.4977433913604126,
+                "New": 0.48876786929884275,
+                "Resolved": 0.5415162454873647,
+                "Stable": 0.7626472051749875,
+                "Worse": 0.49493333333333334
+              },
+              "support": {
+                "Improved": 1551.0,
+                "New": 1469.0,
+                "Resolved": 277.0,
+                "Stable": 6029.0,
+                "Worse": 1875.0
+              }
+            },
+            "realized_coverage": 1.0,
+            "requested_coverage": 1.0,
+            "rows": 11201
+          }
+        },
+        "vote_disagreement": {
+          "0.7": {
+            "class_coverage": {
+              "Improved": 0.6660219213410703,
+              "New": 0.6535057862491491,
+              "Resolved": 0.7220216606498195,
+              "Stable": 0.7240006634599436,
+              "Worse": 0.6842666666666667
+            },
+            "metrics": {
+              "accuracy": 0.6787399566381839,
+              "balanced_accuracy": 0.5794157780834672,
+              "confusion": [
+                [
+                  3531.0,
+                  293.0,
+                  367.0,
+                  144.0,
+                  30.0
+                ],
+                [
+                  390.0,
+                  537.0,
+                  0.0,
+                  49.0,
+                  57.0
+                ],
+                [
+                  487.0,
+                  5.0,
+                  646.0,
+                  140.0,
+                  5.0
+                ],
+                [
+                  264.0,
+                  45.0,
+                  149.0,
+                  499.0,
+                  3.0
+                ],
+                [
+                  28.0,
+                  62.0,
+                  1.0,
+                  0.0,
+                  109.0
+                ]
+              ],
+              "macro_f1": 0.5895141315406256,
+              "min_class_recall": 0.5035074045206547,
+              "opposite_direction_error_rate": 0.0010202780257620202,
+              "per_class_f1": {
+                "Improved": 0.5437974683544303,
+                "New": 0.5569196428571429,
+                "Resolved": 0.5396039603960396,
+                "Stable": 0.7790402647545505,
+                "Worse": 0.5282093213409649
+              },
+              "per_class_recall": {
+                "Improved": 0.5198451113262342,
+                "New": 0.5197916666666667,
+                "Resolved": 0.545,
+                "Stable": 0.8089347079037801,
+                "Worse": 0.5035074045206547
+              },
+              "support": {
+                "Improved": 1033.0,
+                "New": 960.0,
+                "Resolved": 200.0,
+                "Stable": 4365.0,
+                "Worse": 1283.0
+              }
+            },
+            "realized_coverage": 0.7000267833229176,
+            "requested_coverage": 0.7,
+            "rows": 7841
+          },
+          "0.8": {
+            "class_coverage": {
+              "Improved": 0.7691811734364926,
+              "New": 0.7603812117086454,
+              "Resolved": 0.8086642599277978,
+              "Stable": 0.8270028197047603,
+              "Worse": 0.7685333333333333
+            },
+            "metrics": {
+              "accuracy": 0.681731949559201,
+              "balanced_accuracy": 0.5864876785402128,
+              "confusion": [
+                [
+                  4029.0,
+                  350.0,
+                  417.0,
+                  155.0,
+                  35.0
+                ],
+                [
+                  449.0,
+                  623.0,
+                  1.0,
+                  53.0,
+                  67.0
+                ],
+                [
+                  537.0,
+                  6.0,
+                  737.0,
+                  156.0,
+                  5.0
+                ],
+                [
+                  303.0,
+                  48.0,
+                  167.0,
+                  595.0,
+                  4.0
+                ],
+                [
+                  29.0,
+                  68.0,
+                  2.0,
+                  0.0,
+                  125.0
+                ]
+              ],
+              "macro_f1": 0.594840047709915,
+              "min_class_recall": 0.5114503816793893,
+              "opposite_direction_error_rate": 0.0012275415690213146,
+              "per_class_f1": {
+                "Improved": 0.5445804195804196,
+                "New": 0.5732177263969171,
+                "Resolved": 0.5434782608695652,
+                "Stable": 0.7798316074712087,
+                "Worse": 0.5330922242314647
+              },
+              "per_class_recall": {
+                "Improved": 0.5222129086336965,
+                "New": 0.5326768128916741,
+                "Resolved": 0.5580357142857143,
+                "Stable": 0.8080625752105897,
+                "Worse": 0.5114503816793893
+              },
+              "support": {
+                "Improved": 1193.0,
+                "New": 1117.0,
+                "Resolved": 224.0,
+                "Stable": 4986.0,
+                "Worse": 1441.0
+              }
+            },
+            "realized_coverage": 0.8000178555486117,
+            "requested_coverage": 0.8,
+            "rows": 8961
+          },
+          "0.9": {
+            "class_coverage": {
+              "Improved": 0.8852353320438426,
+              "New": 0.8822328114363512,
+              "Resolved": 0.924187725631769,
+              "Stable": 0.9149112622325427,
+              "Worse": 0.8746666666666667
+            },
+            "metrics": {
+              "accuracy": 0.6606487451641703,
+              "balanced_accuracy": 0.5703067466606969,
+              "confusion": [
+                [
+                  4328.0,
+                  427.0,
+                  497.0,
+                  218.0,
+                  46.0
+                ],
+                [
+                  527.0,
+                  695.0,
+                  3.0,
+                  63.0,
+                  85.0
+                ],
+                [
+                  605.0,
+                  9.0,
+                  834.0,
+                  186.0,
+                  6.0
+                ],
+                [
+                  362.0,
+                  56.0,
+                  206.0,
+                  665.0,
+                  7.0
+                ],
+                [
+                  36.0,
+                  78.0,
+                  2.0,
+                  2.0,
+                  138.0
+                ]
+              ],
+              "macro_f1": 0.5744966277210898,
+              "min_class_recall": 0.5061908230152949,
+              "opposite_direction_error_rate": 0.0020831266739410772,
+              "per_class_f1": {
+                "Improved": 0.5269143290371494,
+                "New": 0.5473251028806584,
+                "Resolved": 0.5130111524163569,
+                "Stable": 0.7610339370494109,
+                "Worse": 0.524198617221873
+              },
+              "per_class_recall": {
+                "Improved": 0.5061908230152949,
+                "New": 0.5131172839506173,
+                "Resolved": 0.5390625,
+                "Stable": 0.7846265409717187,
+                "Worse": 0.5085365853658537
+              },
+              "support": {
+                "Improved": 1373.0,
+                "New": 1296.0,
+                "Resolved": 256.0,
+                "Stable": 5516.0,
+                "Worse": 1640.0
+              }
+            },
+            "realized_coverage": 0.9000089277743059,
+            "requested_coverage": 0.9,
+            "rows": 10081
+          },
+          "0.95": {
+            "class_coverage": {
+              "Improved": 0.9516441005802708,
+              "New": 0.9366916269571137,
+              "Resolved": 0.9783393501805054,
+              "Stable": 0.9570409686515177,
+              "Worse": 0.9322666666666667
+            },
+            "metrics": {
+              "accuracy": 0.6492810826050184,
+              "balanced_accuracy": 0.5627856372045408,
+              "confusion": [
+                [
+                  4453.0,
+                  477.0,
+                  546.0,
+                  246.0,
+                  48.0
+                ],
+                [
+                  564.0,
+                  740.0,
+                  5.0,
+                  68.0,
+                  99.0
+                ],
+                [
+                  651.0,
+                  9.0,
+                  879.0,
+                  203.0,
+                  6.0
+                ],
+                [
+                  384.0,
+                  63.0,
+                  227.0,
+                  692.0,
+                  10.0
+                ],
+                [
+                  38.0,
+                  81.0,
+                  2.0,
+                  5.0,
+                  145.0
+                ]
+              ],
+              "macro_f1": 0.5644357134082091,
+              "min_class_recall": 0.5013550135501355,
+              "opposite_direction_error_rate": 0.002725307771825956,
+              "per_class_f1": {
+                "Improved": 0.5200281096275474,
+                "New": 0.5343629343629344,
+                "Resolved": 0.5008635578583766,
+                "Stable": 0.7509274873524452,
+                "Worse": 0.5159964778397417
+              },
+              "per_class_recall": {
+                "Improved": 0.5013550135501355,
+                "New": 0.502906976744186,
+                "Resolved": 0.5350553505535055,
+                "Stable": 0.7717504332755633,
+                "Worse": 0.5028604118993135
+              },
+              "support": {
+                "Improved": 1476.0,
+                "New": 1376.0,
+                "Resolved": 271.0,
+                "Stable": 5770.0,
+                "Worse": 1748.0
+              }
+            },
+            "realized_coverage": 0.950004463887153,
+            "requested_coverage": 0.95,
+            "rows": 10641
+          },
+          "1.0": {
+            "class_coverage": {
+              "Improved": 1.0,
+              "New": 1.0,
+              "Resolved": 1.0,
+              "Stable": 1.0,
+              "Worse": 1.0
+            },
+            "metrics": {
+              "accuracy": 0.6397643067583252,
+              "balanced_accuracy": 0.5571216089309882,
+              "confusion": [
+                [
+                  4598.0,
+                  512.0,
+                  596.0,
+                  271.0,
+                  52.0
+                ],
+                [
+                  590.0,
+                  772.0,
+                  6.0,
+                  74.0,
+                  109.0
+                ],
+                [
+                  704.0,
+                  9.0,
+                  928.0,
+                  228.0,
+                  6.0
+                ],
+                [
+                  422.0,
+                  74.0,
+                  245.0,
+                  718.0,
+                  10.0
+                ],
+                [
+                  38.0,
+                  82.0,
+                  2.0,
+                  5.0,
+                  150.0
+                ]
+              ],
+              "macro_f1": 0.5563340160244247,
+              "min_class_recall": 0.48876786929884275,
+              "opposite_direction_error_rate": 0.0026783322917596645,
+              "per_class_f1": {
+                "Improved": 0.5146666666666667,
+                "New": 0.5193490054249548,
+                "Resolved": 0.4966887417218543,
+                "Stable": 0.7427509894192714,
+                "Worse": 0.5082146768893757
+              },
+              "per_class_recall": {
+                "Improved": 0.4977433913604126,
+                "New": 0.48876786929884275,
+                "Resolved": 0.5415162454873647,
+                "Stable": 0.7626472051749875,
+                "Worse": 0.49493333333333334
+              },
+              "support": {
+                "Improved": 1551.0,
+                "New": 1469.0,
+                "Resolved": 277.0,
+                "Stable": 6029.0,
+                "Worse": 1875.0
+              }
+            },
+            "realized_coverage": 1.0,
+            "requested_coverage": 1.0,
+            "rows": 11201
+          }
+        }
+      }
+    }
+  },
+  "efficiency": {
+    "full": {
+      "benchmarks": {
+        "1": {
+          "batch_size": 1,
+          "latency_ms": {
+            "mean": 10.699407424926758,
+            "p50": 10.697728157043457,
+            "p95": 10.706944465637207,
+            "sd": 0.014414477035471659
+          },
+          "measured_iterations": 100,
+          "peak_allocated_memory_bytes": 318198784,
+          "scope": "model_forward_on_preloaded_cached_features; host-to-device and disk I/O excluded",
+          "throughput_samples_per_second": 93.46311999207241,
+          "warmup_iterations": 20
+        },
+        "16": {
+          "batch_size": 16,
+          "latency_ms": {
+            "mean": 84.58353668212891,
+            "p50": 84.61260986328125,
+            "p95": 84.96225357055664,
+            "sd": 0.28790928782337916
+          },
+          "measured_iterations": 100,
+          "peak_allocated_memory_bytes": 547512320,
+          "scope": "model_forward_on_preloaded_cached_features; host-to-device and disk I/O excluded",
+          "throughput_samples_per_second": 189.16210680725217,
+          "warmup_iterations": 20
+        }
+      },
+      "checkpoint_bytes": 719472082,
+      "checkpoint_sha256": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140",
+      "deployment_state_pruned": false,
+      "flops": {
+        "1": {
+          "batch_flops": 74988440064,
+          "caveat": "operator-accounted FLOPs; MACs are reported using 2 FLOPs per MAC",
+          "flops_per_sample": 74988440064.0,
+          "macs_per_sample_convention": 37494220032.0,
+          "method": "torch.utils.flop_counter.FlopCounterMode"
+        },
+        "16": {
+          "batch_flops": 1199815041024,
+          "caveat": "operator-accounted FLOPs; MACs are reported using 2 FLOPs per MAC",
+          "flops_per_sample": 74988440064.0,
+          "macs_per_sample_convention": 37494220032.0,
+          "method": "torch.utils.flop_counter.FlopCounterMode"
+        }
+      },
+      "hardware": {
+        "name": "NVIDIA A800 80GB PCIe"
+      },
+      "parameters": {
+        "total": 73306898,
+        "trainable": 16602386
+      },
+      "profile_scope": "cached-feature endpoint",
+      "seed": 43,
+      "status": "PASS_PHASE20_S1_FIXED_HARDWARE_EFFICIENCY"
+    },
+    "state_pruned": {
+      "benchmarks": {
+        "1": {
+          "batch_size": 1,
+          "latency_ms": {
+            "mean": 10.512578573226929,
+            "p50": 10.508288383483887,
+            "p95": 10.514431953430176,
+            "sd": 0.038163220543575335
+          },
+          "measured_iterations": 100,
+          "peak_allocated_memory_bytes": 318134272,
+          "scope": "model_forward_on_preloaded_cached_features; host-to-device and disk I/O excluded",
+          "throughput_samples_per_second": 95.12414038424077,
+          "warmup_iterations": 20
+        },
+        "16": {
+          "batch_size": 16,
+          "latency_ms": {
+            "mean": 83.73695510864258,
+            "p50": 83.6940803527832,
+            "p95": 84.2373664855957,
+            "sd": 0.35690366783961053
+          },
+          "measured_iterations": 100,
+          "peak_allocated_memory_bytes": 546480128,
+          "scope": "model_forward_on_preloaded_cached_features; host-to-device and disk I/O excluded",
+          "throughput_samples_per_second": 191.07453786970365,
+          "warmup_iterations": 20
+        }
+      },
+      "checkpoint_bytes": 719472082,
+      "checkpoint_sha256": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140",
+      "deployment_state_pruned": true,
+      "flops": {
+        "1": {
+          "batch_flops": 74464369152,
+          "caveat": "operator-accounted FLOPs; MACs are reported using 2 FLOPs per MAC",
+          "flops_per_sample": 74464369152.0,
+          "macs_per_sample_convention": 37232184576.0,
+          "method": "torch.utils.flop_counter.FlopCounterMode"
+        },
+        "16": {
+          "batch_flops": 1191429906432,
+          "caveat": "operator-accounted FLOPs; MACs are reported using 2 FLOPs per MAC",
+          "flops_per_sample": 74464369152.0,
+          "macs_per_sample_convention": 37232184576.0,
+          "method": "torch.utils.flop_counter.FlopCounterMode"
+        }
+      },
+      "hardware": {
+        "name": "NVIDIA A800 80GB PCIe"
+      },
+      "parameters": {
+        "total": 73306898,
+        "trainable": 16602386
+      },
+      "profile_scope": "cached-feature endpoint",
+      "seed": 43,
+      "status": "PASS_PHASE20_S1_FIXED_HARDWARE_EFFICIENCY"
+    }
+  },
+  "gold_opened": false,
+  "internal_test_opened": false,
+  "paper_method_identity": "Slim-S1",
+  "protected_outcome_read_count": 0,
+  "rows_per_seed": 11201,
+  "schema": "prta-cxr.phase20-b1-git-safe-summary.v1",
+  "seeds": [
+    17,
+    28,
+    43
+  ],
+  "selection_performed": false,
+  "source_artifacts": {
+    "calibration-evidence.json": {
+      "bytes": 4729348,
+      "sha256": "14d61713306f2d9e3d3c9be156cc308018fabc9aa6fe4587ab55e2c09224f2ae"
+    },
+    "efficiency-full.json": {
+      "bytes": 4577,
+      "sha256": "887a83619a8312ffaf5768595141cda40606f758203a7cebfb07ec45e0219769"
+    },
+    "efficiency-parity.json": {
+      "bytes": 809,
+      "sha256": "d3d6b126e9cfa2f8d5049f09c63b18284541f26552de83c1758dd88874598bb3"
+    },
+    "efficiency-pruned.json": {
+      "bytes": 4574,
+      "sha256": "d35b22e043eb9afc0082b266bf9ba2bca00a51c88285acacbee7cb3beaeea16f"
+    },
+    "subgroups-evidence.json": {
+      "bytes": 128939,
+      "sha256": "84ef6aecfada427ab96bbf9b3a13b0cd5d95a1c4e1aae8cc96d2aa9422ca88fc"
+    }
+  },
+  "source_commit": "e98f61b83ed3e1a39716df4ea4b9f4b7f2dff46d",
+  "state_pruning": {
+    "baseline_receipt_sha256": "74e2e6684d14859e78c9cc41daf51a077c2c6f16b7aa15469ff6fb855b360e02",
+    "checkpoint_sha256": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140",
+    "comparison": {
+      "max_abs_logit_difference": 0.0,
+      "parity_pass": true,
+      "parity_tolerance": 1e-06,
+      "prediction_mismatch_count": 0,
+      "rows": 11201
+    },
+    "created_at": "2026-08-22T03:04:07.867903+00:00",
+    "gold_opened": false,
+    "internal_test_opened": false,
+    "protected_outcome_read_count": 0,
+    "pruned_receipt_sha256": "2632c6b63167536f81e3eb4e4f1a797020683e0fbf0ca079a523dbf4119a506c",
+    "schema": "prta-cxr.state-pruning-parity.v1",
+    "seed": 43,
+    "selection_performed": false,
+    "source_commit": "e98f61b83ed3e1a39716df4ea4b9f4b7f2dff46d",
+    "status": "PASS_EXACT_H0_STATE_PRUNING_PARITY"
+  },
+  "status": "PASS_PHASE20_B1_6_OF_6",
+  "subgroups": {
+    "aggregate": {
+      "class_rarity": {
+        "common_ge_5pct": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6388075186134505,
+              "sd": 0.001298901297070228,
+              "values": [
+                0.6374038813621384,
+                0.6399670450384475,
+                0.6390516294397657
+              ]
+            },
+            "brier": {
+              "mean": 0.4899514927510274,
+              "sd": 0.001461307041959969,
+              "values": [
+                0.49014698418575975,
+                0.48840228032887895,
+                0.4913052137384435
+              ]
+            },
+            "ece": {
+              "mean": 0.03812248814285252,
+              "sd": 0.003992398065240621,
+              "values": [
+                0.03601369170105945,
+                0.035626678554810574,
+                0.042727094172687524
+              ]
+            },
+            "error_rate": {
+              "mean": 0.36119248138654947,
+              "sd": 0.001298901297070228,
+              "values": [
+                0.36259611863786156,
+                0.3600329549615525,
+                0.3609483705602343
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6007018821561426,
+              "sd": 0.00407700530942758,
+              "values": [
+                0.6013901896610789,
+                0.6043909215402706,
+                0.5963245352670782
+              ]
+            },
+            "nll": {
+              "mean": 0.9014903782032447,
+              "sd": 0.002740213176728933,
+              "values": [
+                0.9016059254827529,
+                0.8986942191133455,
+                0.9041709900136361
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0034175515684120596,
+              "sd": 0.00045156379186344253,
+              "values": [
+                0.003936287074331747,
+                0.0032039545953863055,
+                0.0031124130355181254
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5721857410612632,
+              "sd": 0.0002784623395536932,
+              "values": [
+                0.5719403494043845,
+                0.5724883770897704,
+                0.5721284966896345
+              ]
+            }
+          },
+          "patients": 2335,
+          "rows": 10924
+        },
+        "rare_lt_5pct": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.5282791817087845,
+              "sd": 0.007515039709264062,
+              "values": [
+                0.5342960288808665,
+                0.51985559566787,
+                0.5306859205776173
+              ]
+            },
+            "brier": {
+              "mean": 0.6092128349664172,
+              "sd": 0.009019779652404013,
+              "values": [
+                0.6012500639501427,
+                0.6190081806812213,
+                0.6073802602678878
+              ]
+            },
+            "ece": {
+              "mean": 0.15330224864225317,
+              "sd": 0.0047758140228905885,
+              "values": [
+                0.15511606126476213,
+                0.14788524672125172,
+                0.15690543794074563
+              ]
+            },
+            "error_rate": {
+              "mean": 0.4717208182912154,
+              "sd": 0.007515039709264062,
+              "values": [
+                0.46570397111913353,
+                0.48014440433213,
+                0.4693140794223827
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6671615226253614,
+              "sd": 0.0012106106265181282,
+              "values": [
+                0.6657865830649449,
+                0.6676305113012615,
+                0.6680674735098779
+              ]
+            },
+            "nll": {
+              "mean": 1.4347049270707604,
+              "sd": 0.011433718269782707,
+              "values": [
+                1.4215876226715607,
+                1.439966599144524,
+                1.4425605593961965
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.018050541516245484,
+              "sd": 0.006252891002053709,
+              "values": [
+                0.010830324909747292,
+                0.021660649819494584,
+                0.021660649819494584
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6913174417797414,
+              "sd": 0.006448918175018113,
+              "values": [
+                0.6964705882352941,
+                0.684085510688836,
+                0.6933962264150944
+              ]
+            }
+          },
+          "patients": 246,
+          "rows": 277
+        }
+      },
+      "current_view": {
+        "AP": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6340021119324181,
+              "sd": 0.0008247359742245402,
+              "values": [
+                0.633051742344245,
+                0.6344244984160506,
+                0.6345300950369588
+              ]
+            },
+            "brier": {
+              "mean": 0.49493653190702136,
+              "sd": 0.0014525229011070999,
+              "values": [
+                0.49519081995491904,
+                0.49337365602448513,
+                0.49624511974165997
+              ]
+            },
+            "ece": {
+              "mean": 0.040836681937551876,
+              "sd": 0.005154158952430079,
+              "values": [
+                0.038704439020153095,
+                0.03709078618796769,
+                0.04671482060453483
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3659978880675818,
+              "sd": 0.0008247359742245401,
+              "values": [
+                0.366948257655755,
+                0.36557550158394936,
+                0.3654699049630412
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5931654299948663,
+              "sd": 0.00486803686738386,
+              "values": [
+                0.5943473033240919,
+                0.597333712228083,
+                0.587815274432424
+              ]
+            },
+            "nll": {
+              "mean": 0.9117334261799784,
+              "sd": 0.003014302597703351,
+              "values": [
+                0.9122818552163388,
+                0.9084825626491368,
+                0.9144358606744599
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.003097500879971841,
+              "sd": 0.0006452060112574219,
+              "values": [
+                0.0038014783526927136,
+                0.0029567053854276664,
+                0.0025343189017951427
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5022542984810427,
+              "sd": 0.003524503228538578,
+              "values": [
+                0.5029992921693596,
+                0.49841685411762027,
+                0.5053467491561486
+              ]
+            }
+          },
+          "patients": 1862,
+          "rows": 9470
+        },
+        "PA": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6474099749663007,
+              "sd": 0.0032849455245969467,
+              "values": [
+                0.6447140381282496,
+                0.6510687463893703,
+                0.6464471403812825
+              ]
+            },
+            "brier": {
+              "mean": 0.48176378101584555,
+              "sd": 0.0012953190992167044,
+              "values": [
+                0.4803320958904369,
+                0.48210471046187026,
+                0.4828545366952294
+              ]
+            },
+            "ece": {
+              "mean": 0.026076771721498044,
+              "sd": 0.006104650650169418,
+              "values": [
+                0.01923965391016448,
+                0.03098097008075809,
+                0.02800969117357157
+              ]
+            },
+            "error_rate": {
+              "mean": 0.35259002503369924,
+              "sd": 0.0032849455245969467,
+              "values": [
+                0.35528596187175043,
+                0.3489312536106297,
+                0.3535528596187175
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6525675796588924,
+              "sd": 0.002120684847487067,
+              "values": [
+                0.6502255071562483,
+                0.6531194822278565,
+                0.6543577495925723
+              ]
+            },
+            "nll": {
+              "mean": 0.93077909322152,
+              "sd": 0.003971698161565937,
+              "values": [
+                0.9264088576284737,
+                0.9317599822471939,
+                0.934168439788892
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.007510109763142692,
+              "sd": 0.0017331022530329286,
+              "values": [
+                0.005777007510109763,
+                0.007510109763142692,
+                0.00924321201617562
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.593395342447617,
+              "sd": 0.00671716133036966,
+              "values": [
+                0.5899014487338476,
+                0.6011393541178813,
+                0.5891452244911222
+              ]
+            }
+          },
+          "patients": 896,
+          "rows": 1731
+        }
+      },
+      "finding": {
+        "Atelectasis": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.5110832287745714,
+              "sd": 0.00631521073632021,
+              "values": [
+                0.5043914680050188,
+                0.5119196988707654,
+                0.5169385194479298
+              ]
+            },
+            "brier": {
+              "mean": 0.6182250922027349,
+              "sd": 0.0016864605805653457,
+              "values": [
+                0.6193910449624787,
+                0.6162913512573908,
+                0.618992880388335
+              ]
+            },
+            "ece": {
+              "mean": 0.043409775385554204,
+              "sd": 0.009025541180438123,
+              "values": [
+                0.0432716373256036,
+                0.03445409610839765,
+                0.05250359272266135
+              ]
+            },
+            "error_rate": {
+              "mean": 0.4889167712254287,
+              "sd": 0.00631521073632021,
+              "values": [
+                0.4956085319949812,
+                0.4880803011292346,
+                0.4830614805520702
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.49432434506284234,
+              "sd": 0.008343911862700065,
+              "values": [
+                0.4919515359203072,
+                0.5035976648526795,
+                0.48742383441554027
+              ]
+            },
+            "nll": {
+              "mean": 1.1261058869659735,
+              "sd": 0.002230423195956626,
+              "values": [
+                1.1278237991532025,
+                1.1235851935523264,
+                1.1269086681923914
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0029276453366792136,
+              "sd": 0.00072440435281007,
+              "values": [
+                0.002509410288582183,
+                0.002509410288582183,
+                0.0037641154328732747
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.4665602951868508,
+              "sd": 0.0067391030986984155,
+              "values": [
+                0.45997833507866775,
+                0.46625629799127843,
+                0.47344625249060635
+              ]
+            }
+          },
+          "patients": 457,
+          "rows": 797
+        },
+        "Cardiomegaly": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.8503401360544217,
+              "sd": 0.0020314928542914416,
+              "values": [
+                0.8515130190007038,
+                0.8479943701618579,
+                0.8515130190007038
+              ]
+            },
+            "brier": {
+              "mean": 0.2845303051022953,
+              "sd": 0.0027166036363255107,
+              "values": [
+                0.28606013910799893,
+                0.2861370207128855,
+                0.28139375548600154
+              ]
+            },
+            "ece": {
+              "mean": 0.12547990348665602,
+              "sd": 0.0017501813786791657,
+              "values": [
+                0.12749557327171007,
+                0.12459832763931158,
+                0.1243458095489464
+              ]
+            },
+            "error_rate": {
+              "mean": 0.1496598639455782,
+              "sd": 0.0020314928542914416,
+              "values": [
+                0.14848698099929625,
+                0.15200562983814214,
+                0.14848698099929625
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.7250600206558845,
+              "sd": 0.0018249122978464905,
+              "values": [
+                0.7240174457289937,
+                0.7239954067869021,
+                0.7271672094517573
+              ]
+            },
+            "nll": {
+              "mean": 0.5954537368182568,
+              "sd": 0.004091031036288476,
+              "values": [
+                0.5985922420299576,
+                0.5969420770101755,
+                0.5908268914146371
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.2560927740031071,
+              "sd": 0.009171344170171222,
+              "values": [
+                0.26644334487311794,
+                0.24897769066976388,
+                0.2528572864664394
+              ]
+            }
+          },
+          "patients": 556,
+          "rows": 1421
+        },
+        "Consolidation": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.4916003536693192,
+              "sd": 0.01881856468063024,
+              "values": [
+                0.4880636604774536,
+                0.5119363395225465,
+                0.47480106100795755
+              ]
+            },
+            "brier": {
+              "mean": 0.6262306574434593,
+              "sd": 0.012751770599702419,
+              "values": [
+                0.6291867551223496,
+                0.6122604603375197,
+                0.6372447568705085
+              ]
+            },
+            "ece": {
+              "mean": 0.07198840409194218,
+              "sd": 0.004344750648081044,
+              "values": [
+                0.069316598794763,
+                0.07700166320060939,
+                0.06964695028045415
+              ]
+            },
+            "error_rate": {
+              "mean": 0.5083996463306808,
+              "sd": 0.01881856468063022,
+              "values": [
+                0.5119363395225465,
+                0.48806366047745353,
+                0.5251989389920424
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5352168866271231,
+              "sd": 0.006723886337198379,
+              "values": [
+                0.5429777090526403,
+                0.5315310876833919,
+                0.5311418631453374
+              ]
+            },
+            "nll": {
+              "mean": 1.130300762528126,
+              "sd": 0.01564041362616648,
+              "values": [
+                1.1409240422824165,
+                1.1123407241814458,
+                1.1376375211205159
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.002652519893899204,
+              "sd": 0.002652519893899204,
+              "values": [
+                0.005305039787798408,
+                0.0,
+                0.002652519893899204
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5238920484693544,
+              "sd": 0.005516599936215389,
+              "values": [
+                0.5203063707945598,
+                0.5302444993040176,
+                0.5211252753094858
+              ]
+            }
+          },
+          "patients": 262,
+          "rows": 377
+        },
+        "Edema": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.5404679708477177,
+              "sd": 0.003515593168358914,
+              "values": [
+                0.5443037974683544,
+                0.5397008055235903,
+                0.5373993095512083
+              ]
+            },
+            "brier": {
+              "mean": 0.6012824468001639,
+              "sd": 0.0022883684814041455,
+              "values": [
+                0.5987974692818363,
+                0.6017469282606863,
+                0.6033029428579688
+              ]
+            },
+            "ece": {
+              "mean": 0.05935969434570194,
+              "sd": 0.011242937497491626,
+              "values": [
+                0.04844657173088616,
+                0.07090571044545377,
+                0.058726800860765906
+              ]
+            },
+            "error_rate": {
+              "mean": 0.45953202915228236,
+              "sd": 0.0035155931683589136,
+              "values": [
+                0.45569620253164556,
+                0.46029919447640966,
+                0.4626006904487917
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5516563413154626,
+              "sd": 0.009581111329765976,
+              "values": [
+                0.5530852023552809,
+                0.5604427771460522,
+                0.5414410444450549
+              ]
+            },
+            "nll": {
+              "mean": 1.1109282649246894,
+              "sd": 0.005343276590091839,
+              "values": [
+                1.1088712678859987,
+                1.1069191869329198,
+                1.1169943399551496
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.007479861910241657,
+              "sd": 0.0020745404346743323,
+              "values": [
+                0.009781357882623706,
+                0.005753739930955121,
+                0.006904487917146145
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5213485083666387,
+              "sd": 0.00395152966220935,
+              "values": [
+                0.5234198481563956,
+                0.5238337403843172,
+                0.5167919365592032
+              ]
+            }
+          },
+          "patients": 683,
+          "rows": 1738
+        },
+        "Enlarged Cardiomediastinum": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.9663699307616221,
+              "sd": 0.0009891196834816984,
+              "values": [
+                0.9673590504451038,
+                0.9653808110781404,
+                0.9663699307616221
+              ]
+            },
+            "brier": {
+              "mean": 0.06926562485280606,
+              "sd": 0.0006553147563853167,
+              "values": [
+                0.06994320992300002,
+                0.06921854499214071,
+                0.06863511964327748
+              ]
+            },
+            "ece": {
+              "mean": 0.034775840245284594,
+              "sd": 0.005136201225641377,
+              "values": [
+                0.0392178943908275,
+                0.029151626539909985,
+                0.03595799980511629
+              ]
+            },
+            "error_rate": {
+              "mean": 0.03363006923837786,
+              "sd": 0.0009891196834816984,
+              "values": [
+                0.03264094955489616,
+                0.034619188921859556,
+                0.03363006923837786
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.933594943597801,
+              "sd": 0.005319556684836541,
+              "values": [
+                0.9293202900411913,
+                0.9395523732610309,
+                0.9319121674911811
+              ]
+            },
+            "nll": {
+              "mean": 0.1971928899072765,
+              "sd": 0.0021257642479503695,
+              "values": [
+                0.1995270732836117,
+                0.19668349466283824,
+                0.1953681017753795
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.20398573663457378,
+              "sd": 0.012916779608139393,
+              "values": [
+                0.21890063188503048,
+                0.1964771011575239,
+                0.196579476861167
+              ]
+            }
+          },
+          "patients": 662,
+          "rows": 1011
+        },
+        "Fracture": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.8045977011494253,
+              "sd": 0.011494252873563204,
+              "values": [
+                0.8045977011494253,
+                0.7931034482758621,
+                0.8160919540229885
+              ]
+            },
+            "brier": {
+              "mean": 0.40060049418942545,
+              "sd": 0.010203137882228534,
+              "values": [
+                0.41165015490121337,
+                0.39153549840525775,
+                0.3986158292618051
+              ]
+            },
+            "ece": {
+              "mean": 0.21295186317559076,
+              "sd": 0.006699234961539814,
+              "values": [
+                0.2102068847955559,
+                0.2205876238222651,
+                0.20806108090895126
+              ]
+            },
+            "error_rate": {
+              "mean": 0.1954022988505747,
+              "sd": 0.011494252873563204,
+              "values": [
+                0.1954022988505747,
+                0.2068965517241379,
+                0.1839080459770115
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6046301426653051,
+              "sd": 0.009032584465986876,
+              "values": [
+                0.5943908163538695,
+                0.6114687385280084,
+                0.6080308731140373
+              ]
+            },
+            "nll": {
+              "mean": 0.6902453419810927,
+              "sd": 0.007308050513928559,
+              "values": [
+                0.697475236243984,
+                0.6828615655851817,
+                0.6903992241141121
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.3340518318588494,
+              "sd": 0.03627550704057068,
+              "values": [
+                0.3664717348927875,
+                0.2948717948717949,
+                0.34081196581196577
+              ]
+            }
+          },
+          "patients": 69,
+          "rows": 87
+        },
+        "Lung Lesion": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.7278287461773699,
+              "sd": 0.005296791460455315,
+              "values": [
+                0.7339449541284404,
+                0.7247706422018348,
+                0.7247706422018348
+              ]
+            },
+            "brier": {
+              "mean": 0.47396746224908837,
+              "sd": 0.01113855774634988,
+              "values": [
+                0.48405392829727906,
+                0.47583544262517063,
+                0.4620130158248155
+              ]
+            },
+            "ece": {
+              "mean": 0.1438112991373893,
+              "sd": 0.0031238815546014496,
+              "values": [
+                0.14527748487962924,
+                0.14022402328437794,
+                0.1459323892481607
+              ]
+            },
+            "error_rate": {
+              "mean": 0.27217125382262997,
+              "sd": 0.005296791460455315,
+              "values": [
+                0.2660550458715596,
+                0.27522935779816515,
+                0.27522935779816515
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6007359981354359,
+              "sd": 0.013884239478251657,
+              "values": [
+                0.5886674692488113,
+                0.5976305107345253,
+                0.6159100144229709
+              ]
+            },
+            "nll": {
+              "mean": 1.050845519956454,
+              "sd": 0.026515351989311892,
+              "values": [
+                1.069413880958486,
+                1.06264393579438,
+                1.0204787431164961
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.2055917209663741,
+              "sd": 0.03251387242986064,
+              "values": [
+                0.22289855072463766,
+                0.2257915057915058,
+                0.16808510638297874
+              ]
+            }
+          },
+          "patients": 70,
+          "rows": 109
+        },
+        "Lung Opacity": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.5656609195402299,
+              "sd": 0.0032351523704591233,
+              "values": [
+                0.5625,
+                0.5689655172413793,
+                0.5655172413793104
+              ]
+            },
+            "brier": {
+              "mean": 0.5638903076054457,
+              "sd": 0.00016654191778004324,
+              "values": [
+                0.5637489067784376,
+                0.5640738821301042,
+                0.5638481339077951
+              ]
+            },
+            "ece": {
+              "mean": 0.032308688361024324,
+              "sd": 0.0052798879202425476,
+              "values": [
+                0.027561140981036774,
+                0.0379949855386938,
+                0.0313699385633424
+              ]
+            },
+            "error_rate": {
+              "mean": 0.43433908045977015,
+              "sd": 0.003235152370459123,
+              "values": [
+                0.4375,
+                0.43103448275862066,
+                0.43448275862068964
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5541821052824148,
+              "sd": 0.0032452796539286224,
+              "values": [
+                0.5556691190396088,
+                0.556417429147019,
+                0.5504597676606168
+              ]
+            },
+            "nll": {
+              "mean": 1.0035903988884713,
+              "sd": 0.0005296183928313977,
+              "values": [
+                1.0034447374042221,
+                1.003148853609547,
+                1.0041776056516447
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.005172413793103448,
+              "sd": 0.0014931472479042046,
+              "values": [
+                0.004310344827586207,
+                0.006896551724137931,
+                0.004310344827586207
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5252068961247941,
+              "sd": 0.0020918402202364686,
+              "values": [
+                0.5254808465896676,
+                0.5229915780755688,
+                0.5271482637091455
+              ]
+            }
+          },
+          "patients": 1008,
+          "rows": 2320
+        },
+        "Pleural Effusion": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6114916286149162,
+              "sd": 0.002118631797119508,
+              "values": [
+                0.6111111111111112,
+                0.6095890410958904,
+                0.6137747336377474
+              ]
+            },
+            "brier": {
+              "mean": 0.5336291645212776,
+              "sd": 0.0035982038133317586,
+              "values": [
+                0.5330702075166764,
+                0.5303431492313342,
+                0.5374741368158222
+              ]
+            },
+            "ece": {
+              "mean": 0.06416189025494261,
+              "sd": 0.008444216087149174,
+              "values": [
+                0.0621917545205315,
+                0.05687690919741584,
+                0.07341700704688048
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3885083713850837,
+              "sd": 0.002118631797119508,
+              "values": [
+                0.38888888888888884,
+                0.3904109589041096,
+                0.38622526636225263
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5610093187220254,
+              "sd": 0.0039213118427197415,
+              "values": [
+                0.5622400109067364,
+                0.5641676623529674,
+                0.5566202829063721
+              ]
+            },
+            "nll": {
+              "mean": 0.9539004481116361,
+              "sd": 0.007515461878175161,
+              "values": [
+                0.9498220878006814,
+                0.9493058209046084,
+                0.9625734356296185
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0025367833587011668,
+              "sd": 0.0005812500881476204,
+              "values": [
+                0.002663622526636225,
+                0.0030441400304414,
+                0.001902587519025875
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5813093980722052,
+              "sd": 0.0016866066677513364,
+              "values": [
+                0.580101667928354,
+                0.5832363969153075,
+                0.5805901293729542
+              ]
+            }
+          },
+          "patients": 878,
+          "rows": 2628
+        },
+        "Pleural Other": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.761006289308176,
+              "sd": 0.02882123078588583,
+              "values": [
+                0.7358490566037735,
+                0.7547169811320755,
+                0.7924528301886793
+              ]
+            },
+            "brier": {
+              "mean": 0.45807517202860404,
+              "sd": 0.013692359198489946,
+              "values": [
+                0.4622047890366596,
+                0.46922741304198207,
+                0.44279331400717054
+              ]
+            },
+            "ece": {
+              "mean": 0.21821602504478207,
+              "sd": 0.018192579412915535,
+              "values": [
+                0.19720911145555678,
+                0.22867331056742307,
+                0.22876565311136626
+              ]
+            },
+            "error_rate": {
+              "mean": 0.23899371069182387,
+              "sd": 0.02882123078588583,
+              "values": [
+                0.26415094339622647,
+                0.24528301886792447,
+                0.2075471698113207
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5550430678288382,
+              "sd": 0.014778952660111096,
+              "values": [
+                0.541261930604406,
+                0.5532171214074623,
+                0.570650151474646
+              ]
+            },
+            "nll": {
+              "mean": 0.8409895526880738,
+              "sd": 0.0035563305270237613,
+              "values": [
+                0.8414130119703302,
+                0.8443151947399749,
+                0.8372404513539164
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.4018479614067849,
+              "sd": 0.013774114369564635,
+              "values": [
+                0.3885281385281385,
+                0.40098039215686276,
+                0.41603535353535354
+              ]
+            }
+          },
+          "patients": 45,
+          "rows": 53
+        },
+        "Pneumonia": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6093189964157707,
+              "sd": 0.04966453928512905,
+              "values": [
+                0.6666666666666666,
+                0.5806451612903226,
+                0.5806451612903226
+              ]
+            },
+            "brier": {
+              "mean": 0.5059471594385198,
+              "sd": 0.017673663782222186,
+              "values": [
+                0.48565134488483575,
+                0.5142461953869881,
+                0.5179439380437355
+              ]
+            },
+            "ece": {
+              "mean": 0.15294895757941193,
+              "sd": 0.026324934883163363,
+              "values": [
+                0.12629457048986412,
+                0.17893158210314508,
+                0.15362072014522654
+              ]
+            },
+            "error_rate": {
+              "mean": 0.39068100358422936,
+              "sd": 0.04966453928512906,
+              "values": [
+                0.33333333333333337,
+                0.4193548387096774,
+                0.4193548387096774
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6908831166925308,
+              "sd": 0.012594427212294293,
+              "values": [
+                0.7029457157513888,
+                0.6778169131293066,
+                0.691886721196897
+              ]
+            },
+            "nll": {
+              "mean": 0.9356121694662837,
+              "sd": 0.013341068236308828,
+              "values": [
+                0.9202495987754316,
+                0.9423046838512351,
+                0.9442822257721842
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5196905813171221,
+              "sd": 0.0683370499252465,
+              "values": [
+                0.5983359299148774,
+                0.47478809963458046,
+                0.4859477144019083
+              ]
+            }
+          },
+          "patients": 78,
+          "rows": 93
+        },
+        "Pneumothorax": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.42621987066431505,
+              "sd": 0.020057286430607852,
+              "values": [
+                0.4038800705467372,
+                0.4426807760141093,
+                0.43209876543209874
+              ]
+            },
+            "brier": {
+              "mean": 0.7131304737379954,
+              "sd": 0.004791402789734252,
+              "values": [
+                0.7144549722979087,
+                0.7078161476780335,
+                0.7171203012380439
+              ]
+            },
+            "ece": {
+              "mean": 0.04584774300527117,
+              "sd": 0.015131239999674376,
+              "values": [
+                0.03867895189885002,
+                0.035633198400552284,
+                0.06323107871641122
+              ]
+            },
+            "error_rate": {
+              "mean": 0.5737801293356849,
+              "sd": 0.0200572864306079,
+              "values": [
+                0.5961199294532629,
+                0.5573192239858906,
+                0.5679012345679013
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.43452716423119986,
+              "sd": 0.010544162644589634,
+              "values": [
+                0.4425590224455873,
+                0.4384356471585701,
+                0.4225868230894422
+              ]
+            },
+            "nll": {
+              "mean": 1.418009335472098,
+              "sd": 0.007065876775168646,
+              "values": [
+                1.4159267382215945,
+                1.412218818370838,
+                1.4258824498238616
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.012933568489124045,
+              "sd": 0.003671368605760375,
+              "values": [
+                0.014109347442680775,
+                0.008818342151675485,
+                0.015873015873015872
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.2835837943190686,
+              "sd": 0.012620696681788366,
+              "values": [
+                0.2781016664104734,
+                0.2980185185185185,
+                0.27463119802821395
+              ]
+            }
+          },
+          "patients": 228,
+          "rows": 567
+        }
+      },
+      "interval_bin": {
+        "gt_365_days": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6923076923076922,
+              "sd": 1.3597399555105182e-16,
+              "values": [
+                0.6923076923076923,
+                0.6923076923076923,
+                0.6923076923076923
+              ]
+            },
+            "brier": {
+              "mean": 0.4393458491314674,
+              "sd": 0.0024719190463510805,
+              "values": [
+                0.4395964673844344,
+                0.44168291216210664,
+                0.43675816784786126
+              ]
+            },
+            "ece": {
+              "mean": 0.06455777561321586,
+              "sd": 0.004256110067005863,
+              "values": [
+                0.06081834105508453,
+                0.06918918527043637,
+                0.06366580051412672
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3076923076923077,
+              "sd": 0.0,
+              "values": [
+                0.3076923076923077,
+                0.3076923076923077,
+                0.3076923076923077
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.7109254524237589,
+              "sd": 0.0059435548076004745,
+              "values": [
+                0.7046777859352542,
+                0.711589439872588,
+                0.7165091314634346
+              ]
+            },
+            "nll": {
+              "mean": 0.8877537428234543,
+              "sd": 0.006282180962017559,
+              "values": [
+                0.8807680753612952,
+                0.8895536101577518,
+                0.8929395429513162
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.46601030837780577,
+              "sd": 0.018978359589054267,
+              "values": [
+                0.4863323821171354,
+                0.44874729136937797,
+                0.4629512516469038
+              ]
+            }
+          },
+          "patients": 189,
+          "rows": 195
+        },
+        "le_30_days": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6586666666666666,
+              "sd": 0.011574685020912388,
+              "values": [
+                0.6528,
+                0.6512,
+                0.672
+              ]
+            },
+            "brier": {
+              "mean": 0.4646860153626636,
+              "sd": 0.0019158458918639705,
+              "values": [
+                0.4662431896337574,
+                0.46526826315408426,
+                0.4625465933001492
+              ]
+            },
+            "ece": {
+              "mean": 0.034693835134584454,
+              "sd": 0.004008302199887577,
+              "values": [
+                0.037562010961545045,
+                0.03640564329294962,
+                0.03011385114925868
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3413333333333333,
+              "sd": 0.011574685020912388,
+              "values": [
+                0.34719999999999995,
+                0.3488,
+                0.32799999999999996
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6572636895208525,
+              "sd": 0.0026319485016108907,
+              "values": [
+                0.655106911060041,
+                0.6601963664631214,
+                0.6564877910393953
+              ]
+            },
+            "nll": {
+              "mean": 0.881743148492626,
+              "sd": 0.006681781437955785,
+              "values": [
+                0.8889359018920895,
+                0.8805642967845936,
+                0.875729246801195
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0026666666666666666,
+              "sd": 0.0009237604307034013,
+              "values": [
+                0.0032,
+                0.0016,
+                0.0032
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6252291805826741,
+              "sd": 0.012341652757379265,
+              "values": [
+                0.614497673658205,
+                0.622474437623428,
+                0.6387154304663893
+              ]
+            }
+          },
+          "patients": 291,
+          "rows": 625
+        },
+        "le_365_days": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.7311534968210718,
+              "sd": 0.004162194091694678,
+              "values": [
+                0.7356948228882834,
+                0.7302452316076294,
+                0.7275204359673024
+              ]
+            },
+            "brier": {
+              "mean": 0.40578340417766534,
+              "sd": 0.0011696538325521868,
+              "values": [
+                0.40483091403161275,
+                0.4070889031196959,
+                0.4054303953816874
+              ]
+            },
+            "ece": {
+              "mean": 0.06431953448436308,
+              "sd": 0.009654982062775073,
+              "values": [
+                0.07270839758452391,
+                0.06648426251299887,
+                0.05376594335556643
+              ]
+            },
+            "error_rate": {
+              "mean": 0.2688465031789283,
+              "sd": 0.004162194091694678,
+              "values": [
+                0.26430517711171664,
+                0.26975476839237056,
+                0.2724795640326976
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6953304179602816,
+              "sd": 0.007151126364005006,
+              "values": [
+                0.687252140575186,
+                0.7008510032907674,
+                0.6978881100148911
+              ]
+            },
+            "nll": {
+              "mean": 0.8036252161942606,
+              "sd": 0.0052443987341429495,
+              "values": [
+                0.7988855900935398,
+                0.802730725888359,
+                0.8092593326008832
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0063578564940962755,
+              "sd": 0.004162194091694677,
+              "values": [
+                0.0027247956403269754,
+                0.005449591280653951,
+                0.010899182561307902
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5987503236374806,
+              "sd": 0.0123748093392982,
+              "values": [
+                0.6095140567778637,
+                0.6015074031198158,
+                0.585229511014762
+              ]
+            }
+          },
+          "patients": 254,
+          "rows": 367
+        },
+        "le_7_days": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6081314093837916,
+              "sd": 0.0016635178128526441,
+              "values": [
+                0.6084944187312823,
+                0.6095834467737544,
+                0.6063163626463381
+              ]
+            },
+            "brier": {
+              "mean": 0.5164168411113685,
+              "sd": 0.0029316327728482784,
+              "values": [
+                0.516167723474911,
+                0.5136177162912324,
+                0.5194650835679622
+              ]
+            },
+            "ece": {
+              "mean": 0.022996890371112435,
+              "sd": 0.00311348534587394,
+              "values": [
+                0.024058652733101846,
+                0.019491402238944387,
+                0.025440616141291072
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3918685906162083,
+              "sd": 0.0016635178128526441,
+              "values": [
+                0.3915055812687177,
+                0.3904165532262456,
+                0.39368363735366185
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5908556791229781,
+              "sd": 0.004369475383126879,
+              "values": [
+                0.5914609226359676,
+                0.5948909802958633,
+                0.5862151344371035
+              ]
+            },
+            "nll": {
+              "mean": 0.9436059246581928,
+              "sd": 0.006556501785002221,
+              "values": [
+                0.9424214273371503,
+                0.9377224154303221,
+                0.9506739312071059
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.004537616843633724,
+              "sd": 0.0001571876583690787,
+              "values": [
+                0.004628369180506398,
+                0.004356112169888375,
+                0.004628369180506398
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5262331288034137,
+              "sd": 0.007009449411013074,
+              "values": [
+                0.5286224423854764,
+                0.5317355434992698,
+                0.518341400525495
+              ]
+            }
+          },
+          "patients": 622,
+          "rows": 3673
+        },
+        "le_90_days": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.706601466992665,
+              "sd": 0.011204341552459293,
+              "values": [
+                0.7090464547677262,
+                0.6943765281173594,
+                0.7163814180929096
+              ]
+            },
+            "brier": {
+              "mean": 0.41263335575344057,
+              "sd": 0.0035111967167132828,
+              "values": [
+                0.4089266131672359,
+                0.41590924134635526,
+                0.4130642127467305
+              ]
+            },
+            "ece": {
+              "mean": 0.054914829732669146,
+              "sd": 0.004068792804558916,
+              "values": [
+                0.05368490900651498,
+                0.051602889773359285,
+                0.05945669041813318
+              ]
+            },
+            "error_rate": {
+              "mean": 0.2933985330073349,
+              "sd": 0.011204341552459293,
+              "values": [
+                0.2909535452322738,
+                0.3056234718826406,
+                0.28361858190709044
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6755350797388795,
+              "sd": 0.00188254836035847,
+              "values": [
+                0.6742139922970486,
+                0.6747006203469669,
+                0.6776906265726231
+              ]
+            },
+            "nll": {
+              "mean": 0.7896243824490958,
+              "sd": 0.00962557020198299,
+              "values": [
+                0.7786479178590031,
+                0.7966257309128926,
+                0.7935994985753917
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0024449877750611247,
+              "sd": 0.0024449877750611247,
+              "values": [
+                0.0024449877750611247,
+                0.004889975550122249,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6538112985207644,
+              "sd": 0.01151910445274999,
+              "values": [
+                0.6607012717447514,
+                0.6405130906526069,
+                0.6602195331649348
+              ]
+            }
+          },
+          "patients": 243,
+          "rows": 409
+        },
+        "ordinal_or_unknown": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6384018880647336,
+              "sd": 0.0024487253955384177,
+              "values": [
+                0.6360418071476737,
+                0.6409305461901551,
+                0.6382333108563722
+              ]
+            },
+            "brier": {
+              "mean": 0.4939973453602837,
+              "sd": 0.0009958387249712714,
+              "values": [
+                0.49428196893796644,
+                0.4928901828936571,
+                0.4948198842492277
+              ]
+            },
+            "ece": {
+              "mean": 0.049956464947265335,
+              "sd": 0.004822055164220126,
+              "values": [
+                0.04488464254649003,
+                0.05050248188965149,
+                0.05448227040565449
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3615981119352663,
+              "sd": 0.0024487253955384177,
+              "values": [
+                0.36395819285232633,
+                0.3590694538098449,
+                0.36176668914362775
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5893050931969719,
+              "sd": 0.00489807800322249,
+              "values": [
+                0.5911571646011836,
+                0.5930070745390145,
+                0.5837510404507177
+              ]
+            },
+            "nll": {
+              "mean": 0.9166118207346371,
+              "sd": 0.001406170882445641,
+              "values": [
+                0.917467342464193,
+                0.914988911980127,
+                0.9173792077595913
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.003483928972802877,
+              "sd": 0.0006812966763869487,
+              "values": [
+                0.004214430209035738,
+                0.0033715441672285905,
+                0.0028658125421443022
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.4920244019176849,
+              "sd": 0.0030851739737495455,
+              "values": [
+                0.48879194686421545,
+                0.4923438163531159,
+                0.49493744253572325
+              ]
+            }
+          },
+          "patients": 1283,
+          "rows": 5932
+        }
+      },
+      "progression_label": {
+        "Improved": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.494949494949495,
+              "sd": 0.0016225734870558139,
+              "values": [
+                0.4932301740812379,
+                0.4951644100580271,
+                0.49645390070921985
+              ]
+            },
+            "brier": {
+              "mean": 0.629202934117752,
+              "sd": 0.0011586075060304802,
+              "values": [
+                0.628361583784674,
+                0.6287227937838679,
+                0.6305244247847139
+              ]
+            },
+            "ece": {
+              "mean": 0.10612332682637542,
+              "sd": 0.013416890596297517,
+              "values": [
+                0.12079093958023564,
+                0.10310910438196874,
+                0.09446993651692188
+              ]
+            },
+            "error_rate": {
+              "mean": 0.5050505050505051,
+              "sd": 0.001622573487055836,
+              "values": [
+                0.5067698259187621,
+                0.504835589941973,
+                0.5035460992907801
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5788331493857627,
+              "sd": 0.004542855505112942,
+              "values": [
+                0.5817072679109967,
+                0.5811963688191776,
+                0.5735958114271136
+              ]
+            },
+            "nll": {
+              "mean": 1.2034970113609387,
+              "sd": 0.0019290693160988527,
+              "values": [
+                1.204549044012355,
+                1.2046713564384564,
+                1.201270633632005
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.009456264775413713,
+              "sd": 0.003886340279395041,
+              "values": [
+                0.013539651837524178,
+                0.009026434558349452,
+                0.005802707930367505
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6621611112644767,
+              "sd": 0.001452358783464462,
+              "values": [
+                0.6606217616580311,
+                0.6623544631306598,
+                0.6635071090047393
+              ]
+            }
+          },
+          "patients": 704,
+          "rows": 1551
+        },
+        "New": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.4894486044928523,
+              "sd": 0.010806336192231161,
+              "values": [
+                0.5017018379850239,
+                0.48127978216473793,
+                0.4853641933287951
+              ]
+            },
+            "brier": {
+              "mean": 0.6300974499429558,
+              "sd": 0.004420133563376721,
+              "values": [
+                0.6325603932330045,
+                0.6327374138818709,
+                0.624994542713992
+              ]
+            },
+            "ece": {
+              "mean": 0.08612479481166618,
+              "sd": 0.01067500987923228,
+              "values": [
+                0.07408515880150199,
+                0.09443398161158563,
+                0.08985524402191092
+              ]
+            },
+            "error_rate": {
+              "mean": 0.5105513955071477,
+              "sd": 0.010806336192231184,
+              "values": [
+                0.4982981620149761,
+                0.5187202178352621,
+                0.5146358066712049
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5563834224074781,
+              "sd": 0.005667325817833904,
+              "values": [
+                0.554482323749042,
+                0.562756881457838,
+                0.551911062015554
+              ]
+            },
+            "nll": {
+              "mean": 1.1701169568353789,
+              "sd": 0.011246311358010172,
+              "values": [
+                1.177864209255166,
+                1.175269103673783,
+                1.157217557577187
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.007261175402768323,
+              "sd": 0.002577221849693794,
+              "values": [
+                0.005445881552076242,
+                0.006126616746085773,
+                0.010211027910142955
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6571742487513407,
+              "sd": 0.009708395144113913,
+              "values": [
+                0.6681776971894833,
+                0.6498161764705882,
+                0.6535288725939505
+              ]
+            }
+          },
+          "patients": 912,
+          "rows": 1469
+        },
+        "Resolved": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.5282791817087845,
+              "sd": 0.007515039709264062,
+              "values": [
+                0.5342960288808665,
+                0.51985559566787,
+                0.5306859205776173
+              ]
+            },
+            "brier": {
+              "mean": 0.6092128349664172,
+              "sd": 0.009019779652404013,
+              "values": [
+                0.6012500639501427,
+                0.6190081806812213,
+                0.6073802602678878
+              ]
+            },
+            "ece": {
+              "mean": 0.15330224864225317,
+              "sd": 0.0047758140228905885,
+              "values": [
+                0.15511606126476213,
+                0.14788524672125172,
+                0.15690543794074563
+              ]
+            },
+            "error_rate": {
+              "mean": 0.4717208182912154,
+              "sd": 0.007515039709264062,
+              "values": [
+                0.46570397111913353,
+                0.48014440433213,
+                0.4693140794223827
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6671615226253614,
+              "sd": 0.0012106106265181282,
+              "values": [
+                0.6657865830649449,
+                0.6676305113012615,
+                0.6680674735098779
+              ]
+            },
+            "nll": {
+              "mean": 1.4347049270707604,
+              "sd": 0.011433718269782707,
+              "values": [
+                1.4215876226715607,
+                1.439966599144524,
+                1.4425605593961965
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.018050541516245484,
+              "sd": 0.006252891002053709,
+              "values": [
+                0.010830324909747292,
+                0.021660649819494584,
+                0.021660649819494584
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6913174417797414,
+              "sd": 0.006448918175018113,
+              "values": [
+                0.6964705882352941,
+                0.684085510688836,
+                0.6933962264150944
+              ]
+            }
+          },
+          "patients": 246,
+          "rows": 277
+        },
+        "Stable": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.7576712555979433,
+              "sd": 0.005181787809525051,
+              "values": [
+                0.7517001161054901,
+                0.7609885553159728,
+                0.7603250953723669
+              ]
+            },
+            "brier": {
+              "mean": 0.38425077264803525,
+              "sd": 0.0010384912606049962,
+              "values": [
+                0.3847664058817031,
+                0.3830553762348075,
+                0.3849305358275952
+              ]
+            },
+            "ece": {
+              "mean": 0.12745995842686472,
+              "sd": 0.0038956574035129594,
+              "values": [
+                0.12360130417779884,
+                0.12738697759676884,
+                0.13139159350602644
+              ]
+            },
+            "error_rate": {
+              "mean": 0.24232874440205673,
+              "sd": 0.005181787809525051,
+              "values": [
+                0.24829988389450985,
+                0.23901144468402724,
+                0.23967490462763308
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6323353305825856,
+              "sd": 0.003079532667962068,
+              "values": [
+                0.6331394771379618,
+                0.6349330127434547,
+                0.6289335018663404
+              ]
+            },
+            "nll": {
+              "mean": 0.7022408110157107,
+              "sd": 0.0036218218120695734,
+              "values": [
+                0.7002566289205985,
+                0.7000446644155276,
+                0.7064211397110056
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0,
+              "sd": 0.0,
+              "values": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.8621241876310098,
+              "sd": 0.0033601844105283223,
+              "values": [
+                0.8582520594640659,
+                0.8642742771027597,
+                0.8638462263262037
+              ]
+            }
+          },
+          "patients": 1496,
+          "rows": 6029
+        },
+        "Worse": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.49262222222222224,
+              "sd": 0.004472798444589915,
+              "values": [
+                0.49546666666666667,
+                0.49493333333333334,
+                0.48746666666666666
+              ]
+            },
+            "brier": {
+              "mean": 0.6048401566583377,
+              "sd": 0.007877294386957005,
+              "values": [
+                0.6030874453734073,
+                0.5979868441822779,
+                0.613446180419328
+              ]
+            },
+            "ece": {
+              "mean": 0.06804937224870072,
+              "sd": 0.0051331628585023475,
+              "values": [
+                0.07210726848485348,
+                0.06976201063027539,
+                0.0622788376309733
+              ]
+            },
+            "error_rate": {
+              "mean": 0.5073777777777777,
+              "sd": 0.004472798444589901,
+              "values": [
+                0.5045333333333333,
+                0.5050666666666667,
+                0.5125333333333333
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.551797434867941,
+              "sd": 0.006476731026873992,
+              "values": [
+                0.5523338763069632,
+                0.5579892619602768,
+                0.5450691663365831
+              ]
+            },
+            "nll": {
+              "mean": 1.081890862755488,
+              "sd": 0.014180797670126916,
+              "values": [
+                1.0820041725612284,
+                1.067653749706739,
+                1.0960146659984966
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0063999999999999994,
+              "sd": 0.0010666666666666667,
+              "values": [
+                0.007466666666666667,
+                0.0064,
+                0.005333333333333333
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.6600681916923908,
+              "sd": 0.0040220936824319035,
+              "values": [
+                0.6626248216833096,
+                0.6621476988940421,
+                0.6554320544998207
+              ]
+            }
+          },
+          "patients": 765,
+          "rows": 1875
+        }
+      },
+      "source": {
+        "chexpert_plus": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6384018880647336,
+              "sd": 0.0024487253955384177,
+              "values": [
+                0.6360418071476737,
+                0.6409305461901551,
+                0.6382333108563722
+              ]
+            },
+            "brier": {
+              "mean": 0.4939973453602837,
+              "sd": 0.0009958387249712714,
+              "values": [
+                0.49428196893796644,
+                0.4928901828936571,
+                0.4948198842492277
+              ]
+            },
+            "ece": {
+              "mean": 0.049956464947265335,
+              "sd": 0.004822055164220126,
+              "values": [
+                0.04488464254649003,
+                0.05050248188965149,
+                0.05448227040565449
+              ]
+            },
+            "error_rate": {
+              "mean": 0.3615981119352663,
+              "sd": 0.0024487253955384177,
+              "values": [
+                0.36395819285232633,
+                0.3590694538098449,
+                0.36176668914362775
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5893050931969719,
+              "sd": 0.00489807800322249,
+              "values": [
+                0.5911571646011836,
+                0.5930070745390145,
+                0.5837510404507177
+              ]
+            },
+            "nll": {
+              "mean": 0.9166118207346371,
+              "sd": 0.001406170882445641,
+              "values": [
+                0.917467342464193,
+                0.914988911980127,
+                0.9173792077595913
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.003483928972802877,
+              "sd": 0.0006812966763869487,
+              "values": [
+                0.004214430209035738,
+                0.0033715441672285905,
+                0.0028658125421443022
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.4920244019176849,
+              "sd": 0.0030851739737495455,
+              "values": [
+                0.48879194686421545,
+                0.4923438163531159,
+                0.49493744253572325
+              ]
+            }
+          },
+          "patients": 1283,
+          "rows": 5932
+        },
+        "mimic_cxr_jpg": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6334535332447649,
+              "sd": 0.0008558075067038839,
+              "values": [
+                0.6335167963560447,
+                0.6325678496868476,
+                0.6342759536914025
+              ]
+            },
+            "brier": {
+              "mean": 0.4916663141811953,
+              "sd": 0.0016429819078721485,
+              "values": [
+                0.4913325646649103,
+                0.4902158306009106,
+                0.49345054727776494
+              ]
+            },
+            "ece": {
+              "mean": 0.019017265811171927,
+              "sd": 0.003195965682989238,
+              "values": [
+                0.01936805941170548,
+                0.015660374938269876,
+                0.02202336308354043
+              ]
+            },
+            "error_rate": {
+              "mean": 0.366546466755235,
+              "sd": 0.0008558075067038838,
+              "values": [
+                0.36648320364395526,
+                0.36743215031315235,
+                0.36572404630859745
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6170266254690623,
+              "sd": 0.003203076842036711,
+              "values": [
+                0.6162962639879285,
+                0.6205318110402225,
+                0.614251801379036
+              ]
+            },
+            "nll": {
+              "mean": 0.9124981658176088,
+              "sd": 0.0045670730704179515,
+              "values": [
+                0.9110849546320028,
+                0.90880473936062,
+                0.9176048034602037
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.004112102233187829,
+              "sd": 0.000219149845963039,
+              "values": [
+                0.0039855760106282025,
+                0.0039855760106282025,
+                0.004365154678307079
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5883211955217996,
+              "sd": 0.002626202214954716,
+              "values": [
+                0.5906899705173833,
+                0.5887765082524202,
+                0.5854971077955952
+              ]
+            }
+          },
+          "patients": 1144,
+          "rows": 5269
+        }
+      },
+      "view_relation": {
+        "matched": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.634744797598095,
+              "sd": 0.0009317734755150409,
+              "values": [
+                0.63381302412258,
+                0.634744797598095,
+                0.6356765710736101
+              ]
+            },
+            "brier": {
+              "mean": 0.4941168202418747,
+              "sd": 0.0014896095050997494,
+              "values": [
+                0.494272656130174,
+                0.4925554189443901,
+                0.49552238565106005
+              ]
+            },
+            "ece": {
+              "mean": 0.038666049839827965,
+              "sd": 0.004833370030083099,
+              "values": [
+                0.03636179564533571,
+                0.03541598710665115,
+                0.04422036676749703
+              ]
+            },
+            "error_rate": {
+              "mean": 0.36525520240190495,
+              "sd": 0.0009317734755150409,
+              "values": [
+                0.36618697587742,
+                0.365255202401905,
+                0.3643234289263899
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.5960787477582671,
+              "sd": 0.004111843811515727,
+              "values": [
+                0.5974512284772442,
+                0.5993288104914439,
+                0.5914562043061131
+              ]
+            },
+            "nll": {
+              "mean": 0.9104597968536688,
+              "sd": 0.0029556783926753477,
+              "values": [
+                0.9103145785179538,
+                0.9075794044151677,
+                0.9134854076278851
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.0034855230010007936,
+              "sd": 0.0004668443682392479,
+              "values": [
+                0.0039341546743969355,
+                0.003520033129723574,
+                0.0030023811988818716
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.537741837728164,
+              "sd": 0.0020676965326718037,
+              "values": [
+                0.5386589689455172,
+                0.5353742090773538,
+                0.5391923351616208
+              ]
+            }
+          },
+          "patients": 2004,
+          "rows": 9659
+        },
+        "mismatched": {
+          "metrics": {
+            "accuracy": {
+              "mean": 0.6444012105490705,
+              "sd": 0.005812507418827801,
+              "values": [
+                0.6413748378728924,
+                0.6511024643320363,
+                0.6407263294422828
+              ]
+            },
+            "brier": {
+              "mean": 0.4852838491450406,
+              "sd": 0.00088642000154567,
+              "values": [
+                0.4842622162114646,
+                0.48584888766375295,
+                0.48574044355990426
+              ]
+            },
+            "ece": {
+              "mean": 0.02751063100303988,
+              "sd": 0.00988077133995101,
+              "values": [
+                0.027150554680071468,
+                0.03756651854843156,
+                0.01781481978061663
+              ]
+            },
+            "error_rate": {
+              "mean": 0.35559878945092943,
+              "sd": 0.005812507418827802,
+              "values": [
+                0.3586251621271076,
+                0.34889753566796367,
+                0.3592736705577172
+              ]
+            },
+            "mean_confidence": {
+              "mean": 0.6415995316756321,
+              "sd": 0.005180207907991859,
+              "values": [
+                0.6376315820395031,
+                0.64745985603081,
+                0.6397071569565833
+              ]
+            },
+            "nll": {
+              "mean": 0.9410914257336316,
+              "sd": 0.0012587294948089912,
+              "values": [
+                0.9404632863480544,
+                0.940270382821734,
+                0.9425406080311062
+              ]
+            },
+            "opposite_direction_error_rate": {
+              "mean": 0.005620406398616515,
+              "sd": 0.0013499779503671416,
+              "values": [
+                0.005188067444876783,
+                0.004539559014267186,
+                0.007133592736705577
+              ]
+            },
+            "supported_class_macro_f1": {
+              "mean": 0.5882660756879075,
+              "sd": 0.009709328143088829,
+              "values": [
+                0.5864615186071418,
+                0.5987510852219513,
+                0.5795856232346294
+              ]
+            }
+          },
+          "patients": 796,
+          "rows": 1542
+        }
+      }
+    },
+    "axes": [
+      "progression_label",
+      "finding",
+      "source",
+      "current_view",
+      "view_relation",
+      "interval_bin",
+      "class_rarity"
+    ],
+    "class_rarity_map": {
+      "Improved": "common_ge_5pct",
+      "New": "common_ge_5pct",
+      "Resolved": "rare_lt_5pct",
+      "Stable": "common_ge_5pct",
+      "Worse": "common_ge_5pct"
+    },
+    "class_rarity_threshold": "Train prevalence < 5%",
+    "descriptive_only": true
+  },
+  "system": "PRTA-CXR"
+}

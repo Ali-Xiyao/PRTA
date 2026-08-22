@@ -1,0 +1,196 @@
+{
+  "schema": "prta-cxr.slim-matrix-final-public.v1",
+  "status": "PASS_SLIM_MATRIX_SELECTED",
+  "created_at_utc": "2026-08-18T02:23:41.387435+00:00",
+  "training_source_commit": "456fb11ac425f778b89ddd4ecd0bef92fdded069",
+  "provenance": {
+    "server_final_json_sha256": "2fc88e884c01cdc247a0815b90ea007f6c0dd5167e110e94cb1161be4539e47d",
+    "offload_reconciliation_sha256": "33cb928ca4a35257b3a3e6fc6ac848e5c0bf6c2edb07601291111becb80c187d",
+    "preparation_sha256": "3320be8160d81d461b2a1a5500e24c521930acb6fb3bcfc0e53f7037dc408b6c",
+    "finalizer_module_sha256": "4af1f9226eeabbe6b6687cf235a3c7ff18fb4f9e75fe2fda1143b8fd048c911e",
+    "lane_completion_sha256": {
+      "a800_3066": "0bcf3c3dee5791c7d65dec98ba3021a21aa8c0f6893c8b1222513355f7609cb6",
+      "a800_9929": "9e17f17b44b9df428db4ac0a7648a2600ff3d286076423e0054e3904effaa531"
+    },
+    "lane_completed_job_count": {
+      "a800_3066": 7,
+      "a800_9929": 6
+    },
+    "authoritative_seed_hardware": {
+      "17": "A800",
+      "28": "A800",
+      "43": "RTX3090"
+    }
+  },
+  "selection_rule": {
+    "macro_f1_tolerance": 0.003,
+    "oder_tolerance": 0.0005,
+    "per_class_recall_tolerance": 0.01,
+    "tie_break": "fewest optional modules then lexical arm ID",
+    "no_admissible_fallback": "Slim-S0 no-simplification reference"
+  },
+  "selected_arm": "Slim-S1",
+  "selection_disposition": "SELECTED_SIMPLEST_WITHIN_FROZEN_TOLERANCES",
+  "admissible_arms": [
+    "Slim-S0",
+    "Slim-S1"
+  ],
+  "arms": {
+    "Slim-S0": {
+      "factors": {
+        "prototype_alignment": true,
+        "state_anchor": true
+      },
+      "optional_module_count": 2,
+      "admissible": true,
+      "metrics": {
+        "macro_f1": {"mean": 0.5628787719339131, "sd": 0.003050877832956995},
+        "opposite_direction_error_rate": {"mean": 0.006444927986737126, "sd": 0.00009496582105389807},
+        "min_class_recall": {"mean": 0.47271893626776706, "sd": 0.00645479515144477}
+      },
+      "seeds": {
+        "17": {
+          "best_epoch": 4,
+          "macro_f1": 0.5620534239163744,
+          "opposite_direction_error_rate": 0.0063413117811625735,
+          "min_class_recall": 0.47145804676753783,
+          "per_class_recall": {"Stable": 0.7398083067092652, "Improved": 0.5633227417158421, "Worse": 0.5100791936645068, "New": 0.47145804676753783, "Resolved": 0.5390835579514824}
+        },
+        "28": {
+          "best_epoch": 2,
+          "macro_f1": 0.5603254796517264,
+          "opposite_direction_error_rate": 0.006527820951196767,
+          "min_class_recall": 0.46698762035763414,
+          "per_class_recall": {"Stable": 0.762555910543131, "Improved": 0.5342714480254199, "Worse": 0.4870410367170626, "New": 0.46698762035763414, "Resolved": 0.5498652291105122}
+        },
+        "43": {
+          "best_epoch": 3,
+          "macro_f1": 0.5662574122336383,
+          "opposite_direction_error_rate": 0.006465651227852036,
+          "min_class_recall": 0.4797111416781293,
+          "per_class_recall": {"Stable": 0.7568051118210862, "Improved": 0.5320018157058557, "Worse": 0.5205183585313174, "New": 0.4797111416781293, "Resolved": 0.5444743935309974}
+        }
+      }
+    },
+    "Slim-S1": {
+      "factors": {
+        "prototype_alignment": false,
+        "state_anchor": true
+      },
+      "optional_module_count": 1,
+      "admissible": true,
+      "metrics": {
+        "macro_f1": {"mean": 0.56051980671741, "sd": 0.0012527799609807113},
+        "opposite_direction_error_rate": {"mean": 0.006880116050150244, "sd": 0.0005776545379656556},
+        "min_class_recall": {"mean": 0.47558459422283356, "sd": 0.003965805569006458}
+      },
+      "seeds": {
+        "17": {
+          "best_epoch": 4,
+          "macro_f1": 0.5613122320840678,
+          "opposite_direction_error_rate": 0.007149518184644078,
+          "min_class_recall": 0.47145804676753783,
+          "per_class_recall": {"Stable": 0.7387859424920128, "Improved": 0.5506128007262824, "Worse": 0.521598272138229, "New": 0.47145804676753783, "Resolved": 0.5283018867924528}
+        },
+        "28": {
+          "best_epoch": 3,
+          "macro_f1": 0.5611716895256001,
+          "opposite_direction_error_rate": 0.007273857631333541,
+          "min_class_recall": 0.4759284731774415,
+          "per_class_recall": {"Stable": 0.7553993610223643, "Improved": 0.5351793009532456, "Worse": 0.5053995680345572, "New": 0.4759284731774415, "Resolved": 0.5498652291105122}
+        },
+        "43": {
+          "best_epoch": 3,
+          "macro_f1": 0.5590754985425619,
+          "opposite_direction_error_rate": 0.006216972334473112,
+          "min_class_recall": 0.4793672627235213,
+          "per_class_recall": {"Stable": 0.75629392971246, "Improved": 0.5288243304584658, "Worse": 0.4953203743700504, "New": 0.4793672627235213, "Resolved": 0.5283018867924528}
+        }
+      }
+    },
+    "Slim-S2": {
+      "factors": {
+        "prototype_alignment": true,
+        "state_anchor": false
+      },
+      "optional_module_count": 1,
+      "admissible": false,
+      "failed_gate": "all_class_recalls_within_tolerance",
+      "metrics": {
+        "macro_f1": {"mean": 0.5622991434865825, "sd": 0.00273841200831032},
+        "opposite_direction_error_rate": {"mean": 0.006382758263392394, "sd": 0.00047482910526948943},
+        "min_class_recall": {"mean": 0.48108665749656127, "sd": 0.0068517396303890135}
+      },
+      "seeds": {
+        "17": {
+          "best_epoch": 3,
+          "macro_f1": 0.5614641557846941,
+          "opposite_direction_error_rate": 0.005968293441094187,
+          "min_class_recall": 0.4731774415405777,
+          "per_class_recall": {"Stable": 0.7578274760383387, "Improved": 0.5279164775306401, "Worse": 0.5079193664506839, "New": 0.4731774415405777, "Resolved": 0.5363881401617251}
+        },
+        "28": {
+          "best_epoch": 5,
+          "macro_f1": 0.5600754260660586,
+          "opposite_direction_error_rate": 0.006900839291265154,
+          "min_class_recall": 0.48521320495185694,
+          "per_class_recall": {"Stable": 0.7395527156549521, "Improved": 0.53109396277803, "Worse": 0.5125989920806335, "New": 0.48521320495185694, "Resolved": 0.5309973045822103}
+        },
+        "43": {
+          "best_epoch": 3,
+          "macro_f1": 0.5653578486089946,
+          "opposite_direction_error_rate": 0.006279142057817843,
+          "min_class_recall": 0.48486932599724897,
+          "per_class_recall": {"Stable": 0.744664536741214, "Improved": 0.5279164775306401, "Worse": 0.5219582433405328, "New": 0.48486932599724897, "Resolved": 0.5525606469002695}
+        }
+      }
+    },
+    "Slim-S3": {
+      "factors": {
+        "prototype_alignment": false,
+        "state_anchor": false
+      },
+      "optional_module_count": 0,
+      "admissible": false,
+      "failed_gate": "all_class_recalls_within_tolerance",
+      "metrics": {
+        "macro_f1": {"mean": 0.5610584626096409, "sd": 0.0021737409808752807},
+        "opposite_direction_error_rate": {"mean": 0.006859392809035333, "sd": 0.0002512559455596753},
+        "min_class_recall": {"mean": 0.4760430994956442, "sd": 0.008647262362467831}
+      },
+      "seeds": {
+        "17": {
+          "best_epoch": 4,
+          "macro_f1": 0.5606670454509817,
+          "opposite_direction_error_rate": 0.006589990674541499,
+          "min_class_recall": 0.4859009628610729,
+          "per_class_recall": {"Stable": 0.7401916932907349, "Improved": 0.5456196096232411, "Worse": 0.513678905687545, "New": 0.4859009628610729, "Resolved": 0.522911051212938}
+        },
+        "28": {
+          "best_epoch": 3,
+          "macro_f1": 0.5591070232416071,
+          "opposite_direction_error_rate": 0.006900839291265154,
+          "min_class_recall": 0.47248968363136173,
+          "per_class_recall": {"Stable": 0.7514376996805112, "Improved": 0.536995006808897, "Worse": 0.4924406047516199, "New": 0.47248968363136173, "Resolved": 0.5579514824797843}
+        },
+        "43": {
+          "best_epoch": 3,
+          "macro_f1": 0.563401319136334,
+          "opposite_direction_error_rate": 0.007087348461299347,
+          "min_class_recall": 0.46973865199449794,
+          "per_class_recall": {"Stable": 0.75629392971246, "Improved": 0.5383567862006355, "Worse": 0.5183585313174947, "New": 0.46973865199449794, "Resolved": 0.5202156334231806}
+        }
+      }
+    }
+  },
+  "selection_performed": true,
+  "winner_selected": true,
+  "current_dev_used_for_selection": false,
+  "internal_test_opened": false,
+  "gold_opened": false,
+  "external_opened": false,
+  "protected_outcome_read_count": 0,
+  "contains_patient_level_data": false,
+  "contains_private_runtime_paths": false,
+  "contains_checkpoints": false
+}

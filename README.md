@@ -7,9 +7,9 @@ classification:
 `Stable / Improved / Worse / New / Resolved`.
 
 The repository preserves only the final ViT-side method and reusable data,
-label, evaluation, and audit contracts. Legacy VisualVIT experiment numbers,
-failed routes, historical rosters, matched-representation benchmarks, and old
-Qwen SFT attempts are intentionally absent.
+training, evaluation, and audit contracts. Queue orchestration, labeling
+pipelines, failed routes, historical rosters, retired external-validation code,
+and old VLM attempts are intentionally absent.
 
 ## Current status
 
@@ -48,13 +48,25 @@ VisualVIT history branch `codex/prta-history-archive-20260822`. Checkpoints,
 predictions, patient-level material, images, and raw logs are never stored in
 ordinary Git.
 
+## Repository boundary
+
+This PRTA repository is the final paper-facing codebase. The complete Git-safe
+snapshot immediately before final cleanup is preserved in the VisualVIT history
+branch `codex/prta-history-archive-20260822` at
+`_archive/PRTA-CXR-dual-branch-repair/process_code_snapshot_before_final_cleanup_20260822/`.
+The archive commit is `fa27c71049b5a45a89816672ab4abbc44b94e547`.
+That archive contains process code for reproducibility archaeology; it is not
+part of the final method and must not be copied back into this repository.
+
 ## Start here
 
-1. Read the authoritative
+1. Give the writing team the self-contained
+   [paper-writing handoff package](writing_handoff/README.md).
+2. Read the authoritative
    [Slim-S1 Phase20 protocol](docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md).
-2. Read the [Phase20 paper-facing rerun matrix](paper/13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md).
-3. Use [the final experiment and result index](paper/17_论文实验数据总表与待跑清单_CN.md).
-4. Use [the final evidence narrative](paper/18_Phase20最终证据与论文叙事_CN.md)
+3. Read the [Phase20 paper-facing rerun matrix](paper/13_PRTA-CXR-Slim-S1最终主线与重跑矩阵_CN.md).
+4. Use [the final experiment and result index](paper/17_论文实验数据总表与待跑清单_CN.md).
+5. Use [the final evidence narrative](paper/18_Phase20最终证据与论文叙事_CN.md)
    when drafting the paper.
 
 ## Local engineering validation

@@ -183,7 +183,7 @@ def train_main(argv: Sequence[str] | None = None) -> int:
                 portable_root=args.cleaned_split_platform_root,
             )
         else:
-            from prta_cxr.slim_matrix import (
+            from prta_cxr.data.selection_manifest import (
                 require_train_only_selection_manifest,
             )
 

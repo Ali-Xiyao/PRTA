@@ -18,15 +18,18 @@ def run_preflight(root: Path | None = None) -> dict[str, Any]:
     root = project_root() if root is None else Path(root).resolve()
     required = [
         root / "pyproject.toml",
+        root / "configs" / "final" / "prta_cxr_slim_s1.json",
+        root / "configs" / "models" / "prta_vit_v1.json",
+        root / "configs" / "training" / "prta_full_v1.json",
+        root / "configs" / "training" / "smoke_v1.json",
+        root / "configs" / "data" / "source_catalog_v1.json",
+        root / "configs" / "data" / "pairing_v1.json",
+        root / "configs" / "data" / "exclusion_sources_v1.json",
         root / "src" / "prta_cxr" / "models" / "prta.py",
-        root / "schemas" / "luna_label_batch.schema.json",
-        root / "prompts" / "luna_label_v1.md",
-        root / "prompts" / "luna_verify_v1.md",
-        root / "schemas" / "independent_silver_label_batch.schema.json",
-        root / "prompts" / "independent_silver_label_v1.md",
-        root / "configs" / "labeling" / "independent_silver_v1.json",
-        root / "configs" / "labeling" / "sol_blind_review_v1.json",
-        root / "configs" / "labeling" / "luna_primary_full_v1.json",
+        root / "src" / "prta_cxr" / "training" / "engine.py",
+        root / "src" / "prta_cxr" / "training" / "losses.py",
+        root / "scripts" / "07_train.py",
+        root / "scripts" / "08_evaluate.py",
     ]
     missing = [
         path.relative_to(root).as_posix()
@@ -36,9 +39,7 @@ def run_preflight(root: Path | None = None) -> dict[str, Any]:
     if missing:
         raise FileNotFoundError(f"preflight missing required files: {missing}")
 
-    json_files = sorted((root / "configs").rglob("*.json")) + sorted(
-        (root / "schemas").rglob("*.json")
-    )
+    json_files = sorted((root / "configs").rglob("*.json"))
     for path in json_files:
         json.loads(path.read_text(encoding="utf-8"))
 
@@ -54,7 +55,7 @@ def run_preflight(root: Path | None = None) -> dict[str, Any]:
 
     authority = sorted(
         path
-        for folder in ("configs", "prompts", "schemas")
+        for folder in ("configs", "manifests")
         for path in (root / folder).rglob("*")
         if path.is_file()
     )
