@@ -1,4 +1,5 @@
 import copy
+import json
 
 import numpy as np
 import torch
@@ -7,6 +8,7 @@ from prta_cxr.attention_flow import patch_attention_flow
 from prta_cxr.query_sensitivity import (
     _batch_patch_attention_flow,
     attention_flow_distribution,
+    build_s3_public_release,
     compute_jsd_units,
     freeze_query_sensitivity_cohort,
     jensen_shannon_divergence,
@@ -127,3 +129,39 @@ def test_batched_flow_matches_single_sample_implementation():
         expected = patch_attention_flow(align[index], transition[index])
         assert np.allclose(current[index], expected["r_current"], atol=1e-7)
         assert np.allclose(prior[index], expected["r_prior"], atol=1e-7)
+
+
+def test_s3_public_release_excludes_private_units_and_pixels():
+    aggregate = {
+        "status": "PASS_S3_AGGREGATE_GIT_SAFE",
+        "source_commit": "source",
+        "checkpoint_sha256": {"S17": "a", "S28": "b", "S43": "c"},
+        "cohort_receipt_sha256": "cohort",
+        "cohort": {"pair_count": 2, "row_count": 4, "patient_cluster_count": 2},
+        "jsd": {"logarithm_base": 2},
+        "bootstrap": {"replicates": 10_000},
+        "statistics": {"query_sensitive_routing_supported": True},
+        "qualitative_queries": [
+            {"finding": "Edema", "reference_progression": "New"}
+        ],
+        "qualitative_selection_rule": "pre-view",
+    }
+    private = {"status": "PASS_S3_JSD_AND_CLUSTERED_BOOTSTRAP"}
+    render = {
+        "status": "PASS_PRIVATE_S3_RENDERED_PUBLIC_RELEASE_BLOCKED",
+        "public_git_redistribution_permitted": False,
+        "renderer_commit": "render",
+        "analysis_manifest_sha256": "analysis",
+        "figure_sha256": "figure",
+        "crop": "crop",
+        "interpolation": "bilinear",
+        "overlay_alpha": 0.4,
+        "colormap": "magma",
+        "shared_p99_clip": 0.1,
+    }
+    release = build_s3_public_release(aggregate, private, render)
+    payload = json.dumps(release)
+    assert release["public_git_redistribution_permitted"] is False
+    assert '"patient_id_hash"' not in payload
+    assert '"sample_id"' not in payload
+    assert "supp_figure_s3_query_sensitivity.png" in payload

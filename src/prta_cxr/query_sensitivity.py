@@ -15,6 +15,8 @@ import torch
 from prta_cxr.attention_flow import (
     EXPECTED_SEEDS,
     SELECTION_SALT,
+    _draw_overlay,
+    _load_model_aligned_grayscale,
     capture_true_attention,
 )
 from prta_cxr.contracts import sha256_file
@@ -816,4 +818,329 @@ def query_sensitivity_analysis_main(argv: Sequence[str] | None = None) -> int:
         json.dumps(public, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     print(json.dumps(public, indent=2, sort_keys=True))
+    return 0
+
+
+def query_sensitivity_figure_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Render governed Figure S3 from the frozen qualitative pair."
+    )
+    parser.add_argument("--cohort", type=Path, required=True)
+    parser.add_argument("--s43", type=Path, required=True)
+    parser.add_argument("--analysis-manifest", type=Path, required=True)
+    parser.add_argument("--jsd-units", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--receipt", type=Path, required=True)
+    parser.add_argument("--renderer-commit", required=True)
+    args = parser.parse_args(argv)
+    try:
+        import matplotlib.pyplot as plt
+        from matplotlib.cm import ScalarMappable
+        from matplotlib.colors import Normalize
+    except ImportError as error:  # pragma: no cover - optional dependency
+        raise RuntimeError("Figure S3 rendering requires matplotlib") from error
+
+    cohort = json.loads(args.cohort.read_text(encoding="utf-8"))
+    _flatten_cohort_rows(cohort)
+    analysis = json.loads(args.analysis_manifest.read_text(encoding="utf-8"))
+    if analysis.get("status") != "PASS_S3_JSD_AND_CLUSTERED_BOOTSTRAP":
+        raise ValueError("S3 analysis is not terminal PASS")
+    if analysis["cohort_sha256"] != sha256_file(args.cohort):
+        raise ValueError("S3 render cohort hash drift")
+    if sha256_file(args.jsd_units) != analysis["private_units_sha256"]:
+        raise ValueError("S3 private JSD unit hash mismatch")
+    receipt43, index43, maps43 = _load_seed_export(args.s43)
+    if int(receipt43["seed"]) != 43:
+        raise ValueError("S3 qualitative figure requires seed 43")
+    index_by_id = {row["sample_id"]: position for position, row in enumerate(index43)}
+    qualitative = cohort["qualitative_selection"]
+    selected = list(qualitative["rows"])
+    if not 2 <= len(selected) <= 3:
+        raise ValueError("S3 qualitative figure requires two or three queries")
+    if any(row["sample_id"] not in index_by_id for row in selected):
+        raise ValueError("S3 qualitative query is absent from seed-43 export")
+
+    prior_path = Path(qualitative["prior_image_path"])
+    current_path = Path(qualitative["current_image_path"])
+    prior_image = _load_model_aligned_grayscale(prior_path)
+    current_image = _load_model_aligned_grayscale(current_path)
+    selected_maps = []
+    for row in selected:
+        position = index_by_id[row["sample_id"]]
+        selected_maps.extend(
+            (maps43["r_prior"][position], maps43["r_current"][position])
+        )
+    clip = float(np.quantile(np.concatenate(selected_maps), 0.99))
+
+    units = _load_jsonl(args.jsd_units)
+    query_values = np.asarray(
+        [unit["jsd_joint"] for unit in units if unit["kind"] == "between_query"]
+    )
+    seed_values = np.asarray(
+        [unit["jsd_joint"] for unit in units if unit["kind"] == "between_seed"]
+    )
+    figure = plt.figure(figsize=(15.5, 7.0), constrained_layout=True)
+    grid = figure.add_gridspec(
+        2,
+        len(selected) + 2,
+        width_ratios=[1.0, *([1.0] * len(selected)), 1.35],
+    )
+    reference_axes = [figure.add_subplot(grid[row, 0]) for row in range(2)]
+    reference_axes[0].imshow(prior_image, cmap="gray", vmin=0.0, vmax=1.0)
+    reference_axes[0].set_title("Fixed prior CXR", fontsize=10)
+    reference_axes[1].imshow(current_image, cmap="gray", vmin=0.0, vmax=1.0)
+    reference_axes[1].set_title("Fixed current CXR", fontsize=10)
+    for axis in reference_axes:
+        axis.set_axis_off()
+
+    overlay_artist = None
+    for column, row in enumerate(selected, start=1):
+        position = index_by_id[row["sample_id"]]
+        prior_axis = figure.add_subplot(grid[0, column])
+        current_axis = figure.add_subplot(grid[1, column])
+        overlay_artist = _draw_overlay(
+            prior_axis, prior_image, maps43["r_prior"][position], clip=clip
+        )
+        _draw_overlay(
+            current_axis,
+            current_image,
+            maps43["r_current"][position],
+            clip=clip,
+        )
+        prior_axis.set_title(
+            f"Query: {row['finding']}\nReference: {row['reference_progression']}",
+            fontsize=10,
+        )
+        current_axis.text(
+            0.02,
+            0.03,
+            "current relevance",
+            transform=current_axis.transAxes,
+            color="white",
+            fontsize=8,
+            weight="bold",
+        )
+        prior_axis.text(
+            0.02,
+            0.03,
+            "prior propagated flow",
+            transform=prior_axis.transAxes,
+            color="white",
+            fontsize=8,
+            weight="bold",
+        )
+
+    summary_axis = figure.add_subplot(grid[:, -1])
+    box = summary_axis.boxplot(
+        [query_values, seed_values],
+        tick_labels=["Between-query", "Between-seed"],
+        patch_artist=True,
+        showfliers=False,
+        widths=0.58,
+    )
+    for patch, color in zip(box["boxes"], ("#4C78A8", "#F58518"), strict=True):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.72)
+    summary_axis.set_ylabel("Jensen-Shannon divergence (base 2)")
+    summary_axis.set_title("All eligible multi-finding pairs", fontsize=10)
+    summary_axis.set_ylim(0.0, 1.0)
+    summary_axis.grid(axis="y", alpha=0.25)
+    summary_axis.tick_params(axis="x", labelrotation=15)
+    stats = analysis["statistics"]
+    query_stat = stats["between_query"]["joint"]
+    seed_stat = stats["between_seed"]["joint"]
+    summary_axis.text(
+        0.03,
+        0.98,
+        (
+            f"Query median {query_stat['median']:.3f}\n"
+            f"clustered 95% CI [{query_stat['ci95_low']:.3f}, "
+            f"{query_stat['ci95_high']:.3f}]\n\n"
+            f"Seed median {seed_stat['median']:.3f}\n"
+            f"clustered 95% CI [{seed_stat['ci95_low']:.3f}, "
+            f"{seed_stat['ci95_high']:.3f}]\n\n"
+            "10,000 patient-clustered bootstraps"
+        ),
+        transform=summary_axis.transAxes,
+        va="top",
+        fontsize=8.5,
+        bbox={"facecolor": "white", "alpha": 0.88, "edgecolor": "0.8"},
+    )
+    if overlay_artist is None:  # pragma: no cover - selection invariant
+        raise RuntimeError("S3 has no overlay artist")
+    colorbar = figure.colorbar(
+        ScalarMappable(norm=Normalize(0.0, clip), cmap="magma"),
+        ax=reference_axes,
+        location="left",
+        shrink=0.68,
+        pad=0.025,
+    )
+    colorbar.set_label("Normalized attention relevance (shared scale)")
+    figure.suptitle(
+        "Query specificity and attention stability (seed 43; fixed CXR pair)",
+        fontsize=13,
+        weight="bold",
+    )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(args.output, dpi=300, facecolor="white")
+    plt.close(figure)
+    render_receipt = {
+        "schema": "prta-cxr.s3-render-receipt.private.v1",
+        "status": "PASS_PRIVATE_S3_RENDERED_PUBLIC_RELEASE_BLOCKED",
+        "figure_sha256": sha256_file(args.output),
+        "renderer_commit": args.renderer_commit,
+        "analysis_manifest_sha256": sha256_file(args.analysis_manifest),
+        "private_units_sha256": sha256_file(args.jsd_units),
+        "checkpoint_sha256": receipt43["checkpoint_sha256"],
+        "cohort_sha256": sha256_file(args.cohort),
+        "case_selection_before_attention_view": True,
+        "cases_changed_after_attention_view": False,
+        "query_count": len(selected),
+        "query_metadata": [
+            {
+                "finding": row["finding"],
+                "reference_progression": row["reference_progression"],
+            }
+            for row in selected
+        ],
+        "prior_image_sha256": sha256_file(prior_path),
+        "current_image_sha256": sha256_file(current_path),
+        "crop": "Resize(224, antialias=True) then CenterCrop(224)",
+        "interpolation": "bilinear",
+        "overlay_alpha": 0.4,
+        "colormap": "magma",
+        "shared_p99_clip": clip,
+        "single_shared_colorbar": True,
+        "publication_permission_confirmed": False,
+        "public_git_redistribution_permitted": False,
+        "permission_reason": (
+            "MIMIC-CXR-JPG governed source pixels; no separate affirmative "
+            "artifact-license receipt was found"
+        ),
+        "public_git_action": "EXCLUDE_PIXEL_FIGURE_AND_SOURCE_IMAGES",
+    }
+    args.receipt.parent.mkdir(parents=True, exist_ok=True)
+    args.receipt.write_text(
+        json.dumps(render_receipt, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(render_receipt, indent=2, sort_keys=True))
+    return 0
+
+
+def build_s3_public_release(
+    aggregate: Mapping[str, Any],
+    private_analysis: Mapping[str, Any],
+    render_receipt: Mapping[str, Any],
+) -> dict[str, Any]:
+    if aggregate.get("status") != "PASS_S3_AGGREGATE_GIT_SAFE":
+        raise ValueError("S3 public aggregate is not terminal PASS")
+    if private_analysis.get("status") != "PASS_S3_JSD_AND_CLUSTERED_BOOTSTRAP":
+        raise ValueError("S3 private analysis is not terminal PASS")
+    if render_receipt.get("status") != (
+        "PASS_PRIVATE_S3_RENDERED_PUBLIC_RELEASE_BLOCKED"
+    ):
+        raise ValueError("S3 private render receipt is not terminal PASS")
+    if render_receipt.get("public_git_redistribution_permitted") is not False:
+        raise ValueError("unexpected S3 public redistribution state")
+    return {
+        "schema": "prta-cxr.s3-query-sensitivity-release.v1",
+        "status": "PASS_S3_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED",
+        "source_commit": str(aggregate["source_commit"]),
+        "renderer_commit": str(render_receipt["renderer_commit"]),
+        "checkpoint_sha256": dict(aggregate["checkpoint_sha256"]),
+        "cohort_receipt_sha256": str(aggregate["cohort_receipt_sha256"]),
+        "private_analysis_manifest_sha256": str(
+            render_receipt["analysis_manifest_sha256"]
+        ),
+        "private_figure_sha256": str(render_receipt["figure_sha256"]),
+        "cohort": dict(aggregate["cohort"]),
+        "jsd": dict(aggregate["jsd"]),
+        "bootstrap": dict(aggregate["bootstrap"]),
+        "statistics": dict(aggregate["statistics"]),
+        "qualitative_queries": list(aggregate["qualitative_queries"]),
+        "qualitative_selection_rule": str(
+            aggregate["qualitative_selection_rule"]
+        ),
+        "selection_performed_before_image_or_attention_view": True,
+        "cases_changed_after_attention_view": False,
+        "plot": {
+            "seed": 43,
+            "crop": str(render_receipt["crop"]),
+            "interpolation": str(render_receipt["interpolation"]),
+            "overlay_alpha": float(render_receipt["overlay_alpha"]),
+            "colormap": str(render_receipt["colormap"]),
+            "shared_p99_clip": float(render_receipt["shared_p99_clip"]),
+            "single_shared_colorbar": True,
+            "summary": "boxplot without per-unit points",
+        },
+        "attention_capture": {
+            "native_post_softmax_attention": True,
+            "need_weights": True,
+            "average_attn_weights": False,
+            "cls_removed_and_patch_renormalized": True,
+            "batched_replay_absolute_tolerance": S3_BATCH_REPLAY_ATOL,
+            "probability_replay_absolute_tolerance": 2e-5,
+        },
+        "public_repository_visibility": "PUBLIC",
+        "publication_permission_confirmed": False,
+        "public_git_redistribution_permitted": False,
+        "excluded_from_public_git": [
+            "supp_figure_s3_query_sensitivity.png",
+            "source CXR pixels",
+            "patient/sample identifiers and private paths",
+            "per-row attention-flow maps",
+            "patient-level JSD units",
+        ],
+        "published_to_git": [
+            "selection/export/statistics/render code",
+            "tests",
+            "checkpoint and private-artifact hashes",
+            "aggregate JSD medians and patient-clustered confidence intervals",
+            "permission boundary and reproduction instructions",
+        ],
+        "permission_basis": {
+            "mimic_cxr_dua": (
+                "https://physionet.org/content/mimic-cxr-jpg/view-dua/2.1.0/"
+            ),
+            "repository_contract": "DATA_AVAILABILITY.md",
+            "reason": (
+                "No affirmative artifact-license receipt authorizes publishing "
+                "MIMIC-CXR-JPG pixels or patient-level derivatives in public Git."
+            ),
+        },
+    }
+
+
+def query_sensitivity_public_release_main(
+    argv: Sequence[str] | None = None,
+) -> int:
+    parser = argparse.ArgumentParser(
+        description="Append the Git-safe Figure S3 release to the attention manifest."
+    )
+    parser.add_argument("--attention-manifest", type=Path, required=True)
+    parser.add_argument("--aggregate", type=Path, required=True)
+    parser.add_argument("--private-analysis", type=Path, required=True)
+    parser.add_argument("--render-receipt", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    manifest = json.loads(args.attention_manifest.read_text(encoding="utf-8"))
+    if manifest.get("status") != (
+        "PASS_FIGURE5_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED"
+    ):
+        raise ValueError("base attention manifest is not Figure-5 terminal PASS")
+    aggregate = json.loads(args.aggregate.read_text(encoding="utf-8"))
+    private_analysis = json.loads(
+        args.private_analysis.read_text(encoding="utf-8")
+    )
+    render_receipt = json.loads(args.render_receipt.read_text(encoding="utf-8"))
+    if sha256_file(args.aggregate) == sha256_file(args.private_analysis):
+        raise ValueError("S3 aggregate/private manifests unexpectedly identical")
+    manifest["supplementary_figure_s3"] = build_s3_public_release(
+        aggregate, private_analysis, render_receipt
+    )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return 0
