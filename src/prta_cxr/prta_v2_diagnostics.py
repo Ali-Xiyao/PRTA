@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import string
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -307,14 +308,31 @@ def _validate_checkpoint_input_hashes(
 
     V0/V1 checkpoints predate matched-hard PRIOR use and therefore omit only
     that hash. V2 checkpoints used the map during training and bind the full
-    diagnostic input set. No other key-set difference is allowed.
+    diagnostic input set. Phase20 Final-S1 checkpoints additionally bind a
+    source-filter audit as immutable training provenance; it is not a runtime
+    diagnostic input. No other key-set difference is allowed.
     """
     diagnostic_keys = set(diagnostic_hashes)
     base_keys = diagnostic_keys - {"matched_hard_prior_map"}
     checkpoint_keys = set(checkpoint_hashes)
-    if checkpoint_keys not in (base_keys, diagnostic_keys):
+    source_filter_key = "source_filter_audit"
+    allowed_key_sets = {
+        frozenset(base_keys),
+        frozenset(diagnostic_keys),
+        frozenset({*base_keys, source_filter_key}),
+        frozenset({*diagnostic_keys, source_filter_key}),
+    }
+    if frozenset(checkpoint_keys) not in allowed_key_sets:
         raise ValueError("unsupported checkpoint input-hash key set")
+    if source_filter_key in checkpoint_hashes:
+        source_filter_hash = str(checkpoint_hashes[source_filter_key])
+        if len(source_filter_hash) != 64 or any(
+            character not in string.hexdigits for character in source_filter_hash
+        ):
+            raise ValueError("invalid source-filter audit hash")
     for key, value in checkpoint_hashes.items():
+        if key == source_filter_key:
+            continue
         if diagnostic_hashes.get(key) != value:
             raise ValueError(f"diagnostic input hash mismatch for {key}")
 

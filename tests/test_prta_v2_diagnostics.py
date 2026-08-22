@@ -160,6 +160,14 @@ def test_checkpoint_input_hashes_accept_base_or_full_diagnostic_contract():
     _validate_checkpoint_input_hashes(base, diagnostic)
     _validate_checkpoint_input_hashes(diagnostic, diagnostic)
 
+    source_filter_hash = "a" * 64
+    _validate_checkpoint_input_hashes(
+        {**base, "source_filter_audit": source_filter_hash}, diagnostic
+    )
+    _validate_checkpoint_input_hashes(
+        {**diagnostic, "source_filter_audit": source_filter_hash}, diagnostic
+    )
+
 
 def test_checkpoint_input_hashes_reject_unsupported_key_sets_and_hash_drift():
     diagnostic = {
@@ -180,6 +188,17 @@ def test_checkpoint_input_hashes_reject_unsupported_key_sets_and_hash_drift():
     drifted["weights"] = "wrong"
     with pytest.raises(ValueError, match="diagnostic input hash mismatch for weights"):
         _validate_checkpoint_input_hashes(drifted, diagnostic)
+
+    malformed_source_filter = {
+        **diagnostic,
+        "source_filter_audit": "not-a-sha256",
+    }
+    with pytest.raises(ValueError, match="invalid source-filter audit hash"):
+        _validate_checkpoint_input_hashes(malformed_source_filter, diagnostic)
+
+    unknown_provenance = {**diagnostic, "unknown_audit": "a" * 64}
+    with pytest.raises(ValueError, match="unsupported checkpoint input-hash key set"):
+        _validate_checkpoint_input_hashes(unknown_provenance, diagnostic)
 
 
 def test_ifusion_random_cmcp_validates_training_map_not_diagnostic_hard_map():
