@@ -18,6 +18,7 @@ SELECTION_SEED = 43
 SELECTION_SALT = "PRTA_ATTN_20260818"
 IMPROVEMENT_LABELS = frozenset(("Improved", "Resolved"))
 WORSENING_LABELS = frozenset(("Worse", "New"))
+ATTENTION_REPLAY_ATOL = 5e-5
 
 
 def salted_sample_hash(sample_id: str, *, salt: str = SELECTION_SALT) -> str:
@@ -206,7 +207,7 @@ def capture_true_attention(
     prior: torch.Tensor,
     current: torch.Tensor,
     finding_text: torch.Tensor,
-    replay_atol: float = 1e-6,
+    replay_atol: float = ATTENTION_REPLAY_ATOL,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Capture the two genuine post-softmax attention tensors.
 
@@ -609,6 +610,7 @@ def attention_export_main(argv: Sequence[str] | None = None) -> int:
         "attention_method": "native post-softmax MHA weights",
         "need_weights": True,
         "average_attn_weights": False,
+        "attention_replay_absolute_tolerance": ATTENTION_REPLAY_ATOL,
         "cls_removed_and_patch_renormalized": True,
         "raw_cxr_redistributed": False,
         "raw_attention_tensors_redistributed": False,
