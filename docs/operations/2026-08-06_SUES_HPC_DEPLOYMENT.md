@@ -4,7 +4,7 @@
 
 ## Scope and authority
 
-- Remote project root: `/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT`.
+- Remote project root: `<private-server-workspace>`.
 - Deployable project: the clean `PRTA-CXR` repository under that root, not the
   historical top-level VisualVIT experiment repository.
 - The execution manual and experiment plan in `docs/` remain authoritative.

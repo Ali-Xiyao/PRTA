@@ -36,7 +36,7 @@ roster，也没有启动训练。下一阶段仍是规则候选与 Luna 审核�
 ## 产物与哈希
 
 外部运行根目录：
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1`
+`<private-local-runtime>`
 
 - `sources_v1/mimic_cxr_jpg_studies.jsonl`
   - file SHA-256：`0e327327ede9fed1de565e89022c527eea718b221334af26e8daf18bb5b220f4`

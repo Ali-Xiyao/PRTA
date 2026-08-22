@@ -46,7 +46,7 @@
 
 所有逐样本 ID、报告、路径和分数均位于 Git 外：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\protected_label_quality_v2\private\analysis`
+`<private-local-runtime>\poststop_audits\protected_label_quality_v2\private\analysis`
 
 - `all_review_results.jsonl`：全部 33,615 条。
 - `all_flagged_for_review.csv`：全部 9,984 条需关注记录。
@@ -56,7 +56,7 @@
 
 最终只读回执位于：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\protected_label_quality_v2\final_audit_receipt.json`
+`<private-local-runtime>\poststop_audits\protected_label_quality_v2\final_audit_receipt.json`
 
 输入在复核前后的 SHA-256 完全一致，标签修改数为 0。
 

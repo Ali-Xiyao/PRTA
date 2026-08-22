@@ -1,0 +1,69 @@
+{
+  "checkpoint_root_role": "local_internal_assets_only",
+  "entries": [
+    {
+      "files": {
+        "best.pt": {
+          "bytes": 719473426,
+          "sha256": "42bdefcf50d4d0e5d34efe83d126d958ac5680bdb3cb559a287204b6de89bb77"
+        },
+        "config.json": {
+          "bytes": 2384,
+          "sha256": "1240e4bce9907f07a13819d6d73a37c753cf836523167039a33e1d8abdb64cd7"
+        },
+        "training_receipt.json": {
+          "bytes": 47768,
+          "sha256": "be0e332c5d76367fdf0422f5cae281a3ab1b20884e385bfcb59f417f246dffbe"
+        }
+      },
+      "local_relative_path": "checkpoints/final/S17",
+      "seed": 17
+    },
+    {
+      "files": {
+        "best.pt": {
+          "bytes": 719473426,
+          "sha256": "02cee98860ac85340b882c262a7ded73ec03b7408fc97d6c4378d1cd6814ab4c"
+        },
+        "config.json": {
+          "bytes": 2384,
+          "sha256": "6df708160c278f23651cfe1cfc71498bb5bc65a1679ac2699a40a649d69636e3"
+        },
+        "training_receipt.json": {
+          "bytes": 47757,
+          "sha256": "4acefe75bd616efa2e46e73413df9fd4987e0e00619df9619127212c224b688a"
+        }
+      },
+      "local_relative_path": "checkpoints/final/S28",
+      "seed": 28
+    },
+    {
+      "files": {
+        "best.pt": {
+          "bytes": 719472082,
+          "sha256": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140"
+        },
+        "config.json": {
+          "bytes": 2384,
+          "sha256": "1fc30eb3fb852c4cb67a8a450cef921a1c0f33b265fa2fe424e30c6a87c74abb"
+        },
+        "training_receipt.json": {
+          "bytes": 45107,
+          "sha256": "9fcc3def10b88e2182e478547fcb39ed6b8d967db63743b8e7f4175037cf8660"
+        }
+      },
+      "local_relative_path": "checkpoints/final/S43",
+      "seed": 43
+    }
+  ],
+  "git_storage": false,
+  "method": "PRTA-CXR",
+  "paper_method_identity": "Slim-S1",
+  "schema": "prta-cxr.final-checkpoint-manifest.v1",
+  "seeds": [
+    17,
+    28,
+    43
+  ],
+  "selection_performed": false
+}

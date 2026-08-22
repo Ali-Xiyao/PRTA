@@ -60,7 +60,7 @@ Silver 不能称为 Gold。
   `26f4f2e5e9b74840c222882311af44d5a6a2202888906f9c878efab6a739b10b`。
 
 运行目录：
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\luna_primary_full_v1\senior_panel_gold_v1`
+`<private-local-runtime>\luna_primary_full_v1\senior_panel_gold_v1`
 
 ## 当前边界
 

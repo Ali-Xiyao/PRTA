@@ -11,14 +11,10 @@ from prta_cxr.models.heads import (
 )
 from prta_cxr.models.prta import (
     PRTATemporalAdapter,
-    branch_decorrelation_loss,
     cmcp_margin_loss,
-    finding_conditioned_prototype_alignment_loss,
     invert_progression_logits,
     opposite_direction_cost_loss,
-    opposite_direction_margin_loss,
     state_preservation_loss,
-    transition_alignment_loss,
 )
 from prta_cxr.training.engine import build_train_model
 from prta_cxr.vision.biomedclip import (
@@ -59,24 +55,10 @@ def test_prta_shapes_native_heads_and_gradient_path():
 def test_losses_and_inversion_are_finite():
     first = torch.randn(5, 16)
     second = torch.randn(5, 16)
-    assert torch.isfinite(transition_alignment_loss(first, second))
     assert torch.isfinite(cmcp_margin_loss(first, second, torch.randn(5, 16)))
     assert torch.isfinite(state_preservation_loss(first, second))
     logits = torch.arange(5.0).unsqueeze(0)
     assert invert_progression_logits(logits).tolist() == [[0.0, 2.0, 1.0, 4.0, 3.0]]
-
-
-def test_finding_conditioned_prototype_alignment_uses_five_class_target():
-    visual = torch.tensor([[1.0, 0.0], [0.0, 1.0]], requires_grad=True)
-    prototypes = torch.zeros(2, 5, 2)
-    prototypes[0, 1] = torch.tensor([1.0, 0.0])
-    prototypes[1, 3] = torch.tensor([0.0, 1.0])
-    loss = finding_conditioned_prototype_alignment_loss(
-        visual, prototypes, torch.tensor([1, 3])
-    )
-    loss.backward()
-    assert torch.isfinite(loss)
-    assert visual.grad is not None
 
 
 def test_relation_residual_scale_is_near_zero_and_receives_gradient():
@@ -482,15 +464,6 @@ def test_h0_deployment_state_pruning_is_exact_and_skips_state_resampler():
     assert torch.equal(ordinary_logits, pruned_logits)
 
 
-def test_branch_decorrelation_penalizes_collapsed_embeddings():
-    state = torch.eye(4)
-    orthogonal = state.roll(1, dims=1)
-    collapsed = branch_decorrelation_loss(state, state)
-    separated = branch_decorrelation_loss(state, orthogonal)
-    assert collapsed == pytest.approx(1.0)
-    assert separated == pytest.approx(0.0)
-
-
 def test_repaired_dual_requires_h4_and_bounded_gate():
     base = {
         "family": "prta",
@@ -514,16 +487,6 @@ def test_repaired_dual_requires_h4_and_bounded_gate():
             nn.Identity(),
             {"model": base},
         )
-
-
-def test_direction_margin_penalizes_opposite_more_than_target():
-    target = torch.tensor([1, 2, 3, 4])
-    good = torch.zeros(4, 5)
-    good[torch.arange(4), target] = 2.0
-    bad = good.clone()
-    bad[torch.arange(4), torch.tensor([2, 1, 4, 3])] = 3.0
-    assert opposite_direction_margin_loss(good, target) == 0
-    assert opposite_direction_margin_loss(bad, target) > 0
 
 
 def test_direction_cost_directly_penalizes_opposite_probability():

@@ -17,7 +17,12 @@ manifests/labels/*.json*
 *.pt
 *.pth
 *.ckpt
+/checkpoints/final/
+/internal_assets/
 .env
 .planning/
+/task_plan.md
+/findings.md
+/progress.md
 .tmp/
 data/runtime/

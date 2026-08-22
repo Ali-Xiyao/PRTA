@@ -15,7 +15,7 @@
 
 权威 Train/Dev manifest：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_cleaned_split_v1_1\manifests\train_dev_cleaned_v1.jsonl`
+`<private-local-runtime>\formal_cleaned_split_v1_1\manifests\train_dev_cleaned_v1.jsonl`
 
 manifest SHA-256：
 

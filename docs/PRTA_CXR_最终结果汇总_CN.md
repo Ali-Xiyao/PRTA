@@ -144,14 +144,14 @@ Wave033 已完成并审计 Tail4/Tail6/Tail8。扩展矩阵新增 no-tail/Tail2/
 |---|---|---|
 | Wave033 九格条件消融终态 | `.../wave033_conditional_adapter_scope_ablation_v1_attempt2/final_nine_cell_aggregate.json` | `606e10c0168bd662fee07999f40e8d9c32134d039c049a5b992fea626d6f221d` |
 | 医生复核前 Internal-test 基线 | `.../wave035_tail8_internal_test_once_v1/outcome_attempt1/internal_test_terminal_receipt.json` | `7e7940252f7549eb0ae5320621489f3069fcb52faf72c974ba935c135a14a5d6` |
-| 正式医生确认 Internal-test | `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_internal_test_doctor_filtered_posthoc_v3_attempt2\outcome\doctor_rereview_filtered_posthoc_v3_attempt2_terminal_receipt.json` | `32c59e49dad3028841976d86a7a879868035cbc1252a1cb8db66e386319423e9` |
-| 正式 Internal-test 独立审计 | `H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_internal_test_doctor_filtered_posthoc_v3_attempt2\audit\independent_audit_receipt.json` | `8ceb92c5fbf4279585a8b77c3cbde1d94546f63a50cc742698a602835fcb3846` |
+| 正式医生确认 Internal-test | `<private-local-runtime>\formal_internal_test_doctor_filtered_posthoc_v3_attempt2\outcome\doctor_rereview_filtered_posthoc_v3_attempt2_terminal_receipt.json` | `32c59e49dad3028841976d86a7a879868035cbc1252a1cb8db66e386319423e9` |
+| 正式 Internal-test 独立审计 | `<private-local-runtime>\formal_internal_test_doctor_filtered_posthoc_v3_attempt2\audit\independent_audit_receipt.json` | `8ceb92c5fbf4279585a8b77c3cbde1d94546f63a50cc742698a602835fcb3846` |
 | 一次性 Gold 终态 | `.../wave040_tail8_gold_once_v1/outcome_attempt1/gold_terminal_receipt.json` | `ba7885b290192b4f3917d317f220b37faa8033309db40dcec28576f67e076297` |
 | Gold 独立审计 | `.../wave040_tail8_gold_once_v1/independent_audit_v1/independent_audit_receipt.json` | `de25ed33ec09c343b21605b625eeccaeffd67fcada4a117179b2bed7553916fc` |
 | Gold 正式清洗后 manifest | 私有运行时，不进入 Git | `6a9c868d07ac1bfd40b2c5b0de039868eb0723f695453bc1bdc7c5ee4cf269ad` |
 
 `...` 表示服务器根目录：
-`/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR/data/runtime/server_runs/continuous_lightweight_dev_search_v1`。
+`<private-server-runtime>`。
 
 ## 10. 下一步
 

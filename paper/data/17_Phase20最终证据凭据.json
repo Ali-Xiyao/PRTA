@@ -1,0 +1,787 @@
+{
+  "attempt_audit": {
+    "b1": [
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "b358f38f5c45e95e3f37fffb757629c9f53ab694726b10ee819f412614dfb199",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-calibration"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "fbfd7811ee075fe46a2ab08078443b70592fb61183669631c9d3dbd3adc4e288",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-probability-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "31339e54cea94ea430338ca0288dd106fb545fca13490aafb85abc3d26442ba5",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-probability-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "8e85cc5bbf839ea45f8deeae623ef52c8c2c95a26c7ad45fd6a6e92c70fa8e5d",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-probability-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "663344d05f7a0cffd5ac125c8503a2dae598c44558ddd443a3c5845b4b81e92a",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-state-efficiency-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "6d2898e437db43f9de2fb769452c3b8192bc84139f78f97e0048ead0a9bffc7e",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "evidence-subgroups"
+      }
+    ],
+    "b2": [
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "073644ad527282432a326f4c98c889830c015841df036c789d00cea0e8cde059",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B401-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "d13e52441bee159ddbbe93ef484ca32554bd56948e36305cca4f89c5c3602755",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B401-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "ff891384ee343de99053d715179072902595a5b426ea61952bfabe5eadea1e12",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B401-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "946209c5b229952694b389968dcee8f6114d940aef75e8c332e48a0d4ff08359",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B402-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "8294dd2c3c53d8cd6139eab1c663bb85e31143a234b1de0b8c939dd1e80212e7",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B402-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "8ea8889a681bc434728e4c40464808ae721b41f1a8c62c3992f682828f949804",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-B402-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "dc94eaf933c6fe3e31343f2695fe11a62434b839b1cd697c4282f19ceba0851c",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-BioViLT-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "9ead8d60a13d2ff02bceef6dcc833e0b36e4dbeda22616f1c588d165309adb3e",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-BioViLT-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "db832b0461332b78370be101b3f665f730343caa782f359f275f8bde4aadcb2b",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-BioViLT-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "ce8103e090046a90167462e9d126e74cfe097fa74d4e8e0eea6967deab254c66",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-CheXRelNet-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "cad5691afd42f59ec9eb6c6ca76530107940339f45ccb0389373b7613dd6cd4a",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-CheXRelNet-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "95a0b7737f62ad4776ea350c5938d52171b32392d5fe5a981fb09c0b29485d76",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-CheXRelNet-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "2e1699e69dd57d225641a5614cce4548aa1a452098e312b7ec24607685911738",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-F02-DMW0-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "1c52d484910a8c093dd6ccd17917fdc09f753391c9a1117c7775b04a06bdb05c",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-F02-DMW0-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "1d9cfdde705c6bec8c6c474be2e1e4ab39ff84192d91d3e102c23da4ca0d4eb5",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-F02-DMW0-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "032bb662bf2102819fdc31b50137ab982c4412a5f7190a8e38efad9574927306",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-S0-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "ad52e60e3ac09737b1f771782ccef27e0378fddd181778b4cf61615d4f774a1b",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-S0-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "c9f791fbc8f2ea6a8f29f10e161c71243826192a00c1003f0e6b12ad1bb19ef8",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-S0-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "9bfd9900a9e8315d460a262b954301e5312418030d88c765500171988fe85edf",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILA8-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "f58d2b857c88cc1e6f2db604d27d36a6419bacee0e15e4acd0647becc653e7a9",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILA8-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "e802002e7e9acbb3f7616c825156d4ead5e304ed97c3b928848fc682d5c8d011",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILA8-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "2dabba1fa03d84e53cbe9154c33d1f386b9708061c4215e47c3184ea349c8412",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILAPaper-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "8bdc107306e1b313d9708447e92bd356c3470766672739bea403b0610a8846ea",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILAPaper-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "bd94ed9f95ea03dd110397a5c97a10b7519d1b6692e028741d4c78f523c51ef9",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-TILAPaper-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "6b3458b5e0e5e9142fb44dadcfcaf5f4e5a62e9fe2750d4e957b11a34156feb2",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-V2-S17"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "6fc34e1bb921328b130a8ff180162bc3b7e7dfe9361988a7b3498d8c994468cc",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-V2-S28"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "f27f5c843a35bef2e492387924770b60f6e61b4b77e133265e65d223c66bb89c",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-export-V2-S43"
+      },
+      {
+        "attempts": [
+          {
+            "selected": true,
+            "state_sha256": "3cb1f523098bf536986362e0f68a05e74fc6a28ea3926f126962c46d6e6ab7b3",
+            "status": "PASS"
+          }
+        ],
+        "job_id": "b2-post-comparator-statistics"
+      }
+    ]
+  },
+  "b1_job_count": 6,
+  "b1_jobs": [
+    {
+      "group": "calibration_selective_prediction",
+      "job_id": "evidence-calibration",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "b41c072487a49ac4d2b03fbc55ef0c263070404779cebefc78c2a6c77a032ad8",
+          "suffix": "calibration/manifest.json"
+        }
+      ],
+      "state_sha256": "b358f38f5c45e95e3f37fffb757629c9f53ab694726b10ee819f412614dfb199"
+    },
+    {
+      "group": "probability_and_prior_stress",
+      "job_id": "evidence-probability-S17",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "68abda36ba25a98cc82dba8be1fefa3f9bc4bc911782b428a3485c5c6f4c5b3f",
+          "suffix": "probability/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "fbfd7811ee075fe46a2ab08078443b70592fb61183669631c9d3dbd3adc4e288"
+    },
+    {
+      "group": "probability_and_prior_stress",
+      "job_id": "evidence-probability-S28",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "11e71114fd65a1987ada73a63e3d5d8daf47b6442e2613cda3e80dc3df1f193f",
+          "suffix": "probability/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "31339e54cea94ea430338ca0288dd106fb545fca13490aafb85abc3d26442ba5"
+    },
+    {
+      "group": "probability_and_prior_stress",
+      "job_id": "evidence-probability-S43",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "74e2e6684d14859e78c9cc41daf51a077c2c6f16b7aa15469ff6fb855b360e02",
+          "suffix": "probability/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "8e85cc5bbf839ea45f8deeae623ef52c8c2c95a26c7ad45fd6a6e92c70fa8e5d"
+    },
+    {
+      "group": "state_pruning_and_efficiency",
+      "job_id": "evidence-state-efficiency-S43",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "652ae371dd22270f0b00aac94b6072de62dab713493ed6047f75c190c79eec04",
+          "suffix": "efficiency/S43/manifest.json"
+        }
+      ],
+      "state_sha256": "663344d05f7a0cffd5ac125c8503a2dae598c44558ddd443a3c5845b4b81e92a"
+    },
+    {
+      "group": "subgroup_long_tail",
+      "job_id": "evidence-subgroups",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "6a4998a8e135912206b7b05a0d09c623fa133ebd4ee807c3c3737f18382cf778",
+          "suffix": "subgroups/manifest.json"
+        }
+      ],
+      "state_sha256": "6d2898e437db43f9de2fb769452c3b8192bc84139f78f97e0048ead0a9bffc7e"
+    }
+  ],
+  "b2_job_count": 28,
+  "b2_jobs": [
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B401-S17",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "80f8b71e10d195b1a079386e959bbc47e8a3a3ccafc4137c8dd1f70ff08bd58c",
+          "suffix": "probability/B401/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "073644ad527282432a326f4c98c889830c015841df036c789d00cea0e8cde059"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B401-S28",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "fa6535d521560fe03035c6f031ade79000ab8d6a709a1621248f8f2daeba497e",
+          "suffix": "probability/B401/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "d13e52441bee159ddbbe93ef484ca32554bd56948e36305cca4f89c5c3602755"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B401-S43",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "c1333beec6b6a0d2ac9ede6e9e8e030367fd2e1a0606f07d6b9d44f71d15737f",
+          "suffix": "probability/B401/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "ff891384ee343de99053d715179072902595a5b426ea61952bfabe5eadea1e12"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B402-S17",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "b18e14ccaead110520a346d3765908e28c71b5e67b631d117dbbd63e70cb4d3d",
+          "suffix": "probability/B402/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "946209c5b229952694b389968dcee8f6114d940aef75e8c332e48a0d4ff08359"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B402-S28",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "ac220eb8cb698274f9c00f19d9ead3e57c925e7d66b93ec83130dbf2a6e80309",
+          "suffix": "probability/B402/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "8294dd2c3c53d8cd6139eab1c663bb85e31143a234b1de0b8c939dd1e80212e7"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-B402-S43",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "c8965d2f36aa93560e59b084683f9cd8e05c9444ec69e1ad3c4ef3c744201c9c",
+          "suffix": "probability/B402/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "8ea8889a681bc434728e4c40464808ae721b41f1a8c62c3992f682828f949804"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-BioViLT-S17",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "848906dc24859481362dc3f7ae09d12dc6b3280368ef48c5aaf90225ef131252",
+          "suffix": "probability/BioViLT/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "dc94eaf933c6fe3e31343f2695fe11a62434b839b1cd697c4282f19ceba0851c"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-BioViLT-S28",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "73c5916f55c0c922b95988748e29ef39bd797cd8c9838d41a15551939f583f35",
+          "suffix": "probability/BioViLT/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "9ead8d60a13d2ff02bceef6dcc833e0b36e4dbeda22616f1c588d165309adb3e"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-BioViLT-S43",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "606b89054dcfaaf3b6a8702f2e0db2fc9b5e1a4fefab37dde66757760ced9271",
+          "suffix": "probability/BioViLT/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "db832b0461332b78370be101b3f665f730343caa782f359f275f8bde4aadcb2b"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-CheXRelNet-S17",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "ea400a64432ce77a5e0c3d76c03c9be4d8946711ff5380d0174be7aa78d36868",
+          "suffix": "probability/CheXRelNet/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "ce8103e090046a90167462e9d126e74cfe097fa74d4e8e0eea6967deab254c66"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-CheXRelNet-S28",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "3e832a7d9b6faef74cd06816d2a130c37dbe25bc83db1b31f5756eef5f91047b",
+          "suffix": "probability/CheXRelNet/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "cad5691afd42f59ec9eb6c6ca76530107940339f45ccb0389373b7613dd6cd4a"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-CheXRelNet-S43",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "81adbec25f8fca087377752125074adcd12f57ba76000423f973218070626b1b",
+          "suffix": "probability/CheXRelNet/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "95a0b7737f62ad4776ea350c5938d52171b32392d5fe5a981fb09c0b29485d76"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-F02-DMW0-S17",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "82b633976627e73a1b1415d73ff59be547f56f80a7bd3b68a04386b1823dbfbe",
+          "suffix": "probability/F02-DMW0/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "2e1699e69dd57d225641a5614cce4548aa1a452098e312b7ec24607685911738"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-F02-DMW0-S28",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "9e0245f8ff867ff5a6db83ab9d36d4bf8f28d9813e11969a8bbdcad12895237d",
+          "suffix": "probability/F02-DMW0/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "1c52d484910a8c093dd6ccd17917fdc09f753391c9a1117c7775b04a06bdb05c"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-F02-DMW0-S43",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "6a662f03b5fc20a9abbb0cab9dec2d7cbdf8d6ffd1457334ac96bdbce3629eef",
+          "suffix": "probability/F02-DMW0/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "1d9cfdde705c6bec8c6c474be2e1e4ab39ff84192d91d3e102c23da4ca0d4eb5"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-S0-S17",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "f3ac80cb03105fb091e3ade119fa139652f5a02bfaa2cac359320bbbb37db525",
+          "suffix": "probability/S0/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "032bb662bf2102819fdc31b50137ab982c4412a5f7190a8e38efad9574927306"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-S0-S28",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "3227910467f0b8bddb39a50ef42225f8a399d586cd1727fa655afa43695216dc",
+          "suffix": "probability/S0/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "ad52e60e3ac09737b1f771782ccef27e0378fddd181778b4cf61615d4f774a1b"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-S0-S43",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "7545bf93e3984c6ac4f2ba6996fb514ddf54aa0799f9478b9edd91c56540a1e7",
+          "suffix": "probability/S0/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "c9f791fbc8f2ea6a8f29f10e161c71243826192a00c1003f0e6b12ad1bb19ef8"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILA8-S17",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "e0b4746441ae718b9691f891fdcd85893561c2861b8595b8a7c3ada8333b2410",
+          "suffix": "probability/TILA8/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "9bfd9900a9e8315d460a262b954301e5312418030d88c765500171988fe85edf"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILA8-S28",
+      "lane": "rtx3090_0",
+      "outputs": [
+        {
+          "sha256": "2af0f4708a3dcf6c487743f544b1b54f443d0988dc48ed44f63d1f196baab427",
+          "suffix": "probability/TILA8/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "f58d2b857c88cc1e6f2db604d27d36a6419bacee0e15e4acd0647becc653e7a9"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILA8-S43",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "c0a09c2bcc0d49ebd689abc481f893f93f350890469da8ee50e9fad9851c4832",
+          "suffix": "probability/TILA8/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "e802002e7e9acbb3f7616c825156d4ead5e304ed97c3b928848fc682d5c8d011"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILAPaper-S17",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "389837433d17ff12fec435bae648f40d8cc501b1833a235a3969c4562386ced3",
+          "suffix": "probability/TILAPaper/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "2dabba1fa03d84e53cbe9154c33d1f386b9708061c4215e47c3184ea349c8412"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILAPaper-S28",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "7796a27af4923faadcf773b8e37bf875f35f41e8715f0230cd6d10592cc8db44",
+          "suffix": "probability/TILAPaper/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "8bdc107306e1b313d9708447e92bd356c3470766672739bea403b0610a8846ea"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-TILAPaper-S43",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "be2cfe1d20ac243ae0c268e33c85d692ded1d1230a2664aaebda8f34b1520787",
+          "suffix": "probability/TILAPaper/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "bd94ed9f95ea03dd110397a5c97a10b7519d1b6692e028741d4c78f523c51ef9"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-V2-S17",
+      "lane": "rtx3090_1",
+      "outputs": [
+        {
+          "sha256": "892eb8b528ad38473f59c9a80b761c36a6d06384dcd1785c7120ac293e6f4533",
+          "suffix": "probability/V2/S17/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "6b3458b5e0e5e9142fb44dadcfcaf5f4e5a62e9fe2750d4e957b11a34156feb2"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-V2-S28",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "2bf783f91c8a84e9f9a1e9cbdb7f624455403309f28db533b9ea408f742b344c",
+          "suffix": "probability/V2/S28/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "6fc34e1bb921328b130a8ff180162bc3b7e7dfe9361988a7b3498d8c994468cc"
+    },
+    {
+      "group": "phase20_b2_probability_export",
+      "job_id": "b2-export-V2-S43",
+      "lane": "a800_9929",
+      "outputs": [
+        {
+          "sha256": "84aba2da23b202baaa2857243a03d254d60ae6d3426c025a2072723455856719",
+          "suffix": "probability/V2/S43/candidate_probability_diagnostic_receipt.json"
+        }
+      ],
+      "state_sha256": "f27f5c843a35bef2e492387924770b60f6e61b4b77e133265e65d223c66bb89c"
+    },
+    {
+      "group": "phase20_b2_statistics",
+      "job_id": "b2-post-comparator-statistics",
+      "lane": "a800_3066",
+      "outputs": [
+        {
+          "sha256": "c717cdca62c4e442ec6a7cb4ec6708f62f97b00b3284303079f053a6785eb14b",
+          "suffix": "b2_statistics.json"
+        }
+      ],
+      "state_sha256": "3cb1f523098bf536986362e0f68a05e74fc6a28ea3926f126962c46d6e6ab7b3"
+    }
+  ],
+  "clinician_manual_work_included": false,
+  "comparator_final_sha256": "a248be5ecfd655b16439c5fe19b826363652a4c4fce703ea4d836d39ff1ddb1e",
+  "created_at": "2026-08-22T05:32:34.338231+00:00",
+  "evidence_families": [
+    "PRIOR stress",
+    "calibration",
+    "risk coverage",
+    "subgroups",
+    "state pruning",
+    "cached-feature efficiency",
+    "safety routing",
+    "three-seed disagreement",
+    "patient-cluster paired bootstrap",
+    "Holm-adjusted primary contrasts"
+  ],
+  "external_evaluation_included": false,
+  "gold_opened": false,
+  "internal_test_opened": false,
+  "phase20_a_final_sha256": "a572f466907b5d5b9a3d151f5182d3652b22e83a8d44be1d8e0ddce23ac23b0d",
+  "phase_c_optional_included": false,
+  "protected_outcome_read_count": 0,
+  "schema": "prta-cxr.phase20-evidence-final-aggregate.v1",
+  "selection_performed": false,
+  "status": "PASS_PHASE20_EVIDENCE_FINAL_NO_SELECTION_AGGREGATE",
+  "winner_selected": false
+}

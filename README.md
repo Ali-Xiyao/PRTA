@@ -13,26 +13,32 @@ Qwen SFT attempts are intentionally absent.
 
 ## Current status
 
-The final paper mainline is frozen as **PRTA-CXR-Slim / Slim-S1**. Phase20-A
-has passed its formal 88/88 finalizer, covering the full-Train/official-Dev
-confirmation and non-external evidence matrix. The active 24-cell comparator
-has a Git-safe interim snapshot with 14 PASS, 4 RUNNING, and 6 PENDING cells;
-its final report remains gated by the strict 24/24 finalizer.
+The final paper method is **PRTA-CXR**; `Slim-S1` is retained only as the
+frozen configuration identity. Phase20-A passed its formal 88/88 finalizer,
+the longitudinal comparator passed 24/24, Phase20-B1 passed 6/6, Phase20-B2
+passed 28/28, and the final evidence finalizer passed without model selection.
 V2 remains historical development
 evidence and is not the final
 paper method. See the authoritative
 [Slim-S1 Phase20 protocol](docs/PRTA_CXR_Slim-S1最终主线锁定与确认实验协议_CN.md).
 
-The focused six-job Phase20-B1 Slim-S1 diagnostic pipeline, separate non-blocking
-Phase C optional catalog, Phase20-B2 paired-statistics pipeline,
-three authoritative finalizers, and the post-cleanup 8-system × 3-seed comparator
-rebuild are implemented and hash-gated. Phase20-B1 is frozen as six queued jobs,
-while B2 remains gated by the comparator and B1 evidence. ReXGradient/external
+The focused six-job Phase20-B1 diagnostic pipeline, Phase20-B2 paired-statistics
+pipeline, three authoritative finalizers, and the post-cleanup 8-system × 3-seed
+comparator rebuild are complete and hash-gated. The final result package is in
+[`paper/`](paper/README.md). ReXGradient/external
 validation has been retired from the active paper
 evidence; bidirectional MIMIC-CXR/CheXpert Plus source-held evaluation is the
 active cross-source generalization experiment. It must not be described as
 independent external clinical validation. Internal-test, Gold, and clinician
 manual work remain excluded.
+
+The final implementation contains only the four active optimization terms:
+classification, state anchor, opposite-direction cost, and matched-hard CMCP.
+Five legacy losses whose frozen weights were exactly zero were removed from the
+main method and preserved only in the VisualVIT history repository. Exact final
+checkpoints are local internal assets and intentionally excluded from Git; their
+immutable hashes are recorded in
+[`manifests/final_prta_cxr_checkpoints.json`](manifests/final_prta_cxr_checkpoints.json).
 
 Git-safe pre-Phase20 source/config/aggregate history is frozen on
 `codex/archive-v2-history-before-phase20` at

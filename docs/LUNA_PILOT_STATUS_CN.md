@@ -25,7 +25,7 @@
 - Final label file SHA-256：`59a230b2d824fa501e512ab040a04531fc751faf203bcfe276c094d1cc8ab4b7`
 
 运行根目录：
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\labels_v1`
+`<private-local-runtime>\labels_v1`
 
 ## Pilot 结果
 

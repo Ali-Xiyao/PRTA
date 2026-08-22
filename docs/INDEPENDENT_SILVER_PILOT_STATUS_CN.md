@@ -108,7 +108,7 @@ AI 每条只输出 `sample_id + ai_label`，没有理由、置信度或证据引
 
 本地运行根：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\independent_silver_v1`
+`<private-local-runtime>\independent_silver_v1`
 
 关键产物：
 

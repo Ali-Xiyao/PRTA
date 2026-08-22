@@ -16,7 +16,7 @@ Luna、Sol、历史多种子误判、高 NLL、方向相反错误和近似 TracI
 
 不移动、不删除原始影像，也不原地修改历史 manifest。全部排除病例的完整内部记录放在私有隔离目录：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_cleaned_split_v1_1\quarantine`
+`<private-local-runtime>\formal_cleaned_split_v1_1\quarantine`
 
 其中：
 
@@ -48,11 +48,11 @@ Top 3%、Top 5% 与 Top 10% 是严格嵌套集合，因此最终排除的是 Top
 
 活动指针：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\active_cleaned_split.json`
+`<private-local-runtime>\active_cleaned_split.json`
 
 冻结回执：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\formal_cleaned_split_v1_1\cleaned_split_freeze_receipt.json`
+`<private-local-runtime>\formal_cleaned_split_v1_1\cleaned_split_freeze_receipt.json`
 
 冻结回执 SHA-256：
 

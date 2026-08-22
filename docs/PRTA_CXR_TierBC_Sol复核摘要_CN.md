@@ -54,7 +54,7 @@ Tier B 是更需要人工复核的层级，尤其是 `New` 和 `Resolved`：其�
 
 逐病例结果、完整报告、真实内部ID和路径全部保存在 Git 外私有目录：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\tier_bc_sol_blind_v1`
+`<private-local-runtime>\poststop_audits\tier_bc_sol_blind_v1`
 
 独立审计 SHA-256：
 `98c3b3e177fa179aade7fde116ad6091d85edc03f5622165bfb85f10f72945b0`。

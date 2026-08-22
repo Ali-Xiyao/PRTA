@@ -466,52 +466,6 @@ class PRTATrainingHeads(nn.Module):
         return self.progression_classifier(transition_embedding)
 
 
-def transition_alignment_loss(
-    transition_embeddings: torch.Tensor,
-    text_embeddings: torch.Tensor,
-    *,
-    temperature: float = 0.07,
-) -> torch.Tensor:
-    if transition_embeddings.shape != text_embeddings.shape:
-        raise ValueError("transition/text embedding shapes differ")
-    if temperature <= 0:
-        raise ValueError("temperature must be positive")
-    visual = F.normalize(transition_embeddings, dim=-1)
-    text = F.normalize(text_embeddings, dim=-1)
-    logits = visual @ text.transpose(0, 1) / temperature
-    targets = torch.arange(logits.shape[0], device=logits.device)
-    return 0.5 * (
-        F.cross_entropy(logits, targets)
-        + F.cross_entropy(logits.transpose(0, 1), targets)
-    )
-
-
-def finding_conditioned_prototype_alignment_loss(
-    transition_embeddings: torch.Tensor,
-    prototype_embeddings: torch.Tensor,
-    target: torch.Tensor,
-    *,
-    temperature: float = 0.07,
-) -> torch.Tensor:
-    if transition_embeddings.ndim != 2:
-        raise ValueError("transition embeddings must have shape [B, D]")
-    expected = (
-        transition_embeddings.shape[0],
-        len(PROGRESSION_LABELS),
-        transition_embeddings.shape[1],
-    )
-    if prototype_embeddings.shape != expected:
-        raise ValueError("prototype embeddings must have shape [B, 5, D]")
-    if target.shape != (transition_embeddings.shape[0],):
-        raise ValueError("prototype target must have shape [B]")
-    if temperature <= 0:
-        raise ValueError("temperature must be positive")
-    visual = F.normalize(transition_embeddings, dim=-1)
-    prototypes = F.normalize(prototype_embeddings, dim=-1)
-    logits = torch.einsum("bd,bkd->bk", visual, prototypes) / temperature
-    return F.cross_entropy(logits, target)
-
-
 def cmcp_margin_loss(
     true_transition: torch.Tensor,
     counterfactual_transition: torch.Tensor,
@@ -547,40 +501,6 @@ def project_equivariant_inversion_logits(
     )
     projected_reversed = invert_progression_logits(projected_forward)
     return projected_forward, projected_reversed
-
-
-def temporal_inversion_loss(
-    forward_logits: torch.Tensor, reversed_logits: torch.Tensor
-) -> torch.Tensor:
-    mapped_forward = invert_progression_logits(forward_logits)
-    target = F.softmax(mapped_forward.detach(), dim=-1)
-    return F.kl_div(
-        F.log_softmax(reversed_logits, dim=-1),
-        target,
-        reduction="batchmean",
-    )
-
-
-def opposite_direction_margin_loss(
-    logits: torch.Tensor,
-    target: torch.Tensor,
-    *,
-    margin: float = 0.2,
-) -> torch.Tensor:
-    if logits.ndim != 2 or logits.shape[-1] != len(PROGRESSION_LABELS):
-        raise ValueError("direction-margin logits must have shape [B, 5]")
-    if target.shape != (logits.shape[0],):
-        raise ValueError("direction-margin target must have shape [B]")
-    if margin < 0:
-        raise ValueError("direction-margin margin must be non-negative")
-    inversion = INVERSION_INDEX.to(device=target.device)
-    directional = target != 0
-    if not bool(directional.any()):
-        return logits.sum() * 0
-    row = torch.arange(target.shape[0], device=target.device)
-    target_logits = logits[row, target]
-    opposite_logits = logits[row, inversion[target]]
-    return F.relu(margin - target_logits + opposite_logits)[directional].mean()
 
 
 def opposite_direction_cost_loss(
@@ -628,17 +548,3 @@ def state_preservation_loss(
         raise ValueError("state-preservation sample weights must be non-negative")
     denominator = sample_weights.sum().clamp_min(torch.finfo(losses.dtype).eps)
     return (losses * sample_weights).sum() / denominator
-
-
-def branch_decorrelation_loss(
-    state_embedding: torch.Tensor, transition_embedding: torch.Tensor
-) -> torch.Tensor:
-    """Discourage per-sample state/transition collapse without fixing direction."""
-    if state_embedding.shape != transition_embedding.shape:
-        raise ValueError("state/transition embedding shapes differ")
-    cosine = F.cosine_similarity(
-        state_embedding,
-        transition_embedding,
-        dim=-1,
-    )
-    return cosine.square().mean()

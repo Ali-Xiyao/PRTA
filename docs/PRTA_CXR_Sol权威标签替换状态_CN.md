@@ -39,13 +39,13 @@ Dev 和 Internal-test 标签。新版本已经物化并通过独立磁盘审计�
 
 私有运行根：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\sol_authoritative_protected_v1`
+`<private-local-runtime>\poststop_audits\sol_authoritative_protected_v1`
 
 未来命令应设置：
 
 ```powershell
 $env:PRTA_CXR_SOL_LABEL_ROOT = `
-  'H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\sol_authoritative_protected_v1'
+  '<private-local-runtime>\poststop_audits\sol_authoritative_protected_v1'
 
 $SOL_TRAIN_DEV = `
   "$env:PRTA_CXR_SOL_LABEL_ROOT\private\train_dev_sol_authoritative_v2.jsonl"

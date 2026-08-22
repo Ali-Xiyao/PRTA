@@ -31,14 +31,9 @@ from prta_cxr.models.prta import (
     FrozenTailWithAdapters,
     PRTATemporalAdapter,
     PRTATrainingHeads,
-    branch_decorrelation_loss,
     cmcp_margin_loss,
-    finding_conditioned_prototype_alignment_loss,
     opposite_direction_cost_loss,
-    opposite_direction_margin_loss,
     state_preservation_loss,
-    temporal_inversion_loss,
-    transition_alignment_loss,
 )
 from prta_cxr.training.losses import progression_classification_loss
 
@@ -493,6 +488,25 @@ def load_training_config(path: Path) -> dict[str, Any]:
         raise ValueError("unsupported training config schema")
     if int(config["optimization"]["epochs"]) <= 0:
         raise ValueError("epochs must be positive")
+    retired_losses = (
+        "alignment",
+        "branch_decorrelation",
+        "direction_margin",
+        "inversion",
+        "prototype_alignment",
+    )
+    nonzero_retired = {
+        name: float(config["loss_weights"].get(name, 0.0))
+        for name in retired_losses
+        if float(config["loss_weights"].get(name, 0.0)) != 0.0
+    }
+    if nonzero_retired:
+        raise ValueError(
+            "final PRTA-CXR does not support retired zero-weight losses: "
+            f"{sorted(nonzero_retired)}"
+        )
+    if bool(config["optimization"].get("two_stage_training", False)):
+        raise ValueError("final PRTA-CXR does not support retired two-stage training")
     return config
 
 
@@ -519,62 +533,23 @@ def _loss(
     total = float(weights.get("classification", 1.0)) * progression_classification_loss(
         logits, target, model.config.get("classification_loss")
     )
-    direction_weight = float(weights.get("direction_margin", 0.0))
-    if direction_weight:
-        direction_spec = dict(model.config.get("direction_margin", {}))
-        total = total + direction_weight * opposite_direction_margin_loss(
-            logits,
-            target,
-            margin=float(direction_spec.get("margin", 0.2)),
-        )
     direction_cost_weight = float(weights.get("opposite_direction_cost", 0.0))
     if direction_cost_weight:
         total = total + direction_cost_weight * opposite_direction_cost_loss(
             logits,
             target,
         )
-    inversion_weight = float(weights.get("inversion", 0.0))
     auxiliary_requested = any(
         float(weights.get(name, 0.0))
-        for name in (
-            "alignment",
-            "state",
-            "cmcp",
-            "prototype_alignment",
-            "branch_decorrelation",
-        )
+        for name in ("state", "cmcp")
     )
     if output is None:
         if auxiliary_requested:
             raise ValueError(
-                "native baselines require zero non-inversion auxiliary-loss weights"
-            )
-        if inversion_weight:
-            _, reverse_logits, _ = model(current, prior, finding)
-            total = total + inversion_weight * temporal_inversion_loss(
-                logits, reverse_logits
+                "native baselines require zero PRTA auxiliary-loss weights"
             )
         return total, logits
     projected_text = model.training_heads.transition_text(transition_text)
-    total = total + float(weights.get("alignment", 0.0)) * transition_alignment_loss(
-        output.transition_embedding, projected_text
-    )
-    prototype_weight = float(weights.get("prototype_alignment", 0.0))
-    if prototype_weight:
-        if "transition_prototypes" not in batch:
-            raise ValueError("prototype alignment requires transition prototypes")
-        projected_prototypes = model.training_heads.transition_text(
-            batch["transition_prototypes"].to(device)
-        )
-        prototype_spec = dict(model.config.get("prototype_alignment", {}))
-        total = total + prototype_weight * (
-            finding_conditioned_prototype_alignment_loss(
-                output.transition_embedding,
-                projected_prototypes,
-                target,
-                temperature=float(prototype_spec.get("temperature", 0.07)),
-            )
-        )
     components = dict(model.config["model"].get("components", {}))
     state_weights = None
     if bool(components.get("selective_state_anchor", False)):
@@ -589,17 +564,6 @@ def _loss(
         output.frozen_current_embedding,
         sample_weights=state_weights,
     )
-    total = total + float(
-        weights.get("branch_decorrelation", 0.0)
-    ) * branch_decorrelation_loss(
-        output.state_embedding,
-        output.transition_embedding,
-    )
-    if inversion_weight:
-        _, reverse_logits, _ = model(current, prior, finding)
-        total = total + inversion_weight * temporal_inversion_loss(
-            logits, reverse_logits
-        )
     cmcp_weight = float(weights.get("cmcp", 0.0))
     if cmcp_weight:
         matching = str(model.config.get("cmcp", {}).get("matching", "in_batch_roll_v1"))
@@ -829,55 +793,6 @@ def _weight_averaged_evaluation_model(
     return averaged_model.module
 
 
-def _build_two_stage_training(
-    optimization: Mapping[str, Any],
-    loss_weights: Mapping[str, float],
-    *,
-    epochs: int,
-) -> dict[str, Any]:
-    enabled = bool(optimization.get("two_stage_training", False))
-    if not enabled:
-        return {
-            "enabled": False,
-            "stage_one_name": "macro_f1",
-            "stage_two_name": "disabled",
-        }
-    if epochs < 2:
-        raise ValueError("two-stage training requires at least two epochs")
-    if str(optimization.get("learning_rate_schedule", "constant")) != "constant":
-        raise ValueError("two-stage training currently requires constant learning rate")
-    start_ratio = float(optimization.get("stage_two_start_ratio", 0.5))
-    learning_rate_ratio = float(optimization.get("stage_two_learning_rate_ratio", 0.1))
-    direction_multiplier = float(
-        optimization.get("stage_two_direction_margin_multiplier", 2.0)
-    )
-    if "stage_two_oder_ceiling" not in optimization:
-        raise ValueError("two-stage training requires stage_two_oder_ceiling")
-    oder_ceiling = float(optimization["stage_two_oder_ceiling"])
-    if not 0.0 < start_ratio < 1.0:
-        raise ValueError("stage_two_start_ratio must be in (0, 1)")
-    if not 0.0 < learning_rate_ratio < 1.0:
-        raise ValueError("stage_two_learning_rate_ratio must be in (0, 1)")
-    if direction_multiplier <= 1.0:
-        raise ValueError("stage_two_direction_margin_multiplier must exceed 1")
-    if not 0.0 <= oder_ceiling <= 1.0:
-        raise ValueError("stage_two_oder_ceiling must be in [0, 1]")
-    direction_weight = float(loss_weights.get("direction_margin", 0.0))
-    if direction_weight <= 0.0:
-        raise ValueError("two-stage training requires positive direction-margin weight")
-    start_epoch = min(max(int(epochs * start_ratio), 1), epochs - 1)
-    return {
-        "enabled": True,
-        "stage_one_name": "macro_f1",
-        "stage_two_name": "low_lr_oder_constrained",
-        "stage_two_start_ratio": start_ratio,
-        "stage_two_start_epoch": start_epoch,
-        "stage_two_learning_rate_ratio": learning_rate_ratio,
-        "stage_two_direction_margin_multiplier": direction_multiplier,
-        "stage_two_oder_ceiling": oder_ceiling,
-    }
-
-
 def _build_opposite_direction_cost(
     loss_weights: Mapping[str, float],
 ) -> dict[str, Any]:
@@ -902,52 +817,6 @@ def _build_opposite_direction_cost(
         ],
         "reduction": "directional_targets_mean",
     }
-
-
-def _apply_two_stage_epoch_policy(
-    optimizer: torch.optim.Optimizer,
-    base_loss_weights: Mapping[str, float],
-    audit: Mapping[str, Any],
-    *,
-    epoch: int,
-    base_learning_rate: float,
-) -> tuple[dict[str, float], str]:
-    weights = {name: float(value) for name, value in base_loss_weights.items()}
-    if not bool(audit["enabled"]):
-        return weights, str(audit["stage_one_name"])
-    stage_two = epoch >= int(audit["stage_two_start_epoch"])
-    learning_rate = base_learning_rate
-    if stage_two:
-        learning_rate *= float(audit["stage_two_learning_rate_ratio"])
-        weights["direction_margin"] *= float(
-            audit["stage_two_direction_margin_multiplier"]
-        )
-    for group in optimizer.param_groups:
-        group["lr"] = learning_rate
-    stage_name = audit["stage_two_name"] if stage_two else audit["stage_one_name"]
-    return weights, str(stage_name)
-
-
-def _two_stage_checkpoint_improved(
-    metrics: Mapping[str, Any],
-    audit: Mapping[str, Any],
-    *,
-    epoch: int,
-    best_f1: float,
-    min_delta: float,
-    qualified_stage_two_best_found: bool,
-) -> tuple[bool, bool]:
-    macro_f1 = float(metrics["macro_f1"])
-    if not bool(audit["enabled"]) or epoch < int(audit["stage_two_start_epoch"]):
-        return macro_f1 > best_f1 + min_delta, qualified_stage_two_best_found
-    qualified = float(metrics["opposite_direction_error_rate"]) <= float(
-        audit["stage_two_oder_ceiling"]
-    )
-    if not qualified:
-        return False, qualified_stage_two_best_found
-    if not qualified_stage_two_best_found:
-        return True, True
-    return macro_f1 > best_f1 + min_delta, True
 
 
 def train_model(
@@ -994,17 +863,11 @@ def train_model(
         config["optimization"],
         epochs=epochs,
     )
-    two_stage_audit = _build_two_stage_training(
-        config["optimization"],
-        config["loss_weights"],
-        epochs=epochs,
-    )
     direction_cost_audit = _build_opposite_direction_cost(config["loss_weights"])
     start_epoch = 0
     best_f1 = -1.0
     best_epoch = -1
     last_improvement_epoch = -1
-    qualified_stage_two_best_found = False
     history: list[dict[str, Any]] = []
     if resume_path is not None:
         if Path(resume_path).resolve().parent != output_root.resolve():
@@ -1039,9 +902,6 @@ def train_model(
         last_improvement_epoch = int(
             checkpoint.get("last_improvement_epoch", best_epoch)
         )
-        qualified_stage_two_best_found = bool(
-            checkpoint.get("qualified_stage_two_best_found", False)
-        )
         history = list(checkpoint.get("history", []))
     optimizer_steps = start_epoch * len(train_loader)
     patience = int(config["optimization"].get("early_stopping_patience", epochs))
@@ -1049,8 +909,6 @@ def train_model(
     min_delta = float(config["optimization"].get("early_stopping_min_delta", 0.0))
     if patience < 1 or not 1 <= min_epochs <= epochs or min_delta < 0:
         raise ValueError("invalid early-stopping configuration")
-    if bool(two_stage_audit["enabled"]):
-        min_epochs = max(min_epochs, int(two_stage_audit["stage_two_start_epoch"]) + 1)
     started = datetime.now(UTC).isoformat()
     state = {
         "schema": "prta-cxr.training-progress.v1",
@@ -1068,25 +926,17 @@ def train_model(
         "config_sha256": canonical_sha256(config),
         "learning_rate_schedule": scheduler_audit,
         "weight_averaging": weight_averaging_audit,
-        "two_stage_training": two_stage_audit,
         "opposite_direction_cost": direction_cost_audit,
         "current_learning_rate": float(optimizer.param_groups[0]["lr"]),
         "completed_optimizer_steps": optimizer_steps,
     }
     replace_json_atomic(output_root / "training_progress.json", state)
     stopped_early = False
+    active_loss_weights = {
+        name: float(value) for name, value in config["loss_weights"].items()
+    }
+    training_stage = "macro_f1"
     for epoch in range(start_epoch, epochs):
-        active_loss_weights, training_stage = _apply_two_stage_epoch_policy(
-            optimizer,
-            config["loss_weights"],
-            two_stage_audit,
-            epoch=epoch,
-            base_learning_rate=float(config["optimization"]["learning_rate"]),
-        )
-        if bool(two_stage_audit["enabled"]) and epoch == int(
-            two_stage_audit["stage_two_start_epoch"]
-        ):
-            last_improvement_epoch = epoch
         model.train()
         train_losses = []
         for step, batch in enumerate(train_loader, start=1):
@@ -1143,14 +993,7 @@ def train_model(
         metrics["training_stage"] = training_stage
         metrics["active_loss_weights"] = active_loss_weights
         history.append(metrics)
-        improved, qualified_stage_two_best_found = _two_stage_checkpoint_improved(
-            metrics,
-            two_stage_audit,
-            epoch=epoch,
-            best_f1=best_f1,
-            min_delta=min_delta,
-            qualified_stage_two_best_found=qualified_stage_two_best_found,
-        )
+        improved = float(metrics["macro_f1"]) > best_f1 + min_delta
         if improved:
             best_f1 = float(metrics["macro_f1"])
             best_epoch = epoch
@@ -1169,7 +1012,6 @@ def train_model(
             ),
             "completed_optimizer_steps": optimizer_steps,
             "last_improvement_epoch": last_improvement_epoch,
-            "qualified_stage_two_best_found": qualified_stage_two_best_found,
             "weight_averaging_updates": (
                 int(averaged_model.n_averaged.item())
                 if averaged_model is not None
@@ -1193,7 +1035,6 @@ def train_model(
                 "latest_dev_metrics": metrics,
                 "training_stage": training_stage,
                 "active_loss_weights": active_loss_weights,
-                "qualified_stage_two_best_found": qualified_stage_two_best_found,
             }
         )
         replace_json_atomic(output_root / "training_progress.json", state)
@@ -1259,15 +1100,7 @@ def train_model(
                 else 0
             ),
         },
-        "two_stage_training": {
-            **two_stage_audit,
-            "qualified_stage_two_best_found": qualified_stage_two_best_found,
-            "selected_training_stage": next(
-                value["training_stage"]
-                for value in history
-                if int(value["epoch"]) == best_epoch
-            ),
-        },
+        "training_stage": "macro_f1",
         "opposite_direction_cost": direction_cost_audit,
         "start_time": started,
         "end_time": ended,

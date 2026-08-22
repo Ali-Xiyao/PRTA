@@ -3,7 +3,7 @@
   "status": "PASS_SUES_HPC_ENGINEERING_READINESS",
   "created_at": "2026-08-06T15:14:00Z",
   "authority": "engineering_only_no_formal_launch",
-  "remote_project_root": "/ipfs/inspurfileset/home/dqxy/dqxy11/projects/xiyaowang/050_VisualVIT/PRTA-CXR",
+  "remote_project_root": "<private-server-workspace>/PRTA-CXR",
   "local_git_head_at_readiness": "d37572aee002f48036b6fba9b5c8b420488d7e41",
   "deployed_source_archive_sha256": "2169fccb5a46e698ac5b3217dd35b6b72d44407a23b83f9fd0647a2cc0f334f4",
   "environment": {

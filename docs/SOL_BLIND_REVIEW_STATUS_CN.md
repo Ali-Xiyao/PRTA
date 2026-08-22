@@ -103,7 +103,7 @@ Luna=`Unclear`，除非以后另行冻结人工或双模型裁决协议。
 
 本地运行根：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\sol_blind_review_v1`
+`<private-local-runtime>\sol_blind_review_v1`
 
 关键文件：
 

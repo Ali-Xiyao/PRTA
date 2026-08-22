@@ -27,13 +27,13 @@
 
 私有运行根：
 
-`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\sol_authoritative_all_risk_v1`
+`<private-local-runtime>\poststop_audits\sol_authoritative_all_risk_v1`
 
 未来命令应显式设置：
 
 ```powershell
 $env:PRTA_CXR_SOL_LABEL_ROOT = `
-  'H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\poststop_audits\sol_authoritative_all_risk_v1'
+  '<private-local-runtime>\poststop_audits\sol_authoritative_all_risk_v1'
 
 $SOL_TRAIN_DEV = `
   "$env:PRTA_CXR_SOL_LABEL_ROOT\private\train_dev_sol_authoritative_all_risk_v1.jsonl"

@@ -1,0 +1,77 @@
+{
+  "schema": "prta-cxr.training.v1",
+  "seed": 17,
+  "paper_seed_contract": [
+    17,
+    28,
+    43
+  ],
+  "experiment_id": "PRTA-CXR-Slim-S1",
+  "final_mainline": "PRTA-CXR",
+  "paper_method_identity": "Slim-S1",
+  "phase20_role": "confirmatory_not_selective",
+  "data": {
+    "train_fraction": 1.0,
+    "fraction_salt": "prta-cxr-luna-primary-scaling-v1"
+  },
+  "model": {
+    "family": "prta",
+    "width": 768,
+    "heads": 12,
+    "dropout": 0.1,
+    "state_tokens": 20,
+    "transition_tokens": 20,
+    "adapter_rank": 32,
+    "adapter_scope": "tail8",
+    "native_head": "H0",
+    "components": {
+      "branch_mode": "legacy",
+      "cross_time_alignment": true,
+      "dual_branch": true,
+      "finding_conditioning": true,
+      "matched_hard_cmcp": true,
+      "prior_reliability_gate": false,
+      "temporal_relation_residual": true,
+      "relation_residual_initial_scale": 0.001,
+      "learned_relation_residual_scale": false,
+      "selective_state_anchor": false,
+      "selective_state_beta": 1.0,
+      "unaligned_prior_mode": "conditioned"
+    }
+  },
+  "classification_loss": {
+    "name": "class_balanced_focal",
+    "beta": 0.9999,
+    "gamma": 1.0,
+    "class_counts": [
+      39126,
+      11010,
+      13884,
+      14534,
+      1848
+    ]
+  },
+  "cmcp": {
+    "margin": 0.2,
+    "matching": "offline_hard_v1"
+  },
+  "loss_weights": {
+    "classification": 1.0,
+    "state": 0.025,
+    "opposite_direction_cost": 0.05,
+    "cmcp": 0.01
+  },
+  "optimization": {
+    "batch_size": 16,
+    "epochs": 20,
+    "minimum_epochs": 6,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1.0,
+    "num_workers": 4,
+    "early_stopping_patience": 4,
+    "early_stopping_min_delta": 0.001,
+    "weight_averaging": "ema",
+    "ema_decay": 0.999
+  }
+}

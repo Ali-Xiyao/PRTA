@@ -54,7 +54,7 @@ Gold 行数和患者数均为 250，排除 0。两名临床资历均超过 5 年
 
 ## 运行产物
 
-运行目录：`H:\VisualVIT_runtime\050_routeD\prta_cxr_clean_v1\luna_primary_full_v1`
+运行目录：`<private-local-runtime>\luna_primary_full_v1`
 
 - `merged/luna_primary_merge_audit.json`：全量合并审计。
 - `merged/luna_primary_silver.jsonl`：完整 Silver，不能直接用于训练。
