@@ -2,7 +2,8 @@
 
 > 2026-08-04 后续更新：Tier B/C 的 Sol 覆盖缺口已经补审完成。13,334 条中
 > 此前已覆盖 7,366 条，本轮补审其余 5,968 条。聚合结果与边界见
-> [Tier B/C Sol复核摘要](PRTA_CXR_TierBC_Sol复核摘要_CN.md)。本次仅复核，
+> Tier B/C Sol 复核摘要已移至 VisualVIT 历史分支
+> `codex/prta-history-archive-20260822`。本次仅复核，
 > 没有修改标签、删除样本或重训。
 
 ## 结论边界

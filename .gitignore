@@ -11,6 +11,7 @@ results/**
 !results/smoke/.gitkeep
 outputs/**/_preview/
 outputs/**/*.inspect.ndjson
+/outputs/
 manifests/receipts/*.json
 manifests/splits/*.json*
 manifests/labels/*.json*
