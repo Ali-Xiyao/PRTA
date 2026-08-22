@@ -828,6 +828,146 @@ def attention_figure_main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
+def build_git_safe_attention_release(
+    private_manifest: Mapping[str, Any],
+    tensors: Mapping[str, np.ndarray],
+    render_receipt: Mapping[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if private_manifest.get("status") != "PASS_FIGURE5_TRUE_ATTENTION_EXPORTED":
+        raise ValueError("private attention export is not terminal PASS")
+    if render_receipt.get("status") != (
+        "PASS_PRIVATE_FIGURE5_RENDERED_PUBLIC_RELEASE_BLOCKED"
+    ):
+        raise ValueError("private Figure 5 render receipt is not terminal")
+    if render_receipt.get("public_git_redistribution_permitted") is not False:
+        raise ValueError("unexpected public redistribution state")
+    families = tuple(case["family"] for case in private_manifest["cases"])
+    if families != ("improvement", "worsening"):
+        raise ValueError("Figure 5 release requires two frozen case families")
+    aggregate_arrays = {}
+    for name in ("A_bar", "r_current", "r_prior", "edge"):
+        values = [np.asarray(tensors[f"{family}_{name}"]) for family in families]
+        aggregate_arrays[name] = np.mean(np.stack(values), axis=0)
+    rank_weights = np.asarray(
+        [
+            [float(route["weight"]) for route in case["routes"]]
+            for case in private_manifest["cases"]
+        ],
+        dtype=np.float64,
+    )
+    aggregate = {
+        "schema": "prta-cxr.figure5-attention-aggregate.v1",
+        "status": "PASS_FIGURE5_TWO_CASE_AGGREGATE_GIT_SAFE",
+        "case_count": 2,
+        "case_families": list(families),
+        "maps": {
+            name: {
+                "shape": list(value.shape),
+                "values": value.astype(float).tolist(),
+            }
+            for name, value in aggregate_arrays.items()
+        },
+        "route_weight_by_rank": [
+            {
+                "rank": rank + 1,
+                "mean": float(rank_weights[:, rank].mean()),
+                "minimum": float(rank_weights[:, rank].min()),
+                "maximum": float(rank_weights[:, rank].max()),
+            }
+            for rank in range(rank_weights.shape[1])
+        ],
+        "shared_p99_clip": float(private_manifest["shared_p99_clip"]),
+        "contains_source_pixels": False,
+        "contains_patient_level_rows": False,
+        "contains_sample_identifiers": False,
+    }
+    release = {
+        "schema": "prta-cxr.figure5-attention-release-manifest.v1",
+        "status": "PASS_FIGURE5_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED",
+        "scientific_export_status": private_manifest["status"],
+        "private_render_status": render_receipt["status"],
+        "source_commit": private_manifest["source_commit"],
+        "renderer_commit": render_receipt["renderer_commit"],
+        "checkpoint_seed": 43,
+        "checkpoint_sha256": private_manifest["checkpoint_sha256"],
+        "preselection_sha256": private_manifest["preselection_sha256"],
+        "private_tensor_bundle_sha256": private_manifest["tensor_bundle"]["sha256"],
+        "private_figure_sha256": render_receipt["figure_sha256"],
+        "tensor_shapes": {
+            "W_align": [12, 197, 197],
+            "W_trans": [12, 20, 197],
+            "A_bar": [196, 196],
+            "r_current": [196],
+            "r_prior": [196],
+            "edge": [196, 196],
+        },
+        "case_count": 2,
+        "selection_performed_before_image_or_attention_view": True,
+        "cases_changed_after_attention_view": False,
+        "need_weights": True,
+        "average_attn_weights": False,
+        "cls_removed_and_patch_renormalized": True,
+        "shared_p99_clip": float(private_manifest["shared_p99_clip"]),
+        "public_repository_visibility": "PUBLIC",
+        "publication_permission_confirmed": False,
+        "public_git_redistribution_permitted": False,
+        "excluded_from_public_git": [
+            "figure5_attention_flow.png",
+            "source CXR pixels",
+            "raw sample identifiers and paths",
+            "full patient-level W_align/W_trans tensors",
+            "patient-level probabilities and routes",
+        ],
+        "published_to_git": [
+            "selection/export/render code",
+            "tests",
+            "provenance and artifact hashes",
+            "two-case aggregate attention maps and rankwise route weights",
+            "permission boundary and reproduction instructions",
+        ],
+        "permission_basis": {
+            "mimic_cxr_dua": "https://physionet.org/content/mimic-cxr-jpg/view-dua/2.1.0/",
+            "repository_contract": "DATA_AVAILABILITY.md",
+            "reason": (
+                "No affirmative artifact-license receipt authorizes publishing "
+                "MIMIC-CXR-JPG pixels or patient-level derivatives in public Git."
+            ),
+        },
+    }
+    return release, aggregate
+
+
+def attention_public_release_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Build the Git-safe aggregate companion for private Figure 5."
+    )
+    parser.add_argument("--private-manifest", type=Path, required=True)
+    parser.add_argument("--tensor-bundle", type=Path, required=True)
+    parser.add_argument("--render-receipt", type=Path, required=True)
+    parser.add_argument("--manifest-output", type=Path, required=True)
+    parser.add_argument("--aggregate-output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    private_manifest = json.loads(
+        args.private_manifest.read_text(encoding="utf-8")
+    )
+    render_receipt = json.loads(args.render_receipt.read_text(encoding="utf-8"))
+    if sha256_file(args.tensor_bundle) != private_manifest["tensor_bundle"]["sha256"]:
+        raise ValueError("private tensor bundle hash mismatch")
+    with np.load(args.tensor_bundle, allow_pickle=False) as tensors:
+        release, aggregate = build_git_safe_attention_release(
+            private_manifest, tensors, render_receipt
+        )
+    args.manifest_output.parent.mkdir(parents=True, exist_ok=True)
+    args.aggregate_output.parent.mkdir(parents=True, exist_ok=True)
+    args.manifest_output.write_text(
+        json.dumps(release, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    args.aggregate_output.write_text(
+        json.dumps(aggregate, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    return 0
+
+
 def attention_preselection_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Freeze Figure 5 cases before any image/attention view."

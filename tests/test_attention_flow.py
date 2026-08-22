@@ -1,4 +1,5 @@
 import copy
+import json
 
 import numpy as np
 import torch
@@ -6,6 +7,7 @@ import torch
 from prta_cxr.attention_flow import (
     EXPECTED_SEEDS,
     _private_to_public_case,
+    build_git_safe_attention_release,
     capture_true_attention,
     patch_attention_flow,
     salted_sample_hash,
@@ -163,3 +165,41 @@ def test_public_case_rejects_private_fields():
         assert "private fields" in str(error)
     else:
         raise AssertionError("private path was accepted for public export")
+
+
+def test_git_safe_release_contains_only_two_case_aggregate():
+    private = {
+        "status": "PASS_FIGURE5_TRUE_ATTENTION_EXPORTED",
+        "source_commit": "capture",
+        "checkpoint_sha256": "checkpoint",
+        "preselection_sha256": "preselection",
+        "tensor_bundle": {"sha256": "tensor"},
+        "shared_p99_clip": 0.1,
+        "cases": [
+            {"family": family, "routes": [{"weight": rank + 1} for rank in range(6)]}
+            for family in ("improvement", "worsening")
+        ],
+    }
+    tensors = {
+        f"{family}_{name}": np.ones(shape) * value
+        for value, family in enumerate(("improvement", "worsening"), start=1)
+        for name, shape in (
+            ("A_bar", (196, 196)),
+            ("r_current", (196,)),
+            ("r_prior", (196,)),
+            ("edge", (196, 196)),
+        )
+    }
+    receipt = {
+        "status": "PASS_PRIVATE_FIGURE5_RENDERED_PUBLIC_RELEASE_BLOCKED",
+        "renderer_commit": "render",
+        "figure_sha256": "figure",
+        "public_git_redistribution_permitted": False,
+    }
+    release, aggregate = build_git_safe_attention_release(private, tensors, receipt)
+    assert release["public_git_redistribution_permitted"] is False
+    assert aggregate["case_count"] == 2
+    assert aggregate["maps"]["r_current"]["values"] == [1.5] * 196
+    payload = json.dumps((release, aggregate))
+    assert '"sample_id":' not in payload
+    assert '"image_path":' not in payload
