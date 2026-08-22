@@ -13,6 +13,10 @@ reports, patient identifiers, or derived patient-level tables. Users must
 obtain the source datasets independently and comply with the applicable data
 use agreements, ethics approvals, and local governance requirements.
 
+The public, patient-safe description of source filtering, longitudinal pairing,
+split construction, and archive boundaries is recorded in
+`writing_handoff/11_数据来源筛选与归档边界_CN.md`.
+
 ## Checkpoints
 
 The three frozen PRTA-CXR checkpoints are internal research artifacts and are
