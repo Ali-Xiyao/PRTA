@@ -84,15 +84,24 @@ class PRTATrainModel(nn.Module):
         self.finding_conditioning = bool(components.get("finding_conditioning", True))
         self.dual_branch = bool(components.get("dual_branch", True))
         self.branch_mode = str(components.get("branch_mode", "legacy"))
-        if self.branch_mode not in {"legacy", "transition_only", "repaired_dual"}:
+        if self.branch_mode not in {
+            "legacy",
+            "training_auxiliary_state",
+            "transition_only",
+            "repaired_dual",
+        }:
             raise ValueError(
-                "model.components.branch_mode must be legacy, transition_only, "
-                "or repaired_dual"
+                "model.components.branch_mode must be legacy, "
+                "training_auxiliary_state, transition_only, or repaired_dual"
             )
         if self.branch_mode == "transition_only" and self.dual_branch:
             raise ValueError("transition_only branch mode requires dual_branch=false")
         if self.branch_mode == "repaired_dual" and not self.dual_branch:
             raise ValueError("repaired_dual branch mode requires dual_branch=true")
+        if self.branch_mode == "training_auxiliary_state" and not self.dual_branch:
+            raise ValueError(
+                "training_auxiliary_state branch mode requires dual_branch=true"
+            )
         self.adapter = PRTATemporalAdapter(
             frozen_tail,
             width=width,
@@ -146,6 +155,10 @@ class PRTATrainModel(nn.Module):
             raise ValueError("native_head must be H0, H1, H2, H3, or H4")
         if self.branch_mode == "transition_only" and head_name != "H0":
             raise ValueError("transition_only branch mode requires native_head=H0")
+        if self.branch_mode == "training_auxiliary_state" and head_name != "H0":
+            raise ValueError(
+                "training_auxiliary_state branch mode requires native_head=H0"
+            )
         if self.branch_mode == "repaired_dual":
             if head_name != "H4":
                 raise ValueError("repaired_dual branch mode requires native_head=H4")

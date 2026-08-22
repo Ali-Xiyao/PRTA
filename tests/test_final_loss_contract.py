@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -62,3 +63,26 @@ def test_retired_two_stage_training_fails_closed(tmp_path) -> None:
     path.write_text(json.dumps(value), encoding="utf-8")
     with pytest.raises(ValueError, match="retired two-stage training"):
         load_training_config(path)
+
+
+def test_public_final_config_has_only_effective_method_fields() -> None:
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "configs"
+        / "final"
+        / "prta_cxr_slim_s1.json"
+    )
+    value = load_training_config(path)
+    components = value["model"]["components"]
+
+    assert components["branch_mode"] == "training_auxiliary_state"
+    assert value["model"]["native_head"] == "H0"
+    assert components["dual_branch"] is True
+    assert components["learned_relation_residual_scale"] is False
+    assert "relation_residual_initial_scale" not in components
+    assert value["loss_weights"] == {
+        "classification": 1.0,
+        "state": 0.025,
+        "opposite_direction_cost": 0.05,
+        "cmcp": 0.01,
+    }

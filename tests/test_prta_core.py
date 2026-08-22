@@ -435,7 +435,10 @@ def test_h0_deployment_state_pruning_is_exact_and_skips_state_resampler():
             "transition_tokens": 4,
             "dropout": 0.0,
             "native_head": "H0",
-            "components": {"dual_branch": True, "branch_mode": "legacy"},
+            "components": {
+                "dual_branch": True,
+                "branch_mode": "training_auxiliary_state",
+            },
         }
     }
     value = build_train_model([nn.Identity() for _ in range(4)], nn.Identity(), config)

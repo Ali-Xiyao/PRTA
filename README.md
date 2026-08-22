@@ -1,5 +1,9 @@
 # PRTA-CXR
 
+> **Authoritative review target:** the `main` branch of this repository is the
+> complete paper-method codebase. Reviewers and downstream coding collaborators
+> do not need the VisualVIT archive to audit or extend PRTA-CXR.
+
 PRTA-CXR is the clean, paper-facing implementation of Prior-Responsive
 Temporal Adaptation for five-way longitudinal chest X-ray progression
 classification:
@@ -58,6 +62,20 @@ The archive commit is `fa27c71049b5a45a89816672ab4abbc44b94e547`.
 That archive contains process code for reproducibility archaeology; it is not
 part of the final method and must not be copied back into this repository.
 
+## Method contract
+
+The final `Slim-S1` configuration uses a training-only auxiliary state branch
+for the state-anchor objective. Its H0 prediction head consumes transition
+tokens only. The state branch can therefore be pruned at deployment; exact
+logit and prediction parity was verified on all 11,201 Dev rows. The temporal
+relation residual is added directly (`current + relation residual`); no learned
+or fixed residual-scale parameter is active in the final configuration.
+
+The public final configuration uses the explicit mode name
+`training_auxiliary_state`. Historical checkpoint-side configs may still use
+the backward-compatible name `legacy`; this naming cleanup is behavior
+equivalent and does not alter checkpoint identities or aggregate results.
+
 ## Start here
 
 1. Give the writing team the self-contained
@@ -90,6 +108,13 @@ The new source catalog intentionally does not inherit old debug rosters. It
 rebuilds patient-disjoint splits from all sources that pass governance and
 lineage checks; revealed tests, protected gold, and external confirmation data
 remain excluded.
+
+## License and research assets
+
+Repository software and documentation are released under the [MIT License](LICENSE).
+Datasets, medical records, feature caches, patient-level predictions, and model
+checkpoints are not covered by that license; see
+[data and artifact availability](DATA_AVAILABILITY.md).
 
 ## Formal execution lock
 

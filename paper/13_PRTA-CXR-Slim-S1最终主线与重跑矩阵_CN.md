@@ -16,7 +16,7 @@ temporal relation residual、state anchor 0.025、ODC 0.05、matched-hard CMCP 0
 | 历史继承 | IF-A10/S0、TILA8、Current-only、Siamese 的 Git-safe 聚合结论 | 只作历史证据；旧私有 checkpoint 已删除 |
 | 新训练 | full S1、精确损失/结构消融、F01/F02-DMW0 | 已完成并由 Phase20-A finalizer 核验 |
 | 新训练 | source-held、scaling、symmetric/plausible noise | 已完成并纳入 88/88 PASS |
-| 新推理 | PRIOR 压力、校准/选择性预测、亚组、效率/剪枝、安全路由 | B1 6/6、B2 28/28 PASS |
+| 新推理 | probability export、校准/选择性预测、亚组、效率/剪枝、安全路由 | B1 6/6、B2 28/28 PASS；S1 四条件 PRIOR 定量表未进入 Git-safe 包 |
 | 对比重建 | V2、S0、B401、B402、TILA8、BioViL-T-style、CheXRelNet-inspired、`TILAPaper` | 8 系统 × 3 Seeds，24/24 finalizer PASS |
 | 历史保留 | V2 及其既有表格/诊断 | 只作开发父方法证据 |
 | 正文泛化 | 双向 MIMIC-CXR/CheXpert Plus source-held | 三 Seed跨来源评估；不称为独立外部验证 |
