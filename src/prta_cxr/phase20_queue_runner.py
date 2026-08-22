@@ -159,6 +159,14 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--runtime-root", type=Path, required=True)
     parser.add_argument("--inputs", type=Path, required=True)
+    parser.add_argument(
+        "--input-manifest",
+        type=Path,
+        help=(
+            "Optional lane-specific frozen input manifest. Defaults to the global "
+            "runtime-root/input_manifest.json contract."
+        ),
+    )
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--shared-state", type=Path, required=True)
     parser.add_argument("--device", default="cuda:0")
@@ -184,9 +192,26 @@ def run_phase20_queue_main(argv: Sequence[str] | None = None) -> int:
     expected_queue_hash = dict(preparation["queue_hashes"]).get(args.queue.name)
     if not expected_queue_hash or sha256_file(args.queue) != expected_queue_hash:
         raise ValueError("Phase20 queue hash drift")
+    input_manifest_path = (
+        args.input_manifest.resolve()
+        if args.input_manifest is not None
+        else runtime_root / "input_manifest.json"
+    )
+    input_manifest_sha256 = sha256_file(input_manifest_path)
+    if args.input_manifest is None:
+        expected_manifest_sha256 = preparation.get("input_manifest_sha256")
+    else:
+        expected_manifest_sha256 = dict(
+            preparation.get("lane_input_manifest_hashes", {})
+        ).get(args.lane)
+    if (
+        not expected_manifest_sha256
+        or input_manifest_sha256 != expected_manifest_sha256
+    ):
+        raise ValueError("Phase20 input manifest hash drift")
     platform_inputs = validate_platform_inputs(
         dict(_read_json(args.inputs)),
-        dict(_read_json(runtime_root / "input_manifest.json")),
+        dict(_read_json(input_manifest_path)),
     )
     queue = _read_json(args.queue)
     if not isinstance(queue, list) or not queue:
