@@ -10,8 +10,13 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import torch
 
-from prta_cxr.attention_flow import EXPECTED_SEEDS, SELECTION_SALT
+from prta_cxr.attention_flow import (
+    EXPECTED_SEEDS,
+    SELECTION_SALT,
+    capture_true_attention,
+)
 from prta_cxr.contracts import sha256_file
 
 BOOTSTRAP_REPLICATES = 10_000
@@ -448,4 +453,364 @@ def query_sensitivity_preselection_main(
             sort_keys=True,
         )
     )
+    return 0
+
+
+def _batch_patch_attention_flow(
+    w_align: torch.Tensor,
+    w_trans: torch.Tensor,
+) -> tuple[np.ndarray, np.ndarray]:
+    if tuple(w_align.shape[1:]) != (12, 197, 197):
+        raise ValueError("W_align must have shape [B,12,197,197]")
+    if tuple(w_trans.shape[1:]) != (12, 20, 197):
+        raise ValueError("W_trans must have shape [B,12,20,197]")
+    align = w_align.float()[:, :, 1:, 1:]
+    transition = w_trans.float()[:, :, :, 1:]
+    align = align / align.sum(dim=-1, keepdim=True)
+    transition = transition / transition.sum(dim=-1, keepdim=True)
+    a_bar = align.mean(dim=1)
+    current = transition.mean(dim=(1, 2))
+    current = current / current.sum(dim=-1, keepdim=True)
+    prior = torch.bmm(current.unsqueeze(1), a_bar).squeeze(1)
+    prior = prior / prior.sum(dim=-1, keepdim=True)
+    return (
+        current.detach().cpu().numpy().astype(np.float32),
+        prior.detach().cpu().numpy().astype(np.float32),
+    )
+
+
+def _flatten_cohort_rows(cohort: Mapping[str, Any]) -> list[dict[str, Any]]:
+    if cohort.get("status") != "PASS_S3_COHORT_AND_CASE_PRESELECTED":
+        raise ValueError("S3 cohort is not terminal PASS")
+    if not cohort.get("selection_performed_before_image_or_attention_view"):
+        raise ValueError("S3 cohort was not selected before viewing")
+    if cohort.get("images_opened") or cohort.get("attention_opened"):
+        raise ValueError("S3 cohort reports premature qualitative access")
+    rows = []
+    for pair in cohort["eligible_pairs"]:
+        for row in pair["rows"]:
+            rows.append(
+                {
+                    **dict(row),
+                    "pair_hash": str(pair["pair_hash"]),
+                    "patient_id_hash": str(pair["patient_id_hash"]),
+                }
+            )
+    if len(rows) != int(cohort["eligible_row_count"]):
+        raise ValueError("S3 cohort row count drift")
+    return rows
+
+
+def query_sensitivity_export_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Export one frozen seed's S3 attention-flow maps."
+    )
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--predictions", type=Path, required=True)
+    parser.add_argument("--split-manifest", type=Path, required=True)
+    parser.add_argument("--cache-root", type=Path, required=True)
+    parser.add_argument("--text-cache", type=Path, required=True)
+    parser.add_argument("--weights", type=Path, required=True)
+    parser.add_argument("--cohort", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-commit", required=True)
+    parser.add_argument("--device", default="cuda:0")
+    parser.add_argument("--batch-size", type=int, default=12)
+    args = parser.parse_args(argv)
+    if args.batch_size < 1:
+        raise ValueError("batch size must be positive")
+    if args.output.exists():
+        raise ValueError("refusing to overwrite an S3 seed export")
+
+    from prta_cxr.data.token_cache import Block8CacheIndex
+    from prta_cxr.data.training_dataset import PRTAFeatureDataset, read_jsonl
+    from prta_cxr.training.engine import build_train_model
+    from prta_cxr.vision.biomedclip import load_biomedclip_visual, tail_modules
+
+    checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
+    if checkpoint.get("schema") != "prta-cxr.checkpoint.v1":
+        raise ValueError("unsupported S3 checkpoint schema")
+    seed = int(checkpoint["config"].get("seed", -1))
+    if seed not in EXPECTED_SEEDS:
+        raise ValueError("S3 checkpoint seed is not frozen")
+    expected = checkpoint["input_hashes"]
+    actual = {
+        "split_manifest": sha256_file(args.split_manifest),
+        "cache_manifest": sha256_file(args.cache_root / "cache_manifest.json"),
+        "text_cache": sha256_file(args.text_cache),
+        "weights": sha256_file(args.weights),
+    }
+    if {key: expected.get(key) for key in actual} != actual:
+        raise ValueError("S3 replay inputs do not match checkpoint hashes")
+
+    cohort = json.loads(args.cohort.read_text(encoding="utf-8"))
+    cohort_rows = _flatten_cohort_rows(cohort)
+    cohort_ids = [row["sample_id"] for row in cohort_rows]
+    prediction_rows = _load_jsonl(args.predictions)
+    predictions = {str(row["observation_id"]): row for row in prediction_rows}
+    if len(predictions) != len(prediction_rows):
+        raise ValueError("duplicate S3 prediction observation_id")
+    if any(sample_id not in predictions for sample_id in cohort_ids):
+        raise ValueError("S3 prediction block does not cover the cohort")
+    if any(
+        int(predictions[sample_id]["training_seed"]) != seed
+        for sample_id in cohort_ids
+    ):
+        raise ValueError("S3 prediction seed drift")
+
+    manifest_index = {
+        str(row["sample_id"]): row for row in read_jsonl(args.split_manifest)
+    }
+    selected_rows = [manifest_index[sample_id] for sample_id in cohort_ids]
+    cache = Block8CacheIndex(args.cache_root)
+    dataset = PRTAFeatureDataset(
+        selected_rows,
+        cache=cache,
+        text_cache_path=args.text_cache,
+        split="dev",
+    )
+    visual, _ = load_biomedclip_visual(args.weights)
+    config = checkpoint["config"]
+    start_block = int(config.get("cache_entry_block", 8))
+    frozen_tail, final_norm = tail_modules(visual, start_block=start_block)
+    model = build_train_model(frozen_tail, final_norm, config)
+    model.load_state_dict(checkpoint["model_state"])
+    device = torch.device(args.device)
+    model.to(device).eval()
+
+    current_maps = np.empty((len(cohort_rows), 196), dtype=np.float32)
+    prior_maps = np.empty((len(cohort_rows), 196), dtype=np.float32)
+    maximum_probability_drift = 0.0
+    for start in range(0, len(cohort_rows), args.batch_size):
+        stop = min(start + args.batch_size, len(cohort_rows))
+        items = [
+            dataset[dataset.sample_indices[value]]
+            for value in cohort_ids[start:stop]
+        ]
+        logits, w_align, w_trans = capture_true_attention(
+            model,
+            prior=torch.stack([item["prior"] for item in items]).to(device),
+            current=torch.stack([item["current"] for item in items]).to(device),
+            finding_text=torch.stack(
+                [item["finding_text"] for item in items]
+            ).to(device),
+        )
+        probabilities = torch.softmax(logits.float(), dim=-1).cpu().numpy()
+        expected_probabilities = np.asarray(
+            [predictions[value]["probabilities"] for value in cohort_ids[start:stop]],
+            dtype=np.float64,
+        )
+        drift = float(np.max(np.abs(probabilities - expected_probabilities)))
+        maximum_probability_drift = max(maximum_probability_drift, drift)
+        if drift > 2e-5:
+            raise ValueError(f"S{seed} probability replay drift; maximum_abs={drift}")
+        current, prior = _batch_patch_attention_flow(w_align, w_trans)
+        current_maps[start:stop] = current
+        prior_maps[start:stop] = prior
+        print(f"S{seed} {stop}/{len(cohort_rows)}", flush=True)
+
+    if not np.allclose(current_maps.sum(axis=1), 1.0, atol=2e-6):
+        raise ValueError("S3 current maps are not normalized")
+    if not np.allclose(prior_maps.sum(axis=1), 1.0, atol=2e-6):
+        raise ValueError("S3 prior maps are not normalized")
+    args.output.mkdir(parents=True, exist_ok=False)
+    maps_path = args.output / f"S{seed}_flow_maps.private.npz"
+    np.savez_compressed(
+        maps_path, r_current=current_maps, r_prior=prior_maps
+    )
+    index_path = args.output / f"S{seed}_flow_index.private.jsonl"
+    with index_path.open("w", encoding="utf-8", newline="\n") as handle:
+        for row in cohort_rows:
+            handle.write(
+                json.dumps(
+                    {
+                        "sample_id": row["sample_id"],
+                        "pair_hash": row["pair_hash"],
+                        "patient_id_hash": row["patient_id_hash"],
+                        "finding": row["finding"],
+                        "reference_progression": row["reference_progression"],
+                    },
+                    sort_keys=True,
+                )
+                + "\n"
+            )
+    receipt = {
+        "schema": "prta-cxr.s3-seed-flow-export.private.v1",
+        "status": "PASS_S3_SEED_TRUE_ATTENTION_FLOW_EXPORTED",
+        "source_commit": args.source_commit,
+        "seed": seed,
+        "checkpoint_sha256": sha256_file(args.checkpoint),
+        "prediction_sha256": sha256_file(args.predictions),
+        "cohort_sha256": sha256_file(args.cohort),
+        "input_sha256": actual,
+        "row_count": len(cohort_rows),
+        "patient_cluster_count": int(cohort["eligible_patient_count"]),
+        "maps_sha256": sha256_file(maps_path),
+        "index_sha256": sha256_file(index_path),
+        "tensor_shapes": {
+            "W_align_batch_item": [12, 197, 197],
+            "W_trans_batch_item": [12, 20, 197],
+            "r_current": list(current_maps.shape),
+            "r_prior": list(prior_maps.shape),
+        },
+        "maximum_probability_replay_drift": maximum_probability_drift,
+        "native_post_softmax_attention": True,
+        "need_weights": True,
+        "average_attn_weights": False,
+        "cls_removed_and_patch_renormalized": True,
+        "images_opened": False,
+        "internal_test_opened": False,
+        "gold_opened": False,
+    }
+    receipt_path = args.output / f"S{seed}_flow_export_receipt.private.json"
+    receipt_path.write_text(
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(json.dumps(receipt, indent=2, sort_keys=True))
+    return 0
+
+
+def _load_seed_export(
+    directory: Path,
+) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, np.ndarray]]:
+    receipts = list(directory.glob("S*_flow_export_receipt.private.json"))
+    if len(receipts) != 1:
+        raise ValueError("S3 seed directory must contain one receipt")
+    receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
+    seed = int(receipt["seed"])
+    if receipt.get("status") != "PASS_S3_SEED_TRUE_ATTENTION_FLOW_EXPORTED":
+        raise ValueError("S3 seed export is not terminal PASS")
+    index_path = directory / f"S{seed}_flow_index.private.jsonl"
+    maps_path = directory / f"S{seed}_flow_maps.private.npz"
+    if sha256_file(index_path) != receipt["index_sha256"]:
+        raise ValueError("S3 seed index hash mismatch")
+    if sha256_file(maps_path) != receipt["maps_sha256"]:
+        raise ValueError("S3 seed maps hash mismatch")
+    index = _load_jsonl(index_path)
+    with np.load(maps_path, allow_pickle=False) as bundle:
+        maps = {name: bundle[name].copy() for name in ("r_current", "r_prior")}
+    if any(value.shape != (len(index), 196) for value in maps.values()):
+        raise ValueError("S3 seed map/index shape mismatch")
+    return receipt, index, maps
+
+
+def query_sensitivity_analysis_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Compute private S3 JSD units and Git-safe aggregate statistics."
+    )
+    parser.add_argument("--cohort", type=Path, required=True)
+    for seed in EXPECTED_SEEDS:
+        parser.add_argument(f"--s{seed}", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--source-commit", required=True)
+    args = parser.parse_args(argv)
+    if args.output.exists():
+        raise ValueError("refusing to overwrite an S3 analysis")
+    cohort = json.loads(args.cohort.read_text(encoding="utf-8"))
+    cohort_rows = _flatten_cohort_rows(cohort)
+    records = []
+    receipts = {}
+    for seed in EXPECTED_SEEDS:
+        receipt, index, maps = _load_seed_export(getattr(args, f"s{seed}"))
+        if int(receipt["seed"]) != seed:
+            raise ValueError("S3 seed directory mismatch")
+        if receipt["cohort_sha256"] != sha256_file(args.cohort):
+            raise ValueError("S3 seed cohort hash drift")
+        expected_ids = [row["sample_id"] for row in cohort_rows]
+        if [row["sample_id"] for row in index] != expected_ids:
+            raise ValueError("S3 seed index order drift")
+        receipts[f"S{seed}"] = receipt
+        for position, row in enumerate(index):
+            records.append(
+                {
+                    **row,
+                    "seed": seed,
+                    "r_current": maps["r_current"][position],
+                    "r_prior": maps["r_prior"][position],
+                }
+            )
+    units = compute_jsd_units(records)
+    statistics = summarize_jsd_units(units)
+    args.output.mkdir(parents=True, exist_ok=False)
+    units_path = args.output / "s3_jsd_units.private.jsonl"
+    with units_path.open("w", encoding="utf-8", newline="\n") as handle:
+        for unit in units:
+            handle.write(json.dumps(unit, sort_keys=True) + "\n")
+    private_manifest = {
+        "schema": "prta-cxr.s3-query-sensitivity-analysis.private.v1",
+        "status": "PASS_S3_JSD_AND_CLUSTERED_BOOTSTRAP",
+        "source_commit": args.source_commit,
+        "cohort_sha256": sha256_file(args.cohort),
+        "checkpoint_sha256": {
+            seed: receipts[seed]["checkpoint_sha256"] for seed in receipts
+        },
+        "seed_export_receipts": {
+            seed: {
+                "maps_sha256": receipt["maps_sha256"],
+                "index_sha256": receipt["index_sha256"],
+                "prediction_sha256": receipt["prediction_sha256"],
+            }
+            for seed, receipt in receipts.items()
+        },
+        "cohort": {
+            "pair_count": int(cohort["eligible_pair_count"]),
+            "row_count": int(cohort["eligible_row_count"]),
+            "patient_cluster_count": int(cohort["eligible_patient_count"]),
+        },
+        "jsd": {
+            "logarithm_base": 2,
+            "range": [0.0, 1.0],
+            "primary_distribution": (
+                "equal-mass concatenation [0.5*r_current, 0.5*r_prior]"
+            ),
+            "sensitivity_distributions": ["r_current", "r_prior"],
+        },
+        "bootstrap": {
+            "cluster": "patient",
+            "replicates": BOOTSTRAP_REPLICATES,
+            "rng_seed": BOOTSTRAP_SEED,
+            "interval": "percentile 95%",
+        },
+        "statistics": statistics,
+        "private_units_sha256": sha256_file(units_path),
+        "qualitative_selection": cohort["qualitative_selection"],
+        "selection_performed_before_image_or_attention_view": True,
+        "attention_opened_only_after_selection_lock": True,
+        "source_images_opened": False,
+    }
+    private_path = args.output / "s3_analysis_manifest.private.json"
+    private_path.write_text(
+        json.dumps(private_manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    public = {
+        "schema": "prta-cxr.s3-query-sensitivity-aggregate.v1",
+        "status": "PASS_S3_AGGREGATE_GIT_SAFE",
+        "source_commit": args.source_commit,
+        "cohort_receipt_sha256": sha256_file(args.cohort),
+        "cohort": private_manifest["cohort"],
+        "checkpoint_sha256": private_manifest["checkpoint_sha256"],
+        "jsd": private_manifest["jsd"],
+        "bootstrap": private_manifest["bootstrap"],
+        "statistics": statistics,
+        "qualitative_queries": [
+            {
+                "finding": row["finding"],
+                "reference_progression": row["reference_progression"],
+            }
+            for row in cohort["qualitative_selection"]["rows"]
+        ],
+        "qualitative_selection_rule": (
+            "salted pre-view pair order; unanimous-correct S17/S28/S43; "
+            "distinct progression states prioritized"
+        ),
+        "contains_source_pixels": False,
+        "contains_patient_level_rows": False,
+        "contains_sample_identifiers": False,
+    }
+    public_path = args.output / "s3_query_sensitivity_aggregate.json"
+    public_path.write_text(
+        json.dumps(public, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(json.dumps(public, indent=2, sort_keys=True))
     return 0

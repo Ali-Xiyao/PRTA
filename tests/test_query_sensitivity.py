@@ -1,8 +1,11 @@
 import copy
 
 import numpy as np
+import torch
 
+from prta_cxr.attention_flow import patch_attention_flow
 from prta_cxr.query_sensitivity import (
+    _batch_patch_attention_flow,
     attention_flow_distribution,
     compute_jsd_units,
     freeze_query_sensitivity_cohort,
@@ -109,3 +112,18 @@ def test_patient_clustered_bootstrap_resamples_whole_patients():
     assert result["unit_count"] == 3
     assert result["patient_cluster_count"] == 2
     assert result["median"] == 0.2
+
+
+def test_batched_flow_matches_single_sample_implementation():
+    rng = np.random.default_rng(43)
+    align = rng.random((2, 12, 197, 197)).astype(np.float32)
+    align /= align.sum(axis=-1, keepdims=True)
+    transition = rng.random((2, 12, 20, 197)).astype(np.float32)
+    transition /= transition.sum(axis=-1, keepdims=True)
+    current, prior = _batch_patch_attention_flow(
+        torch.from_numpy(align), torch.from_numpy(transition)
+    )
+    for index in range(2):
+        expected = patch_attention_flow(align[index], transition[index])
+        assert np.allclose(current[index], expected["r_current"], atol=1e-7)
+        assert np.allclose(prior[index], expected["r_prior"], atol=1e-7)
