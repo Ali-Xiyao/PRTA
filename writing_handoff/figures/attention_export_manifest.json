@@ -1,0 +1,68 @@
+{
+  "average_attn_weights": false,
+  "case_count": 2,
+  "cases_changed_after_attention_view": false,
+  "checkpoint_seed": 43,
+  "checkpoint_sha256": "d7673c8ce36dfac53c78a1dd2ca1adabaeb9a56b6510c81c979860981fee2140",
+  "cls_removed_and_patch_renormalized": true,
+  "excluded_from_public_git": [
+    "figure5_attention_flow.png",
+    "source CXR pixels",
+    "raw sample identifiers and paths",
+    "full patient-level W_align/W_trans tensors",
+    "patient-level probabilities and routes"
+  ],
+  "need_weights": true,
+  "permission_basis": {
+    "mimic_cxr_dua": "https://physionet.org/content/mimic-cxr-jpg/view-dua/2.1.0/",
+    "reason": "No affirmative artifact-license receipt authorizes publishing MIMIC-CXR-JPG pixels or patient-level derivatives in public Git.",
+    "repository_contract": "DATA_AVAILABILITY.md"
+  },
+  "preselection_sha256": "e83d773d1295da9084cc70e7913795ea4a95afd770d384b605d28ea53c20fb65",
+  "private_figure_sha256": "a1e0d02715bac1617cc0d0203585240c5e015952a9ddadb1c2c9eaa9e002b0b1",
+  "private_render_status": "PASS_PRIVATE_FIGURE5_RENDERED_PUBLIC_RELEASE_BLOCKED",
+  "private_tensor_bundle_sha256": "8a55c0ee4e7f1d99a36f1a89aac408a88733b26897972f6223488830752120c4",
+  "public_git_redistribution_permitted": false,
+  "public_repository_visibility": "PUBLIC",
+  "publication_permission_confirmed": false,
+  "published_to_git": [
+    "selection/export/render code",
+    "tests",
+    "provenance and artifact hashes",
+    "two-case aggregate attention maps and rankwise route weights",
+    "permission boundary and reproduction instructions"
+  ],
+  "renderer_commit": "79e181c49cdb0ce7273e2b75f85217a0da38147b",
+  "schema": "prta-cxr.figure5-attention-release-manifest.v1",
+  "scientific_export_status": "PASS_FIGURE5_TRUE_ATTENTION_EXPORTED",
+  "selection_performed_before_image_or_attention_view": true,
+  "shared_p99_clip": 0.08322171984437607,
+  "source_commit": "3f5031fd657f7040309df5246a27fcdbd4a0f4cb",
+  "status": "PASS_FIGURE5_CODE_AND_AGGREGATE_RELEASE_PRIVATE_FIGURE_BLOCKED",
+  "tensor_shapes": {
+    "A_bar": [
+      196,
+      196
+    ],
+    "W_align": [
+      12,
+      197,
+      197
+    ],
+    "W_trans": [
+      12,
+      20,
+      197
+    ],
+    "edge": [
+      196,
+      196
+    ],
+    "r_current": [
+      196
+    ],
+    "r_prior": [
+      196
+    ]
+  }
+}

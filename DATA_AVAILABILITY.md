@@ -31,3 +31,10 @@ Only Git-safe aggregate metrics, configuration contracts, and provenance
 receipts are included. Patient-level predictions and raw runtime logs are not
 published. Bidirectional source-held evaluation is reported as cross-source
 generalization, not as independent external clinical validation.
+
+Figure 5 uses native post-softmax attention from two preselected governed
+MIMIC-CXR-JPG cases. The public repository includes the export/render code,
+artifact hashes, tensor shapes, and two-case aggregate attention maps. It does
+not include the source radiographs, per-case attention tensors, probabilities,
+routes, or rendered pixel-bearing figure. Those artifacts require a separate
+affirmative publication and redistribution review.
