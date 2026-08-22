@@ -772,7 +772,7 @@ def attention_figure_main(argv: Sequence[str] | None = None) -> int:
         )
         _draw_routes(axes[row_index, 4], prior, current, case["routes"])
         probability = max(float(value) for value in case["probabilities"])
-        axes[row_index, 0].text(
+        row_label = axes[row_index, 0].text(
             0.0,
             1.035,
             (
@@ -786,6 +786,7 @@ def attention_figure_main(argv: Sequence[str] | None = None) -> int:
             weight="bold",
             ha="left",
         )
+        row_label.set_in_layout(False)
     if overlay_artist is None:  # pragma: no cover - case invariant
         raise RuntimeError("Figure 5 has no overlay artist")
     colorbar = figure.colorbar(
