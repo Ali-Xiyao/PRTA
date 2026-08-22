@@ -629,6 +629,204 @@ def attention_export_main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
+def _load_model_aligned_grayscale(path: Path) -> np.ndarray:
+    try:
+        from PIL import Image
+        from torchvision.transforms import v2
+    except ImportError as error:  # pragma: no cover - optional dependency
+        raise RuntimeError("Figure 5 rendering requires vision dependencies") from error
+    transform = v2.Compose(
+        [
+            v2.Resize(224, antialias=True),
+            v2.CenterCrop(224),
+            v2.ToImage(),
+            v2.ToDtype(torch.float32, scale=True),
+        ]
+    )
+    with Image.open(path) as image:
+        tensor = transform(image.convert("RGB"))
+    return tensor.mean(dim=0).numpy()
+
+
+def _draw_overlay(axis, image: np.ndarray, relevance: np.ndarray, *, clip: float):
+    axis.imshow(image, cmap="gray", vmin=0.0, vmax=1.0)
+    overlay = axis.imshow(
+        np.asarray(relevance).reshape(14, 14),
+        cmap="magma",
+        vmin=0.0,
+        vmax=clip,
+        alpha=0.4,
+        interpolation="bilinear",
+        extent=(0, 224, 224, 0),
+    )
+    axis.set_axis_off()
+    return overlay
+
+
+def _draw_routes(
+    axis,
+    prior: np.ndarray,
+    current: np.ndarray,
+    routes: Sequence[Mapping[str, Any]],
+) -> None:
+    from matplotlib.lines import Line2D
+
+    gap = 12
+    paired = np.concatenate(
+        (prior, np.ones((224, gap), dtype=prior.dtype), current), axis=1
+    )
+    axis.imshow(paired, cmap="gray", vmin=0.0, vmax=1.0)
+    maximum = max(float(route["weight"]) for route in routes)
+    for route in routes:
+        prior_x = (float(route["prior_column"]) + 0.5) * 16
+        prior_y = (float(route["prior_row"]) + 0.5) * 16
+        current_x = 224 + gap + (float(route["current_column"]) + 0.5) * 16
+        current_y = (float(route["current_row"]) + 0.5) * 16
+        relative = float(route["weight"]) / maximum
+        axis.add_line(
+            Line2D(
+                (prior_x, current_x),
+                (prior_y, current_y),
+                color="#f6c85f",
+                linewidth=0.8 + 3.2 * relative,
+                alpha=0.3 + 0.65 * relative,
+            )
+        )
+    axis.text(4, 14, "prior", color="white", fontsize=8, weight="bold")
+    axis.text(240, 14, "current", color="white", fontsize=8, weight="bold")
+    axis.set_axis_off()
+
+
+def attention_figure_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Render private paper Figure 5 from a governed export."
+    )
+    parser.add_argument("--private-manifest", type=Path, required=True)
+    parser.add_argument("--tensor-bundle", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--receipt", type=Path, required=True)
+    parser.add_argument("--renderer-commit", required=True)
+    args = parser.parse_args(argv)
+    try:
+        import matplotlib.pyplot as plt
+        from matplotlib.cm import ScalarMappable
+        from matplotlib.colors import Normalize
+    except ImportError as error:  # pragma: no cover - optional dependency
+        raise RuntimeError("Figure 5 rendering requires matplotlib") from error
+
+    manifest = json.loads(args.private_manifest.read_text(encoding="utf-8"))
+    if manifest.get("status") != "PASS_FIGURE5_TRUE_ATTENTION_EXPORTED":
+        raise ValueError("private attention export is not terminal PASS")
+    if sha256_file(args.tensor_bundle) != manifest["tensor_bundle"]["sha256"]:
+        raise ValueError("private attention tensor bundle hash mismatch")
+    cases = list(manifest["cases"])
+    if [case["family"] for case in cases] != ["improvement", "worsening"]:
+        raise ValueError("Figure 5 case order drift")
+    tensors = np.load(args.tensor_bundle, allow_pickle=False)
+    clip = float(manifest["shared_p99_clip"])
+    figure, axes = plt.subplots(
+        2,
+        5,
+        figsize=(18.0, 7.3),
+        gridspec_kw={"width_ratios": [1, 1, 1, 1, 2.05]},
+        constrained_layout=True,
+    )
+    image_hashes = []
+    overlay_artist = None
+    column_titles = (
+        "Prior CXR",
+        "Prior attention flow",
+        "Current CXR",
+        "Current transition relevance",
+        "Strongest cross-time routes",
+    )
+    for column, title in enumerate(column_titles):
+        axes[0, column].set_title(title, fontsize=11, pad=24)
+    for row_index, case in enumerate(cases):
+        prior_path = Path(case["prior_image_path"])
+        current_path = Path(case["current_image_path"])
+        prior = _load_model_aligned_grayscale(prior_path)
+        current = _load_model_aligned_grayscale(current_path)
+        image_hashes.append(
+            {
+                "sample_hash": case["sample_hash"],
+                "prior_image_sha256": sha256_file(prior_path),
+                "current_image_sha256": sha256_file(current_path),
+            }
+        )
+        axes[row_index, 0].imshow(prior, cmap="gray", vmin=0.0, vmax=1.0)
+        axes[row_index, 0].set_axis_off()
+        overlay_artist = _draw_overlay(
+            axes[row_index, 1],
+            prior,
+            tensors[f"{case['family']}_r_prior"],
+            clip=clip,
+        )
+        axes[row_index, 2].imshow(current, cmap="gray", vmin=0.0, vmax=1.0)
+        axes[row_index, 2].set_axis_off()
+        _draw_overlay(
+            axes[row_index, 3],
+            current,
+            tensors[f"{case['family']}_r_current"],
+            clip=clip,
+        )
+        _draw_routes(axes[row_index, 4], prior, current, case["routes"])
+        probability = max(float(value) for value in case["probabilities"])
+        axes[row_index, 0].text(
+            0.0,
+            1.035,
+            (
+                f"Finding query: {case['finding']}   |   "
+                f"Reference: {case['reference_progression']}   |   "
+                f"Prediction: {case['predicted_progression']} "
+                f"(p={probability:.3f})   |   {case['interval_bucket']}"
+            ),
+            transform=axes[row_index, 0].transAxes,
+            fontsize=10,
+            weight="bold",
+            ha="left",
+        )
+    if overlay_artist is None:  # pragma: no cover - case invariant
+        raise RuntimeError("Figure 5 has no overlay artist")
+    colorbar = figure.colorbar(
+        ScalarMappable(norm=Normalize(0.0, clip), cmap="magma"),
+        ax=axes,
+        location="right",
+        shrink=0.78,
+        pad=0.015,
+    )
+    colorbar.set_label("Normalized attention relevance (shared scale)")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(args.output, dpi=300, facecolor="white")
+    plt.close(figure)
+    receipt = {
+        "schema": "prta-cxr.figure5-render-receipt.private.v1",
+        "status": "PASS_PRIVATE_FIGURE5_RENDERED_PUBLIC_RELEASE_BLOCKED",
+        "figure_sha256": sha256_file(args.output),
+        "source_commit": manifest["source_commit"],
+        "renderer_commit": args.renderer_commit,
+        "checkpoint_sha256": manifest["checkpoint_sha256"],
+        "tensor_bundle_sha256": manifest["tensor_bundle"]["sha256"],
+        "case_selection_before_attention_view": True,
+        "cases_changed_after_attention_view": False,
+        "image_hashes": image_hashes,
+        "shared_p99_clip": clip,
+        "publication_permission_confirmed": False,
+        "public_git_redistribution_permitted": False,
+        "permission_reason": (
+            "MIMIC-CXR-JPG governed source pixels; no separate affirmative "
+            "artifact-license receipt was found"
+        ),
+        "public_git_action": "EXCLUDE_FIGURE_AND_SOURCE_PIXELS",
+    }
+    args.receipt.parent.mkdir(parents=True, exist_ok=True)
+    args.receipt.write_text(
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(json.dumps(receipt, indent=2, sort_keys=True))
+    return 0
+
+
 def attention_preselection_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Freeze Figure 5 cases before any image/attention view."
